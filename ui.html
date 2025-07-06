@@ -838,8 +838,6 @@
 
         <div class="section">
             <h3>Debug Options</h3>
-            <button class="btn btn-secondary btn-small" onclick="clearAllData()">🗑️ Clear All Data</button>
-            <button class="btn btn-secondary btn-small" onclick="testMigration()">🧪 Test Migration</button>
         </div>
     </div>
 
@@ -899,8 +897,6 @@
                 </div>
                 
                 <div class="button-row">
-                    <button class="btn" onclick="generateWithGemini()" id="generateBtn">🪄 Generate UI</button>
-                    <button class="btn btn-pipeline" onclick="generateWithPipeline()" id="pipelineBtn">🚀 5-Stage AI Pipeline</button>
                 </div>
                 <div class="button-row">
                     <button class="btn btn-pipeline" onclick="generateWith3StagePipeline()" id="pipeline3Btn" style="background: #28a745;">⚡ 3-Stage Pipeline (NEW)</button>
@@ -1840,9 +1836,6 @@ function isValidImageSelected() {
             }
         }
 
-        function testMigration() {
-            parent.postMessage({ pluginMessage: { type: 'test-migration' } }, '*');
-        }
 
         function formatTime(timestamp) {
             const now = Date.now();
@@ -2335,7 +2328,6 @@ function isValidImageSelected() {
     document.getElementById('userPrompt').placeholder = 'create a login form with email and password fields...';
     document.getElementById('currentContext').textContent = 'Ready for new UI';
     document.getElementById('userPrompt').value = '';
-    document.getElementById('generateBtn').textContent = '🪄 Generate UI';
     document.getElementById('imageUploadArea').style.display = 'block';
 
     clearStatus('generationStatus');
@@ -2358,7 +2350,6 @@ function isValidImageSelected() {
             document.getElementById('iterationContext').style.display = 'block';
             document.getElementById('userPromptLabel').textContent = 'Describe the changes you want to make:';
             document.getElementById('userPrompt').placeholder = 'e.g., "add a forgot password link" or "change the button to secondary"';
-            document.getElementById('generateBtn').textContent = '🪄 Apply Changes';
             
             // Hide image upload during iteration to avoid confusion
             document.getElementById('imageUploadArea').style.display = 'none';
@@ -2423,200 +2414,8 @@ function isValidImageSelected() {
             }, '*');
         }
         
-        async function generateWithGemini() {
-            if (designState.isIterating) {
-                await iterateOnDesign();
-            } else {
-                await generateNewDesign();
-            }
-        }
         
-        async function iterateOnDesign() {
-    const userPrompt = document.getElementById('userPrompt').value.trim();
-    const generateBtn = document.getElementById('generateBtn');
 
-    if (!userPrompt) {
-        showStatus('generationStatus', '❌ Please describe the changes you want to make.', 'error');
-        return;
-    }
-
-    // 🔍 DEBUG: Verify image state before generating modification prompt
-    console.log('🔍 Before generating modification prompt:');
-    console.log('  - selectedImage:', selectedImage);
-    console.log('  - !!selectedImage:', !!selectedImage);
-    console.log('  - isValidImageSelected():', isValidImageSelected());
-    console.log('  - Should use modification prompt (not image prompt)');
-
-    generateBtn.disabled = true;
-    generateBtn.textContent = '🪄 Applying...';
-    showStatus('generationStatus', '🤖 Gemini is analyzing your changes...', 'info');
-
-    try {
-        const apiKey = await getApiKeyFromBackend();
-        
-        // 🔧 IMPORTANT: Use generateModificationPrompt directly with platform support
-        const promptData = promptGenerator.generateModificationPrompt(
-            userPrompt, 
-            designState.current, 
-            scanResults, 
-            currentPlatform  // ← Add platform parameter
-        );
-        console.log('✅ Using modification prompt with platform:', currentPlatform);
-        
-        const response = await callGeminiAPI(apiKey, promptData.fullPrompt, null);
-        
-        // AI Self-Check & Retry System for Modifications
-        const basicValidation = validateAndFixJSONEnhanced(response);
-        if (!basicValidation.isValid) {
-            throw new Error(`JSON parsing failed: ${basicValidation.errors.join(', ')}`);
-        }
-        
-        // Run AI validation on the modification
-        const aiValidation = validateAIResponse(basicValidation.data, scanResults);
-        let validatedData;
-        
-        if (aiValidation.isValid) {
-            console.log('✅ Modification passed AI validation on first attempt');
-            validatedData = basicValidation.data;
-        } else {
-            console.log('❌ Modification validation failed, starting retry system...');
-            try {
-                validatedData = await executeRetry(userPrompt, aiValidation, scanResults, 1);
-                showStatus('generationStatus', '✅ Modification retry successful! Changes validated.', 'success');
-            } catch (retryError) {
-                throw new Error(`Modification validation failed: ${retryError.message}`);
-            }
-        }
-        
-        const modifiedJSON = validatedData;
-        lastGeneratedJSON = modifiedJSON;
-
-        // Update state
-        designState.current = modifiedJSON;
-        designState.history.push(userPrompt);
-        updateModificationHistory();
-        saveCurrentSession();
-
-        // Display debug JSON
-        const debugSection = document.getElementById('jsonDebugSection');
-        if(debugSection) debugSection.style.display = 'block';
-        const jsonOutput = document.getElementById('jsonOutput');
-        if(jsonOutput) jsonOutput.textContent = JSON.stringify(modifiedJSON, null, 2);
-
-        // Send to backend for in-place update
-        parent.postMessage({
-            pluginMessage: {
-                type: 'modify-existing-ui',
-                payload: {
-                    modifiedJSON: modifiedJSON,
-                    frameId: designState.frameId
-                }
-            }
-        }, '*');
-
-        document.getElementById('userPrompt').value = '';
-        showStatus('generationStatus', '✅ Changes applied successfully!', 'success');
-
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        showStatus('generationStatus', `❌ Error: ${errorMessage}`, 'error');
-    } finally {
-        generateBtn.disabled = false;
-        generateBtn.textContent = '🪄 Apply Changes';
-    }
-}
-
-        async function generateNewDesign() {
-    const userPrompt = document.getElementById('userPrompt').value.trim();
-    const generateBtn = document.getElementById('generateBtn');
-    
-    // 🔧 ROBUST IMAGE VALIDATION: Use more strict check
-    const hasValidImage = isValidImageSelected();
-    console.log('🔍 Image validation:');
-    console.log('  - selectedImage:', selectedImage);
-    console.log('  - hasValidImage:', hasValidImage);
-    
-    if (!userPrompt && !hasValidImage) {
-        showStatus('generationStatus', '❌ Please describe the UI or upload a reference image', 'error');
-        return;
-    }
-    
-    generateBtn.disabled = true;
-    generateBtn.textContent = '🪄 Generating...';
-    showStatus('generationStatus', '🤖 Gemini is generating UI...', 'info');
-
-    try {
-        const apiKey = await getApiKeyFromBackend();
-        
-        // 🔧 USE ROBUST VALIDATION: Pass hasValidImage instead of !!selectedImage
-        const promptData = promptGenerator.generatePrompt(
-            userPrompt, 
-            scanResults, 
-            [], 
-            hasValidImage,  // ← Use robust validation here
-            currentPlatform
-        );
-        
-        console.log('🔍 Using hasValidImage:', hasValidImage);
-        console.log('🔍 Prompt type:', hasValidImage ? 'IMAGE ANALYSIS' : 'TEXT ONLY');
-        
-        // Pass actual image only if validation passes
-        const imageToSend = hasValidImage ? selectedImage : null;
-        const response = await callGeminiAPI(apiKey, promptData.fullPrompt, imageToSend);
-        
-        console.log('🔍 Raw LLM response:', response);
-        console.log('🔍 Response length:', response.length);
-        console.log('🔍 Response around position 776:', response.substring(770, 785));
-// AI Self-Check & Retry System Integration
-                const basicValidation = validateAndFixJSONEnhanced(response);
-                if (!basicValidation.isValid) {
-                    throw new Error(`JSON parsing failed: ${basicValidation.errors.join(', ')}`);
-                }
-                
-                // Run AI validation on the parsed JSON
-                const aiValidation = validateAIResponse(basicValidation.data, scanResults);
-                let layoutData;
-                
-                if (aiValidation.isValid) {
-                    // Perfect! First attempt worked
-                    console.log('✅ First attempt passed AI validation');
-                    layoutData = basicValidation.data;
-                } else {
-                    // AI validation failed, trigger retry system
-                    console.log('❌ AI validation failed, starting retry system...');
-                    console.log('Errors:', aiValidation.errors);
-                    
-                    try {
-                        layoutData = await executeRetry(userPrompt, aiValidation, scanResults, 1);
-                        showStatus('generationStatus', '✅ Retry successful! UI improved and validated.', 'success');
-                    } catch (retryError) {
-                        throw new Error(`AI validation and all retries failed: ${retryError.message}`);
-                    }
-                }
-                
-                lastGeneratedJSON = layoutData;
-
-                const debugSection = document.getElementById('jsonDebugSection');
-                if (debugSection) debugSection.style.display = 'block';
-                const jsonOutput = document.getElementById('jsonOutput');
-                if (jsonOutput) jsonOutput.textContent = JSON.stringify(layoutData, null, 2);
-
-                showStatus('generationStatus', '✨ Creating UI in Figma...', 'success');
-                parent.postMessage({
-                    pluginMessage: {
-                        type: 'generate-ui-from-json',
-                        payload: JSON.stringify(layoutData)
-                    }
-                }, '*');
-                
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        showStatus('generationStatus', `❌ Error: ${errorMessage}`, 'error');
-    } finally {
-        generateBtn.disabled = false;
-        generateBtn.textContent = '🪄 Generate UI';
-    }
-}
 
         async function getApiKeyFromBackend() {
             showStatus('generationStatus', '🔄 Getting API key...', 'info');
@@ -2674,41 +2473,6 @@ function isValidImageSelected() {
             }
         }
 
-        async function generateWithPipeline() {
-            const userPrompt = document.getElementById('userPrompt').value.trim();
-            const pipelineBtn = document.getElementById('pipelineBtn');
-            
-            if (!userPrompt) {
-                showStatus('generationStatus', '❌ Please describe the UI you want to create.', 'error');
-                return;
-            }
-            
-            // Disable button and show loading
-            pipelineBtn.disabled = true;
-            pipelineBtn.textContent = '🔄 Running Pipeline...';
-            showStatus('generationStatus', '🚀 Starting 5-stage AI pipeline...', 'info');
-            
-            try {
-                // Send message to backend to run pipeline
-                parent.postMessage({
-                    pluginMessage: {
-                        type: 'run-ai-pipeline',
-                        payload: {
-                            prompt: userPrompt,
-                            timestamp: Date.now()
-                        }
-                    }
-                }, '*');
-                
-            } catch (error) {
-                console.error('❌ Pipeline error:', error);
-                showStatus('generationStatus', `❌ Pipeline failed: ${error.message}`, 'error');
-                
-                // Reset button
-                pipelineBtn.disabled = false;
-                pipelineBtn.textContent = '🚀 5-Stage AI Pipeline';
-            }
-        }
 
         async function generateWith3StagePipeline() {
             const userPrompt = document.getElementById('userPrompt').value.trim();
@@ -2897,12 +2661,6 @@ function isValidImageSelected() {
             }
         }
 
-        function clearAllData() {
-            if (confirm('Clear all saved data? This will remove API key and design system cache.')) {
-                parent.postMessage({ pluginMessage: { type: 'clear-storage' } }, '*');
-                location.reload();
-            }
-        }
 
         // NEW: Session state saving
         function saveCurrentSession() {
@@ -3030,9 +2788,6 @@ function isValidImageSelected() {
                 // Pipeline handlers
                 case 'pipeline-success':
                     clearStatus('generationStatus');
-                    const pipelineBtn = document.getElementById('pipelineBtn');
-                    pipelineBtn.disabled = false;
-                    pipelineBtn.textContent = '🚀 5-Stage AI Pipeline';
                     
                     // Show success with detailed stats
                     const stats = msg.result.pipelineStats;
@@ -3049,9 +2804,6 @@ function isValidImageSelected() {
 
                 case 'pipeline-success-no-render':
                     clearStatus('generationStatus');
-                    const pipelineBtnNoRender = document.getElementById('pipelineBtn');
-                    pipelineBtnNoRender.disabled = false;
-                    pipelineBtnNoRender.textContent = '🚀 5-Stage AI Pipeline';
                     
                     const statsNoRender = msg.result.pipelineStats;
                     const messageNoRender = `⚠️ Pipeline completed but no UI generated. ${statsNoRender.totalStagesWithAI} stages used AI.`;
@@ -3060,9 +2812,6 @@ function isValidImageSelected() {
 
                 case 'pipeline-error':
                     clearStatus('generationStatus');
-                    const pipelineBtnError = document.getElementById('pipelineBtn');
-                    pipelineBtnError.disabled = false;
-                    pipelineBtnError.textContent = '🚀 5-Stage AI Pipeline';
                     
                     showStatus('generationStatus', `❌ Pipeline failed: ${msg.error}`, 'error');
                     break;
