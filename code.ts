@@ -890,6 +890,38 @@ figma.ui.onmessage = async (msg: any) => {
             }
             break;
 
+        case 'run-3stage-modification':
+            try {
+                const { modificationRequest, originalPrompt, currentJSON, frameId } = msg.payload;
+                console.log('🔄 Starting 3-stage modification pipeline');
+                console.log('- Original prompt:', originalPrompt);
+                console.log('- Modification request:', modificationRequest);
+                console.log('- Frame ID:', frameId);
+                
+                // For now, show a message that user needs to run Python pipeline manually
+                // In the future, this could directly invoke the Python script
+                const modificationCommand = `python3 instance.py alt3-modify --original-prompt "${originalPrompt}" --modification "${modificationRequest}" --current-json '${JSON.stringify(currentJSON)}'`;
+                
+                figma.ui.postMessage({
+                    type: '3stage-modification-error',
+                    error: 'Please run the 3-stage modification pipeline manually:\n\n' + modificationCommand
+                });
+                
+                figma.notify('🔄 Run Python modification pipeline manually and copy JSON result', { timeout: 5000 });
+                
+            } catch (error) {
+                console.error('❌ 3-stage modification pipeline error:', error);
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                
+                figma.ui.postMessage({
+                    type: '3stage-modification-error',
+                    error: errorMessage
+                });
+                
+                figma.notify(`❌ 3-stage modification pipeline failed: ${errorMessage}`, { error: true });
+            }
+            break;
+
         case 'render-json-direct':
             try {
                 const { json, source } = msg.payload;

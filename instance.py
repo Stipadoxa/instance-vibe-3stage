@@ -499,14 +499,118 @@ class Alternative3StagePipeline:
             "stages": results,
             "summary": summary
         }
+    
+    async def run_modification_pipeline(self, original_prompt: str, modification_request: str, current_json: str) -> Dict[str, Any]:
+        """Run 3-stage modification pipeline with original context"""
+        run_id = f"mod_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        print(f"🔄 Starting 3-Stage Modification Pipeline run: {run_id}")
+        print(f"📝 Original prompt: {original_prompt[:50]}...")
+        print(f"🔧 Modification request: {modification_request[:50]}...")
+        
+        results = {}
+        
+        # Stage 1: User Request Analyzer with modification context
+        modification_context = f"""
+MODIFICATION REQUEST ANALYSIS:
+
+Original Prompt: {original_prompt}
+
+Current UI JSON:
+{current_json}
+
+Requested Changes: {modification_request}
+
+Please analyze what specific changes are needed while preserving the existing design structure and intent. Focus on understanding both the original requirements and the new modification request.
+"""
+        
+        print("🚀 Alt Stage 1/3: User Request Analyzer (Modification Mode)")
+        stage_1_result = await self.run_alt_stage(1, modification_context, run_id)
+        results["stage_1"] = stage_1_result
+        
+        # Stage 2: UX UI Designer with modification awareness  
+        stage_2_input = f"""
+MODIFICATION DESIGN SPECIFICATIONS:
+
+Analysis from Stage 1:
+{stage_1_result.content}
+
+Original Design Intent: {original_prompt}
+Modification Request: {modification_request}
+
+Current JSON Structure:
+{current_json}
+
+Please create detailed design specifications that modify the existing UI while maintaining consistency and good UX principles. Consider what should change and what should remain the same.
+"""
+        
+        print("🚀 Alt Stage 2/3: UX UI Designer (Modification Mode)")
+        stage_2_result = await self.run_alt_stage(2, stage_2_input, run_id)  
+        results["stage_2"] = stage_2_result
+        
+        # Stage 3: JSON Engineer with current JSON context
+        stage_3_input = f"""
+JSON MODIFICATION ENGINEERING:
+
+Design Specifications from Stage 2:
+{stage_2_result.content}
+
+Current JSON to Modify:
+{current_json}
+
+Original Intent: {original_prompt}
+Requested Changes: {modification_request}
+
+Please generate the modified JSON that implements the requested changes while preserving the existing structure where appropriate. Only modify what needs to be changed based on the modification request.
+"""
+        
+        print("🚀 Alt Stage 3/3: JSON Engineer (Modification Mode)")
+        stage_3_result = await self.run_alt_stage(3, stage_3_input, run_id)
+        results["stage_3"] = stage_3_result
+        
+        # Process final JSON
+        final_json_str = results["stage_3"].content
+        
+        # Use regex to extract the JSON
+        match = re.search(r'```json\n(.*)\n```', final_json_str, re.DOTALL)
+        if match:
+            final_json_str = match.group(1)
+
+        try:
+            final_json = json.loads(final_json_str)
+            results["stage_3"].content = json.dumps(final_json, indent=2)
+            print("✅ JSON parsing successful (modification complete)")
+        except json.JSONDecodeError as e:
+            print(f"❌ Could not parse modified JSON: {e}")
+
+        # Generate modification summary
+        summary = {
+            "pipeline": "alternative_3_stage_modification", 
+            "run_id": run_id,
+            "original_prompt": original_prompt,
+            "modification_request": modification_request,
+            "total_stages": 3,
+            "ai_enabled": bool(self.gemini_client),
+            "results": {k: asdict(v) for k, v in results.items()}
+        }
+        
+        return {
+            "success": True,
+            "run_id": run_id,
+            "type": "modification",
+            "stages": results,
+            "summary": summary
+        }
 
 
 def main():
     parser = argparse.ArgumentParser(description="Instance Vibe Pipeline Runner")
-    parser.add_argument("stage", help="Stage to run (1-5, 'all', 'alt3', or 'alt3-1', 'alt3-2', 'alt3-3')")
+    parser.add_argument("stage", help="Stage to run (1-5, 'all', 'alt3', 'alt3-modify', or 'alt3-1', 'alt3-2', 'alt3-3')")
     parser.add_argument("--input", help="Custom input for stage 1 or full pipeline")
     parser.add_argument("--api-key", help="Gemini API key (or use GEMINI_API_KEY env var)")
     parser.add_argument("--run-id", help="Run ID to continue from previous execution")
+    parser.add_argument("--original-prompt", help="Original prompt for modification pipeline")
+    parser.add_argument("--modification", help="Modification request for existing UI")
+    parser.add_argument("--current-json", help="Current JSON structure to modify")
     
     args = parser.parse_args()
     
@@ -530,7 +634,20 @@ def main():
         initial_input = args.input or default_input
         asyncio.run(alt_runner.run_all_alt_stages(initial_input))
     
-    elif args.stage.startswith("alt3-"):
+    elif args.stage == "alt3-modify":
+        # Alternative 3-stage modification pipeline
+        if not args.original_prompt or not args.modification or not args.current_json:
+            print("❌ --original-prompt, --modification, and --current-json are required for alt3-modify")
+            sys.exit(1)
+        
+        alt_runner = Alternative3StagePipeline(api_key)
+        asyncio.run(alt_runner.run_modification_pipeline(
+            args.original_prompt, 
+            args.modification, 
+            args.current_json
+        ))
+    
+    elif args.stage.startswith("alt3-") and args.stage != "alt3-modify":
         # Single stage from alternative 3-stage pipeline
         alt_runner = Alternative3StagePipeline(api_key)
         stage_num = int(args.stage.split("-")[1])
