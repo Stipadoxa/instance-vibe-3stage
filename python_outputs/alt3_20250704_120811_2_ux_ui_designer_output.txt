@@ -1,0 +1,123 @@
+```json
+{
+  "screenName": "Workout Timer",
+  "layoutStructure": {
+    "type": "vertical-stack",
+    "spacing": "medium",
+    "sections": [
+      {
+        "sectionName": "Exercise Information",
+        "components": [
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Display the current exercise and set information.",
+            "content": {
+              "headline": "Push-ups",
+              "supportingText": "Set 1 of 3"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        ]
+      },
+      {
+        "sectionName": "Timer Controls",
+        "components": [
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Display the current workout timer and provide controls.",
+            "content": {
+              "headline": "00:00:00",
+              "supportingText": "Workout Timer"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          },
+          {
+            "componentType": "button",
+            "componentId": "10:3907",
+            "purpose": "Start/Pause/Stop the workout timer.",
+            "content": {
+              "action": "Start"
+            },
+            "variants": {
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default"
+            }
+          }
+        ]
+      },
+      {
+        "sectionName": "Set Controls",
+        "components": [
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Display set timer and provide controls.",
+            "content": {
+              "headline": "00:30",
+              "supportingText": "Set Timer"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          },
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Display rest timer and provide controls.",
+            "content": {
+              "headline": "00:00",
+              "supportingText": "Rest Timer"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          },
+          {
+            "componentType": "button",
+            "componentId": "10:3907",
+            "purpose": "Advance to the next exercise.",
+            "content": {
+              "action": "Next Exercise"
+            },
+            "variants": {
+              "Size": "Medium",
+              "Type": "Filled"
+            }
+          },
+          {
+            "componentType": "button",
+            "componentId": "10:3907",
+            "purpose": "Skip the current exercise",
+            "content": {
+              "action": "Skip Exercise"
+            },
+            "variants": {
+              "Size": "Medium",
+              "Type": "Filled"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Reasoning:**
+
+The design prioritizes the user's primary goal: accurate workout time tracking.  The `vertical-stack` layout is chosen for its simplicity and suitability for mobile screens.  The current exercise is prominently displayed at the top using a `list-item` component.  The timer is given significant visual weight, also using a `list-item` for consistency.  Large, clearly distinguishable `button` components handle the primary actions (Start/Pause/Stop, Next/Skip).  The secondary actions (adjusting timers) are also accessible through `list-item` components with implied interaction (tapping likely reveals an adjustment mechanism).  This keeps the screen uncluttered, suitable for the user context of potentially distracting workout environments.  The use of `list-item` for both exercise info and timers allows for consistent visual hierarchy and familiar interaction patterns.  The component selections prioritize function over pure content fit, ensuring the interface efficiently supports the user goals.

@@ -1,0 +1,129 @@
+```json
+{
+  "screenName": "Workout Tracker",
+  "layoutStructure": {
+    "type": "vertical-stack",
+    "spacing": "medium",
+    "sections": [
+      {
+        "sectionName": "Current Exercise",
+        "components": [
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Display the name and details of the current exercise.",
+            "content": {
+              "headline": "Push-ups",
+              "supportingText": "3 sets of 15 reps"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        ]
+      },
+      {
+        "sectionName": "Set Input",
+        "components": [
+          {
+            "componentType": "text input",
+            "componentId": "10:8492",
+            "purpose": "Allow user to input the number of reps completed.",
+            "content": {
+              "label-text": "Reps",
+              "placeholder-text": "Enter reps"
+            },
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          },
+          {
+            "componentType": "text input",
+            "componentId": "10:8492",
+            "purpose": "Allow user to input the weight used (if applicable).",
+            "content": {
+              "label-text": "Weight (kg)",
+              "placeholder-text": "Enter weight"
+            },
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          },
+          {
+            "componentType": "text input",
+            "componentId": "10:8492",
+            "purpose": "Allow user to input the time taken (if applicable).",
+            "content": {
+              "label-text": "Time (sec)",
+              "placeholder-text": "Enter time"
+            },
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        ]
+      },
+      {
+        "sectionName": "Set Actions",
+        "components": [
+          {
+            "componentType": "button",
+            "componentId": "10:3907",
+            "purpose": "Allows the user to save the current set's data.",
+            "content": {
+              "Action": "Complete Set"
+            },
+            "variants": {
+              "Size": "Large",
+              "Type": "Filled"
+            }
+          }
+        ]
+      },
+      {
+        "sectionName": "Rest Timer",
+        "components": [
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Displays the remaining rest time.",
+            "content": {
+              "headline": "Rest Timer",
+              "supportingText": "0:30 remaining"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        ]
+      },
+      {
+        "sectionName": "Next Exercise",
+        "components": [
+          {
+            "componentType": "list-item",
+            "componentId": "10:10214",
+            "purpose": "Shows the name of the next exercise in the workout.",
+            "content": {
+              "headline": "Squats",
+              "supportingText": "3 sets of 12 reps"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,155 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Product Search Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "width": 375,
+    "paddingTop": 0,
+    "paddingBottom": 32,
+    "paddingLeft": 0,
+    "paddingRight": 0
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Search",
+        "subheadline": "Find what you need",
+        "Mode": "Light",
+        "Type": "search-field",
+        "Elevation": "flat"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Category Tabs Container",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "tab",
+          "componentNodeId": "10:7852",
+          "properties": {
+            "Label": ["Electronics", "Clothing", "Automotive", "Home Goods"],
+            "Type": "Scrollable",
+            "Style": "Primary",
+            "Configuration": "Label & Icon"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Filters Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Chip Container",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "chip",
+              "componentNodeId": "10:8132",
+              "properties": {
+                "label-text": ["Location: Nairobi", "Brand: Samsung"],
+                "Style": ["selected", "unselected"],
+                "State": "enabled"
+              }
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "More Filters",
+            "Size": "Medium",
+            "Type": "Text",
+            "Color": "Green"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Results Section Container",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Found 123 ads",
+          "properties": {
+            "fontSize": 14,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "select",
+          "componentNodeId": "10:10010",
+          "properties": {
+            "Overline": "Sort By",
+            "Platform": "Android+Web",
+            "State": "Filled"
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "List View",
+            "Size": "Medium",
+            "Type": "Text",
+            "Color": "Green"
+          }
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "Diamond": "Product Name",
+        "#price": "KSh 1000",
+        "#title": "Product Title 1",
+        "#attribute1 value": "4.5 (12)",
+        "#attribut value1": "Nairobi",
+        "view": "grid",
+        "type": "normal"
+      }
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": ["Home", "Saved", "Sell", "Messages", "Profile"],
+        "Device": "Mobile"
+      }
+    }
+  ]
+}
+```

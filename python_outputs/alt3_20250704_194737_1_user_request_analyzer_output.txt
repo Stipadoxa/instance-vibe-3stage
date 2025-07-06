@@ -1,0 +1,31 @@
+Domain & Context
+Domain: E-commerce domain with product discovery and marketplace functionality.
+User Type: Mobile users browsing and purchasing products on a marketplace app.
+Platform Impact: Mobile users need a streamlined interface with clear visual hierarchy, large touch targets, and quick loading times.  Limited screen real estate necessitates efficient information display. Location awareness may be relevant for location-based filtering.
+
+User Requirements
+Primary Goals: Search and discover products, filter results based on criteria, view product details.
+Secondary Goals: Save products, list products for sale, communicate with sellers, manage their profile.
+User Constraints: Limited screen size, touch-only interaction, potential for slow network connections, interruptions during browsing.
+Ready for handoff if:  All primary navigation elements (search, filters, product grid) are easily accessible and usable.  Loading indicators are present, and clear error messages are designed for various failure scenarios (e.g., network issues, empty search results).  Touch target sizes meet accessibility guidelines.
+
+Content Requirements
+Critical: Product images, titles, prices, locations,  search bar, category tabs, filter options, product count display, sort options.
+Supporting:  Seller information, reviews, discount badges, currency display (KSh), saved products, messages, profile information.
+Contextual: Filter chip indicators (active filters), loading indicators (during search and product load), error messages (for search failures, network errors).
+
+Structural & Component Directives
+*   **Header:** Green header with search bar, back arrow, and bookmark icon.
+*   **Category Tabs:** 4 product category cards with icons, horizontal scrollable layout.
+*   **Filters:** Multiple filter chips (location, brand, etc.), active filter indicated with checkmark and green background, "More" button for additional filters.
+*   **Results Section:** Results counter ("Found X ads"), sort dropdown, and view toggle buttons.
+*   **Product Cards:** 2-column grid layout, product photos with overlay badges, price with discount percentage, product title, location, currency display (KSh).
+*   **Bottom Nav:** 5 tabs: Home, Saved, Sell, Messages, Profile.
+*   **Style:** Green accent color, card-based design, clean typography, discount badges in red.
+
+
+Screen Requirements
+Primary Actions: Search for products, apply filters, view product details, save products.
+Secondary Actions: Sort products, change view (list/grid), access saved products, list a product, view messages, access profile.
+Screen States: Default (product grid), loading state (during search and data loading), empty state (no search results), filter applied state, error state (network error, search error).
+Feedback Needs: Loading indicators, filter application feedback (active filters highlighted), search results count, error messages, and success messages for actions like saving products.
