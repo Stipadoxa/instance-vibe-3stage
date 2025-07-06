@@ -2330,6 +2330,12 @@ function isValidImageSelected() {
     document.getElementById('userPrompt').value = '';
     document.getElementById('imageUploadArea').style.display = 'block';
 
+    // Reset button text to normal mode
+    const pipeline3Btn = document.getElementById('pipeline3Btn');
+    if (pipeline3Btn) {
+        pipeline3Btn.textContent = 'Generate';
+    }
+
     clearStatus('generationStatus');
     clearImageSelection(); // This will also clear the UI state
 }
@@ -2353,6 +2359,12 @@ function isValidImageSelected() {
             
             // Hide image upload during iteration to avoid confusion
             document.getElementById('imageUploadArea').style.display = 'none';
+            
+            // Update button text for iteration mode
+            const pipeline3Btn = document.getElementById('pipeline3Btn');
+            if (pipeline3Btn) {
+                pipeline3Btn.textContent = 'Apply Changes';
+            }
         }
         
         function updateModificationHistory() {
