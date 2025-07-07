@@ -1,6 +1,24 @@
 // session-manager.ts
 // Session state management for AIDesigner
 
+export interface ColorInfo {
+  type: 'SOLID' | 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL' | 'GRADIENT_ANGULAR' | 'GRADIENT_DIAMOND' | 'IMAGE';
+  color?: string; // hex code for solid colors
+  opacity?: number;
+  gradientStops?: Array<{
+    color: string;
+    position: number;
+  }>;
+}
+
+export interface StyleInfo {
+  fills?: ColorInfo[];
+  strokes?: ColorInfo[];
+  backgroundColor?: ColorInfo;
+  primaryColor?: ColorInfo; // Most prominent color
+  textColor?: ColorInfo; // Primary text color
+}
+
 export interface TextHierarchy {
   nodeName: string;
   nodeId: string;
@@ -9,6 +27,7 @@ export interface TextHierarchy {
   classification: 'primary' | 'secondary' | 'tertiary';
   visible: boolean;
   characters?: string;
+  textColor?: ColorInfo;
 }
 
 export interface ComponentInstance {
@@ -50,6 +69,7 @@ export interface ComponentInfo {
   componentInstances?: ComponentInstance[];
   vectorNodes?: VectorNode[];
   imageNodes?: ImageNode[];
+  styleInfo?: StyleInfo; // NEW: Color and styling information
 }
 
 export interface SessionState {

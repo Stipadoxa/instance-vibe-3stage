@@ -1,7 +1,7 @@
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
 
-import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode } from './session-manager';
+import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo } from './session-manager';
 
 export interface ScanSession {
   components: ComponentInfo[];
@@ -80,6 +80,9 @@ export class ComponentScanner {
       const vectorNodes = this.findVectorNodes(comp);
       const imageNodes = this.findImageNodes(comp);
       
+      // NEW: Extract color and style information
+      const styleInfo = this.extractStyleInfo(comp);
+      
       let variants: string[] = [];
       const variantDetails: { [key: string]: string[] } = {};
       
@@ -111,6 +114,7 @@ export class ComponentScanner {
           componentInstances: componentInstances.length > 0 ? componentInstances : undefined,
           vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined,
           imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
+          styleInfo: styleInfo, // NEW: Include color and style information
           isFromLibrary: false
       };
   }
@@ -299,6 +303,19 @@ export class ComponentScanner {
           } catch (e) {
             characters = undefined;
           }
+
+          // NEW: Extract text color
+          let textColor: ColorInfo | undefined;
+          try {
+            if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+              const firstFill = node.fills[0];
+              if (firstFill.visible !== false) {
+                textColor = this.convertPaintToColorInfo(firstFill) || undefined;
+              }
+            }
+          } catch (e) {
+            console.warn(`Could not extract text color for "${node.name}"`);
+          }
           
           textHierarchy.push({
             nodeName: node.name,
@@ -307,7 +324,8 @@ export class ComponentScanner {
             fontWeight,
             classification,
             visible: node.visible,
-            characters
+            characters,
+            textColor // NEW: Include text color information
           });
         });
       }
@@ -650,5 +668,228 @@ export class ComponentScanner {
       }
       console.log(`❌ ID for type ${type} not found`);
       return null;
+  }
+
+  /**
+   * NEW: Extract color and style information from component
+   */
+  static extractStyleInfo(node: ComponentNode | ComponentSetNode): StyleInfo {
+    const styleInfo: StyleInfo = {};
+
+    try {
+      // Get the primary node to analyze (for component sets, use the first variant)
+      let primaryNode: SceneNode = node;
+      if (node.type === 'COMPONENT_SET' && node.children.length > 0) {
+        primaryNode = node.children[0];
+      }
+
+      // Extract fills and background colors
+      const fills = this.extractFills(primaryNode);
+      if (fills.length > 0) {
+        styleInfo.fills = fills;
+        styleInfo.primaryColor = fills[0]; // Use first fill as primary color
+      }
+
+      // Extract strokes
+      const strokes = this.extractStrokes(primaryNode);
+      if (strokes.length > 0) {
+        styleInfo.strokes = strokes;
+      }
+
+      // Find text color from text nodes
+      const textColor = this.findPrimaryTextColor(primaryNode);
+      if (textColor) {
+        styleInfo.textColor = textColor;
+      }
+
+      // Extract background color (look for the largest rectangle/background)
+      const backgroundColor = this.findBackgroundColor(primaryNode);
+      if (backgroundColor) {
+        styleInfo.backgroundColor = backgroundColor;
+      }
+
+      // Log summary of extracted colors for debugging
+      if (styleInfo.primaryColor || styleInfo.backgroundColor || styleInfo.textColor) {
+        console.log(`🎨 Colors extracted for "${node.name}":`, {
+          primary: styleInfo.primaryColor?.color,
+          background: styleInfo.backgroundColor?.color,
+          text: styleInfo.textColor?.color
+        });
+      }
+
+    } catch (error) {
+      console.warn(`⚠️ Error extracting style info for "${node.name}":`, error);
+    }
+
+    return styleInfo;
+  }
+
+  /**
+   * Extract fill colors from a node
+   */
+  static extractFills(node: SceneNode): ColorInfo[] {
+    const colorInfos: ColorInfo[] = [];
+
+    try {
+      if ('fills' in node && node.fills && Array.isArray(node.fills)) {
+        for (const fill of node.fills) {
+          if (fill.visible !== false) {
+            const colorInfo = this.convertPaintToColorInfo(fill);
+            if (colorInfo) {
+              colorInfos.push(colorInfo);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Error extracting fills:', error);
+    }
+
+    return colorInfos;
+  }
+
+  /**
+   * Extract stroke colors from a node
+   */
+  static extractStrokes(node: SceneNode): ColorInfo[] {
+    const colorInfos: ColorInfo[] = [];
+
+    try {
+      if ('strokes' in node && node.strokes && Array.isArray(node.strokes)) {
+        for (const stroke of node.strokes) {
+          if (stroke.visible !== false) {
+            const colorInfo = this.convertPaintToColorInfo(stroke);
+            if (colorInfo) {
+              colorInfos.push(colorInfo);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Error extracting strokes:', error);
+    }
+
+    return colorInfos;
+  }
+
+  /**
+   * Convert Figma Paint to ColorInfo
+   */
+  static convertPaintToColorInfo(paint: Paint): ColorInfo | null {
+    try {
+      if (paint.type === 'SOLID' && paint.color) {
+        return {
+          type: 'SOLID',
+          color: this.rgbToHex(paint.color),
+          opacity: paint.opacity || 1
+        };
+      }
+
+      if (paint.type === 'GRADIENT_LINEAR' && paint.gradientStops) {
+        return {
+          type: 'GRADIENT_LINEAR',
+          gradientStops: paint.gradientStops.map(stop => ({
+            color: this.rgbToHex(stop.color),
+            position: stop.position
+          })),
+          opacity: paint.opacity || 1
+        };
+      }
+
+      // Add support for other gradient types
+      if ((paint.type === 'GRADIENT_RADIAL' || paint.type === 'GRADIENT_ANGULAR' || paint.type === 'GRADIENT_DIAMOND') && paint.gradientStops) {
+        return {
+          type: paint.type,
+          gradientStops: paint.gradientStops.map(stop => ({
+            color: this.rgbToHex(stop.color),
+            position: stop.position
+          })),
+          opacity: paint.opacity || 1
+        };
+      }
+
+      if (paint.type === 'IMAGE') {
+        return {
+          type: 'IMAGE',
+          opacity: paint.opacity || 1
+        };
+      }
+
+    } catch (error) {
+      console.warn('Error converting paint to color info:', error);
+    }
+
+    return null;
+  }
+
+  /**
+   * Convert RGB to hex color
+   */
+  static rgbToHex(rgb: RGB): string {
+    const toHex = (value: number): string => {
+      const hex = Math.round(value * 255).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    };
+
+    return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+  }
+
+  /**
+   * Find primary text color by analyzing text nodes
+   */
+  static findPrimaryTextColor(node: SceneNode): ColorInfo | null {
+    try {
+      const textNodes = node.findAll(n => n.type === 'TEXT') as TextNode[];
+      
+      for (const textNode of textNodes) {
+        if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
+          for (const fill of textNode.fills) {
+            if (fill.visible !== false && fill.type === 'SOLID') {
+              return this.convertPaintToColorInfo(fill);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Error finding text color:', error);
+    }
+
+    return null;
+  }
+
+  /**
+   * Find background color by analyzing the largest rectangle or container
+   */
+  static findBackgroundColor(node: SceneNode): ColorInfo | null {
+    try {
+      // Look for rectangles that could be backgrounds
+      const rectangles = node.findAll(n => 
+        n.type === 'RECTANGLE' || n.type === 'FRAME' || n.type === 'COMPONENT'
+      );
+
+      // Sort by size (area) to find the largest one that's likely the background
+      rectangles.sort((a, b) => {
+        const areaA = a.width * a.height;
+        const areaB = b.width * b.height;
+        return areaB - areaA;
+      });
+
+      for (const rect of rectangles) {
+        if ('fills' in rect && rect.fills && Array.isArray(rect.fills)) {
+          for (const fill of rect.fills) {
+            if (fill.visible !== false) {
+              const colorInfo = this.convertPaintToColorInfo(fill);
+              if (colorInfo && colorInfo.type === 'SOLID') {
+                return colorInfo;
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Error finding background color:', error);
+    }
+
+    return null;
   }
 }
