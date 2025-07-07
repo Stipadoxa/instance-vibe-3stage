@@ -535,21 +535,6 @@
             font-weight: 500;
             color: #24292e;
         }
-        .modification-history {
-            max-height: 80px;
-            overflow-y: auto;
-            font-size: 10px;
-            color: #586069;
-            margin-bottom: 10px;
-            padding-left: 15px;
-        }
-        .modification-history li {
-            margin-bottom: 4px;
-        }
-        .iteration-controls {
-            display: flex;
-            gap: 8px;
-        }
 
         /* NEW: Session Modal Styles */
         .session-modal {
@@ -848,19 +833,6 @@
             <button class="btn btn-secondary btn-small" onclick="startFresh()" id="resetBtn">🗂️ New UI</button>
         </div>
 
-        <!-- Iteration Context Area -->
-        <div class="iteration-context" id="iterationContext" style="display: none;">
-            <div class="current-design-info">
-                <h4>Modifying: <span id="currentDesignName"></span></h4>
-                <ul class="modification-history" id="modHistory">
-                    <li>Original design generated.</li>
-                </ul>
-            </div>
-            <div class="iteration-controls">
-                <button class="btn btn-secondary btn-small" onclick="viewCurrentDesignJSON()">👁️ View Current JSON</button>
-                <button class="btn btn-secondary btn-small" onclick="resetToOriginal()">↩️ Reset to Original</button>
-            </div>
-        </div>
     <!-- INSERT PLATFORM TOGGLE HERE -->
     <div class="platform-toggle-container">
         <label class="toggle-label">Platform:</label>
@@ -1430,12 +1402,7 @@ console.log('Platform switched to:', platform);
 
         // NEW: Enhanced state management for sessions
         let designState = {
-            original: null,
-            current: null,
-            history: [],
-            frameId: null,
-            isIterating: false,
-            originalPrompt: null
+            scanData: null
         };
 
         // NEW: Session management variables
@@ -1722,7 +1689,7 @@ function isValidImageSelected() {
             document.getElementById('sessionLastModified').textContent = formatTime(sessionData.lastModified);
             
             const historyList = document.getElementById('sessionHistoryList');
-            historyList.innerHTML = sessionData.designState.history.map(item => `<li>${item}</li>`).join('');
+            historyList.innerHTML = '<li>Session data available</li>';
             
             document.getElementById('sessionModal').style.display = 'flex';
         }
@@ -1794,8 +1761,8 @@ function isValidImageSelected() {
                         <div class="session-time">${formatTime(session.lastModified)}</div>
                     </div>
                     <div class="session-item-details">
-                        Frame: ${session.designState.frameName} • 
-                        History: ${session.designState.history.length} changes
+                        Frame: ${session.designState.frameName || 'Unknown'} • 
+                        Scan data available
                     </div>
                     <div class="session-item-actions">
                         ${isCurrentFile ? 
@@ -2312,12 +2279,7 @@ function isValidImageSelected() {
         function startFresh() {
     // Reset state object
     designState = {
-        original: null,
-        current: null,
-        history: [],
-        frameId: null,
-        isIterating: false,
-        originalPrompt: null
+        scanData: null
     };
 
     // 🔧 ENSURE CLEAN IMAGE STATE: Force clear selectedImage
@@ -2325,7 +2287,6 @@ function isValidImageSelected() {
     console.log('🔄 startFresh called, selectedImage reset to:', selectedImage);
 
     // Update UI elements
-    document.getElementById('iterationContext').style.display = 'none';
     document.getElementById('userPromptLabel').textContent = 'Describe the UI you want to create:';
     document.getElementById('userPrompt').placeholder = 'create a login form with email and password fields...';
     document.getElementById('currentContext').textContent = 'Ready for new UI';
@@ -2342,75 +2303,9 @@ function isValidImageSelected() {
     clearImageSelection(); // This will also clear the UI state
 }
 
-        function enterIterationMode(generatedJSON, frameId, originalPrompt = null) {
-            designState.original = JSON.parse(JSON.stringify(generatedJSON));
-            designState.current = generatedJSON;
-            designState.frameId = frameId;
-            designState.isIterating = true;
-            designState.originalPrompt = originalPrompt;
-            designState.history = ["Original design generated."];
-
-            // Save session state
-            saveCurrentSession();
-
-            // Update UI
-            document.getElementById('currentDesignName').textContent = generatedJSON.layoutContainer?.name || 'Generated UI';
-            updateModificationHistory();
-            document.getElementById('iterationContext').style.display = 'block';
-            document.getElementById('userPromptLabel').textContent = 'Describe the changes you want to make:';
-            document.getElementById('userPrompt').placeholder = 'e.g., "add a forgot password link" or "change the button to secondary"';
-            
-            // Hide image upload during iteration to avoid confusion
-            document.getElementById('imageUploadArea').style.display = 'none';
-            
-            // Update button text for iteration mode
-            const pipeline3Btn = document.getElementById('pipeline3Btn');
-            if (pipeline3Btn) {
-                pipeline3Btn.textContent = 'Modify UI';
-            }
-        }
         
-        function updateModificationHistory() {
-            const historyList = document.getElementById('modHistory');
-            historyList.innerHTML = designState.history.map(item => `<li>${item}</li>`).join('');
-        }
         
-        async function resetToOriginal() {
-            if (!designState.isIterating || !designState.original) return;
-            
-            showStatus('generationStatus', '🔄 Resetting to original design...', 'info');
-            
-            // Update state
-            designState.current = JSON.parse(JSON.stringify(designState.original));
-            designState.history = ["Original design generated."];
-            updateModificationHistory();
-            saveCurrentSession();
 
-            // Send message to backend to re-render the original JSON
-            parent.postMessage({
-                pluginMessage: {
-                    type: 'modify-existing-ui',
-                    payload: {
-                        modifiedJSON: designState.current,
-                        frameId: designState.frameId
-                    }
-                }
-            }, '*');
-        }
-
-        function viewCurrentDesignJSON() {
-            if (!designState.current) return;
-            
-            lastGeneratedJSON = designState.current;
-            const jsonOutput = document.getElementById('jsonOutput');
-            const debugSection = document.getElementById('jsonDebugSection');
-            
-            if (jsonOutput && debugSection) {
-                jsonOutput.textContent = JSON.stringify(lastGeneratedJSON, null, 2);
-                debugSection.style.display = 'block';
-                jsonOutput.style.display = 'block';
-            }
-        }
 
         function generateFromJSON() {
             const jsonInput = document.getElementById('jsonInput');
@@ -2500,42 +2395,20 @@ function isValidImageSelected() {
             
             // Disable button and show loading
             pipeline3Btn.disabled = true;
-            if (designState.isIterating) {
-                pipeline3Btn.textContent = '🔄 Modifying UI...';
-                showStatus('generationStatus', '⚡ Modifying UI with 3-stage pipeline...', 'info');
-            } else {
-                pipeline3Btn.textContent = '🔄 Running 3-Stage Pipeline...';
-                showStatus('generationStatus', '⚡ Starting 3-stage AI pipeline...', 'info');
-            }
+            pipeline3Btn.textContent = '🔄 Running 3-Stage Pipeline...';
+            showStatus('generationStatus', '⚡ Starting 3-stage AI pipeline...', 'info');
             
             try {
-                // Check if we're in iteration mode
-                if (designState.isIterating) {
-                    // Send modification message with iteration context
-                    parent.postMessage({
-                        pluginMessage: {
-                            type: 'run-3stage-modification',
-                            payload: {
-                                prompt: userPrompt,
-                                originalPrompt: designState.originalPrompt,
-                                currentJSON: designState.current,
-                                frameId: designState.frameId,
-                                timestamp: Date.now()
-                            }
+                // Send pipeline message for new generation
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'run-3stage-pipeline',
+                        payload: {
+                            prompt: userPrompt,
+                            timestamp: Date.now()
                         }
-                    }, '*');
-                } else {
-                    // Send normal pipeline message for new generation
-                    parent.postMessage({
-                        pluginMessage: {
-                            type: 'run-3stage-pipeline',
-                            payload: {
-                                prompt: userPrompt,
-                                timestamp: Date.now()
-                            }
-                        }
-                    }, '*');
-                }
+                    }
+                }, '*');
                 
             } catch (error) {
                 console.error('❌ 3-Stage Pipeline error:', error);
@@ -2543,11 +2416,7 @@ function isValidImageSelected() {
                 
                 // Reset button
                 pipeline3Btn.disabled = false;
-                if (designState.isIterating) {
-                    pipeline3Btn.textContent = 'Modify UI';
-                } else {
-                    pipeline3Btn.textContent = '⚡ 3-Stage Pipeline (NEW)';
-                }
+                pipeline3Btn.textContent = '⚡ 3-Stage Pipeline (NEW)';
             }
         }
 
@@ -2703,19 +2572,17 @@ function isValidImageSelected() {
         }
 
 
-        // NEW: Session state saving
+        // Session state saving
         function saveCurrentSession() {
-            if (designState.isIterating) {
-                parent.postMessage({
-                    pluginMessage: {
-                        type: 'save-current-session',
-                        payload: {
-                            designState: designState,
-                            scanData: scanResults
-                        }
+            // Save scan data only
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'save-current-session',
+                    payload: {
+                        scanData: scanResults
                     }
-                }, '*');
-            }
+                }
+            }, '*');
         }
 
         // Message Handler and Initialization
@@ -2813,7 +2680,6 @@ function isValidImageSelected() {
                 // UI generation handlers
                 case 'ui-generated-success':
                     clearStatus('generationStatus');
-                    enterIterationMode(msg.generatedJSON, msg.frameId);
                     document.getElementById('userPrompt').value = '';
                     break;
                 
@@ -2835,10 +2701,7 @@ function isValidImageSelected() {
                     const message = `✅ Pipeline completed! ${stats.totalStagesWithAI}/${stats.stageAIUsage ? Object.keys(stats.stageAIUsage).length : 5} stages used AI`;
                     showStatus('generationStatus', message, 'success');
                     
-                    // Enter iteration mode if UI was generated
-                    if (msg.result.frameId && msg.result.generatedJSON) {
-                        enterIterationMode(msg.result.generatedJSON, msg.result.frameId);
-                    }
+                    // UI was generated successfully
                     
                     document.getElementById('userPrompt').value = '';
                     break;
@@ -2866,10 +2729,7 @@ function isValidImageSelected() {
                     
                     showStatus('generationStatus', '✅ 3-Stage Pipeline completed successfully!', 'success');
                     
-                    // Enter iteration mode if UI was generated
-                    if (msg.result.frameId && msg.result.generatedJSON) {
-                        enterIterationMode(msg.result.generatedJSON, msg.result.frameId, msg.result.originalPrompt);
-                    }
+                    // UI was generated successfully
                     
                     document.getElementById('userPrompt').value = '';
                     break;
@@ -2884,42 +2744,6 @@ function isValidImageSelected() {
                     break;
 
                 // 3-Stage Modification Pipeline handlers
-                case '3stage-modification-success':
-                    clearStatus('generationStatus');
-                    const pipeline3ModBtn = document.getElementById('pipeline3Btn');
-                    pipeline3ModBtn.disabled = false;
-                    pipeline3ModBtn.textContent = 'Modify UI';
-                    
-                    showStatus('generationStatus', '✅ UI modification completed successfully!', 'success');
-                    
-                    // Update the current design state with the modified JSON
-                    if (msg.result.frameId && msg.result.generatedJSON) {
-                        designState.current = msg.result.generatedJSON;
-                        designState.frameId = msg.result.frameId;
-                        
-                        // Add to history
-                        const userPrompt = document.getElementById('userPrompt').value.trim();
-                        designState.history.push(`Modified: ${userPrompt}`);
-                        
-                        // Update UI
-                        document.getElementById('currentDesignName').textContent = msg.result.generatedJSON.layoutContainer?.name || 'Generated UI';
-                        updateModificationHistory();
-                        
-                        // Save session state
-                        saveCurrentSession();
-                    }
-                    
-                    document.getElementById('userPrompt').value = '';
-                    break;
-
-                case '3stage-modification-error':
-                    clearStatus('generationStatus');
-                    const pipeline3ModBtnError = document.getElementById('pipeline3Btn');
-                    pipeline3ModBtnError.disabled = false;
-                    pipeline3ModBtnError.textContent = 'Modify UI';
-                    
-                    showStatus('generationStatus', `❌ UI modification failed: ${msg.error}`, 'error');
-                    break;
 
                 case 'json-render-success':
                     clearStatus('generationStatus');
@@ -2929,10 +2753,7 @@ function isValidImageSelected() {
                     
                     showStatus('generationStatus', `✅ ${msg.result.source} JSON rendered successfully!`, 'success');
                     
-                    // Enter iteration mode if UI was generated
-                    if (msg.result.frameId && msg.result.generatedJSON) {
-                        enterIterationMode(msg.result.generatedJSON, msg.result.frameId);
-                    }
+                    // UI was generated successfully
                     
                     document.getElementById('jsonInput').value = '';
                     break;
@@ -2965,25 +2786,10 @@ function isValidImageSelected() {
                     break;
 
                 case 'session-restored':
-                    // Restore the design state from session
-                    designState = {
-                        original: msg.designState.original,
-                        current: msg.designState.current,
-                        history: [...msg.designState.history],
-                        frameId: msg.designState.frameId,
-                        isIterating: msg.designState.isIterating
-                    };
-                    
+                    // Restore scan data only
                     if (msg.scanData) {
                         scanResults = msg.scanData;
                         displaySavedScan(msg.scanData);
-                    }
-                    
-                    if (designState.isIterating) {
-                        enterIterationMode(designState.current, designState.frameId);
-                        // Update history display
-                        designState.history = msg.designState.history;
-                        updateModificationHistory();
                     }
                     
                     showStatus('generationStatus', '✅ Session restored successfully!', 'success');

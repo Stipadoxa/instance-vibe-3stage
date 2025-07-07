@@ -353,7 +353,8 @@ async function initializePlugin() {
     await ComponentPropertyEngine.initialize();
     console.log("✅ Plugin initialized with systematic property validation");
   } catch (error) {
-    console.warn("Could not initialize property engine:", error);
+    console.warn("⚠️ Could not initialize property engine:", error);
+    // Continue without property engine - this won't break the main functionality
   }
 }
 
@@ -447,61 +448,6 @@ figma.ui.onmessage = async (msg: any) => {
             }
             break;
 
-        // ENHANCED: API-driven UI modification with validation
-        case 'modify-ui-from-prompt':
-            try {
-                const { originalJSON, modificationRequest, systemPrompt, frameId, enableValidation = true } = msg.payload;
-                
-                const geminiAPI = await GeminiAPI.createFromStorage();
-                if (!geminiAPI) {
-                    throw new Error("No API key configured");
-                }
-
-                console.log("🔄 Modifying UI with API...");
-                const response = await geminiAPI.modifyExistingUI(originalJSON, modificationRequest, systemPrompt);
-                
-                if (!response.success) {
-                    throw new Error(response.error || "API modification failed");
-                }
-
-                let finalJSON = response.content || "{}";
-                let validationResult: ValidationResult | undefined;
-                let retryCount = 0;
-
-                // Validate modification
-                if (enableValidation && validationEngine) {
-                    console.log("🔍 Validating modified JSON...");
-                    const validationData = await validationEngine.validateWithRetry(
-                        finalJSON, 
-                        modificationRequest, 
-                        geminiAPI
-                    );
-                    
-                    validationResult = validationData.result;
-                    finalJSON = validationData.finalJSON;
-                    retryCount = validationData.retryCount;
-                    
-                    console.log(`📊 Modification validation: ${validationEngine.getValidationSummary(validationResult)}`);
-                }
-
-                const modifiedJSON = JSON.parse(finalJSON);
-                const modifiedFrame = await FigmaRenderer.modifyExistingUI(modifiedJSON, frameId);
-                
-                if (modifiedFrame) {
-                    figma.ui.postMessage({ 
-                        type: 'ui-modified-success', 
-                        frameId: modifiedFrame.id, 
-                        modifiedJSON: modifiedJSON,
-                        validationResult: validationResult,
-                        retryCount: retryCount
-                    });
-                }
-            } catch (e: any) {
-                const errorMessage = e instanceof Error ? e.message : String(e);
-                figma.notify("API modification error: " + errorMessage, { error: true });
-                figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
-            }
-            break;
 
         // NEW: Standalone JSON validation
         case 'validate-json':
@@ -869,58 +815,99 @@ figma.ui.onmessage = async (msg: any) => {
                 const { prompt } = msg.payload;
                 console.log('⚡ Starting 3-stage AI pipeline with prompt:', prompt);
                 
-                // For now, show a message that user needs to run Python pipeline manually
-                figma.ui.postMessage({
-                    type: '3stage-pipeline-error',
-                    error: 'Please run the 3-stage pipeline manually: python3 instance.py alt3 --input "' + prompt + '"'
+                figma.notify('🚀 Running 3-stage pipeline...', { timeout: 30000 });
+                
+                // Get current design system data from plugin
+                let designSystemData = null;
+                try {
+                    const savedScan = await DesignSystemScannerService.getScanSession();
+                    if (savedScan && savedScan.components && savedScan.components.length > 0) {
+                        designSystemData = savedScan.components;
+                        console.log(`📊 Sending ${designSystemData.length} components to pipeline`);
+                    } else {
+                        console.warn('⚠️ No design system data available. Consider scanning first.');
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Could not load design system data:', error);
+                }
+                
+                // Call HTTP server with live design system data
+                const requestBody: any = { prompt: prompt };
+                if (designSystemData) {
+                    requestBody.design_system_data = designSystemData;
+                }
+                
+                const response = await fetch('http://localhost:8000/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
                 });
                 
-                figma.notify('⚡ Run Python pipeline manually and copy JSON result', { timeout: 5000 });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('✅ 3-stage pipeline completed successfully!');
+                    
+                    // Extract final JSON from stage 3
+                    const stage3Content = result.stages.stage_3.content;
+                    let finalJSON;
+                    
+                    try {
+                        finalJSON = JSON.parse(stage3Content);
+                    } catch (e) {
+                        throw new Error('Failed to parse JSON from pipeline result');
+                    }
+                    
+                    // Render the UI
+                    const newFrame = await FigmaRenderer.generateUIFromDataDynamic(finalJSON);
+                    
+                    if (newFrame) {
+                        figma.ui.postMessage({
+                            type: '3stage-pipeline-success',
+                            result: {
+                                frameId: newFrame.id,
+                                generatedJSON: finalJSON,
+                                runId: result.run_id,
+                                stagesCompleted: 3,
+                                originalPrompt: prompt
+                            }
+                        });
+                        
+                        figma.notify('✅ 3-stage pipeline completed and UI rendered!', { timeout: 3000 });
+                    } else {
+                        throw new Error('Failed to render UI from generated JSON');
+                    }
+                } else {
+                    throw new Error(result.error || 'Pipeline execution failed');
+                }
                 
             } catch (error) {
                 console.error('❌ 3-stage pipeline error:', error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
                 
-                figma.ui.postMessage({
-                    type: '3stage-pipeline-error',
-                    error: errorMessage
-                });
-                
-                figma.notify(`❌ 3-stage pipeline failed: ${errorMessage}`, { error: true });
+                // Check if it's a network error (server not running)
+                if (errorMessage.includes('fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('Failed to fetch')) {
+                    figma.ui.postMessage({
+                        type: '3stage-pipeline-error',
+                        error: 'Server not running. Please start the server with: python3 instance.py server'
+                    });
+                    figma.notify('❌ Please start the Python server first', { error: true });
+                } else {
+                    figma.ui.postMessage({
+                        type: '3stage-pipeline-error',
+                        error: errorMessage
+                    });
+                    figma.notify(`❌ Pipeline failed: ${errorMessage}`, { error: true });
+                }
             }
             break;
 
-        case 'run-3stage-modification':
-            try {
-                const { modificationRequest, originalPrompt, currentJSON, frameId } = msg.payload;
-                console.log('🔄 Starting 3-stage modification pipeline');
-                console.log('- Original prompt:', originalPrompt);
-                console.log('- Modification request:', modificationRequest);
-                console.log('- Frame ID:', frameId);
-                
-                // For now, show a message that user needs to run Python pipeline manually
-                // In the future, this could directly invoke the Python script
-                const modificationCommand = `python3 instance.py alt3-modify --original-prompt "${originalPrompt}" --modification "${modificationRequest}" --current-json '${JSON.stringify(currentJSON)}'`;
-                
-                figma.ui.postMessage({
-                    type: '3stage-modification-error',
-                    error: 'Please run the 3-stage modification pipeline manually:\n\n' + modificationCommand
-                });
-                
-                figma.notify('🔄 Run Python modification pipeline manually and copy JSON result', { timeout: 5000 });
-                
-            } catch (error) {
-                console.error('❌ 3-stage modification pipeline error:', error);
-                const errorMessage = error instanceof Error ? error.message : String(error);
-                
-                figma.ui.postMessage({
-                    type: '3stage-modification-error',
-                    error: errorMessage
-                });
-                
-                figma.notify(`❌ 3-stage modification pipeline failed: ${errorMessage}`, { error: true });
-            }
-            break;
 
         case 'render-json-direct':
             try {
@@ -1085,8 +1072,10 @@ figma.on('run', async (event) => {
   }
 });
 
-// Initialize plugin on startup
-initializePlugin();
+// Initialize plugin on startup (non-blocking)
+initializePlugin().catch(error => {
+    console.warn("⚠️ Plugin initialization warning:", error);
+});
 
 
 main().catch(err => {
