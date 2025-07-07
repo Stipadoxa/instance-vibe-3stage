@@ -152,6 +152,10 @@ export class DesignSystemUI {
                 this.handleScanResults(msg.components);
             });
 
+            window.messageHandler.register('scan-error', (msg) => {
+                this.handleScanError(msg.error);
+            });
+
             window.messageHandler.register('saved-scan-loaded', (msg) => {
                 this.displaySavedScan(msg.components, msg.scanTime);
             });
@@ -197,6 +201,21 @@ export class DesignSystemUI {
 
         this.displaySavedScan(components, Date.now());
         console.log(`✅ Scan completed: ${components?.length || 0} components found`);
+    }
+
+    /**
+     * Handle scan error from backend
+     */
+    handleScanError(error) {
+        // Reset button state
+        if (this.elements.scanBtn) {
+            this.elements.scanBtn.disabled = false;
+            this.elements.scanBtn.textContent = '🔍 Scan Design System';
+        }
+
+        // Show error status
+        this.showScanStatus(`❌ Scan failed: ${error}`, 'error');
+        console.error(`❌ Scan failed: ${error}`);
     }
 
     /**

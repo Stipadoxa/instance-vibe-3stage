@@ -291,19 +291,23 @@ async function initializeSession() {
 
 async function handleScanCommand() {
   try {
-    figma.notify(" Scanning design system...", { timeout: 30000 });
+    figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
     
-    const components = await ComponentScanner.scanDesignSystem();
-    await ComponentScanner.saveLastScanResults(components);
+    // Use comprehensive scanner that includes both components and color styles
+    const scanSession = await ComponentScanner.scanDesignSystem();
+    
+    // Save complete scan session using the new method
+    await DesignSystemScannerService.saveScanSession(scanSession);
     
     // NEW: Initialize systematic engine
     await ComponentPropertyEngine.initialize();
     
-    figma.notify(`✅ Scanned ${components.length} components and initialized systematic engine!`);
+    const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
     
     // Optional: Show debug info for a sample component
-    if (components.length > 0) {
-      const sampleComponent = components.find(c => c.suggestedType === 'tab') || components[0];
+    if (scanSession.components.length > 0) {
+      const sampleComponent = scanSession.components.find(c => c.suggestedType === 'tab') || scanSession.components[0];
       ComponentPropertyEngine.debugSchema(sampleComponent.id);
     }
   } catch (error) {
@@ -610,14 +614,76 @@ figma.ui.onmessage = async (msg: any) => {
             break;
 
         case 'scan-design-system':
-            await handleScanCommand();
+            try {
+                figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
+                
+                // Use comprehensive scanner from DesignSystemScannerService
+                const scanSession = await DesignSystemScannerService.scanDesignSystem();
+                
+                // Save the complete session
+                await DesignSystemScannerService.saveScanSession(scanSession);
+                
+                const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+                
+                // Send scan results to UI (what the UI expects)
+                figma.ui.postMessage({ 
+                    type: 'scan-results', 
+                    components: scanSession.components,
+                    colorStyles: scanSession.colorStyles,
+                    scanTime: scanSession.scanTime,
+                    colorStylesCount: colorStylesCount
+                });
+                
+                figma.notify(`✅ Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3000 });
+            } catch (error) {
+                console.error("Scan failed:", error);
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                
+                // Send scan error to UI (what the UI expects for error handling)
+                figma.ui.postMessage({ 
+                    type: 'scan-error', 
+                    error: errorMessage 
+                });
+                
+                figma.notify("Scan failed. Check console for details.", { error: true });
+            }
+            break;
+
+        case 'test-color-styles':
+            try {
+                console.log("🎨 Testing color styles scanning...");
+                const colorStyles = await ComponentScanner.scanFigmaColorStyles();
+                
+                // Count total color styles across all categories
+                const totalCount = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+                
+                figma.ui.postMessage({ 
+                    type: 'color-styles-result', 
+                    colorStyles: colorStyles,
+                    count: totalCount
+                });
+                
+                figma.notify(`✅ Found ${totalCount} color styles`, { timeout: 2000 });
+                
+            } catch (error) {
+                console.error("❌ Color styles scan failed:", error);
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                figma.ui.postMessage({ 
+                    type: 'color-styles-error', 
+                    error: errorMessage 
+                });
+                figma.notify("❌ Color styles scan failed", { error: true });
+            }
             break;
 
         case 'generate-llm-prompt':
             try {
-                const scanResultsForPrompt = await DesignSystemScannerService.getSavedScanResults();
-                if (scanResultsForPrompt?.length) {
-                    const llmPrompt = DesignSystemScannerService.generateLLMPrompt(scanResultsForPrompt);
+                const scanSession = await DesignSystemScannerService.getScanSession();
+                if (scanSession && scanSession.components?.length) {
+                    const llmPrompt = DesignSystemScannerService.generateLLMPrompt(
+                        scanSession.components, 
+                        scanSession.colorStyles
+                    );
                     figma.ui.postMessage({ type: 'llm-prompt-generated', prompt: llmPrompt });
                 } else {
                     figma.notify("Scan components first", { error: true });
@@ -817,13 +883,16 @@ figma.ui.onmessage = async (msg: any) => {
                 
                 figma.notify('🚀 Running 3-stage pipeline...', { timeout: 30000 });
                 
-                // Get current design system data from plugin
+                // Get current design system data from plugin (components + color styles)
                 let designSystemData = null;
                 try {
                     const savedScan = await DesignSystemScannerService.getScanSession();
                     if (savedScan && savedScan.components && savedScan.components.length > 0) {
-                        designSystemData = savedScan.components;
-                        console.log(`📊 Sending ${designSystemData.length} components to pipeline`);
+                        designSystemData = {
+                            components: savedScan.components,
+                            colorStyles: savedScan.colorStyles || null
+                        };
+                        console.log(`📊 Sending ${savedScan.components.length} components and ${savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0} color styles to pipeline`);
                     } else {
                         console.warn('⚠️ No design system data available. Consider scanning first.');
                     }
