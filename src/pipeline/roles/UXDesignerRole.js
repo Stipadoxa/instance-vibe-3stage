@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UXDesignerRole = void 0;
-const BaseRole_1 = require("./BaseRole");
-const PromptLoader_1 = require("../PromptLoader");
-class UXDesignerRole extends BaseRole_1.BaseRole {
+import { BaseRole } from './BaseRole';
+import { PromptLoader } from '../PromptLoader';
+export class UXDesignerRole extends BaseRole {
     constructor(geminiClient, debugLogger) {
         super();
         this.geminiClient = geminiClient;
@@ -13,7 +10,7 @@ class UXDesignerRole extends BaseRole_1.BaseRole {
         var _a, _b, _c, _d, _e;
         this.safeLog('UXDesigner execute started', { inputStage: input.metadata.stage });
         try {
-            const prompt = await PromptLoader_1.PromptLoader.loadPrompt('ux-designer');
+            const prompt = await PromptLoader.loadPrompt('ux-designer');
             this.safeLog('Prompt loaded', { promptLength: prompt.length });
             // Prepare context with UX Design Brief replacement
             const contextWithBrief = prompt.replace('[UX_DESIGN_BRIEF_PLACEHOLDER]', input.content);
@@ -108,4 +105,3 @@ Prompt Length: ${prompt.length} characters
 Previous Stage AI Used: ${input.metadata.aiUsed || false}`;
     }
 }
-exports.UXDesignerRole = UXDesignerRole;

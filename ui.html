@@ -774,6 +774,7 @@
         <div class="section">
             <h3>Scan Components</h3>
             <button class="btn" onclick="scanDesignSystem()" id="scanBtn">🔍 Scan Design System</button>
+            <button class="btn btn-secondary" onclick="testColorStyles()" id="colorStylesBtn">🎨 Test Color Styles</button>
             
         </div>
 
@@ -1394,6 +1395,7 @@ console.log('Platform switched to:', platform);
         
         let currentTab = 'design-system';
         let scanResults = [];
+        let colorStyles = null; // Store color styles from scan
         let currentFilter = 'all';
         let searchQuery = '';
         let lastGeneratedJSON = null;
@@ -1829,6 +1831,16 @@ function isValidImageSelected() {
             scanDesignSystem();
         }
 
+        function testColorStyles() {
+            console.log('🎨 testColorStyles called');
+            const btn = document.getElementById('colorStylesBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '🎨 Testing...';
+            }
+            parent.postMessage({ pluginMessage: { type: 'test-color-styles' } }, '*');
+        }
+
         function createExportButton() {
             const scanBtn = document.getElementById('scanBtn');
             if (!scanBtn) return;
@@ -1857,15 +1869,38 @@ function isValidImageSelected() {
             }
 
             try {
+                // Debug logging for colorStyles availability
+                console.log('🔍 DEBUG: exportRawScanData called');
+                console.log('🔍 DEBUG: colorStyles variable exists:', typeof colorStyles !== 'undefined');
+                console.log('🔍 DEBUG: colorStyles value:', colorStyles);
+                
+                if (colorStyles) {
+                    console.log('🔍 DEBUG: colorStyles keys:', Object.keys(colorStyles));
+                    console.log('🔍 DEBUG: colorStyles structure:', JSON.stringify(colorStyles, null, 2));
+                    
+                    // Log each category of color styles
+                    Object.keys(colorStyles).forEach(category => {
+                        console.log(`🔍 DEBUG: ${category} has ${colorStyles[category].length} styles:`, colorStyles[category]);
+                    });
+                } else {
+                    console.log('🔍 DEBUG: colorStyles is null, undefined, or empty');
+                }
+
+                // Calculate color styles count for metadata
+                const colorStylesCount = colorStyles ? 
+                    Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+                
                 // Prepare export data with metadata
                 const exportData = {
                     metadata: {
                         exportedAt: new Date().toISOString(),
                         componentCount: scanResults.length,
-                        exportVersion: '1.0',
+                        colorStylesCount: colorStylesCount,
+                        exportVersion: '1.1',
                         source: 'Figma Design System Scanner'
                     },
-                    components: scanResults
+                    components: scanResults,
+                    colorStyles: colorStyles
                 };
 
                 // Generate filename with timestamp
@@ -1875,8 +1910,11 @@ function isValidImageSelected() {
                 // Download the JSON file
                 downloadJsonFile(exportData, filename);
 
-                showStatusMessage('✅ Raw data exported successfully', 'success');
-                console.log(`📤 Exported ${scanResults.length} components to ${filename}`);
+                const exportMessage = colorStyles ? 
+                    `✅ Raw data exported successfully (${scanResults.length} components, ${colorStylesCount} color styles)` :
+                    `✅ Raw data exported successfully (${scanResults.length} components)`;
+                showStatusMessage(exportMessage, 'success');
+                console.log(`📤 Exported ${scanResults.length} components and ${colorStylesCount} color styles to ${filename}`);
             } catch (error) {
                 console.error('Export failed:', error);
                 showStatusMessage('❌ Export failed. Please try again.', 'error');
@@ -2284,6 +2322,8 @@ function isValidImageSelected() {
 
     // 🔧 ENSURE CLEAN IMAGE STATE: Force clear selectedImage
     selectedImage = null;
+    // Clear color styles data
+    colorStyles = null;
     console.log('🔄 startFresh called, selectedImage reset to:', selectedImage);
 
     // Update UI elements
@@ -2647,6 +2687,16 @@ function isValidImageSelected() {
                         completedScanBtn.textContent = '🔍 Scan Design System';
                     }
                     
+                    // Store both components and colorStyles
+                    colorStyles = msg.colorStyles || null;
+                    
+                    // Debug logging
+                    console.log('🎨 Received colorStyles:', colorStyles);
+                    if (colorStyles) {
+                        const count = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+                        console.log(`🎨 Total color styles: ${count}`);
+                    }
+                    
                     // Let displaySavedScan handle the final status update
                     displaySavedScan(msg.components, Date.now());
                     break;
@@ -2666,6 +2716,8 @@ function isValidImageSelected() {
 
                 case 'saved-scan-loaded':
                     console.log('✅ Design system loaded from storage');
+                    // Store colorStyles if available in saved data
+                    colorStyles = msg.colorStyles || null;
                     displaySavedScan(msg.components, msg.scanTime);
                     break;
 
@@ -2789,6 +2841,8 @@ function isValidImageSelected() {
                     // Restore scan data only
                     if (msg.scanData) {
                         scanResults = msg.scanData;
+                        // Store colorStyles if available in session data
+                        colorStyles = msg.colorStyles || null;
                         displaySavedScan(msg.scanData);
                     }
                     
@@ -2850,6 +2904,50 @@ function isValidImageSelected() {
                 case 'all-data-cleared':
                     // Refresh page after clearing all data
                     location.reload();
+                    break;
+
+                case 'color-styles-result':
+                    const completedColorBtn = document.getElementById('colorStylesBtn');
+                    if (completedColorBtn) {
+                        completedColorBtn.disabled = false;
+                        completedColorBtn.textContent = '🎨 Test Color Styles';
+                    }
+                    
+                    // Display the color styles results in the scan status area
+                    const colorStylesStatusElement = document.getElementById('scanStatusText');
+                    if (colorStylesStatusElement) {
+                        const totalCount = msg.count || 0;
+                        const message = totalCount > 0 
+                            ? `✅ Found ${totalCount} color styles across ${Object.keys(msg.colorStyles).length} categories`
+                            : `ℹ️ No formal Color Styles found - using component colors`;
+                        showStatus('scanStatusContainer', message, totalCount > 0 ? 'success' : 'info');
+                    }
+                    
+                    // Log detailed results to console for debugging
+                    console.log("🎨 Color Styles Test Results:", {
+                        total: msg.count,
+                        breakdown: msg.colorStyles,
+                        categories: Object.keys(msg.colorStyles).map(cat => ({
+                            category: cat,
+                            count: msg.colorStyles[cat].length,
+                            styles: msg.colorStyles[cat].map(style => style.name)
+                        }))
+                    });
+                    break;
+
+                case 'color-styles-error':
+                    const errorColorBtn = document.getElementById('colorStylesBtn');
+                    if (errorColorBtn) {
+                        errorColorBtn.disabled = false;
+                        errorColorBtn.textContent = '🎨 Test Color Styles';
+                    }
+                    
+                    const colorStylesErrorElement = document.getElementById('scanStatusText');
+                    if (colorStylesErrorElement) {
+                        showStatus('scanStatusContainer', `❌ Color styles test failed: ${msg.error}`, 'error');
+                    }
+                    
+                    console.error("❌ Color Styles Test Error:", msg.error);
                     break;
 
                 default:
@@ -2945,6 +3043,16 @@ startFresh();
             // Request saved data
             parent.postMessage({ pluginMessage: { type: 'get-saved-scan' } }, '*');
             parent.postMessage({ pluginMessage: { type: 'get-api-key' } }, '*');
+            
+            // Ensure global functions are available (fallback if bundle doesn't load properly)
+            if (typeof window.scanDesignSystem === 'undefined') {
+                window.scanDesignSystem = scanDesignSystem;
+                console.log('✅ scanDesignSystem fallback enabled');
+            }
+            if (typeof window.testColorStyles === 'undefined') {
+                window.testColorStyles = testColorStyles;
+                console.log('✅ testColorStyles fallback enabled');
+            }
         });
     </script>
     <script src="ui-bundle.js"></script>

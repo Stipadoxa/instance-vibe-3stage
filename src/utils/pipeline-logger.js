@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PipelineLogger = void 0;
-class PipelineLogger {
+export class PipelineLogger {
     constructor() {
         this.logs = [];
         const now = new Date();
@@ -104,4 +101,3 @@ class PipelineLogger {
         return this.logs;
     }
 }
-exports.PipelineLogger = PipelineLogger;

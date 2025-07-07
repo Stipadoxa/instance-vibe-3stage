@@ -58,12 +58,15 @@ export class UIDesignerRole extends BaseRole {
             timestamp: previousStage?.metadata?.timestamp
         });
         
+        const colorStylesCount = designSystemScan?.colorStyles ? Object.values(designSystemScan.colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
+        
         console.log('   🎨 Design System details:', {
             designSystemExists: !!designSystemScan,
             designSystemType: typeof designSystemScan,
             totalCount: designSystemScan?.totalCount,
             componentsArray: designSystemScan?.components ? 'exists' : 'missing',
             componentsCount: designSystemScan?.components?.length || 0,
+            colorStylesCount: colorStylesCount,
             scanTime: designSystemScan?.scanTime,
             firstComponent: designSystemScan?.components?.[0] ? {
                 id: designSystemScan.components[0].id,
@@ -285,6 +288,38 @@ export class UIDesignerRole extends BaseRole {
         const componentsWithIcons = designSystem.components.filter((c: any) => c.vectorNodes?.length > 0).length;
         const componentsWithImages = designSystem.components.filter((c: any) => c.imageNodes?.length > 0).length;
         
+        // Add color styles section if available
+        let colorStylesSection = '';
+        if (designSystem.colorStyles) {
+            const totalColorStyles = Object.values(designSystem.colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0);
+            if (totalColorStyles > 0) {
+                colorStylesSection = `
+
+Available Color Styles:
+- Total: ${totalColorStyles} color styles available`;
+                
+                Object.entries(designSystem.colorStyles).forEach(([category, styles]: [string, any[]]) => {
+                    if (styles.length > 0) {
+                        colorStylesSection += `\n- ${category.toUpperCase()}: ${styles.length} styles`;
+                        // Add first few color examples
+                        const examples = styles.slice(0, 3).map(style => `${style.name} (${style.colorInfo.color})`).join(', ');
+                        if (examples) {
+                            colorStylesSection += ` - Examples: ${examples}`;
+                        }
+                    }
+                });
+                
+                colorStylesSection += `
+
+Color Usage Guidelines:
+- Use PRIMARY colors for main actions, headers, and brand elements
+- Use SECONDARY colors for supporting actions and accents  
+- Use NEUTRAL colors for text, backgrounds, and borders
+- Use SEMANTIC colors for success/error/warning states
+- Use SURFACE colors for backgrounds and containers`;
+            }
+        }
+
         const result = `Available Design System Components:
 - Total: ${designSystem.totalCount}
 - Types: ${Object.keys(componentTypes).join(', ')}
@@ -292,7 +327,7 @@ export class UIDesignerRole extends BaseRole {
 - Library components: ${libraryComponents}/${designSystem.totalCount}
 - Components with variants: ${componentsWithVariants}/${designSystem.totalCount}
 - Components with icons: ${componentsWithIcons}/${designSystem.totalCount}
-- Components with image support: ${componentsWithImages}/${designSystem.totalCount}
+- Components with image support: ${componentsWithImages}/${designSystem.totalCount}${colorStylesSection}
 
 Specific Components (first 20 with enhanced intelligence):
 ${componentList.join('\n')}

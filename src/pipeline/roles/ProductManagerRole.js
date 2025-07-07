@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductManagerRole = void 0;
-const BaseRole_1 = require("./BaseRole");
-const PromptLoader_1 = require("../PromptLoader");
-class ProductManagerRole extends BaseRole_1.BaseRole {
+import { BaseRole } from './BaseRole';
+import { PromptLoader } from '../PromptLoader';
+export class ProductManagerRole extends BaseRole {
     constructor(geminiClient, debugLogger) {
         super();
         this.geminiClient = geminiClient;
@@ -20,7 +17,7 @@ class ProductManagerRole extends BaseRole_1.BaseRole {
         this.safeLog('ProductManager execute started', { inputLength: input.length });
         try {
             // Load the real prompt from file
-            const prompt = await PromptLoader_1.PromptLoader.loadPrompt('product-manager');
+            const prompt = await PromptLoader.loadPrompt('product-manager');
             this.safeLog('Prompt loaded', { promptLength: prompt.length });
             let content;
             let aiUsed = false;
@@ -102,4 +99,3 @@ User Input: ${input}
 Status: Prompt successfully loaded. ${this.geminiClient ? 'AI generation failed, using fallback.' : 'No AI client provided.'}`;
     }
 }
-exports.ProductManagerRole = ProductManagerRole;

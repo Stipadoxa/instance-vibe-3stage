@@ -338,9 +338,12 @@ export class PipelineOrchestrator {
                 
                 const scanSession = await figma.clientStorage.getAsync('design-system-scan');
                 if (scanSession && scanSession.components) {
+                    const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
+                    
                     console.log('✅ Found ScanSession data - DETAILED CHECK:');
                     console.log('   📊 Session details:', {
                         componentsCount: scanSession.components.length,
+                        colorStylesCount: colorStylesCount,
                         scanTime: new Date(scanSession.scanTime).toLocaleString(),
                         fileKey: scanSession.fileKey,
                         currentFileMatches: scanSession.fileKey === figma.root.id,
@@ -349,12 +352,15 @@ export class PipelineOrchestrator {
                     
                     const result = {
                         components: scanSession.components,
+                        colorStyles: scanSession.colorStyles || null,
                         scanTime: scanSession.scanTime,
-                        totalCount: scanSession.components.length
+                        totalCount: scanSession.components.length,
+                        colorStylesCount: colorStylesCount
                     };
                     
                     console.log('🚀 RETURNING ScanSession data to pipeline:', {
                         totalCount: result.totalCount,
+                        colorStylesCount: result.colorStylesCount,
                         componentsPreview: result.components.slice(0, 2).map((c: any) => `${c.name}(${c.suggestedType})`)
                     });
                     

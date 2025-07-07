@@ -1,10 +1,7 @@
-"use strict";
 // src/core/validation-engine.ts
 // Quality assurance and validation engine for AIDesigner
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ValidationEngine = void 0;
-const gemini_api_1 = require("../ai/gemini-api");
-class ValidationEngine {
+import { GeminiAPI } from '../ai/gemini-api';
+export class ValidationEngine {
     constructor(config) {
         this.config = Object.assign(Object.assign({}, ValidationEngine.DEFAULT_CONFIG), config);
     }
@@ -272,7 +269,7 @@ class ValidationEngine {
      */
     async performAIValidation(layoutData, originalPrompt) {
         try {
-            const geminiAPI = await gemini_api_1.GeminiAPI.createFromStorage();
+            const geminiAPI = await GeminiAPI.createFromStorage();
             if (!geminiAPI)
                 return null;
             const validationPrompt = `You are a UX design expert. Please analyze this JSON layout and provide feedback.
@@ -437,7 +434,6 @@ Please provide the corrected JSON that fixes these errors while maintaining the 
         this.config = Object.assign(Object.assign({}, this.config), newConfig);
     }
 }
-exports.ValidationEngine = ValidationEngine;
 ValidationEngine.DEFAULT_CONFIG = {
     enableAIValidation: true,
     enableStructuralValidation: true,

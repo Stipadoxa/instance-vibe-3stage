@@ -1,18 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PipelineOrchestrator = void 0;
-const pipeline_logger_1 = require("../../utils/pipeline-logger");
-const pipeline_debug_logger_1 = require("../../utils/pipeline-debug-logger");
-const ProductManagerRole_1 = require("../roles/ProductManagerRole");
-const ProductDesignerRole_1 = require("../roles/ProductDesignerRole");
-const UXDesignerRole_1 = require("../roles/UXDesignerRole");
-const UIDesignerRole_1 = require("../roles/UIDesignerRole");
-const JSONEngineerRole_1 = require("../roles/JSONEngineerRole");
-class PipelineOrchestrator {
+import { PipelineLogger } from '../../utils/pipeline-logger';
+import { PipelineDebugLogger } from '../../utils/pipeline-debug-logger';
+import { ProductManagerRole } from '../roles/ProductManagerRole';
+import { ProductDesignerRole } from '../roles/ProductDesignerRole';
+import { UXDesignerRole } from '../roles/UXDesignerRole';
+import { UIDesignerRole } from '../roles/UIDesignerRole';
+import { JSONEngineerRole } from '../roles/JSONEngineerRole';
+export class PipelineOrchestrator {
     constructor(geminiClient) {
         this.startTime = 0;
-        this.logger = new pipeline_logger_1.PipelineLogger();
-        this.debugLogger = new pipeline_debug_logger_1.PipelineDebugLogger();
+        this.logger = new PipelineLogger();
+        this.debugLogger = new PipelineDebugLogger();
         this.geminiClient = geminiClient;
         if (geminiClient) {
             console.log('🤖 PipelineOrchestrator initialized with AI client');
@@ -51,7 +48,7 @@ class PipelineOrchestrator {
                 length: input.length,
                 preview: input.substring(0, 200) + (input.length > 200 ? '...' : '')
             });
-            const stage1 = new ProductManagerRole_1.ProductManagerRole(this.geminiClient, this.debugLogger);
+            const stage1 = new ProductManagerRole(this.geminiClient, this.debugLogger);
             const result1 = await stage1.execute(input);
             console.log('📥 STAGE 1 OUTPUT:', {
                 contentLength: result1.content.length,
@@ -72,7 +69,7 @@ class PipelineOrchestrator {
                 aiUsed: result1.metadata.aiUsed,
                 contentPreview: result1.content.substring(0, 300) + (result1.content.length > 300 ? '...' : '')
             });
-            const stage2 = new ProductDesignerRole_1.ProductDesignerRole(this.geminiClient, this.debugLogger);
+            const stage2 = new ProductDesignerRole(this.geminiClient, this.debugLogger);
             const result2 = await stage2.execute(result1);
             console.log('📥 STAGE 2 OUTPUT:', {
                 contentLength: result2.content.length,
@@ -93,7 +90,7 @@ class PipelineOrchestrator {
                 aiUsed: result2.metadata.aiUsed,
                 contentPreview: result2.content.substring(0, 300) + (result2.content.length > 300 ? '...' : '')
             });
-            const stage3 = new UXDesignerRole_1.UXDesignerRole(this.geminiClient, this.debugLogger);
+            const stage3 = new UXDesignerRole(this.geminiClient, this.debugLogger);
             const result3 = await stage3.execute(result2);
             console.log('📥 STAGE 3 OUTPUT:', {
                 contentLength: result3.content.length,
@@ -124,7 +121,7 @@ class PipelineOrchestrator {
                         designSystemData.components.slice(0, 3).map((c) => `${c.name}(${c.suggestedType})`) : []
                 }
             });
-            const stage4 = new UIDesignerRole_1.UIDesignerRole(this.geminiClient, this.debugLogger);
+            const stage4 = new UIDesignerRole(this.geminiClient, this.debugLogger);
             const uiDesignerInput = {
                 uxOutput: result3,
                 designSystem: designSystemData
@@ -151,7 +148,7 @@ class PipelineOrchestrator {
                 designSystemUsed: result4.metadata.designSystemUsed,
                 contentPreview: result4.content.substring(0, 300) + (result4.content.length > 300 ? '...' : '')
             });
-            const stage5 = new JSONEngineerRole_1.JSONEngineerRole(this.geminiClient, this.debugLogger);
+            const stage5 = new JSONEngineerRole(this.geminiClient, this.debugLogger);
             const result5 = await stage5.execute(result4);
             console.log('📥 STAGE 5 OUTPUT:', {
                 contentLength: result5.content.length,
@@ -268,9 +265,11 @@ class PipelineOrchestrator {
                 }
                 const scanSession = await figma.clientStorage.getAsync('design-system-scan');
                 if (scanSession && scanSession.components) {
+                    const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
                     console.log('✅ Found ScanSession data - DETAILED CHECK:');
                     console.log('   📊 Session details:', {
                         componentsCount: scanSession.components.length,
+                        colorStylesCount: colorStylesCount,
                         scanTime: new Date(scanSession.scanTime).toLocaleString(),
                         fileKey: scanSession.fileKey,
                         currentFileMatches: scanSession.fileKey === figma.root.id,
@@ -278,11 +277,14 @@ class PipelineOrchestrator {
                     });
                     const result = {
                         components: scanSession.components,
+                        colorStyles: scanSession.colorStyles || null,
                         scanTime: scanSession.scanTime,
-                        totalCount: scanSession.components.length
+                        totalCount: scanSession.components.length,
+                        colorStylesCount: colorStylesCount
                     };
                     console.log('🚀 RETURNING ScanSession data to pipeline:', {
                         totalCount: result.totalCount,
+                        colorStylesCount: result.colorStylesCount,
                         componentsPreview: result.components.slice(0, 2).map((c) => `${c.name}(${c.suggestedType})`)
                     });
                     return result;
@@ -321,4 +323,3 @@ class PipelineOrchestrator {
         }
     }
 }
-exports.PipelineOrchestrator = PipelineOrchestrator;

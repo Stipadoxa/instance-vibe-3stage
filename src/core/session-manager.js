@@ -1,9 +1,6 @@
-"use strict";
 // session-manager.ts
 // Session state management for AIDesigner
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionManager = void 0;
-class SessionManager {
+export class SessionManager {
     // Зберегти поточний стан сесії
     static async saveSession(designState, scanData) {
         try {
@@ -165,7 +162,6 @@ class SessionManager {
         }
     }
 }
-exports.SessionManager = SessionManager;
 SessionManager.STORAGE_KEY = 'aidesigner-sessions';
 SessionManager.SESSION_VERSION = '1.0';
 SessionManager.MAX_SESSION_AGE = 30 * 24 * 60 * 60 * 1000; // 30 днів

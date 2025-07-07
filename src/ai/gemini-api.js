@@ -1,4 +1,3 @@
-"use strict";
 // src/ai/gemini-api.ts
 // Gemini API integration and management for AIDesigner
 var __rest = (this && this.__rest) || function (s, e) {
@@ -12,9 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GeminiAPI = void 0;
-class GeminiAPI {
+export class GeminiAPI {
     constructor(config) {
         this.config = Object.assign(Object.assign({}, GeminiAPI.DEFAULT_CONFIG), config);
         if (!this.config.apiKey) {
@@ -320,7 +317,6 @@ Return ONLY the modified JSON, no explanation needed.`;
         }
     }
 }
-exports.GeminiAPI = GeminiAPI;
 GeminiAPI.DEFAULT_CONFIG = {
     model: 'gemini-1.5-flash',
     maxRetries: 3,

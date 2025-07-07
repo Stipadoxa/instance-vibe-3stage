@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PipelineDebugLogger = void 0;
 // Pipeline Debug Logger - logs full prompts and contexts to console and memory
-class PipelineDebugLogger {
+export class PipelineDebugLogger {
     constructor() {
         this.logBuffer = [];
         this.startTime = new Date();
@@ -159,4 +156,3 @@ class PipelineDebugLogger {
         }
     }
 }
-exports.PipelineDebugLogger = PipelineDebugLogger;

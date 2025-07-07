@@ -1345,6 +1345,9 @@ var AIDesignerUI = (() => {
         window.messageHandler.register("scan-results", (msg) => {
           this.handleScanResults(msg.components);
         });
+        window.messageHandler.register("scan-error", (msg) => {
+          this.handleScanError(msg.error);
+        });
         window.messageHandler.register("saved-scan-loaded", (msg) => {
           this.displaySavedScan(msg.components, msg.scanTime);
         });
@@ -1383,6 +1386,17 @@ var AIDesignerUI = (() => {
       }
       this.displaySavedScan(components, Date.now());
       console.log(`\u2705 Scan completed: ${(components == null ? void 0 : components.length) || 0} components found`);
+    }
+    /**
+     * Handle scan error from backend
+     */
+    handleScanError(error) {
+      if (this.elements.scanBtn) {
+        this.elements.scanBtn.disabled = false;
+        this.elements.scanBtn.textContent = "\u{1F50D} Scan Design System";
+      }
+      this.showScanStatus(`\u274C Scan failed: ${error}`, "error");
+      console.error(`\u274C Scan failed: ${error}`);
     }
     /**
      * Display saved scan results

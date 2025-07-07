@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PromptLoader = void 0;
 // Import all prompts via static imports (webpack processes these at build time)
-const product_manager_js_1 = require("../prompts/roles/product-manager.js");
-const product_designer_js_1 = require("../prompts/roles/product-designer.js");
-const ux_designer_js_1 = require("../prompts/roles/ux-designer.js");
-const ui_designer_js_1 = require("../prompts/roles/ui-designer.js");
-const json_engineer_js_1 = require("../prompts/roles/json-engineer.js");
-class PromptLoader {
+import { PRODUCT_MANAGER_PROMPT } from '../prompts/roles/product-manager.js';
+import { PRODUCT_DESIGNER_PROMPT } from '../prompts/roles/product-designer.js';
+import { UX_DESIGNER_PROMPT } from '../prompts/roles/ux-designer.js';
+import { UI_DESIGNER_PROMPT } from '../prompts/roles/ui-designer.js';
+import { JSON_ENGINEER_PROMPT } from '../prompts/roles/json-engineer.js';
+export class PromptLoader {
     static async loadPrompt(name) {
         if (this.cache.has(name)) {
             return this.cache.get(name);
@@ -84,13 +81,12 @@ Create a PRD that eliminates guesswork for the UX Designer.`,
         return Object.keys(this.prompts);
     }
 }
-exports.PromptLoader = PromptLoader;
 PromptLoader.cache = new Map();
 // Real prompts loaded via static imports (working method!)
 PromptLoader.prompts = {
-    'product-manager': product_manager_js_1.PRODUCT_MANAGER_PROMPT,
-    'product-designer': product_designer_js_1.PRODUCT_DESIGNER_PROMPT,
-    'ux-designer': ux_designer_js_1.UX_DESIGNER_PROMPT,
-    'ui-designer': ui_designer_js_1.UI_DESIGNER_PROMPT,
-    'json-engineer': json_engineer_js_1.JSON_ENGINEER_PROMPT,
+    'product-manager': PRODUCT_MANAGER_PROMPT,
+    'product-designer': PRODUCT_DESIGNER_PROMPT,
+    'ux-designer': UX_DESIGNER_PROMPT,
+    'ui-designer': UI_DESIGNER_PROMPT,
+    'json-engineer': JSON_ENGINEER_PROMPT,
 };

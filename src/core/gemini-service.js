@@ -1,9 +1,6 @@
-"use strict";
 // src/core/gemini-service.ts
 // Gemini API service for AIDesigner plugin - handles all AI generation logic
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GeminiService = void 0;
-class GeminiService {
+export class GeminiService {
     /**
      * Get API key from storage
      */
@@ -223,7 +220,6 @@ class GeminiService {
         return error;
     }
 }
-exports.GeminiService = GeminiService;
 GeminiService.API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 GeminiService.DEFAULT_CONFIG = {
     temperature: 0.2,

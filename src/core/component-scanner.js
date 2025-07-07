@@ -1,18 +1,167 @@
-"use strict";
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ComponentScanner = void 0;
-class ComponentScanner {
+export class ComponentScanner {
     /**
-     * Main scanning function - scans all pages for components
+     * Scan Figma Color Styles from the local file
+     */
+    static async scanFigmaColorStyles() {
+        console.log("🎨 Scanning Figma Color Styles...");
+        try {
+            const paintStyles = await figma.getLocalPaintStylesAsync();
+            console.log(`✅ Found ${paintStyles.length} paint styles`);
+            const colorStyleCollection = {
+                primary: [],
+                secondary: [],
+                tertiary: [],
+                neutral: [],
+                semantic: [],
+                surface: [],
+                other: []
+            };
+            for (const paintStyle of paintStyles) {
+                try {
+                    const colorStyle = await this.convertPaintStyleToColorStyle(paintStyle);
+                    const category = this.categorizeColorStyle(colorStyle.name);
+                    colorStyleCollection[category].push(colorStyle);
+                    console.log(`🎨 Categorized "${colorStyle.name}" as ${category} (variant: ${colorStyle.variant || 'none'})`);
+                }
+                catch (error) {
+                    console.warn(`⚠️ Failed to process paint style "${paintStyle.name}":`, error);
+                }
+            }
+            // Log summary
+            const totalStyles = Object.values(colorStyleCollection).reduce((sum, styles) => sum + styles.length, 0);
+            console.log(`🎨 Color Styles Summary:`);
+            console.log(`   Primary: ${colorStyleCollection.primary.length}`);
+            console.log(`   Secondary: ${colorStyleCollection.secondary.length}`);
+            console.log(`   Tertiary: ${colorStyleCollection.tertiary.length}`);
+            console.log(`   Neutral: ${colorStyleCollection.neutral.length}`);
+            console.log(`   Semantic: ${colorStyleCollection.semantic.length}`);
+            console.log(`   Surface: ${colorStyleCollection.surface.length}`);
+            console.log(`   Other: ${colorStyleCollection.other.length}`);
+            console.log(`   Total: ${totalStyles} styles`);
+            return colorStyleCollection;
+        }
+        catch (error) {
+            console.error("❌ Failed to scan color styles:", error);
+            return {
+                primary: [],
+                secondary: [],
+                tertiary: [],
+                neutral: [],
+                semantic: [],
+                surface: [],
+                other: []
+            };
+        }
+    }
+    /**
+     * Convert Figma PaintStyle to our ColorStyle interface
+     */
+    static async convertPaintStyleToColorStyle(paintStyle) {
+        const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
+        const { category, variant } = this.parseColorStyleName(paintStyle.name);
+        return {
+            id: paintStyle.id,
+            name: paintStyle.name,
+            description: paintStyle.description || undefined,
+            paints: paintStyle.paints,
+            category,
+            variant,
+            colorInfo: colorInfo || { type: 'SOLID', color: '#000000', opacity: 1 }
+        };
+    }
+    /**
+     * Categorize a color style based on its name
+     * Supports patterns like: 'primary90', 'secondary50', 'neutral-100', 'Primary/500', etc.
+     */
+    static categorizeColorStyle(styleName) {
+        const name = styleName.toLowerCase();
+        // Primary patterns
+        if (name.includes('primary') || name.includes('brand')) {
+            return 'primary';
+        }
+        // Secondary patterns
+        if (name.includes('secondary') || name.includes('accent')) {
+            return 'secondary';
+        }
+        // Tertiary patterns
+        if (name.includes('tertiary')) {
+            return 'tertiary';
+        }
+        // Neutral patterns (grays, blacks, whites)
+        if (name.includes('neutral') || name.includes('gray') || name.includes('grey') ||
+            name.includes('black') || name.includes('white') || name.includes('slate')) {
+            return 'neutral';
+        }
+        // Semantic patterns (success, error, warning, info)
+        if (name.includes('success') || name.includes('error') || name.includes('warning') ||
+            name.includes('info') || name.includes('danger') || name.includes('alert') ||
+            name.includes('green') || name.includes('red') || name.includes('yellow') ||
+            name.includes('blue') || name.includes('orange')) {
+            return 'semantic';
+        }
+        // Surface patterns (background, surface, container)
+        if (name.includes('surface') || name.includes('background') || name.includes('container') ||
+            name.includes('backdrop') || name.includes('overlay')) {
+            return 'surface';
+        }
+        // Default to other
+        return 'other';
+    }
+    /**
+     * Parse color style name to extract category and variant
+     * Examples: 'primary90' -> { category: 'primary', variant: '90' }
+     *          'Primary/500' -> { category: 'primary', variant: '500' }
+     *          'neutral-100' -> { category: 'neutral', variant: '100' }
+     */
+    static parseColorStyleName(styleName) {
+        const name = styleName.toLowerCase();
+        // Pattern 1: name + number (e.g., 'primary90', 'secondary50')
+        const pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
+        if (pattern1) {
+            const [, colorName, variant] = pattern1;
+            return {
+                category: this.categorizeColorStyle(colorName),
+                variant
+            };
+        }
+        // Pattern 2: name/number or name-number (e.g., 'Primary/500', 'neutral-100')
+        const pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
+        if (pattern2) {
+            const [, colorName, variant] = pattern2;
+            return {
+                category: this.categorizeColorStyle(colorName),
+                variant
+            };
+        }
+        // Pattern 3: just category name
+        return {
+            category: this.categorizeColorStyle(name),
+            variant: undefined
+        };
+    }
+    /**
+     * Main scanning function - scans all pages for components and color styles
      */
     static async scanDesignSystem() {
-        console.log("🔍 Starting scan...");
+        console.log("🔍 Starting comprehensive design system scan...");
         const components = [];
+        let colorStyles;
         try {
             await figma.loadAllPagesAsync();
             console.log("✅ All pages loaded");
+            // First, scan Color Styles
+            console.log("\n🎨 Phase 1: Scanning Color Styles...");
+            try {
+                colorStyles = await this.scanFigmaColorStyles();
+            }
+            catch (error) {
+                console.warn("⚠️ Color Styles scanning failed, continuing without color styles:", error);
+                colorStyles = undefined;
+            }
+            // Then, scan components
+            console.log("\n🧩 Phase 2: Scanning Components...");
             for (const page of figma.root.children) {
                 console.log(`📋 Scanning page: "${page.name}"`);
                 try {
@@ -49,13 +198,30 @@ class ComponentScanner {
                     console.error(`❌ Error scanning page "${page.name}":`, e);
                 }
             }
-            console.log(`🎉 Scan complete! Found ${components.length} unique components.`);
-            return components;
+            const scanSession = {
+                components,
+                colorStyles,
+                scanTime: Date.now(),
+                version: "2.0.0",
+                fileKey: figma.fileKey || undefined
+            };
+            console.log(`\n🎉 Comprehensive scan complete!`);
+            console.log(`   📦 Components: ${components.length}`);
+            console.log(`   🎨 Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+            console.log(`   📄 File Key: ${scanSession.fileKey || 'Unknown'}`);
+            return scanSession;
         }
         catch (e) {
             console.error("❌ Critical error in scanDesignSystem:", e);
             throw e;
         }
+    }
+    /**
+     * Legacy method for backward compatibility - returns only components
+     */
+    static async scanComponents() {
+        const session = await this.scanDesignSystem();
+        return session.components;
     }
     /**
      * Analyzes a single component to extract metadata
@@ -69,6 +235,8 @@ class ComponentScanner {
         const componentInstances = await this.findComponentInstances(comp);
         const vectorNodes = this.findVectorNodes(comp);
         const imageNodes = this.findImageNodes(comp);
+        // NEW: Extract color and style information
+        const styleInfo = this.extractStyleInfo(comp);
         let variants = [];
         const variantDetails = {};
         if (comp.type === 'COMPONENT_SET') {
@@ -96,6 +264,7 @@ class ComponentScanner {
             componentInstances: componentInstances.length > 0 ? componentInstances : undefined,
             vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined,
             imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
+            styleInfo: styleInfo, // NEW: Include color and style information
             isFromLibrary: false
         };
     }
@@ -286,6 +455,19 @@ class ComponentScanner {
                     catch (e) {
                         characters = undefined;
                     }
+                    // NEW: Extract text color
+                    let textColor;
+                    try {
+                        if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                            const firstFill = node.fills[0];
+                            if (firstFill.visible !== false) {
+                                textColor = this.convertPaintToColorInfo(firstFill) || undefined;
+                            }
+                        }
+                    }
+                    catch (e) {
+                        console.warn(`Could not extract text color for "${node.name}"`);
+                    }
                     textHierarchy.push({
                         nodeName: node.name,
                         nodeId: node.id,
@@ -293,7 +475,8 @@ class ComponentScanner {
                         fontWeight,
                         classification,
                         visible: node.visible,
-                        characters
+                        characters,
+                        textColor // NEW: Include text color information
                     });
                 });
             }
@@ -401,9 +584,10 @@ class ComponentScanner {
         return imageNodes;
     }
     /**
-     * Generate LLM prompt based on scanned components
+     * Generate LLM prompt based on scanned components and color styles
      */
-    static generateLLMPrompt(components) {
+    static generateLLMPrompt(components, colorStyles) {
+        var _a;
         const componentsByType = {};
         components.forEach(comp => {
             if (comp.confidence >= 0.7) {
@@ -412,7 +596,38 @@ class ComponentScanner {
                 componentsByType[comp.suggestedType].push(comp);
             }
         });
-        let prompt = `# AIDesigner JSON Generation Instructions\n\n## Available Components in Design System:\n\n`;
+        let prompt = `# AIDesigner JSON Generation Instructions\n\n`;
+        // Add Color Styles section if available
+        if (colorStyles) {
+            const totalColorStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+            if (totalColorStyles > 0) {
+                prompt += `## Available Color Styles in Design System:\n\n`;
+                Object.entries(colorStyles).forEach(([category, styles]) => {
+                    if (styles.length > 0) {
+                        prompt += `### ${category.toUpperCase()} COLORS\n`;
+                        styles.forEach(style => {
+                            prompt += `- **${style.name}**: ${style.colorInfo.color}`;
+                            if (style.variant) {
+                                prompt += ` (variant: ${style.variant})`;
+                            }
+                            if (style.description) {
+                                prompt += ` - ${style.description}`;
+                            }
+                            prompt += `\n`;
+                        });
+                        prompt += `\n`;
+                    }
+                });
+                prompt += `### Color Usage Guidelines:\n`;
+                prompt += `- Use PRIMARY colors for main actions, headers, and brand elements\n`;
+                prompt += `- Use SECONDARY colors for supporting actions and accents\n`;
+                prompt += `- Use NEUTRAL colors for text, backgrounds, and borders\n`;
+                prompt += `- Use SEMANTIC colors for success/error/warning states\n`;
+                prompt += `- Use SURFACE colors for backgrounds and containers\n`;
+                prompt += `- Reference colors by their exact name: "${((_a = colorStyles.primary[0]) === null || _a === void 0 ? void 0 : _a.name) || 'Primary/500'}"\n\n`;
+            }
+        }
+        prompt += `## Available Components in Design System:\n\n`;
         Object.keys(componentsByType).sort().forEach(type => {
             var _a, _b, _c, _d, _e, _f;
             const comps = componentsByType[type];
@@ -618,5 +833,202 @@ class ComponentScanner {
         console.log(`❌ ID for type ${type} not found`);
         return null;
     }
+    /**
+     * NEW: Extract color and style information from component
+     */
+    static extractStyleInfo(node) {
+        var _a, _b, _c;
+        const styleInfo = {};
+        try {
+            // Get the primary node to analyze (for component sets, use the first variant)
+            let primaryNode = node;
+            if (node.type === 'COMPONENT_SET' && node.children.length > 0) {
+                primaryNode = node.children[0];
+            }
+            // Extract fills and background colors
+            const fills = this.extractFills(primaryNode);
+            if (fills.length > 0) {
+                styleInfo.fills = fills;
+                styleInfo.primaryColor = fills[0]; // Use first fill as primary color
+            }
+            // Extract strokes
+            const strokes = this.extractStrokes(primaryNode);
+            if (strokes.length > 0) {
+                styleInfo.strokes = strokes;
+            }
+            // Find text color from text nodes
+            const textColor = this.findPrimaryTextColor(primaryNode);
+            if (textColor) {
+                styleInfo.textColor = textColor;
+            }
+            // Extract background color (look for the largest rectangle/background)
+            const backgroundColor = this.findBackgroundColor(primaryNode);
+            if (backgroundColor) {
+                styleInfo.backgroundColor = backgroundColor;
+            }
+            // Log summary of extracted colors for debugging
+            if (styleInfo.primaryColor || styleInfo.backgroundColor || styleInfo.textColor) {
+                console.log(`🎨 Colors extracted for "${node.name}":`, {
+                    primary: (_a = styleInfo.primaryColor) === null || _a === void 0 ? void 0 : _a.color,
+                    background: (_b = styleInfo.backgroundColor) === null || _b === void 0 ? void 0 : _b.color,
+                    text: (_c = styleInfo.textColor) === null || _c === void 0 ? void 0 : _c.color
+                });
+            }
+        }
+        catch (error) {
+            console.warn(`⚠️ Error extracting style info for "${node.name}":`, error);
+        }
+        return styleInfo;
+    }
+    /**
+     * Extract fill colors from a node
+     */
+    static extractFills(node) {
+        const colorInfos = [];
+        try {
+            if ('fills' in node && node.fills && Array.isArray(node.fills)) {
+                for (const fill of node.fills) {
+                    if (fill.visible !== false) {
+                        const colorInfo = this.convertPaintToColorInfo(fill);
+                        if (colorInfo) {
+                            colorInfos.push(colorInfo);
+                        }
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.warn('Error extracting fills:', error);
+        }
+        return colorInfos;
+    }
+    /**
+     * Extract stroke colors from a node
+     */
+    static extractStrokes(node) {
+        const colorInfos = [];
+        try {
+            if ('strokes' in node && node.strokes && Array.isArray(node.strokes)) {
+                for (const stroke of node.strokes) {
+                    if (stroke.visible !== false) {
+                        const colorInfo = this.convertPaintToColorInfo(stroke);
+                        if (colorInfo) {
+                            colorInfos.push(colorInfo);
+                        }
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.warn('Error extracting strokes:', error);
+        }
+        return colorInfos;
+    }
+    /**
+     * Convert Figma Paint to ColorInfo
+     */
+    static convertPaintToColorInfo(paint) {
+        try {
+            if (paint.type === 'SOLID' && paint.color) {
+                return {
+                    type: 'SOLID',
+                    color: this.rgbToHex(paint.color),
+                    opacity: paint.opacity || 1
+                };
+            }
+            if (paint.type === 'GRADIENT_LINEAR' && paint.gradientStops) {
+                return {
+                    type: 'GRADIENT_LINEAR',
+                    gradientStops: paint.gradientStops.map(stop => ({
+                        color: this.rgbToHex(stop.color),
+                        position: stop.position
+                    })),
+                    opacity: paint.opacity || 1
+                };
+            }
+            // Add support for other gradient types
+            if ((paint.type === 'GRADIENT_RADIAL' || paint.type === 'GRADIENT_ANGULAR' || paint.type === 'GRADIENT_DIAMOND') && paint.gradientStops) {
+                return {
+                    type: paint.type,
+                    gradientStops: paint.gradientStops.map(stop => ({
+                        color: this.rgbToHex(stop.color),
+                        position: stop.position
+                    })),
+                    opacity: paint.opacity || 1
+                };
+            }
+            if (paint.type === 'IMAGE') {
+                return {
+                    type: 'IMAGE',
+                    opacity: paint.opacity || 1
+                };
+            }
+        }
+        catch (error) {
+            console.warn('Error converting paint to color info:', error);
+        }
+        return null;
+    }
+    /**
+     * Convert RGB to hex color
+     */
+    static rgbToHex(rgb) {
+        const toHex = (value) => {
+            const hex = Math.round(value * 255).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        };
+        return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+    }
+    /**
+     * Find primary text color by analyzing text nodes
+     */
+    static findPrimaryTextColor(node) {
+        try {
+            const textNodes = node.findAll(n => n.type === 'TEXT');
+            for (const textNode of textNodes) {
+                if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
+                    for (const fill of textNode.fills) {
+                        if (fill.visible !== false && fill.type === 'SOLID') {
+                            return this.convertPaintToColorInfo(fill);
+                        }
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.warn('Error finding text color:', error);
+        }
+        return null;
+    }
+    /**
+     * Find background color by analyzing the largest rectangle or container
+     */
+    static findBackgroundColor(node) {
+        try {
+            // Look for rectangles that could be backgrounds
+            const rectangles = node.findAll(n => n.type === 'RECTANGLE' || n.type === 'FRAME' || n.type === 'COMPONENT');
+            // Sort by size (area) to find the largest one that's likely the background
+            rectangles.sort((a, b) => {
+                const areaA = a.width * a.height;
+                const areaB = b.width * b.height;
+                return areaB - areaA;
+            });
+            for (const rect of rectangles) {
+                if ('fills' in rect && rect.fills && Array.isArray(rect.fills)) {
+                    for (const fill of rect.fills) {
+                        if (fill.visible !== false) {
+                            const colorInfo = this.convertPaintToColorInfo(fill);
+                            if (colorInfo && colorInfo.type === 'SOLID') {
+                                return colorInfo;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.warn('Error finding background color:', error);
+        }
+        return null;
+    }
 }
-exports.ComponentScanner = ComponentScanner;

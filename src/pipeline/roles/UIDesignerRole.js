@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UIDesignerRole = void 0;
-const BaseRole_1 = require("./BaseRole");
-const PromptLoader_1 = require("../PromptLoader");
-class UIDesignerRole extends BaseRole_1.BaseRole {
+import { BaseRole } from './BaseRole';
+import { PromptLoader } from '../PromptLoader';
+export class UIDesignerRole extends BaseRole {
     constructor(geminiClient, debugLogger) {
         super();
         this.geminiClient = geminiClient;
@@ -30,12 +27,14 @@ class UIDesignerRole extends BaseRole_1.BaseRole {
             aiUsed: (_c = previousStage === null || previousStage === void 0 ? void 0 : previousStage.metadata) === null || _c === void 0 ? void 0 : _c.aiUsed,
             timestamp: (_d = previousStage === null || previousStage === void 0 ? void 0 : previousStage.metadata) === null || _d === void 0 ? void 0 : _d.timestamp
         });
+        const colorStylesCount = (designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.colorStyles) ? Object.values(designSystemScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
         console.log('   🎨 Design System details:', {
             designSystemExists: !!designSystemScan,
             designSystemType: typeof designSystemScan,
             totalCount: designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.totalCount,
             componentsArray: (designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.components) ? 'exists' : 'missing',
             componentsCount: ((_e = designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.components) === null || _e === void 0 ? void 0 : _e.length) || 0,
+            colorStylesCount: colorStylesCount,
             scanTime: designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.scanTime,
             firstComponent: ((_f = designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.components) === null || _f === void 0 ? void 0 : _f[0]) ? {
                 id: designSystemScan.components[0].id,
@@ -48,7 +47,7 @@ class UIDesignerRole extends BaseRole_1.BaseRole {
             hasDesignSystem: !!designSystemScan
         });
         try {
-            const prompt = await PromptLoader_1.PromptLoader.loadPrompt('ui-designer');
+            const prompt = await PromptLoader.loadPrompt('ui-designer');
             this.safeLog('Prompt loaded', { promptLength: prompt.length });
             const componentsAvailable = ((_g = designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.components) === null || _g === void 0 ? void 0 : _g.length) || 0;
             const designSystemInfo = this.analyzeDesignSystem(designSystemScan);
@@ -231,6 +230,35 @@ class UIDesignerRole extends BaseRole_1.BaseRole {
         const componentsWithVariants = designSystem.components.filter((c) => c.variantDetails && Object.keys(c.variantDetails).length > 0).length;
         const componentsWithIcons = designSystem.components.filter((c) => { var _a; return ((_a = c.vectorNodes) === null || _a === void 0 ? void 0 : _a.length) > 0; }).length;
         const componentsWithImages = designSystem.components.filter((c) => { var _a; return ((_a = c.imageNodes) === null || _a === void 0 ? void 0 : _a.length) > 0; }).length;
+        // Add color styles section if available
+        let colorStylesSection = '';
+        if (designSystem.colorStyles) {
+            const totalColorStyles = Object.values(designSystem.colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+            if (totalColorStyles > 0) {
+                colorStylesSection = `
+
+Available Color Styles:
+- Total: ${totalColorStyles} color styles available`;
+                Object.entries(designSystem.colorStyles).forEach(([category, styles]) => {
+                    if (styles.length > 0) {
+                        colorStylesSection += `\n- ${category.toUpperCase()}: ${styles.length} styles`;
+                        // Add first few color examples
+                        const examples = styles.slice(0, 3).map(style => `${style.name} (${style.colorInfo.color})`).join(', ');
+                        if (examples) {
+                            colorStylesSection += ` - Examples: ${examples}`;
+                        }
+                    }
+                });
+                colorStylesSection += `
+
+Color Usage Guidelines:
+- Use PRIMARY colors for main actions, headers, and brand elements
+- Use SECONDARY colors for supporting actions and accents  
+- Use NEUTRAL colors for text, backgrounds, and borders
+- Use SEMANTIC colors for success/error/warning states
+- Use SURFACE colors for backgrounds and containers`;
+            }
+        }
         const result = `Available Design System Components:
 - Total: ${designSystem.totalCount}
 - Types: ${Object.keys(componentTypes).join(', ')}
@@ -238,7 +266,7 @@ class UIDesignerRole extends BaseRole_1.BaseRole {
 - Library components: ${libraryComponents}/${designSystem.totalCount}
 - Components with variants: ${componentsWithVariants}/${designSystem.totalCount}
 - Components with icons: ${componentsWithIcons}/${designSystem.totalCount}
-- Components with image support: ${componentsWithImages}/${designSystem.totalCount}
+- Components with image support: ${componentsWithImages}/${designSystem.totalCount}${colorStylesSection}
 
 Specific Components (first 20 with enhanced intelligence):
 ${componentList.join('\n')}
@@ -321,4 +349,3 @@ Design System Available: ${!!previousStage}`;
         return categories;
     }
 }
-exports.UIDesignerRole = UIDesignerRole;

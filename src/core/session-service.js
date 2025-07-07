@@ -1,9 +1,6 @@
-"use strict";
 // src/core/session-service.ts
 // Session management service for AIDesigner plugin
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionService = void 0;
-class SessionService {
+export class SessionService {
     /**
      * Get current file information
      */
@@ -194,6 +191,5 @@ class SessionService {
         };
     }
 }
-exports.SessionService = SessionService;
 SessionService.STORAGE_PREFIX = 'aidesigner_session_';
 SessionService.ALL_SESSIONS_KEY = 'aidesigner_all_sessions';

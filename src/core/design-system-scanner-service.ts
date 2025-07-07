@@ -142,10 +142,10 @@ export class DesignSystemScannerService {
     }
 
     /**
-     * Generate LLM prompt - delegated to ComponentScanner
+     * Generate LLM prompt with components and color styles
      */
-    static generateLLMPrompt(components: ComponentInfo[]): string {
-        return ComponentScanner.generateLLMPrompt(components);
+    static generateLLMPrompt(components: ComponentInfo[], colorStyles?: any): string {
+        return ComponentScanner.generateLLMPrompt(components, colorStyles);
     }
 
     /**
@@ -322,21 +322,23 @@ export class DesignSystemScannerService {
 
 
     /**
-     * Save scan results to Figma storage
+     * Save scan results to Figma storage - supports full scan session with color styles
      */
-    static async saveScanResults(components: ComponentInfo[]): Promise<void> {
+    static async saveScanResults(components: ComponentInfo[], colorStyles?: any): Promise<void> {
         try {
             const scanSession: ScanSession = {
                 components,
+                colorStyles: colorStyles || undefined,
                 scanTime: Date.now(),
-                version: "1.0",
-                fileKey: figma.root.id
+                version: "2.0.0",
+                fileKey: figma.fileKey || figma.root.id
             };
             
             await figma.clientStorage.setAsync('design-system-scan', scanSession);
             await figma.clientStorage.setAsync('last-scan-results', components);
             
-            console.log(`💾 Saved ${components.length} components with session data`);
+            const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
+            console.log(`💾 Saved ${components.length} components and ${colorStylesCount} color styles with session data`);
         } catch (error) {
             console.error("❌ Error saving scan results:", error);
             try {
@@ -346,6 +348,22 @@ export class DesignSystemScannerService {
             } catch (fallbackError) {
                 console.warn("⚠️ Could not save scan results:", fallbackError);
             }
+        }
+    }
+    
+    /**
+     * Save complete scan session including color styles
+     */
+    static async saveScanSession(scanSession: ScanSession): Promise<void> {
+        try {
+            await figma.clientStorage.setAsync('design-system-scan', scanSession);
+            await figma.clientStorage.setAsync('last-scan-results', scanSession.components);
+            
+            const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
+            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components and ${colorStylesCount} color styles`);
+        } catch (error) {
+            console.error("❌ Error saving scan session:", error);
+            throw error;
         }
     }
 

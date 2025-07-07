@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EnvironmentValidator = void 0;
-class EnvironmentValidator {
+export class EnvironmentValidator {
     static validateEnvironment() {
         return {
             consoleGroupAvailable: this.testConsoleGroup(),
@@ -50,4 +47,3 @@ class EnvironmentValidator {
         }
     }
 }
-exports.EnvironmentValidator = EnvironmentValidator;

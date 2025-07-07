@@ -657,9 +657,9 @@ export class ComponentScanner {
   }
 
   /**
-   * Generate LLM prompt based on scanned components
+   * Generate LLM prompt based on scanned components and color styles
    */
-  static generateLLMPrompt(components: ComponentInfo[]): string {
+  static generateLLMPrompt(components: ComponentInfo[], colorStyles?: ColorStyleCollection): string {
       const componentsByType: { [key: string]: ComponentInfo[] } = {};
       components.forEach(comp => {
           if (comp.confidence >= 0.7) {
@@ -668,7 +668,42 @@ export class ComponentScanner {
           }
       });
       
-      let prompt = `# AIDesigner JSON Generation Instructions\n\n## Available Components in Design System:\n\n`;
+      let prompt = `# AIDesigner JSON Generation Instructions\n\n`;
+      
+      // Add Color Styles section if available
+      if (colorStyles) {
+          const totalColorStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+          if (totalColorStyles > 0) {
+              prompt += `## Available Color Styles in Design System:\n\n`;
+              
+              Object.entries(colorStyles).forEach(([category, styles]) => {
+                  if (styles.length > 0) {
+                      prompt += `### ${category.toUpperCase()} COLORS\n`;
+                      styles.forEach(style => {
+                          prompt += `- **${style.name}**: ${style.colorInfo.color}`;
+                          if (style.variant) {
+                              prompt += ` (variant: ${style.variant})`;
+                          }
+                          if (style.description) {
+                              prompt += ` - ${style.description}`;
+                          }
+                          prompt += `\n`;
+                      });
+                      prompt += `\n`;
+                  }
+              });
+              
+              prompt += `### Color Usage Guidelines:\n`;
+              prompt += `- Use PRIMARY colors for main actions, headers, and brand elements\n`;
+              prompt += `- Use SECONDARY colors for supporting actions and accents\n`;
+              prompt += `- Use NEUTRAL colors for text, backgrounds, and borders\n`;
+              prompt += `- Use SEMANTIC colors for success/error/warning states\n`;
+              prompt += `- Use SURFACE colors for backgrounds and containers\n`;
+              prompt += `- Reference colors by their exact name: "${colorStyles.primary[0]?.name || 'Primary/500'}"\n\n`;
+          }
+      }
+      
+      prompt += `## Available Components in Design System:\n\n`;
       
       Object.keys(componentsByType).sort().forEach(type => {
           const comps = componentsByType[type];
