@@ -430,14 +430,145 @@
   // src/core/component-scanner.ts
   var ComponentScanner = class {
     /**
-     * Main scanning function - scans all pages for components
+     * Scan Figma Color Styles from the local file
+     */
+    static async scanFigmaColorStyles() {
+      console.log("\u{1F3A8} Scanning Figma Color Styles...");
+      try {
+        const paintStyles = await figma.getLocalPaintStylesAsync();
+        console.log(`\u2705 Found ${paintStyles.length} paint styles`);
+        const colorStyleCollection = {
+          primary: [],
+          secondary: [],
+          tertiary: [],
+          neutral: [],
+          semantic: [],
+          surface: [],
+          other: []
+        };
+        for (const paintStyle of paintStyles) {
+          try {
+            const colorStyle = await this.convertPaintStyleToColorStyle(paintStyle);
+            const category = this.categorizeColorStyle(colorStyle.name);
+            colorStyleCollection[category].push(colorStyle);
+            console.log(`\u{1F3A8} Categorized "${colorStyle.name}" as ${category} (variant: ${colorStyle.variant || "none"})`);
+          } catch (error) {
+            console.warn(`\u26A0\uFE0F Failed to process paint style "${paintStyle.name}":`, error);
+          }
+        }
+        const totalStyles = Object.values(colorStyleCollection).reduce((sum, styles) => sum + styles.length, 0);
+        console.log(`\u{1F3A8} Color Styles Summary:`);
+        console.log(`   Primary: ${colorStyleCollection.primary.length}`);
+        console.log(`   Secondary: ${colorStyleCollection.secondary.length}`);
+        console.log(`   Tertiary: ${colorStyleCollection.tertiary.length}`);
+        console.log(`   Neutral: ${colorStyleCollection.neutral.length}`);
+        console.log(`   Semantic: ${colorStyleCollection.semantic.length}`);
+        console.log(`   Surface: ${colorStyleCollection.surface.length}`);
+        console.log(`   Other: ${colorStyleCollection.other.length}`);
+        console.log(`   Total: ${totalStyles} styles`);
+        return colorStyleCollection;
+      } catch (error) {
+        console.error("\u274C Failed to scan color styles:", error);
+        return {
+          primary: [],
+          secondary: [],
+          tertiary: [],
+          neutral: [],
+          semantic: [],
+          surface: [],
+          other: []
+        };
+      }
+    }
+    /**
+     * Convert Figma PaintStyle to our ColorStyle interface
+     */
+    static async convertPaintStyleToColorStyle(paintStyle) {
+      const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
+      const { category, variant } = this.parseColorStyleName(paintStyle.name);
+      return {
+        id: paintStyle.id,
+        name: paintStyle.name,
+        description: paintStyle.description || void 0,
+        paints: paintStyle.paints,
+        category,
+        variant,
+        colorInfo: colorInfo || { type: "SOLID", color: "#000000", opacity: 1 }
+      };
+    }
+    /**
+     * Categorize a color style based on its name
+     * Supports patterns like: 'primary90', 'secondary50', 'neutral-100', 'Primary/500', etc.
+     */
+    static categorizeColorStyle(styleName) {
+      const name = styleName.toLowerCase();
+      if (name.includes("primary") || name.includes("brand")) {
+        return "primary";
+      }
+      if (name.includes("secondary") || name.includes("accent")) {
+        return "secondary";
+      }
+      if (name.includes("tertiary")) {
+        return "tertiary";
+      }
+      if (name.includes("neutral") || name.includes("gray") || name.includes("grey") || name.includes("black") || name.includes("white") || name.includes("slate")) {
+        return "neutral";
+      }
+      if (name.includes("success") || name.includes("error") || name.includes("warning") || name.includes("info") || name.includes("danger") || name.includes("alert") || name.includes("green") || name.includes("red") || name.includes("yellow") || name.includes("blue") || name.includes("orange")) {
+        return "semantic";
+      }
+      if (name.includes("surface") || name.includes("background") || name.includes("container") || name.includes("backdrop") || name.includes("overlay")) {
+        return "surface";
+      }
+      return "other";
+    }
+    /**
+     * Parse color style name to extract category and variant
+     * Examples: 'primary90' -> { category: 'primary', variant: '90' }
+     *          'Primary/500' -> { category: 'primary', variant: '500' }
+     *          'neutral-100' -> { category: 'neutral', variant: '100' }
+     */
+    static parseColorStyleName(styleName) {
+      const name = styleName.toLowerCase();
+      const pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
+      if (pattern1) {
+        const [, colorName, variant] = pattern1;
+        return {
+          category: this.categorizeColorStyle(colorName),
+          variant
+        };
+      }
+      const pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
+      if (pattern2) {
+        const [, colorName, variant] = pattern2;
+        return {
+          category: this.categorizeColorStyle(colorName),
+          variant
+        };
+      }
+      return {
+        category: this.categorizeColorStyle(name),
+        variant: void 0
+      };
+    }
+    /**
+     * Main scanning function - scans all pages for components and color styles
      */
     static async scanDesignSystem() {
-      console.log("\u{1F50D} Starting scan...");
+      console.log("\u{1F50D} Starting comprehensive design system scan...");
       const components = [];
+      let colorStyles;
       try {
         await figma.loadAllPagesAsync();
         console.log("\u2705 All pages loaded");
+        console.log("\n\u{1F3A8} Phase 1: Scanning Color Styles...");
+        try {
+          colorStyles = await this.scanFigmaColorStyles();
+        } catch (error) {
+          console.warn("\u26A0\uFE0F Color Styles scanning failed, continuing without color styles:", error);
+          colorStyles = void 0;
+        }
+        console.log("\n\u{1F9E9} Phase 2: Scanning Components...");
         for (const page of figma.root.children) {
           console.log(`\u{1F4CB} Scanning page: "${page.name}"`);
           try {
@@ -472,12 +603,30 @@
             console.error(`\u274C Error scanning page "${page.name}":`, e);
           }
         }
-        console.log(`\u{1F389} Scan complete! Found ${components.length} unique components.`);
-        return components;
+        const scanSession = {
+          components,
+          colorStyles,
+          scanTime: Date.now(),
+          version: "2.0.0",
+          fileKey: figma.fileKey || void 0
+        };
+        console.log(`
+\u{1F389} Comprehensive scan complete!`);
+        console.log(`   \u{1F4E6} Components: ${components.length}`);
+        console.log(`   \u{1F3A8} Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+        console.log(`   \u{1F4C4} File Key: ${scanSession.fileKey || "Unknown"}`);
+        return scanSession;
       } catch (e) {
         console.error("\u274C Critical error in scanDesignSystem:", e);
         throw e;
       }
+    }
+    /**
+     * Legacy method for backward compatibility - returns only components
+     */
+    static async scanComponents() {
+      const session = await this.scanDesignSystem();
+      return session.components;
     }
     /**
      * Analyzes a single component to extract metadata
@@ -491,6 +640,7 @@
       const componentInstances = await this.findComponentInstances(comp);
       const vectorNodes = this.findVectorNodes(comp);
       const imageNodes = this.findImageNodes(comp);
+      const styleInfo = this.extractStyleInfo(comp);
       let variants = [];
       const variantDetails = {};
       if (comp.type === "COMPONENT_SET") {
@@ -518,6 +668,8 @@
         componentInstances: componentInstances.length > 0 ? componentInstances : void 0,
         vectorNodes: vectorNodes.length > 0 ? vectorNodes : void 0,
         imageNodes: imageNodes.length > 0 ? imageNodes : void 0,
+        styleInfo,
+        // NEW: Include color and style information
         isFromLibrary: false
       };
     }
@@ -717,6 +869,17 @@
             } catch (e) {
               characters = void 0;
             }
+            let textColor;
+            try {
+              if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                const firstFill = node.fills[0];
+                if (firstFill.visible !== false) {
+                  textColor = this.convertPaintToColorInfo(firstFill) || void 0;
+                }
+              }
+            } catch (e) {
+              console.warn(`Could not extract text color for "${node.name}"`);
+            }
             textHierarchy.push({
               nodeName: node.name,
               nodeId: node.id,
@@ -724,7 +887,9 @@
               fontWeight,
               classification,
               visible: node.visible,
-              characters
+              characters,
+              textColor
+              // NEW: Include text color information
             });
           });
         }
@@ -1074,365 +1239,190 @@
       console.log(`\u274C ID for type ${type} not found`);
       return null;
     }
-  };
-
-  // src/core/design-system-scanner-service.ts
-  var DesignSystemScannerService = class {
     /**
-     * Main scanning function - scans all pages for components
+     * NEW: Extract color and style information from component
      */
-    static async scanDesignSystem(progressCallback) {
-      console.log("\u{1F50D} Starting design system scan...");
-      const components = [];
+    static extractStyleInfo(node) {
+      var _a, _b, _c;
+      const styleInfo = {};
       try {
-        await figma.loadAllPagesAsync();
-        console.log("\u2705 All pages loaded");
-        const totalPages = figma.root.children.length;
-        let currentPage = 0;
-        progressCallback == null ? void 0 : progressCallback({ current: 0, total: totalPages, status: "Initializing scan..." });
-        for (const page of figma.root.children) {
-          currentPage++;
-          const pageStatus = `Scanning page: "${page.name}" (${currentPage}/${totalPages})`;
-          console.log(`\u{1F4CB} ${pageStatus}`);
-          progressCallback == null ? void 0 : progressCallback({
-            current: currentPage,
-            total: totalPages,
-            status: pageStatus
+        let primaryNode = node;
+        if (node.type === "COMPONENT_SET" && node.children.length > 0) {
+          primaryNode = node.children[0];
+        }
+        const fills = this.extractFills(primaryNode);
+        if (fills.length > 0) {
+          styleInfo.fills = fills;
+          styleInfo.primaryColor = fills[0];
+        }
+        const strokes = this.extractStrokes(primaryNode);
+        if (strokes.length > 0) {
+          styleInfo.strokes = strokes;
+        }
+        const textColor = this.findPrimaryTextColor(primaryNode);
+        if (textColor) {
+          styleInfo.textColor = textColor;
+        }
+        const backgroundColor = this.findBackgroundColor(primaryNode);
+        if (backgroundColor) {
+          styleInfo.backgroundColor = backgroundColor;
+        }
+        if (styleInfo.primaryColor || styleInfo.backgroundColor || styleInfo.textColor) {
+          console.log(`\u{1F3A8} Colors extracted for "${node.name}":`, {
+            primary: (_a = styleInfo.primaryColor) == null ? void 0 : _a.color,
+            background: (_b = styleInfo.backgroundColor) == null ? void 0 : _b.color,
+            text: (_c = styleInfo.textColor) == null ? void 0 : _c.color
           });
-          try {
-            const allNodes = page.findAll((node) => {
-              if (node.type === "COMPONENT_SET") {
-                return true;
-              }
-              if (node.type === "COMPONENT") {
-                return !!(node.parent && node.parent.type !== "COMPONENT_SET");
-              }
-              return false;
-            });
-            console.log(`\u2705 Found ${allNodes.length} main components on page "${page.name}"`);
-            for (const node of allNodes) {
-              try {
-                if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
-                  const componentInfo = await ComponentScanner.analyzeComponent(node);
-                  if (componentInfo) {
-                    componentInfo.pageInfo = {
-                      pageName: page.name,
-                      pageId: page.id,
-                      isCurrentPage: page.id === figma.currentPage.id
-                    };
-                    components.push(componentInfo);
-                  }
-                }
-              } catch (e) {
-                console.error(`\u274C Error analyzing component "${node.name}":`, e);
+        }
+      } catch (error) {
+        console.warn(`\u26A0\uFE0F Error extracting style info for "${node.name}":`, error);
+      }
+      return styleInfo;
+    }
+    /**
+     * Extract fill colors from a node
+     */
+    static extractFills(node) {
+      const colorInfos = [];
+      try {
+        if ("fills" in node && node.fills && Array.isArray(node.fills)) {
+          for (const fill of node.fills) {
+            if (fill.visible !== false) {
+              const colorInfo = this.convertPaintToColorInfo(fill);
+              if (colorInfo) {
+                colorInfos.push(colorInfo);
               }
             }
-          } catch (e) {
-            console.error(`\u274C Error scanning page "${page.name}":`, e);
           }
         }
-        progressCallback == null ? void 0 : progressCallback({
-          current: totalPages,
-          total: totalPages,
-          status: `Scan complete! Found ${components.length} components`
-        });
-        console.log(`\u{1F389} Design system scan complete! Found ${components.length} unique components.`);
-        return components;
-      } catch (e) {
-        console.error("\u274C Critical error in design system scan:", e);
-        throw e;
+      } catch (error) {
+        console.warn("Error extracting fills:", error);
       }
+      return colorInfos;
     }
     /**
-     * Generate LLM prompt - delegated to ComponentScanner
+     * Extract stroke colors from a node
      */
-    static generateLLMPrompt(components) {
-      return ComponentScanner.generateLLMPrompt(components);
-    }
-    /**
-     * Analyzes a single component to extract metadata and variants
-     * @deprecated Use ComponentScanner.analyzeComponent instead
-     */
-    static analyzeComponent(comp) {
-      const name = comp.name;
-      const suggestedType = this.guessComponentType(name.toLowerCase());
-      const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-      const textLayers = this.findTextLayers(comp);
-      let variants = [];
-      let variantDetails = {};
-      if (comp.type === "COMPONENT_SET") {
-        const variantProps = comp.variantGroupProperties;
-        if (variantProps) {
-          variants = Object.keys(variantProps);
-          Object.entries(variantProps).forEach(([propName, propInfo]) => {
-            if (propInfo.values && propInfo.values.length > 0) {
-              variantDetails[propName] = [...propInfo.values].sort();
-              console.log(`\u2705 Found variant property: ${propName} with values: [${propInfo.values.join(", ")}]`);
-            }
-          });
-          console.log(`\u{1F3AF} Variant details for "${comp.name}":`, variantDetails);
-        }
-      }
-      return {
-        id: comp.id,
-        name,
-        suggestedType,
-        confidence,
-        variants: variants.length > 0 ? variants : void 0,
-        variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
-        textLayers: textLayers.length > 0 ? textLayers : void 0,
-        isFromLibrary: false
-      };
-    }
-    /**
-     * Intelligent component type detection based on naming patterns
-     */
-    static guessComponentType(name) {
-      var _a;
-      const patterns = {
-        "icon-button": /icon.*button|button.*icon/i,
-        "upload": /upload|file.*drop|drop.*zone|attach/i,
-        "form": /form|captcha|verification/i,
-        "context-menu": /context-menu|context menu|contextual menu|options menu/i,
-        "modal-header": /modal-header|modal header|modalstack|modal_stack/i,
-        "list-item": /list-item|list item|list_item|list[\s\-_]*row|list[\s\-_]*cell/i,
-        "appbar": /appbar|app-bar|navbar|nav-bar|header|top bar|page header/i,
-        "dialog": /dialog|dialogue|popup|modal(?!-header)/i,
-        "list": /list(?!-item)/i,
-        "navigation": /nav|navigation(?!-bar)/i,
-        "header": /h[1-6]|title|heading(?! bar)/i,
-        "button": /button|btn|cta|action/i,
-        "input": /input|field|textfield|text-field|entry/i,
-        "textarea": /textarea|text-area|multiline/i,
-        "select": /select|dropdown|drop-down|picker/i,
-        "checkbox": /checkbox|check-box/i,
-        "radio": /radio|radiobutton|radio-button/i,
-        "switch": /switch|toggle/i,
-        "slider": /slider|range/i,
-        "searchbar": /search|searchbar|search-bar/i,
-        "tab": /tab|tabs|tabbar|tab-bar/i,
-        "breadcrumb": /breadcrumb|bread-crumb/i,
-        "pagination": /pagination|pager/i,
-        "bottomsheet": /bottomsheet|bottom-sheet|drawer/i,
-        "sidebar": /sidebar|side-bar/i,
-        "snackbar": /snack|snackbar|toast|notification/i,
-        "alert": /alert/i,
-        "tooltip": /tooltip|tip|hint/i,
-        "badge": /badge|indicator|count/i,
-        "progress": /progress|loader|loading|spinner/i,
-        "skeleton": /skeleton|placeholder/i,
-        "card": /card|tile|block|panel/i,
-        "avatar": /avatar|profile|user|photo/i,
-        "image": /image|img|picture/i,
-        "video": /video|player/i,
-        "icon": /icon|pictogram|symbol/i,
-        "text": /text|label|paragraph|caption|copy/i,
-        "link": /link|anchor/i,
-        "container": /container|wrapper|box|frame/i,
-        "grid": /grid/i,
-        "divider": /divider|separator|delimiter/i,
-        "spacer": /spacer|space|gap/i,
-        "fab": /fab|floating|float/i,
-        "chip": /chip|tag/i,
-        "actionsheet": /actionsheet|action-sheet/i,
-        "chart": /chart|graph/i,
-        "table": /table/i,
-        "calendar": /calendar|date/i,
-        "timeline": /timeline/i,
-        "gallery": /gallery|carousel/i,
-        "price": /price|cost/i,
-        "rating": /rating|star/i,
-        "cart": /cart|basket/i,
-        "map": /map|location/i,
-        "code": /code|syntax/i,
-        "terminal": /terminal|console/i
-      };
-      const priorityPatterns = [
-        "icon-button",
-        "upload",
-        "form",
-        "context-menu",
-        "modal-header",
-        "list-item",
-        "appbar",
-        "dialog",
-        "snackbar",
-        "bottomsheet",
-        "actionsheet",
-        "searchbar",
-        "fab",
-        "breadcrumb",
-        "pagination",
-        "skeleton",
-        "textarea",
-        "checkbox",
-        "radio",
-        "switch",
-        "slider",
-        "tab",
-        "navigation",
-        "tooltip",
-        "badge",
-        "progress",
-        "avatar",
-        "chip",
-        "stepper",
-        "chart",
-        "table",
-        "calendar",
-        "timeline",
-        "gallery",
-        "rating"
-      ];
-      for (const type of priorityPatterns) {
-        if ((_a = patterns[type]) == null ? void 0 : _a.test(name)) return type;
-      }
-      for (const type in patterns) {
-        if (patterns.hasOwnProperty(type) && !priorityPatterns.includes(type)) {
-          if (patterns[type].test(name)) return type;
-        }
-      }
-      return "unknown";
-    }
-    /**
-     * Calculates confidence score for component type detection
-     */
-    static calculateConfidence(name, suggestedType) {
-      if (suggestedType === "unknown") return 0.1;
-      if (name.toLowerCase() === suggestedType.toLowerCase()) return 0.95;
-      if (name.includes(suggestedType)) return 0.9;
-      if (name.toLowerCase().includes(suggestedType + "-") || name.toLowerCase().includes(suggestedType + "_")) return 0.85;
-      return 0.7;
-    }
-    /**
-     * Finds and catalogs text layers within a component
-     */
-    static findTextLayers(comp) {
-      const textLayers = [];
+    static extractStrokes(node) {
+      const colorInfos = [];
       try {
-        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-          const allNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
-          allNodes.forEach((node) => {
-            if (node.type === "TEXT" && node.name) {
-              const textNode = node;
-              textLayers.push(textNode.name);
-              try {
-                const chars = textNode.characters || "[empty]";
-                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
-              } catch (charError) {
-                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
+        if ("strokes" in node && node.strokes && Array.isArray(node.strokes)) {
+          for (const stroke of node.strokes) {
+            if (stroke.visible !== false) {
+              const colorInfo = this.convertPaintToColorInfo(stroke);
+              if (colorInfo) {
+                colorInfos.push(colorInfo);
               }
             }
-          });
+          }
         }
-      } catch (e) {
-        console.error(`Error finding text layers in "${comp.name}":`, e);
-      }
-      return textLayers;
-    }
-    /**
-     * Save scan results to Figma storage
-     */
-    static async saveScanResults(components) {
-      try {
-        const scanSession = {
-          components,
-          scanTime: Date.now(),
-          version: "1.0",
-          fileKey: figma.root.id
-        };
-        await figma.clientStorage.setAsync("design-system-scan", scanSession);
-        await figma.clientStorage.setAsync("last-scan-results", components);
-        console.log(`\u{1F4BE} Saved ${components.length} components with session data`);
       } catch (error) {
-        console.error("\u274C Error saving scan results:", error);
-        try {
-          await figma.clientStorage.setAsync("last-scan-results", components);
-          console.log("\u{1F4BE} Fallback save successful");
-        } catch (fallbackError) {
-          console.warn("\u26A0\uFE0F Could not save scan results:", fallbackError);
-        }
+        console.warn("Error extracting strokes:", error);
       }
+      return colorInfos;
     }
     /**
-     * Get component ID by type for UI generation
+     * Convert Figma Paint to ColorInfo
      */
-    static async getComponentIdByType(type) {
-      const searchType = type.toLowerCase();
-      const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-      if (scanResults && Array.isArray(scanResults)) {
-        const matchingComponent = scanResults.find(
-          (comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7
-        );
-        if (matchingComponent) return matchingComponent.id;
-        const nameMatchingComponent = scanResults.find(
-          (comp) => comp.name.toLowerCase().includes(searchType)
-        );
-        if (nameMatchingComponent) return nameMatchingComponent.id;
+    static convertPaintToColorInfo(paint) {
+      try {
+        if (paint.type === "SOLID" && paint.color) {
+          return {
+            type: "SOLID",
+            color: this.rgbToHex(paint.color),
+            opacity: paint.opacity || 1
+          };
+        }
+        if (paint.type === "GRADIENT_LINEAR" && paint.gradientStops) {
+          return {
+            type: "GRADIENT_LINEAR",
+            gradientStops: paint.gradientStops.map((stop) => ({
+              color: this.rgbToHex(stop.color),
+              position: stop.position
+            })),
+            opacity: paint.opacity || 1
+          };
+        }
+        if ((paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") && paint.gradientStops) {
+          return {
+            type: paint.type,
+            gradientStops: paint.gradientStops.map((stop) => ({
+              color: this.rgbToHex(stop.color),
+              position: stop.position
+            })),
+            opacity: paint.opacity || 1
+          };
+        }
+        if (paint.type === "IMAGE") {
+          return {
+            type: "IMAGE",
+            opacity: paint.opacity || 1
+          };
+        }
+      } catch (error) {
+        console.warn("Error converting paint to color info:", error);
       }
-      console.log(`\u274C Component ID for type "${type}" not found`);
       return null;
     }
     /**
-     * Get saved scan results from storage
+     * Convert RGB to hex color
      */
-    static async getSavedScanResults() {
-      try {
-        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-        return scanResults || null;
-      } catch (error) {
-        console.error("\u274C Error getting saved scan results:", error);
-        return null;
-      }
+    static rgbToHex(rgb) {
+      const toHex = (value) => {
+        const hex = Math.round(value * 255).toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      };
+      return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
     }
     /**
-     * Get scan session data
+     * Find primary text color by analyzing text nodes
      */
-    static async getScanSession() {
+    static findPrimaryTextColor(node) {
       try {
-        const scanSession = await figma.clientStorage.getAsync("design-system-scan");
-        return scanSession || null;
-      } catch (error) {
-        console.error("\u274C Error getting scan session:", error);
-        return null;
-      }
-    }
-    /**
-     * Update component type manually
-     */
-    static async updateComponentType(componentId, newType) {
-      try {
-        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-        if (scanResults && Array.isArray(scanResults)) {
-          let componentName = "";
-          const updatedResults = scanResults.map((comp) => {
-            if (comp.id === componentId) {
-              componentName = comp.name;
-              return __spreadProps(__spreadValues({}, comp), { suggestedType: newType, confidence: 1 });
+        const textNodes = node.findAll((n) => n.type === "TEXT");
+        for (const textNode of textNodes) {
+          if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
+            for (const fill of textNode.fills) {
+              if (fill.visible !== false && fill.type === "SOLID") {
+                return this.convertPaintToColorInfo(fill);
+              }
             }
-            return comp;
-          });
-          await this.saveScanResults(updatedResults);
-          return { success: true, componentName };
+          }
         }
-        return { success: false };
       } catch (error) {
-        console.error("\u274C Error updating component type:", error);
-        return { success: false };
+        console.warn("Error finding text color:", error);
       }
+      return null;
     }
     /**
-     * Clear all scan data
+     * Find background color by analyzing the largest rectangle or container
      */
-    static async clearScanData() {
+    static findBackgroundColor(node) {
       try {
-        await figma.clientStorage.setAsync("design-system-scan", null);
-        await figma.clientStorage.setAsync("last-scan-results", null);
-        console.log("\u2705 Scan data cleared");
+        const rectangles = node.findAll(
+          (n) => n.type === "RECTANGLE" || n.type === "FRAME" || n.type === "COMPONENT"
+        );
+        rectangles.sort((a, b) => {
+          const areaA = a.width * a.height;
+          const areaB = b.width * b.height;
+          return areaB - areaA;
+        });
+        for (const rect of rectangles) {
+          if ("fills" in rect && rect.fills && Array.isArray(rect.fills)) {
+            for (const fill of rect.fills) {
+              if (fill.visible !== false) {
+                const colorInfo = this.convertPaintToColorInfo(fill);
+                if (colorInfo && colorInfo.type === "SOLID") {
+                  return colorInfo;
+                }
+              }
+            }
+          }
+        }
       } catch (error) {
-        console.error("\u274C Error clearing scan data:", error);
+        console.warn("Error finding background color:", error);
       }
+      return null;
     }
   };
 
@@ -1468,23 +1458,23 @@
       return "chip appearance and behavior";
     }
   };
-  var PerformanceTracker = class {
+  var _PerformanceTracker = class _PerformanceTracker {
     static async track(operation, fn) {
       const start = Date.now();
       try {
         return await fn();
       } finally {
         const duration = Date.now() - start;
-        if (!this.metrics.has(operation)) {
-          this.metrics.set(operation, []);
+        if (!_PerformanceTracker.metrics.has(operation)) {
+          _PerformanceTracker.metrics.set(operation, []);
         }
-        this.metrics.get(operation).push(duration);
+        _PerformanceTracker.metrics.get(operation).push(duration);
         console.log(`\u23F1\uFE0F ${operation}: ${duration.toFixed(2)}ms`);
       }
     }
     static getReport() {
       const report = {};
-      this.metrics.forEach((durations, operation) => {
+      _PerformanceTracker.metrics.forEach((durations, operation) => {
         report[operation] = {
           avg: durations.reduce((a, b) => a + b, 0) / durations.length,
           min: Math.min(...durations),
@@ -1494,31 +1484,32 @@
       return report;
     }
   };
-  PerformanceTracker.metrics = /* @__PURE__ */ new Map();
-  var ComponentPropertyEngine = class {
+  _PerformanceTracker.metrics = /* @__PURE__ */ new Map();
+  var PerformanceTracker = _PerformanceTracker;
+  var _ComponentPropertyEngine = class _ComponentPropertyEngine {
     static async initialize() {
       try {
         await PerformanceTracker.track("engine-initialization", async () => {
           figma.skipInvisibleInstanceChildren = true;
-          await this.preloadCommonFonts();
+          await _ComponentPropertyEngine.preloadCommonFonts();
           const scanResults = await figma.clientStorage.getAsync("last-scan-results");
           if (!scanResults || !Array.isArray(scanResults)) {
             console.warn("\u26A0\uFE0F No scan results found. Run ComponentScanner.scanDesignSystem() first.");
             return;
           }
           for (const component of scanResults) {
-            const schema = await this.buildComponentSchemaFromScanData(component);
-            this.componentSchemas.set(component.id, schema);
+            const schema = await _ComponentPropertyEngine.buildComponentSchemaFromScanData(component);
+            _ComponentPropertyEngine.componentSchemas.set(component.id, schema);
             console.log(`\u{1F4CB} Loaded schema for ${schema.name} (${schema.id})`);
           }
         });
-        console.log(`\u{1F3AF} ComponentPropertyEngine initialized with ${this.componentSchemas.size} component schemas`);
+        console.log(`\u{1F3AF} ComponentPropertyEngine initialized with ${_ComponentPropertyEngine.componentSchemas.size} component schemas`);
       } catch (error) {
         console.error("\u274C Failed to initialize ComponentPropertyEngine:", error);
       }
     }
     static async preloadCommonFonts() {
-      if (this.commonFontsLoaded) return;
+      if (_ComponentPropertyEngine.commonFontsLoaded) return;
       const commonFonts = [
         { family: "Inter", style: "Regular" },
         { family: "Inter", style: "Medium" },
@@ -1532,7 +1523,7 @@
           console.warn(`\u26A0\uFE0F Could not preload font: ${font.family} ${font.style}`);
         })
       ));
-      this.commonFontsLoaded = true;
+      _ComponentPropertyEngine.commonFontsLoaded = true;
       console.log("\u2705 Common fonts preloaded");
     }
     static async buildComponentSchemaFromScanData(scanData) {
@@ -1597,7 +1588,7 @@
         componentType: scanData.suggestedType || "unknown",
         scanTimestamp: Date.now(),
         scanVersion: "1.1",
-        componentHash: this.generateComponentHash(scanData)
+        componentHash: "hash_" + Date.now().toString(36)
       };
     }
     static generateComponentHash(scanData) {
@@ -1607,7 +1598,17 @@
         textLayers: (_a = scanData.textLayers) == null ? void 0 : _a.length,
         componentInstances: (_b = scanData.componentInstances) == null ? void 0 : _b.length
       });
-      return btoa(hashData).substring(0, 8);
+      try {
+        return btoa(hashData).substring(0, 8);
+      } catch (e) {
+        let hash = 0;
+        for (let i = 0; i < hashData.length; i++) {
+          const char = hashData.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).substring(0, 8);
+      }
     }
     static inferTextDataType(componentType, layerName) {
       const layerLower = layerName.toLowerCase();
@@ -1777,10 +1778,10 @@
       return null;
     }
     static getComponentSchema(componentId) {
-      return this.componentSchemas.get(componentId) || null;
+      return _ComponentPropertyEngine.componentSchemas.get(componentId) || null;
     }
     static getAllSchemas() {
-      return Array.from(this.componentSchemas.values());
+      return Array.from(_ComponentPropertyEngine.componentSchemas.values());
     }
     static isSchemaStale(schema) {
       const staleThreshold = 7 * 24 * 60 * 60 * 1e3;
@@ -1868,13 +1869,14 @@
       return PerformanceTracker.getReport();
     }
   };
-  ComponentPropertyEngine.componentSchemas = /* @__PURE__ */ new Map();
-  ComponentPropertyEngine.componentHandlers = /* @__PURE__ */ new Map([
+  _ComponentPropertyEngine.componentSchemas = /* @__PURE__ */ new Map();
+  _ComponentPropertyEngine.componentHandlers = /* @__PURE__ */ new Map([
     ["tab", new TabComponentHandler()],
     ["tabs", new TabComponentHandler()],
     ["chip", new ChipComponentHandler()]
   ]);
-  ComponentPropertyEngine.commonFontsLoaded = false;
+  _ComponentPropertyEngine.commonFontsLoaded = false;
+  var ComponentPropertyEngine = _ComponentPropertyEngine;
 
   // src/core/json-migrator.ts
   var JSONMigrator = class {
@@ -2192,8 +2194,18 @@
       if (props.color) {
         const fills = textNode.fills;
         if (fills.length > 0 && fills[0].type === "SOLID") {
-          textNode.fills = [{ type: "SOLID", color: props.color }];
-          textNode.fills = fills;
+          if (typeof props.color === "string") {
+            console.log(`\u{1F3A8} Attempting to resolve semantic color: "${props.color}"`);
+            const resolvedColor = this.resolveSemanticColor(props.color);
+            if (resolvedColor) {
+              textNode.fills = [this.createSolidPaint(resolvedColor)];
+              console.log(`\u2705 Applied semantic color "${props.color}" to text`);
+            } else {
+              console.warn(`\u26A0\uFE0F Could not resolve semantic color "${props.color}", skipping color application`);
+            }
+          } else {
+            textNode.fills = [{ type: "SOLID", color: props.color }];
+          }
         }
       }
       this.applyChildLayoutProperties(textNode, props);
@@ -3135,6 +3147,562 @@ ${llmErrors}`);
         figma.notify("Modification error: " + errorMessage, { error: true });
         console.error("\u274C modifyExistingUI error:", e);
         return null;
+      }
+    }
+    /**
+     * Initialize Color Styles from a scan session
+     */
+    static setColorStyles(colorStyles) {
+      this.cachedColorStyles = colorStyles;
+      if (colorStyles) {
+        const totalStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+        console.log(`\u{1F3A8} FigmaRenderer: Loaded ${totalStyles} Color Styles for semantic color resolution`);
+      }
+    }
+    /**
+     * Resolve semantic color names to actual RGB values from scanned Color Styles
+     * Examples: "primary", "secondary", "primary-500", "neutral-100", "success"
+     */
+    static resolveSemanticColor(semanticColorName) {
+      if (!this.cachedColorStyles) {
+        console.warn(`\u26A0\uFE0F No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
+        return null;
+      }
+      console.log(`\u{1F3A8} Resolving semantic color: "${semanticColorName}"`);
+      const { category, variant } = this.parseSemanticColorName(semanticColorName);
+      const categoryStyles = this.cachedColorStyles[category];
+      if (!categoryStyles || categoryStyles.length === 0) {
+        console.warn(`\u26A0\uFE0F No Color Styles found for category "${category}"`);
+        return this.getFallbackColor(category);
+      }
+      if (variant) {
+        const exactMatch = categoryStyles.find((style) => style.variant === variant);
+        if (exactMatch && exactMatch.colorInfo.type === "SOLID") {
+          console.log(`\u2705 Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
+          return this.hexToRgb(exactMatch.colorInfo.color || "#000000");
+        }
+      }
+      const defaultVariants = ["default", "500", "50", "100", ""];
+      for (const defaultVariant of defaultVariants) {
+        const defaultMatch = categoryStyles.find(
+          (style) => !style.variant || style.variant === defaultVariant
+        );
+        if (defaultMatch && defaultMatch.colorInfo.type === "SOLID") {
+          console.log(`\u2705 Found default variant: ${defaultMatch.name} (${defaultMatch.colorInfo.color})`);
+          return this.hexToRgb(defaultMatch.colorInfo.color || "#000000");
+        }
+      }
+      const firstStyle = categoryStyles[0];
+      if (firstStyle && firstStyle.colorInfo.type === "SOLID") {
+        console.log(`\u2705 Using first available: ${firstStyle.name} (${firstStyle.colorInfo.color})`);
+        return this.hexToRgb(firstStyle.colorInfo.color || "#000000");
+      }
+      console.warn(`\u26A0\uFE0F Could not resolve semantic color "${semanticColorName}"`);
+      return this.getFallbackColor(category);
+    }
+    /**
+     * Parse semantic color name to extract category and variant
+     * Examples: "primary-500" -> { category: "primary", variant: "500" }
+     *          "secondary" -> { category: "secondary", variant: null }
+     */
+    static parseSemanticColorName(semanticColorName) {
+      const name = semanticColorName.toLowerCase().trim();
+      const hyphenMatch = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface)-(\d+)$/);
+      if (hyphenMatch) {
+        return {
+          category: hyphenMatch[1],
+          variant: hyphenMatch[2]
+        };
+      }
+      const semanticMapping = {
+        "primary": "primary",
+        "secondary": "secondary",
+        "tertiary": "tertiary",
+        "neutral": "neutral",
+        "semantic": "semantic",
+        "surface": "surface",
+        "brand": "primary",
+        "accent": "secondary",
+        "success": "semantic",
+        "error": "semantic",
+        "warning": "semantic",
+        "info": "semantic",
+        "danger": "semantic",
+        "green": "semantic",
+        "red": "semantic",
+        "blue": "semantic",
+        "yellow": "semantic",
+        "orange": "semantic"
+      };
+      const category = semanticMapping[name] || "other";
+      return { category, variant: null };
+    }
+    /**
+     * Get fallback colors when semantic resolution fails
+     */
+    static getFallbackColor(category) {
+      const fallbacks = {
+        primary: { r: 0.149, g: 0.376, b: 0.894 },
+        // Blue #2563EB
+        secondary: { r: 0.596, g: 0.525, b: 0.843 },
+        // Purple #9A8ED7
+        tertiary: { r: 0.627, g: 0.627, b: 0.627 },
+        // Gray #A0A0A0
+        neutral: { r: 0.627, g: 0.627, b: 0.627 },
+        // Gray #A0A0A0
+        semantic: { r: 0, g: 0.7, b: 0.3 },
+        // Green #00B53F
+        surface: { r: 0.98, g: 0.98, b: 0.98 },
+        // Light Gray #FAFAFA
+        other: { r: 0, g: 0, b: 0 }
+        // Black #000000
+      };
+      console.log(`\u{1F3A8} Using fallback color for category "${category}"`);
+      return fallbacks[category];
+    }
+    /**
+     * Convert hex color to RGB values (0-1 range)
+     */
+    static hexToRgb(hex) {
+      hex = hex.replace("#", "");
+      if (hex.length === 3) {
+        hex = hex.split("").map((char) => char + char).join("");
+      }
+      const r = parseInt(hex.substr(0, 2), 16) / 255;
+      const g = parseInt(hex.substr(2, 2), 16) / 255;
+      const b = parseInt(hex.substr(4, 2), 16) / 255;
+      return { r, g, b };
+    }
+    /**
+     * Create a solid paint from RGB values
+     */
+    static createSolidPaint(rgb, opacity = 1) {
+      return {
+        type: "SOLID",
+        color: rgb,
+        opacity
+      };
+    }
+    /**
+     * Helper method to resolve and apply semantic colors to text nodes
+     */
+    static applySemanticTextColor(textNode, semanticColorName) {
+      const rgb = this.resolveSemanticColor(semanticColorName);
+      if (rgb) {
+        textNode.fills = [this.createSolidPaint(rgb)];
+        console.log(`\u2705 Applied semantic color "${semanticColorName}" to text node`);
+        return true;
+      }
+      return false;
+    }
+    /**
+     * Helper method to resolve and apply semantic colors to any node with fills
+     */
+    static applySemanticFillColor(node, semanticColorName) {
+      const rgb = this.resolveSemanticColor(semanticColorName);
+      if (rgb && "fills" in node) {
+        node.fills = [this.createSolidPaint(rgb)];
+        console.log(`\u2705 Applied semantic fill color "${semanticColorName}" to node`);
+        return true;
+      }
+      return false;
+    }
+  };
+  // Static storage for Color Styles scanned from the design system
+  FigmaRenderer.cachedColorStyles = null;
+
+  // src/core/design-system-scanner-service.ts
+  var DesignSystemScannerService = class {
+    /**
+     * Main scanning function - scans all pages for components and Color Styles
+     */
+    static async scanDesignSystem(progressCallback) {
+      console.log("\u{1F50D} Starting comprehensive design system scan with Color Styles...");
+      try {
+        progressCallback == null ? void 0 : progressCallback({ current: 0, total: 100, status: "Initializing comprehensive scan..." });
+        const scanSession = await ComponentScanner.scanDesignSystem();
+        progressCallback == null ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles with renderer..." });
+        FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
+        progressCallback == null ? void 0 : progressCallback({ current: 100, total: 100, status: "Comprehensive scan complete!" });
+        return scanSession;
+      } catch (e) {
+        console.error("\u274C Critical error in comprehensive design system scan:", e);
+        throw e;
+      }
+    }
+    /**
+     * Legacy method for backward compatibility - returns only components
+     */
+    static async scanComponents(progressCallback) {
+      const session = await this.scanDesignSystem(progressCallback);
+      return session.components;
+    }
+    /**
+     * Scan only Color Styles without components
+     */
+    static async scanColorStyles() {
+      console.log("\u{1F3A8} Scanning only Color Styles...");
+      try {
+        const colorStyles = await ComponentScanner.scanFigmaColorStyles();
+        FigmaRenderer.setColorStyles(colorStyles);
+        return colorStyles;
+      } catch (e) {
+        console.error("\u274C Error scanning Color Styles:", e);
+        throw e;
+      }
+    }
+    // Remove the old implementation below and replace with legacy support
+    static async legacyScanImplementation(progressCallback) {
+      console.log("\u{1F50D} Starting legacy design system scan...");
+      const components = [];
+      try {
+        await figma.loadAllPagesAsync();
+        console.log("\u2705 All pages loaded");
+        const totalPages = figma.root.children.length;
+        let currentPage = 0;
+        progressCallback == null ? void 0 : progressCallback({ current: 0, total: totalPages, status: "Initializing scan..." });
+        for (const page of figma.root.children) {
+          currentPage++;
+          const pageStatus = `Scanning page: "${page.name}" (${currentPage}/${totalPages})`;
+          console.log(`\u{1F4CB} ${pageStatus}`);
+          progressCallback == null ? void 0 : progressCallback({
+            current: currentPage,
+            total: totalPages,
+            status: pageStatus
+          });
+          try {
+            const allNodes = page.findAll((node) => {
+              if (node.type === "COMPONENT_SET") {
+                return true;
+              }
+              if (node.type === "COMPONENT") {
+                return !!(node.parent && node.parent.type !== "COMPONENT_SET");
+              }
+              return false;
+            });
+            console.log(`\u2705 Found ${allNodes.length} main components on page "${page.name}"`);
+            for (const node of allNodes) {
+              try {
+                if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
+                  const componentInfo = await ComponentScanner.analyzeComponent(node);
+                  if (componentInfo) {
+                    componentInfo.pageInfo = {
+                      pageName: page.name,
+                      pageId: page.id,
+                      isCurrentPage: page.id === figma.currentPage.id
+                    };
+                    components.push(componentInfo);
+                  }
+                }
+              } catch (e) {
+                console.error(`\u274C Error analyzing component "${node.name}":`, e);
+              }
+            }
+          } catch (e) {
+            console.error(`\u274C Error scanning page "${page.name}":`, e);
+          }
+        }
+        progressCallback == null ? void 0 : progressCallback({
+          current: totalPages,
+          total: totalPages,
+          status: `Scan complete! Found ${components.length} components`
+        });
+        console.log(`\u{1F389} Design system scan complete! Found ${components.length} unique components.`);
+        return components;
+      } catch (e) {
+        console.error("\u274C Critical error in design system scan:", e);
+        throw e;
+      }
+    }
+    /**
+     * Generate LLM prompt - delegated to ComponentScanner
+     */
+    static generateLLMPrompt(components) {
+      return ComponentScanner.generateLLMPrompt(components);
+    }
+    /**
+     * Analyzes a single component to extract metadata and variants
+     * @deprecated Use ComponentScanner.analyzeComponent instead
+     */
+    static analyzeComponent(comp) {
+      const name = comp.name;
+      const suggestedType = this.guessComponentType(name.toLowerCase());
+      const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+      const textLayers = this.findTextLayers(comp);
+      let variants = [];
+      let variantDetails = {};
+      if (comp.type === "COMPONENT_SET") {
+        const variantProps = comp.variantGroupProperties;
+        if (variantProps) {
+          variants = Object.keys(variantProps);
+          Object.entries(variantProps).forEach(([propName, propInfo]) => {
+            if (propInfo.values && propInfo.values.length > 0) {
+              variantDetails[propName] = [...propInfo.values].sort();
+              console.log(`\u2705 Found variant property: ${propName} with values: [${propInfo.values.join(", ")}]`);
+            }
+          });
+          console.log(`\u{1F3AF} Variant details for "${comp.name}":`, variantDetails);
+        }
+      }
+      return {
+        id: comp.id,
+        name,
+        suggestedType,
+        confidence,
+        variants: variants.length > 0 ? variants : void 0,
+        variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
+        textLayers: textLayers.length > 0 ? textLayers : void 0,
+        isFromLibrary: false
+      };
+    }
+    /**
+     * Intelligent component type detection based on naming patterns
+     */
+    static guessComponentType(name) {
+      var _a;
+      const patterns = {
+        "icon-button": /icon.*button|button.*icon/i,
+        "upload": /upload|file.*drop|drop.*zone|attach/i,
+        "form": /form|captcha|verification/i,
+        "context-menu": /context-menu|context menu|contextual menu|options menu/i,
+        "modal-header": /modal-header|modal header|modalstack|modal_stack/i,
+        "list-item": /list-item|list item|list_item|list[\s\-_]*row|list[\s\-_]*cell/i,
+        "appbar": /appbar|app-bar|navbar|nav-bar|header|top bar|page header/i,
+        "dialog": /dialog|dialogue|popup|modal(?!-header)/i,
+        "list": /list(?!-item)/i,
+        "navigation": /nav|navigation(?!-bar)/i,
+        "header": /h[1-6]|title|heading(?! bar)/i,
+        "button": /button|btn|cta|action/i,
+        "input": /input|field|textfield|text-field|entry/i,
+        "textarea": /textarea|text-area|multiline/i,
+        "select": /select|dropdown|drop-down|picker/i,
+        "checkbox": /checkbox|check-box/i,
+        "radio": /radio|radiobutton|radio-button/i,
+        "switch": /switch|toggle/i,
+        "slider": /slider|range/i,
+        "searchbar": /search|searchbar|search-bar/i,
+        "tab": /tab|tabs|tabbar|tab-bar/i,
+        "breadcrumb": /breadcrumb|bread-crumb/i,
+        "pagination": /pagination|pager/i,
+        "bottomsheet": /bottomsheet|bottom-sheet|drawer/i,
+        "sidebar": /sidebar|side-bar/i,
+        "snackbar": /snack|snackbar|toast|notification/i,
+        "alert": /alert/i,
+        "tooltip": /tooltip|tip|hint/i,
+        "badge": /badge|indicator|count/i,
+        "progress": /progress|loader|loading|spinner/i,
+        "skeleton": /skeleton|placeholder/i,
+        "card": /card|tile|block|panel/i,
+        "avatar": /avatar|profile|user|photo/i,
+        "image": /image|img|picture/i,
+        "video": /video|player/i,
+        "icon": /icon|pictogram|symbol/i,
+        "text": /text|label|paragraph|caption|copy/i,
+        "link": /link|anchor/i,
+        "container": /container|wrapper|box|frame/i,
+        "grid": /grid/i,
+        "divider": /divider|separator|delimiter/i,
+        "spacer": /spacer|space|gap/i,
+        "fab": /fab|floating|float/i,
+        "chip": /chip|tag/i,
+        "actionsheet": /actionsheet|action-sheet/i,
+        "chart": /chart|graph/i,
+        "table": /table/i,
+        "calendar": /calendar|date/i,
+        "timeline": /timeline/i,
+        "gallery": /gallery|carousel/i,
+        "price": /price|cost/i,
+        "rating": /rating|star/i,
+        "cart": /cart|basket/i,
+        "map": /map|location/i,
+        "code": /code|syntax/i,
+        "terminal": /terminal|console/i
+      };
+      const priorityPatterns = [
+        "icon-button",
+        "upload",
+        "form",
+        "context-menu",
+        "modal-header",
+        "list-item",
+        "appbar",
+        "dialog",
+        "snackbar",
+        "bottomsheet",
+        "actionsheet",
+        "searchbar",
+        "fab",
+        "breadcrumb",
+        "pagination",
+        "skeleton",
+        "textarea",
+        "checkbox",
+        "radio",
+        "switch",
+        "slider",
+        "tab",
+        "navigation",
+        "tooltip",
+        "badge",
+        "progress",
+        "avatar",
+        "chip",
+        "stepper",
+        "chart",
+        "table",
+        "calendar",
+        "timeline",
+        "gallery",
+        "rating"
+      ];
+      for (const type of priorityPatterns) {
+        if ((_a = patterns[type]) == null ? void 0 : _a.test(name)) return type;
+      }
+      for (const type in patterns) {
+        if (patterns.hasOwnProperty(type) && !priorityPatterns.includes(type)) {
+          if (patterns[type].test(name)) return type;
+        }
+      }
+      return "unknown";
+    }
+    /**
+     * Calculates confidence score for component type detection
+     */
+    static calculateConfidence(name, suggestedType) {
+      if (suggestedType === "unknown") return 0.1;
+      if (name.toLowerCase() === suggestedType.toLowerCase()) return 0.95;
+      if (name.includes(suggestedType)) return 0.9;
+      if (name.toLowerCase().includes(suggestedType + "-") || name.toLowerCase().includes(suggestedType + "_")) return 0.85;
+      return 0.7;
+    }
+    /**
+     * Finds and catalogs text layers within a component
+     */
+    static findTextLayers(comp) {
+      const textLayers = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const allNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
+          allNodes.forEach((node) => {
+            if (node.type === "TEXT" && node.name) {
+              const textNode = node;
+              textLayers.push(textNode.name);
+              try {
+                const chars = textNode.characters || "[empty]";
+                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
+              } catch (charError) {
+                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.error(`Error finding text layers in "${comp.name}":`, e);
+      }
+      return textLayers;
+    }
+    /**
+     * Save scan results to Figma storage
+     */
+    static async saveScanResults(components) {
+      try {
+        const scanSession = {
+          components,
+          scanTime: Date.now(),
+          version: "1.0",
+          fileKey: figma.root.id
+        };
+        await figma.clientStorage.setAsync("design-system-scan", scanSession);
+        await figma.clientStorage.setAsync("last-scan-results", components);
+        console.log(`\u{1F4BE} Saved ${components.length} components with session data`);
+      } catch (error) {
+        console.error("\u274C Error saving scan results:", error);
+        try {
+          await figma.clientStorage.setAsync("last-scan-results", components);
+          console.log("\u{1F4BE} Fallback save successful");
+        } catch (fallbackError) {
+          console.warn("\u26A0\uFE0F Could not save scan results:", fallbackError);
+        }
+      }
+    }
+    /**
+     * Get component ID by type for UI generation
+     */
+    static async getComponentIdByType(type) {
+      const searchType = type.toLowerCase();
+      const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+      if (scanResults && Array.isArray(scanResults)) {
+        const matchingComponent = scanResults.find(
+          (comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7
+        );
+        if (matchingComponent) return matchingComponent.id;
+        const nameMatchingComponent = scanResults.find(
+          (comp) => comp.name.toLowerCase().includes(searchType)
+        );
+        if (nameMatchingComponent) return nameMatchingComponent.id;
+      }
+      console.log(`\u274C Component ID for type "${type}" not found`);
+      return null;
+    }
+    /**
+     * Get saved scan results from storage
+     */
+    static async getSavedScanResults() {
+      try {
+        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+        return scanResults || null;
+      } catch (error) {
+        console.error("\u274C Error getting saved scan results:", error);
+        return null;
+      }
+    }
+    /**
+     * Get scan session data
+     */
+    static async getScanSession() {
+      try {
+        const scanSession = await figma.clientStorage.getAsync("design-system-scan");
+        return scanSession || null;
+      } catch (error) {
+        console.error("\u274C Error getting scan session:", error);
+        return null;
+      }
+    }
+    /**
+     * Update component type manually
+     */
+    static async updateComponentType(componentId, newType) {
+      try {
+        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+        if (scanResults && Array.isArray(scanResults)) {
+          let componentName = "";
+          const updatedResults = scanResults.map((comp) => {
+            if (comp.id === componentId) {
+              componentName = comp.name;
+              return __spreadProps(__spreadValues({}, comp), { suggestedType: newType, confidence: 1 });
+            }
+            return comp;
+          });
+          await this.saveScanResults(updatedResults);
+          return { success: true, componentName };
+        }
+        return { success: false };
+      } catch (error) {
+        console.error("\u274C Error updating component type:", error);
+        return { success: false };
+      }
+    }
+    /**
+     * Clear all scan data
+     */
+    static async clearScanData() {
+      try {
+        await figma.clientStorage.setAsync("design-system-scan", null);
+        await figma.clientStorage.setAsync("last-scan-results", null);
+        console.log("\u2705 Scan data cleared");
+      } catch (error) {
+        console.error("\u274C Error clearing scan data:", error);
       }
     }
   };
@@ -7199,7 +7767,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       await ComponentPropertyEngine.initialize();
       console.log("\u2705 Plugin initialized with systematic property validation");
     } catch (error) {
-      console.warn("Could not initialize property engine:", error);
+      console.warn("\u26A0\uFE0F Could not initialize property engine:", error);
     }
   }
   async function main() {
@@ -7280,51 +7848,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           } catch (e) {
             const errorMessage = e instanceof Error ? e.message : String(e);
             figma.notify("Modification error: " + errorMessage, { error: true });
-            figma.ui.postMessage({ type: "ui-generation-error", error: errorMessage });
-          }
-          break;
-        // ENHANCED: API-driven UI modification with validation
-        case "modify-ui-from-prompt":
-          try {
-            const { originalJSON, modificationRequest, systemPrompt, frameId, enableValidation = true } = msg.payload;
-            const geminiAPI = await GeminiAPI.createFromStorage();
-            if (!geminiAPI) {
-              throw new Error("No API key configured");
-            }
-            console.log("\u{1F504} Modifying UI with API...");
-            const response = await geminiAPI.modifyExistingUI(originalJSON, modificationRequest, systemPrompt);
-            if (!response.success) {
-              throw new Error(response.error || "API modification failed");
-            }
-            let finalJSON = response.content || "{}";
-            let validationResult;
-            let retryCount = 0;
-            if (enableValidation && validationEngine) {
-              console.log("\u{1F50D} Validating modified JSON...");
-              const validationData = await validationEngine.validateWithRetry(
-                finalJSON,
-                modificationRequest,
-                geminiAPI
-              );
-              validationResult = validationData.result;
-              finalJSON = validationData.finalJSON;
-              retryCount = validationData.retryCount;
-              console.log(`\u{1F4CA} Modification validation: ${validationEngine.getValidationSummary(validationResult)}`);
-            }
-            const modifiedJSON = JSON.parse(finalJSON);
-            const modifiedFrame = await FigmaRenderer.modifyExistingUI(modifiedJSON, frameId);
-            if (modifiedFrame) {
-              figma.ui.postMessage({
-                type: "ui-modified-success",
-                frameId: modifiedFrame.id,
-                modifiedJSON,
-                validationResult,
-                retryCount
-              });
-            }
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            figma.notify("API modification error: " + errorMessage, { error: true });
             figma.ui.postMessage({ type: "ui-generation-error", error: errorMessage });
           }
           break;
@@ -7643,19 +8166,78 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           try {
             const { prompt } = msg.payload;
             console.log("\u26A1 Starting 3-stage AI pipeline with prompt:", prompt);
-            figma.ui.postMessage({
-              type: "3stage-pipeline-error",
-              error: 'Please run the 3-stage pipeline manually: python3 instance.py alt3 --input "' + prompt + '"'
+            figma.notify("\u{1F680} Running 3-stage pipeline...", { timeout: 3e4 });
+            let designSystemData = null;
+            try {
+              const savedScan = await DesignSystemScannerService.getScanSession();
+              if (savedScan && savedScan.components && savedScan.components.length > 0) {
+                designSystemData = savedScan.components;
+                console.log(`\u{1F4CA} Sending ${designSystemData.length} components to pipeline`);
+              } else {
+                console.warn("\u26A0\uFE0F No design system data available. Consider scanning first.");
+              }
+            } catch (error) {
+              console.warn("\u26A0\uFE0F Could not load design system data:", error);
+            }
+            const requestBody = { prompt };
+            if (designSystemData) {
+              requestBody.design_system_data = designSystemData;
+            }
+            const response = await fetch("http://localhost:8000/api/generate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(requestBody)
             });
-            figma.notify("\u26A1 Run Python pipeline manually and copy JSON result", { timeout: 5e3 });
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const result = await response.json();
+            if (result.success) {
+              console.log("\u2705 3-stage pipeline completed successfully!");
+              const stage3Content = result.stages.stage_3.content;
+              let finalJSON;
+              try {
+                finalJSON = JSON.parse(stage3Content);
+              } catch (e) {
+                throw new Error("Failed to parse JSON from pipeline result");
+              }
+              const newFrame = await FigmaRenderer.generateUIFromDataDynamic(finalJSON);
+              if (newFrame) {
+                figma.ui.postMessage({
+                  type: "3stage-pipeline-success",
+                  result: {
+                    frameId: newFrame.id,
+                    generatedJSON: finalJSON,
+                    runId: result.run_id,
+                    stagesCompleted: 3,
+                    originalPrompt: prompt
+                  }
+                });
+                figma.notify("\u2705 3-stage pipeline completed and UI rendered!", { timeout: 3e3 });
+              } else {
+                throw new Error("Failed to render UI from generated JSON");
+              }
+            } else {
+              throw new Error(result.error || "Pipeline execution failed");
+            }
           } catch (error) {
             console.error("\u274C 3-stage pipeline error:", error);
             const errorMessage = error instanceof Error ? error.message : String(error);
-            figma.ui.postMessage({
-              type: "3stage-pipeline-error",
-              error: errorMessage
-            });
-            figma.notify(`\u274C 3-stage pipeline failed: ${errorMessage}`, { error: true });
+            if (errorMessage.includes("fetch") || errorMessage.includes("NetworkError") || errorMessage.includes("Failed to fetch")) {
+              figma.ui.postMessage({
+                type: "3stage-pipeline-error",
+                error: "Server not running. Please start the server with: python3 instance.py server"
+              });
+              figma.notify("\u274C Please start the Python server first", { error: true });
+            } else {
+              figma.ui.postMessage({
+                type: "3stage-pipeline-error",
+                error: errorMessage
+              });
+              figma.notify(`\u274C Pipeline failed: ${errorMessage}`, { error: true });
+            }
           }
           break;
         case "render-json-direct":
@@ -7785,7 +8367,9 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
         break;
     }
   });
-  initializePlugin();
+  initializePlugin().catch((error) => {
+    console.warn("\u26A0\uFE0F Plugin initialization warning:", error);
+  });
   main().catch((err) => {
     console.error("\u274C Unhandled error:", err);
     figma.closePlugin("A critical error occurred.");

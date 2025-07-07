@@ -349,7 +349,7 @@ class Alternative3StagePipeline:
                 return str(self.live_design_system_data)
         
         # Fallback to static file
-        design_system_file = "src/prompts/roles/design-system-scan-data.json"
+        design_system_file = "design-system-raw-data-2025-07-07T18-45-53.json"
         if not os.path.exists(design_system_file):
             return "No design system data available"
         

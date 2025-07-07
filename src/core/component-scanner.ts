@@ -3,8 +3,29 @@
 
 import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo } from './session-manager';
 
+export interface ColorStyle {
+  id: string;
+  name: string;
+  description?: string;
+  paints: Paint[];
+  category?: 'primary' | 'secondary' | 'tertiary' | 'neutral' | 'semantic' | 'surface' | 'other';
+  variant?: string; // e.g., '50', '100', '900' for material design scales
+  colorInfo: ColorInfo;
+}
+
+export interface ColorStyleCollection {
+  primary: ColorStyle[];
+  secondary: ColorStyle[];
+  tertiary: ColorStyle[];
+  neutral: ColorStyle[];
+  semantic: ColorStyle[];
+  surface: ColorStyle[];
+  other: ColorStyle[];
+}
+
 export interface ScanSession {
   components: ComponentInfo[];
+  colorStyles?: ColorStyleCollection;
   scanTime: number;
   version: string;
   fileKey?: string;
@@ -13,15 +34,187 @@ export interface ScanSession {
 export class ComponentScanner {
   
   /**
-   * Main scanning function - scans all pages for components
+   * Scan Figma Color Styles from the local file
    */
-  static async scanDesignSystem(): Promise<ComponentInfo[]> {
-    console.log("🔍 Starting scan...");
+  static async scanFigmaColorStyles(): Promise<ColorStyleCollection> {
+    console.log("🎨 Scanning Figma Color Styles...");
+    
+    try {
+      const paintStyles = await figma.getLocalPaintStylesAsync();
+      console.log(`✅ Found ${paintStyles.length} paint styles`);
+      
+      const colorStyleCollection: ColorStyleCollection = {
+        primary: [],
+        secondary: [],
+        tertiary: [],
+        neutral: [],
+        semantic: [],
+        surface: [],
+        other: []
+      };
+      
+      for (const paintStyle of paintStyles) {
+        try {
+          const colorStyle = await this.convertPaintStyleToColorStyle(paintStyle);
+          const category = this.categorizeColorStyle(colorStyle.name);
+          colorStyleCollection[category].push(colorStyle);
+          
+          console.log(`🎨 Categorized "${colorStyle.name}" as ${category} (variant: ${colorStyle.variant || 'none'})`);
+        } catch (error) {
+          console.warn(`⚠️ Failed to process paint style "${paintStyle.name}":`, error);
+        }
+      }
+      
+      // Log summary
+      const totalStyles = Object.values(colorStyleCollection).reduce((sum, styles) => sum + styles.length, 0);
+      console.log(`🎨 Color Styles Summary:`);
+      console.log(`   Primary: ${colorStyleCollection.primary.length}`);
+      console.log(`   Secondary: ${colorStyleCollection.secondary.length}`);
+      console.log(`   Tertiary: ${colorStyleCollection.tertiary.length}`);
+      console.log(`   Neutral: ${colorStyleCollection.neutral.length}`);
+      console.log(`   Semantic: ${colorStyleCollection.semantic.length}`);
+      console.log(`   Surface: ${colorStyleCollection.surface.length}`);
+      console.log(`   Other: ${colorStyleCollection.other.length}`);
+      console.log(`   Total: ${totalStyles} styles`);
+      
+      return colorStyleCollection;
+    } catch (error) {
+      console.error("❌ Failed to scan color styles:", error);
+      return {
+        primary: [],
+        secondary: [],
+        tertiary: [],
+        neutral: [],
+        semantic: [],
+        surface: [],
+        other: []
+      };
+    }
+  }
+  
+  /**
+   * Convert Figma PaintStyle to our ColorStyle interface
+   */
+  private static async convertPaintStyleToColorStyle(paintStyle: PaintStyle): Promise<ColorStyle> {
+    const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
+    const { category, variant } = this.parseColorStyleName(paintStyle.name);
+    
+    return {
+      id: paintStyle.id,
+      name: paintStyle.name,
+      description: paintStyle.description || undefined,
+      paints: paintStyle.paints,
+      category,
+      variant,
+      colorInfo: colorInfo || { type: 'SOLID', color: '#000000', opacity: 1 }
+    };
+  }
+  
+  /**
+   * Categorize a color style based on its name
+   * Supports patterns like: 'primary90', 'secondary50', 'neutral-100', 'Primary/500', etc.
+   */
+  static categorizeColorStyle(styleName: string): keyof ColorStyleCollection {
+    const name = styleName.toLowerCase();
+    
+    // Primary patterns
+    if (name.includes('primary') || name.includes('brand')) {
+      return 'primary';
+    }
+    
+    // Secondary patterns
+    if (name.includes('secondary') || name.includes('accent')) {
+      return 'secondary';
+    }
+    
+    // Tertiary patterns
+    if (name.includes('tertiary')) {
+      return 'tertiary';
+    }
+    
+    // Neutral patterns (grays, blacks, whites)
+    if (name.includes('neutral') || name.includes('gray') || name.includes('grey') || 
+        name.includes('black') || name.includes('white') || name.includes('slate')) {
+      return 'neutral';
+    }
+    
+    // Semantic patterns (success, error, warning, info)
+    if (name.includes('success') || name.includes('error') || name.includes('warning') || 
+        name.includes('info') || name.includes('danger') || name.includes('alert') ||
+        name.includes('green') || name.includes('red') || name.includes('yellow') || 
+        name.includes('blue') || name.includes('orange')) {
+      return 'semantic';
+    }
+    
+    // Surface patterns (background, surface, container)
+    if (name.includes('surface') || name.includes('background') || name.includes('container') ||
+        name.includes('backdrop') || name.includes('overlay')) {
+      return 'surface';
+    }
+    
+    // Default to other
+    return 'other';
+  }
+  
+  /**
+   * Parse color style name to extract category and variant
+   * Examples: 'primary90' -> { category: 'primary', variant: '90' }
+   *          'Primary/500' -> { category: 'primary', variant: '500' }
+   *          'neutral-100' -> { category: 'neutral', variant: '100' }
+   */
+  private static parseColorStyleName(styleName: string): { category: keyof ColorStyleCollection, variant?: string } {
+    const name = styleName.toLowerCase();
+    
+    // Pattern 1: name + number (e.g., 'primary90', 'secondary50')
+    const pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
+    if (pattern1) {
+      const [, colorName, variant] = pattern1;
+      return {
+        category: this.categorizeColorStyle(colorName),
+        variant
+      };
+    }
+    
+    // Pattern 2: name/number or name-number (e.g., 'Primary/500', 'neutral-100')
+    const pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
+    if (pattern2) {
+      const [, colorName, variant] = pattern2;
+      return {
+        category: this.categorizeColorStyle(colorName),
+        variant
+      };
+    }
+    
+    // Pattern 3: just category name
+    return {
+      category: this.categorizeColorStyle(name),
+      variant: undefined
+    };
+  }
+  
+  /**
+   * Main scanning function - scans all pages for components and color styles
+   */
+  static async scanDesignSystem(): Promise<ScanSession> {
+    console.log("🔍 Starting comprehensive design system scan...");
     const components: ComponentInfo[] = [];
+    let colorStyles: ColorStyleCollection | undefined;
+    
     try {
       await figma.loadAllPagesAsync();
       console.log("✅ All pages loaded");
       
+      // First, scan Color Styles
+      console.log("\n🎨 Phase 1: Scanning Color Styles...");
+      try {
+        colorStyles = await this.scanFigmaColorStyles();
+      } catch (error) {
+        console.warn("⚠️ Color Styles scanning failed, continuing without color styles:", error);
+        colorStyles = undefined;
+      }
+      
+      // Then, scan components
+      console.log("\n🧩 Phase 2: Scanning Components...");
       for (const page of figma.root.children) {
         console.log(`📋 Scanning page: "${page.name}"`);
         try {
@@ -59,12 +252,32 @@ export class ComponentScanner {
         }
       }
       
-      console.log(`🎉 Scan complete! Found ${components.length} unique components.`);
-      return components;
+      const scanSession: ScanSession = {
+        components,
+        colorStyles,
+        scanTime: Date.now(),
+        version: "2.0.0",
+        fileKey: figma.fileKey || undefined
+      };
+      
+      console.log(`\n🎉 Comprehensive scan complete!`);
+      console.log(`   📦 Components: ${components.length}`);
+      console.log(`   🎨 Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+      console.log(`   📄 File Key: ${scanSession.fileKey || 'Unknown'}`);
+      
+      return scanSession;
     } catch (e) {
       console.error("❌ Critical error in scanDesignSystem:", e);
       throw e;
     }
+  }
+  
+  /**
+   * Legacy method for backward compatibility - returns only components
+   */
+  static async scanComponents(): Promise<ComponentInfo[]> {
+    const session = await this.scanDesignSystem();
+    return session.components;
   }
 
   /**

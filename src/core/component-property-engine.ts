@@ -120,17 +120,17 @@ export class PerformanceTracker {
       return await fn();
     } finally {
       const duration = Date.now() - start;
-      if (!this.metrics.has(operation)) {
-        this.metrics.set(operation, []);
+      if (!PerformanceTracker.metrics.has(operation)) {
+        PerformanceTracker.metrics.set(operation, []);
       }
-      this.metrics.get(operation)!.push(duration);
+      PerformanceTracker.metrics.get(operation)!.push(duration);
       console.log(`⏱️ ${operation}: ${duration.toFixed(2)}ms`);
     }
   }
   
   static getReport(): { [operation: string]: { avg: number; min: number; max: number } } {
     const report: any = {};
-    this.metrics.forEach((durations, operation) => {
+    PerformanceTracker.metrics.forEach((durations, operation) => {
       report[operation] = {
         avg: durations.reduce((a, b) => a + b, 0) / durations.length,
         min: Math.min(...durations),
@@ -159,7 +159,7 @@ export class ComponentPropertyEngine {
         figma.skipInvisibleInstanceChildren = true;
         
         // Preload common fonts
-        await this.preloadCommonFonts();
+        await ComponentPropertyEngine.preloadCommonFonts();
         
         const scanResults: ComponentInfo[] | undefined = await figma.clientStorage.getAsync('last-scan-results');
         
@@ -169,20 +169,20 @@ export class ComponentPropertyEngine {
         }
         
         for (const component of scanResults) {
-          const schema = await this.buildComponentSchemaFromScanData(component);
-          this.componentSchemas.set(component.id, schema);
+          const schema = await ComponentPropertyEngine.buildComponentSchemaFromScanData(component);
+          ComponentPropertyEngine.componentSchemas.set(component.id, schema);
           console.log(`📋 Loaded schema for ${schema.name} (${schema.id})`);
         }
       });
       
-      console.log(`🎯 ComponentPropertyEngine initialized with ${this.componentSchemas.size} component schemas`);
+      console.log(`🎯 ComponentPropertyEngine initialized with ${ComponentPropertyEngine.componentSchemas.size} component schemas`);
     } catch (error) {
       console.error("❌ Failed to initialize ComponentPropertyEngine:", error);
     }
   }
 
   private static async preloadCommonFonts(): Promise<void> {
-    if (this.commonFontsLoaded) return;
+    if (ComponentPropertyEngine.commonFontsLoaded) return;
     
     const commonFonts = [
       { family: "Inter", style: "Regular" },
@@ -199,7 +199,7 @@ export class ComponentPropertyEngine {
       })
     ));
     
-    this.commonFontsLoaded = true;
+    ComponentPropertyEngine.commonFontsLoaded = true;
     console.log("✅ Common fonts preloaded");
   }
 
@@ -277,7 +277,7 @@ export class ComponentPropertyEngine {
       componentType: scanData.suggestedType || 'unknown',
       scanTimestamp: Date.now(),
       scanVersion: "1.1",
-      componentHash: this.generateComponentHash(scanData)
+      componentHash: "hash_" + Date.now().toString(36)
     };
   }
 
@@ -288,7 +288,20 @@ export class ComponentPropertyEngine {
       textLayers: scanData.textLayers?.length,
       componentInstances: scanData.componentInstances?.length
     });
-    return btoa(hashData).substring(0, 8);
+    
+    // Simple hash function for Figma environment (btoa may not be available)
+    try {
+      return btoa(hashData).substring(0, 8);
+    } catch (e) {
+      // Fallback: simple string hash
+      let hash = 0;
+      for (let i = 0; i < hashData.length; i++) {
+        const char = hashData.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+      }
+      return Math.abs(hash).toString(16).substring(0, 8);
+    }
   }
 
   private static inferTextDataType(componentType: string, layerName: string): 'single' | 'array' | 'object' {
@@ -497,11 +510,11 @@ export class ComponentPropertyEngine {
   }
 
   static getComponentSchema(componentId: string): ComponentSchema | null {
-    return this.componentSchemas.get(componentId) || null;
+    return ComponentPropertyEngine.componentSchemas.get(componentId) || null;
   }
 
   static getAllSchemas(): ComponentSchema[] {
-    return Array.from(this.componentSchemas.values());
+    return Array.from(ComponentPropertyEngine.componentSchemas.values());
   }
 
   static isSchemaStale(schema: ComponentSchema): boolean {
