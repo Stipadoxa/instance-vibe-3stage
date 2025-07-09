@@ -7986,9 +7986,13 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
         } else {
           console.log("\u2139\uFE0F Scan from different file, clearing cache");
           await DesignSystemScannerService.clearScanData();
+          console.log("\u{1F504} Auto-scanning design system for testing...");
+          await handleScanCommand();
         }
       } else {
         console.log("\u2139\uFE0F No saved design system found");
+        console.log("\u{1F504} Auto-scanning design system for testing...");
+        await handleScanCommand();
       }
     } catch (error) {
       console.error("\u274C Error loading session:", error);
@@ -8001,6 +8005,13 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       await DesignSystemScannerService.saveScanSession(scanSession);
       await ComponentPropertyEngine.initialize();
       const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+      figma.ui.postMessage({
+        type: "scan-results",
+        components: scanSession.components,
+        colorStyles: scanSession.colorStyles,
+        scanTime: scanSession.scanTime,
+        colorStylesCount
+      });
       figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
       if (scanSession.components.length > 0) {
         const sampleComponent = scanSession.components.find((c) => c.suggestedType === "tab") || scanSession.components[0];
@@ -8008,6 +8019,11 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       }
     } catch (error) {
       console.error("Scan failed:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      figma.ui.postMessage({
+        type: "scan-error",
+        error: errorMessage
+      });
       figma.notify("Scan failed. Check console for details.", { error: true });
     }
   }
