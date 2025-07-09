@@ -280,9 +280,17 @@ async function initializeSession() {
       } else {
         console.log("ℹ️ Scan from different file, clearing cache");
         await DesignSystemScannerService.clearScanData();
+        
+        // 🔥 AUTO-SCAN FOR TESTING: Automatically scan after clearing cache
+        console.log("🔄 Auto-scanning design system for testing...");
+        await handleScanCommand();
       }
     } else {
       console.log("ℹ️ No saved design system found");
+      
+      // 🔥 AUTO-SCAN FOR TESTING: Automatically scan design system on plugin startup
+      console.log("🔄 Auto-scanning design system for testing...");
+      await handleScanCommand();
     }
   } catch (error) {
     console.error("❌ Error loading session:", error);
@@ -303,6 +311,16 @@ async function handleScanCommand() {
     await ComponentPropertyEngine.initialize();
     
     const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+    
+    // Send scan results to UI (same as manual scan)
+    figma.ui.postMessage({ 
+      type: 'scan-results', 
+      components: scanSession.components,
+      colorStyles: scanSession.colorStyles,
+      scanTime: scanSession.scanTime,
+      colorStylesCount: colorStylesCount
+    });
+    
     figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
     
     // Optional: Show debug info for a sample component
@@ -312,6 +330,14 @@ async function handleScanCommand() {
     }
   } catch (error) {
     console.error("Scan failed:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    // Send scan error to UI (same as manual scan)
+    figma.ui.postMessage({ 
+      type: 'scan-error', 
+      error: errorMessage 
+    });
+    
     figma.notify("Scan failed. Check console for details.", { error: true });
   }
 }
