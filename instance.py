@@ -606,7 +606,15 @@ def main():
         # Alternative 3-stage pipeline
         alt_runner = Alternative3StagePipeline(api_key)
         default_input = "create a login page for a SaaS app"
-        initial_input = args.input or default_input
+        
+        # 🔥 TESTING: Read from user-request.txt if it exists
+        if os.path.exists("user-request.txt"):
+            with open("user-request.txt", "r", encoding="utf-8") as f:
+                initial_input = f.read().strip()
+            print(f"📁 Reading input from user-request.txt: {initial_input}")
+        else:
+            initial_input = args.input or default_input
+            
         asyncio.run(alt_runner.run_all_alt_stages(initial_input))
     
     
