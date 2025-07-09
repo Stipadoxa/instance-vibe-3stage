@@ -2,9 +2,16 @@
 // UI generation and rendering engine for AIDesigner
 
 import { ComponentScanner, ColorStyleCollection, ColorStyle } from './component-scanner';
-import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode } from './session-manager';
+import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, SessionManager } from './session-manager';
 import { ComponentPropertyEngine, PropertyValidationResult, PerformanceTracker } from './component-property-engine';
 import { JSONMigrator } from './json-migrator';
+
+// RGB type definition for color values
+interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
 
 export interface RenderOptions {
   parentNode?: FrameNode | PageNode;
@@ -244,6 +251,9 @@ export class FigmaRenderer {
       // Enable performance optimizations
       figma.skipInvisibleInstanceChildren = true;
       
+      // Load color styles if not already cached
+      await this.ensureColorStylesLoaded();
+      
       // Skip ComponentPropertyEngine for testing if no schemas available
       console.log('🔧 Checking ComponentPropertyEngine schemas...');
       const existingSchemas = ComponentPropertyEngine.getAllSchemas();
@@ -356,17 +366,57 @@ export class FigmaRenderer {
         // Check if color is a semantic color name (string)
         if (typeof props.color === 'string') {
           console.log(`🎨 Attempting to resolve semantic color: "${props.color}"`);
-          const resolvedColor = this.resolveSemanticColor(props.color);
-          if (resolvedColor) {
-            textNode.fills = [this.createSolidPaint(resolvedColor)];
-            console.log(`✅ Applied semantic color "${props.color}" to text`);
-          } else {
-            console.warn(`⚠️ Could not resolve semantic color "${props.color}", skipping color application`);
+          
+          try {
+            // Try to apply actual Figma color style first
+            const colorStyle = await this.resolveColorStyleReference(props.color);
+            if (colorStyle) {
+              await textNode.setFillStyleIdAsync(colorStyle.id);
+              console.log(`✅ Applied semantic color "${props.color}" to text (as style reference)`);
+            } else {
+              // Fallback to RGB color if style not found
+              const resolvedColor = this.resolveSemanticColor(props.color);
+              if (resolvedColor) {
+                textNode.fills = [this.createSolidPaint(resolvedColor)];
+                console.log(`✅ Applied semantic color "${props.color}" to text (as RGB fallback)`);
+              } else {
+                console.warn(`⚠️ Could not resolve semantic color "${props.color}", skipping color application`);
+              }
+            }
+          } catch (error) {
+            console.error(`❌ Error applying color "${props.color}":`, error);
+            // Continue without color if there's an error
           }
         } else {
           // Handle RGB object (existing behavior)
           textNode.fills = [{ type: 'SOLID', color: props.color }];
         }
+      }
+    }
+    
+    // Color style name support (new feature) - applies actual Figma color style
+    if (props.colorStyleName) {
+      console.log(`🎨 Attempting to resolve color style: "${props.colorStyleName}"`);
+      
+      try {
+        // Try to apply actual Figma color style first
+        const colorStyle = await this.resolveColorStyleReference(props.colorStyleName);
+        if (colorStyle) {
+          await textNode.setFillStyleIdAsync(colorStyle.id);
+          console.log(`✅ Applied color style "${props.colorStyleName}" to text (as style reference)`);
+        } else {
+          // Fallback to RGB color if style not found
+          const resolvedColor = this.resolveSemanticColor(props.colorStyleName);
+          if (resolvedColor) {
+            textNode.fills = [this.createSolidPaint(resolvedColor)];
+            console.log(`✅ Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
+          } else {
+            console.warn(`⚠️ Could not resolve color style "${props.colorStyleName}", skipping color application`);
+          }
+        }
+      } catch (error) {
+        console.error(`❌ Error applying color style "${props.colorStyleName}":`, error);
+        // Continue without color if there's an error
       }
     }
     
@@ -1651,6 +1701,28 @@ export class FigmaRenderer {
   }
   
   /**
+   * Ensure color styles are loaded before UI generation
+   */
+  static async ensureColorStylesLoaded(): Promise<void> {
+    if (!this.cachedColorStyles) {
+      console.log('🎨 Color styles not cached, attempting to load from storage...');
+      try {
+        const scanSession = await SessionManager.loadLastScanSession();
+        if (scanSession?.colorStyles) {
+          this.setColorStyles(scanSession.colorStyles);
+          console.log('✅ Color styles loaded from scan session');
+        } else {
+          console.warn('⚠️ No color styles found in storage. Run a design system scan first.');
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to load color styles from storage:', e);
+      }
+    } else {
+      console.log('✅ Color styles already cached');
+    }
+  }
+
+  /**
    * Initialize Color Styles from a scan session
    */
   static setColorStyles(colorStyles: ColorStyleCollection | null): void {
@@ -1662,120 +1734,87 @@ export class FigmaRenderer {
   }
   
   /**
-   * Resolve semantic color names to actual RGB values from scanned Color Styles
-   * Examples: "primary", "secondary", "primary-500", "neutral-100", "success"
+   * Resolve color style names to actual Figma color styles (for style application)
+   * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
    */
-  static resolveSemanticColor(semanticColorName: string): RGB | null {
+  static async resolveColorStyleReference(colorStyleName: string): Promise<PaintStyle | null> {
+    console.log(`🎨 Resolving color style reference: "${colorStyleName}"`);
+    
+    try {
+      // Get all local paint styles from Figma
+      const localPaintStyles = await figma.getLocalPaintStylesAsync();
+      console.log(`📋 Found ${localPaintStyles.length} local paint styles in Figma`);
+      
+      // Debug: Show first few style names
+      if (localPaintStyles.length > 0) {
+        console.log(`📋 First 5 style names:`, localPaintStyles.slice(0, 5).map(s => s.name));
+      }
+      
+      // Find exact match first
+      const exactMatch = localPaintStyles.find(style => style.name === colorStyleName);
+      if (exactMatch) {
+        console.log(`✅ Found exact color style: ${exactMatch.name}`);
+        return exactMatch;
+      }
+      
+      // Fallback: case-insensitive search
+      const caseInsensitiveMatch = localPaintStyles.find(style => 
+        style.name.toLowerCase() === colorStyleName.toLowerCase()
+      );
+      if (caseInsensitiveMatch) {
+        console.log(`✅ Found case-insensitive color style: ${caseInsensitiveMatch.name}`);
+        return caseInsensitiveMatch;
+      }
+      
+      console.warn(`⚠️ Could not find color style "${colorStyleName}"`);
+      console.log(`📋 All available paint styles:`, localPaintStyles.map(s => s.name));
+      return null;
+      
+    } catch (error) {
+      console.error(`❌ Error resolving color style "${colorStyleName}":`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Resolve color style names to actual RGB values from scanned Color Styles (fallback)
+   * Uses exact name matching from design system scan data
+   * Examples: "Primary/primary80", "Button-color", "Light Green", "ui-primary-500"
+   */
+  static resolveSemanticColor(colorStyleName: string): RGB | null {
     if (!this.cachedColorStyles) {
       console.warn(`⚠️ No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
       return null;
     }
     
-    console.log(`🎨 Resolving semantic color: "${semanticColorName}"`);
+    console.log(`🎨 Resolving color style: "${colorStyleName}"`);
     
-    const { category, variant } = this.parseSemanticColorName(semanticColorName);
-    const categoryStyles = this.cachedColorStyles[category];
+    // Search all categories for exact name match
+    const allCategories = Object.values(this.cachedColorStyles).flat();
+    const exactMatch = allCategories.find(style => style.name === colorStyleName);
     
-    if (!categoryStyles || categoryStyles.length === 0) {
-      console.warn(`⚠️ No Color Styles found for category "${category}"`);
-      return this.getFallbackColor(category);
+    if (exactMatch && exactMatch.colorInfo.type === 'SOLID') {
+      console.log(`✅ Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
+      return this.hexToRgb(exactMatch.colorInfo.color || '#000000');
     }
     
-    // Find exact variant match if specified
-    if (variant) {
-      const exactMatch = categoryStyles.find(style => style.variant === variant);
-      if (exactMatch && exactMatch.colorInfo.type === 'SOLID') {
-        console.log(`✅ Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
-        return this.hexToRgb(exactMatch.colorInfo.color || '#000000');
-      }
+    // Fallback: case-insensitive search
+    const caseInsensitiveMatch = allCategories.find(style => 
+      style.name.toLowerCase() === colorStyleName.toLowerCase()
+    );
+    
+    if (caseInsensitiveMatch && caseInsensitiveMatch.colorInfo.type === 'SOLID') {
+      console.log(`✅ Found case-insensitive match: ${caseInsensitiveMatch.name} (${caseInsensitiveMatch.colorInfo.color})`);
+      return this.hexToRgb(caseInsensitiveMatch.colorInfo.color || '#000000');
     }
     
-    // Find default/primary variant for the category
-    const defaultVariants = ['default', '500', '50', '100', ''];
-    for (const defaultVariant of defaultVariants) {
-      const defaultMatch = categoryStyles.find(style => 
-        !style.variant || style.variant === defaultVariant
-      );
-      if (defaultMatch && defaultMatch.colorInfo.type === 'SOLID') {
-        console.log(`✅ Found default variant: ${defaultMatch.name} (${defaultMatch.colorInfo.color})`);
-        return this.hexToRgb(defaultMatch.colorInfo.color || '#000000');
-      }
-    }
+    console.warn(`⚠️ Could not find color style "${colorStyleName}"`);
+    console.log(`Available color styles:`, allCategories.map(s => s.name));
     
-    // Use first available style in the category
-    const firstStyle = categoryStyles[0];
-    if (firstStyle && firstStyle.colorInfo.type === 'SOLID') {
-      console.log(`✅ Using first available: ${firstStyle.name} (${firstStyle.colorInfo.color})`);
-      return this.hexToRgb(firstStyle.colorInfo.color || '#000000');
-    }
-    
-    console.warn(`⚠️ Could not resolve semantic color "${semanticColorName}"`);
-    return this.getFallbackColor(category);
+    // Return black as fallback
+    return { r: 0, g: 0, b: 0 };
   }
   
-  /**
-   * Parse semantic color name to extract category and variant
-   * Examples: "primary-500" -> { category: "primary", variant: "500" }
-   *          "secondary" -> { category: "secondary", variant: null }
-   */
-  private static parseSemanticColorName(semanticColorName: string): { 
-    category: keyof ColorStyleCollection, 
-    variant: string | null 
-  } {
-    const name = semanticColorName.toLowerCase().trim();
-    
-    // Handle hyphenated variants (e.g., "primary-500", "neutral-100")
-    const hyphenMatch = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface)-(\d+)$/);
-    if (hyphenMatch) {
-      return {
-        category: hyphenMatch[1] as keyof ColorStyleCollection,
-        variant: hyphenMatch[2]
-      };
-    }
-    
-    // Handle direct semantic color names
-    const semanticMapping: { [key: string]: keyof ColorStyleCollection } = {
-      'primary': 'primary',
-      'secondary': 'secondary', 
-      'tertiary': 'tertiary',
-      'neutral': 'neutral',
-      'semantic': 'semantic',
-      'surface': 'surface',
-      'brand': 'primary',
-      'accent': 'secondary',
-      'success': 'semantic',
-      'error': 'semantic',
-      'warning': 'semantic',
-      'info': 'semantic',
-      'danger': 'semantic',
-      'green': 'semantic',
-      'red': 'semantic',
-      'blue': 'semantic',
-      'yellow': 'semantic',
-      'orange': 'semantic'
-    };
-    
-    const category = semanticMapping[name] || 'other';
-    return { category, variant: null };
-  }
-  
-  /**
-   * Get fallback colors when semantic resolution fails
-   */
-  private static getFallbackColor(category: keyof ColorStyleCollection): RGB {
-    const fallbacks: { [key in keyof ColorStyleCollection]: RGB } = {
-      primary: { r: 0.149, g: 0.376, b: 0.894 }, // Blue #2563EB
-      secondary: { r: 0.596, g: 0.525, b: 0.843 }, // Purple #9A8ED7
-      tertiary: { r: 0.627, g: 0.627, b: 0.627 }, // Gray #A0A0A0
-      neutral: { r: 0.627, g: 0.627, b: 0.627 }, // Gray #A0A0A0
-      semantic: { r: 0.0, g: 0.7, b: 0.3 }, // Green #00B53F
-      surface: { r: 0.98, g: 0.98, b: 0.98 }, // Light Gray #FAFAFA
-      other: { r: 0.0, g: 0.0, b: 0.0 } // Black #000000
-    };
-    
-    console.log(`🎨 Using fallback color for category "${category}"`);
-    return fallbacks[category];
-  }
   
   /**
    * Convert hex color to RGB values (0-1 range)
@@ -1821,13 +1860,22 @@ export class FigmaRenderer {
   }
   
   /**
-   * Helper method to resolve and apply semantic colors to any node with fills
+   * Helper method to resolve and apply color styles to any node with fills
    */
-  static applySemanticFillColor(node: SceneNode & { fills?: ReadonlyArray<Paint> | symbol }, semanticColorName: string): boolean {
+  static async applySemanticFillColor(node: SceneNode & { fills?: ReadonlyArray<Paint> | symbol, setFillStyleIdAsync?: Function }, semanticColorName: string): Promise<boolean> {
+    // Try to apply actual Figma color style first
+    const colorStyle = await this.resolveColorStyleReference(semanticColorName);
+    if (colorStyle && 'setFillStyleIdAsync' in node) {
+      await (node as any).setFillStyleIdAsync(colorStyle.id);
+      console.log(`✅ Applied color style "${semanticColorName}" to node (as style reference)`);
+      return true;
+    }
+    
+    // Fallback to RGB color if style not found
     const rgb = this.resolveSemanticColor(semanticColorName);
     if (rgb && 'fills' in node) {
       (node as any).fills = [this.createSolidPaint(rgb)];
-      console.log(`✅ Applied semantic fill color "${semanticColorName}" to node`);
+      console.log(`✅ Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
       return true;
     }
     return false;

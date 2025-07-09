@@ -667,7 +667,12 @@ Native Elements: Use text at root level + properties object for styling
 Component Elements: Use properties object for all content and variants
 {"type": "list-item", "properties": {"text": "Content", "variants": {}}}
 
-Color Format: Always use RGB object format
+Color Format: ALWAYS use exact color style names from design system scan data
+- When UX Designer provides colorStyleName: Use the EXACT name from the design system scan
+- When UX Designer provides color object: Use RGB format
+- NEVER convert colorStyleName to RGB - preserve the exact style reference
+- Color style names must match exactly as they appear in the design system (e.g., "Primary/primary80", "Button-color", "Light Green")
+{"colorStyleName": "Primary/primary80"}
 {"color": {"r": 0.1, "g": 0.1, "b": 0.1}}
 
 Template Variables: Use ${variableName} for component IDs that need resolution

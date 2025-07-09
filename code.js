@@ -1470,6 +1470,158 @@
     }
   };
 
+  // src/core/session-manager.ts
+  var SessionManager = class {
+    // 30 днів
+    // Зберегти поточний стан сесії
+    static async saveSession(designState, scanData) {
+      try {
+        const fileId = figma.root.id;
+        const fileName = figma.root.name;
+        if (!designState.isIterating) return;
+        console.log(`\u{1F4BE} \u0417\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${fileName}`);
+        const storage = await this.getSessionStorage();
+        const session = {
+          fileId,
+          fileName,
+          lastModified: Date.now(),
+          designState: {
+            original: designState.original,
+            current: designState.current,
+            history: [...designState.history],
+            frameId: designState.frameId,
+            frameName: designState.frameId ? await this.getFrameName(designState.frameId) : "",
+            isIterating: designState.isIterating
+          },
+          scanData
+        };
+        storage.sessions[fileId] = session;
+        storage.lastActiveSession = fileId;
+        await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
+        console.log(`\u2705 \u0421\u0435\u0441\u0456\u044F \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u0430`);
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+      }
+    }
+    // Завантажити сесію для поточного файлу
+    static async loadSession() {
+      try {
+        const fileId = figma.root.id;
+        const storage = await this.getSessionStorage();
+        const session = storage.sessions[fileId];
+        if (!session) return null;
+        if (session.designState.frameId) {
+          const frame = await figma.getNodeByIdAsync(session.designState.frameId);
+          if (!frame || frame.removed) {
+            console.log("\u26A0\uFE0F \u0424\u0440\u0435\u0439\u043C \u0437 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0457 \u0441\u0435\u0441\u0456\u0457 \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E, \u043E\u0447\u0438\u0449\u0443\u0454\u043C\u043E \u0441\u0435\u0441\u0456\u044E");
+            await this.clearSession(fileId);
+            return null;
+          }
+        }
+        console.log(`\u2705 \u0421\u0435\u0441\u0456\u044F \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${session.fileName}`);
+        return session;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+        return null;
+      }
+    }
+    // Отримати всі активні сесії
+    static async getAllSessions() {
+      try {
+        const storage = await this.getSessionStorage();
+        const now = Date.now();
+        const activeSessions = Object.values(storage.sessions).filter((session) => now - session.lastModified < this.MAX_SESSION_AGE).sort((a, b) => b.lastModified - a.lastModified);
+        return activeSessions;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0432\u0441\u0456\u0445 \u0441\u0435\u0441\u0456\u0439:", error);
+        return [];
+      }
+    }
+    // Очистити сесію для файлу
+    static async clearSession(fileId) {
+      try {
+        const targetFileId = fileId || figma.root.id;
+        const storage = await this.getSessionStorage();
+        delete storage.sessions[targetFileId];
+        if (storage.lastActiveSession === targetFileId) {
+          delete storage.lastActiveSession;
+        }
+        await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
+        console.log(`\u{1F5D1}\uFE0F \u0421\u0435\u0441\u0456\u044F \u043E\u0447\u0438\u0449\u0435\u043D\u0430 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${targetFileId}`);
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0447\u0438\u0449\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+      }
+    }
+    // Очистити старі сесії
+    static async cleanupOldSessions() {
+      try {
+        const storage = await this.getSessionStorage();
+        const now = Date.now();
+        let cleaned = 0;
+        Object.entries(storage.sessions).forEach(([fileId, session]) => {
+          if (now - session.lastModified > this.MAX_SESSION_AGE) {
+            delete storage.sessions[fileId];
+            cleaned++;
+          }
+        });
+        if (cleaned > 0) {
+          await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
+          console.log(`\u{1F9F9} \u041E\u0447\u0438\u0449\u0435\u043D\u043E ${cleaned} \u0441\u0442\u0430\u0440\u0438\u0445 \u0441\u0435\u0441\u0456\u0439`);
+        }
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0447\u0438\u0449\u0435\u043D\u043D\u044F \u0441\u0442\u0430\u0440\u0438\u0445 \u0441\u0435\u0441\u0456\u0439:", error);
+      }
+    }
+    // Отримати storage з ініціалізацією
+    static async getSessionStorage() {
+      try {
+        const storage = await figma.clientStorage.getAsync(this.STORAGE_KEY);
+        if (!storage || storage.version !== this.SESSION_VERSION) {
+          return {
+            sessions: {},
+            version: this.SESSION_VERSION
+          };
+        }
+        return storage;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0442\u0440\u0438\u043C\u0430\u043D\u043D\u044F storage:", error);
+        return {
+          sessions: {},
+          version: this.SESSION_VERSION
+        };
+      }
+    }
+    // Отримати назву фрейму за ID
+    static async getFrameName(frameId) {
+      try {
+        const frame = await figma.getNodeByIdAsync(frameId);
+        return (frame == null ? void 0 : frame.name) || "Unknown Frame";
+      } catch (e) {
+        return "Unknown Frame";
+      }
+    }
+    // Відновити сесію з даних
+    static async restoreSessionData(sessionData) {
+      try {
+        if (sessionData.designState.frameId) {
+          const frame = await figma.getNodeByIdAsync(sessionData.designState.frameId);
+          if (!frame || frame.removed) {
+            throw new Error("\u0424\u0440\u0435\u0439\u043C \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E");
+          }
+          figma.currentPage.selection = [frame];
+          figma.viewport.scrollAndZoomIntoView([frame]);
+        }
+        return true;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0432\u0456\u0434\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+        return false;
+      }
+    }
+  };
+  SessionManager.STORAGE_KEY = "aidesigner-sessions";
+  SessionManager.SESSION_VERSION = "1.0";
+  SessionManager.MAX_SESSION_AGE = 30 * 24 * 60 * 60 * 1e3;
+
   // src/core/component-property-engine.ts
   var TabComponentHandler = class {
     preprocessProperties(properties) {
@@ -2160,6 +2312,7 @@
       }
       try {
         figma.skipInvisibleInstanceChildren = true;
+        await this.ensureColorStylesLoaded();
         console.log("\u{1F527} Checking ComponentPropertyEngine schemas...");
         const existingSchemas = ComponentPropertyEngine.getAllSchemas();
         if (existingSchemas.length === 0) {
@@ -2240,16 +2393,46 @@
         if (fills.length > 0 && fills[0].type === "SOLID") {
           if (typeof props.color === "string") {
             console.log(`\u{1F3A8} Attempting to resolve semantic color: "${props.color}"`);
-            const resolvedColor = this.resolveSemanticColor(props.color);
-            if (resolvedColor) {
-              textNode.fills = [this.createSolidPaint(resolvedColor)];
-              console.log(`\u2705 Applied semantic color "${props.color}" to text`);
-            } else {
-              console.warn(`\u26A0\uFE0F Could not resolve semantic color "${props.color}", skipping color application`);
+            try {
+              const colorStyle = await this.resolveColorStyleReference(props.color);
+              if (colorStyle) {
+                await textNode.setFillStyleIdAsync(colorStyle.id);
+                console.log(`\u2705 Applied semantic color "${props.color}" to text (as style reference)`);
+              } else {
+                const resolvedColor = this.resolveSemanticColor(props.color);
+                if (resolvedColor) {
+                  textNode.fills = [this.createSolidPaint(resolvedColor)];
+                  console.log(`\u2705 Applied semantic color "${props.color}" to text (as RGB fallback)`);
+                } else {
+                  console.warn(`\u26A0\uFE0F Could not resolve semantic color "${props.color}", skipping color application`);
+                }
+              }
+            } catch (error) {
+              console.error(`\u274C Error applying color "${props.color}":`, error);
             }
           } else {
             textNode.fills = [{ type: "SOLID", color: props.color }];
           }
+        }
+      }
+      if (props.colorStyleName) {
+        console.log(`\u{1F3A8} Attempting to resolve color style: "${props.colorStyleName}"`);
+        try {
+          const colorStyle = await this.resolveColorStyleReference(props.colorStyleName);
+          if (colorStyle) {
+            await textNode.setFillStyleIdAsync(colorStyle.id);
+            console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as style reference)`);
+          } else {
+            const resolvedColor = this.resolveSemanticColor(props.colorStyleName);
+            if (resolvedColor) {
+              textNode.fills = [this.createSolidPaint(resolvedColor)];
+              console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
+            } else {
+              console.warn(`\u26A0\uFE0F Could not resolve color style "${props.colorStyleName}", skipping color application`);
+            }
+          }
+        } catch (error) {
+          console.error(`\u274C Error applying color style "${props.colorStyleName}":`, error);
         }
       }
       this.applyChildLayoutProperties(textNode, props);
@@ -3194,6 +3377,27 @@ ${llmErrors}`);
       }
     }
     /**
+     * Ensure color styles are loaded before UI generation
+     */
+    static async ensureColorStylesLoaded() {
+      if (!this.cachedColorStyles) {
+        console.log("\u{1F3A8} Color styles not cached, attempting to load from storage...");
+        try {
+          const scanSession = await SessionManager.loadLastScanSession();
+          if (scanSession == null ? void 0 : scanSession.colorStyles) {
+            this.setColorStyles(scanSession.colorStyles);
+            console.log("\u2705 Color styles loaded from scan session");
+          } else {
+            console.warn("\u26A0\uFE0F No color styles found in storage. Run a design system scan first.");
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to load color styles from storage:", e);
+        }
+      } else {
+        console.log("\u2705 Color styles already cached");
+      }
+    }
+    /**
      * Initialize Color Styles from a scan session
      */
     static setColorStyles(colorStyles) {
@@ -3204,105 +3408,64 @@ ${llmErrors}`);
       }
     }
     /**
-     * Resolve semantic color names to actual RGB values from scanned Color Styles
-     * Examples: "primary", "secondary", "primary-500", "neutral-100", "success"
+     * Resolve color style names to actual Figma color styles (for style application)
+     * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
      */
-    static resolveSemanticColor(semanticColorName) {
+    static async resolveColorStyleReference(colorStyleName) {
+      console.log(`\u{1F3A8} Resolving color style reference: "${colorStyleName}"`);
+      try {
+        const localPaintStyles = await figma.getLocalPaintStylesAsync();
+        console.log(`\u{1F4CB} Found ${localPaintStyles.length} local paint styles in Figma`);
+        if (localPaintStyles.length > 0) {
+          console.log(`\u{1F4CB} First 5 style names:`, localPaintStyles.slice(0, 5).map((s) => s.name));
+        }
+        const exactMatch = localPaintStyles.find((style) => style.name === colorStyleName);
+        if (exactMatch) {
+          console.log(`\u2705 Found exact color style: ${exactMatch.name}`);
+          return exactMatch;
+        }
+        const caseInsensitiveMatch = localPaintStyles.find(
+          (style) => style.name.toLowerCase() === colorStyleName.toLowerCase()
+        );
+        if (caseInsensitiveMatch) {
+          console.log(`\u2705 Found case-insensitive color style: ${caseInsensitiveMatch.name}`);
+          return caseInsensitiveMatch;
+        }
+        console.warn(`\u26A0\uFE0F Could not find color style "${colorStyleName}"`);
+        console.log(`\u{1F4CB} All available paint styles:`, localPaintStyles.map((s) => s.name));
+        return null;
+      } catch (error) {
+        console.error(`\u274C Error resolving color style "${colorStyleName}":`, error);
+        return null;
+      }
+    }
+    /**
+     * Resolve color style names to actual RGB values from scanned Color Styles (fallback)
+     * Uses exact name matching from design system scan data
+     * Examples: "Primary/primary80", "Button-color", "Light Green", "ui-primary-500"
+     */
+    static resolveSemanticColor(colorStyleName) {
       if (!this.cachedColorStyles) {
         console.warn(`\u26A0\uFE0F No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
         return null;
       }
-      console.log(`\u{1F3A8} Resolving semantic color: "${semanticColorName}"`);
-      const { category, variant } = this.parseSemanticColorName(semanticColorName);
-      const categoryStyles = this.cachedColorStyles[category];
-      if (!categoryStyles || categoryStyles.length === 0) {
-        console.warn(`\u26A0\uFE0F No Color Styles found for category "${category}"`);
-        return this.getFallbackColor(category);
+      console.log(`\u{1F3A8} Resolving color style: "${colorStyleName}"`);
+      const allCategories = Object.values(this.cachedColorStyles).flat();
+      const exactMatch = allCategories.find((style) => style.name === colorStyleName);
+      if (exactMatch && exactMatch.colorInfo.type === "SOLID") {
+        console.log(`\u2705 Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
+        return this.hexToRgb(exactMatch.colorInfo.color || "#000000");
       }
-      if (variant) {
-        const exactMatch = categoryStyles.find((style) => style.variant === variant);
-        if (exactMatch && exactMatch.colorInfo.type === "SOLID") {
-          console.log(`\u2705 Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
-          return this.hexToRgb(exactMatch.colorInfo.color || "#000000");
-        }
+      const caseInsensitiveMatch = allCategories.find(
+        (style) => style.name.toLowerCase() === colorStyleName.toLowerCase()
+      );
+      if (caseInsensitiveMatch && caseInsensitiveMatch.colorInfo.type === "SOLID") {
+        console.log(`\u2705 Found case-insensitive match: ${caseInsensitiveMatch.name} (${caseInsensitiveMatch.colorInfo.color})`);
+        return this.hexToRgb(caseInsensitiveMatch.colorInfo.color || "#000000");
       }
-      const defaultVariants = ["default", "500", "50", "100", ""];
-      for (const defaultVariant of defaultVariants) {
-        const defaultMatch = categoryStyles.find(
-          (style) => !style.variant || style.variant === defaultVariant
-        );
-        if (defaultMatch && defaultMatch.colorInfo.type === "SOLID") {
-          console.log(`\u2705 Found default variant: ${defaultMatch.name} (${defaultMatch.colorInfo.color})`);
-          return this.hexToRgb(defaultMatch.colorInfo.color || "#000000");
-        }
-      }
-      const firstStyle = categoryStyles[0];
-      if (firstStyle && firstStyle.colorInfo.type === "SOLID") {
-        console.log(`\u2705 Using first available: ${firstStyle.name} (${firstStyle.colorInfo.color})`);
-        return this.hexToRgb(firstStyle.colorInfo.color || "#000000");
-      }
-      console.warn(`\u26A0\uFE0F Could not resolve semantic color "${semanticColorName}"`);
-      return this.getFallbackColor(category);
-    }
-    /**
-     * Parse semantic color name to extract category and variant
-     * Examples: "primary-500" -> { category: "primary", variant: "500" }
-     *          "secondary" -> { category: "secondary", variant: null }
-     */
-    static parseSemanticColorName(semanticColorName) {
-      const name = semanticColorName.toLowerCase().trim();
-      const hyphenMatch = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface)-(\d+)$/);
-      if (hyphenMatch) {
-        return {
-          category: hyphenMatch[1],
-          variant: hyphenMatch[2]
-        };
-      }
-      const semanticMapping = {
-        "primary": "primary",
-        "secondary": "secondary",
-        "tertiary": "tertiary",
-        "neutral": "neutral",
-        "semantic": "semantic",
-        "surface": "surface",
-        "brand": "primary",
-        "accent": "secondary",
-        "success": "semantic",
-        "error": "semantic",
-        "warning": "semantic",
-        "info": "semantic",
-        "danger": "semantic",
-        "green": "semantic",
-        "red": "semantic",
-        "blue": "semantic",
-        "yellow": "semantic",
-        "orange": "semantic"
-      };
-      const category = semanticMapping[name] || "other";
-      return { category, variant: null };
-    }
-    /**
-     * Get fallback colors when semantic resolution fails
-     */
-    static getFallbackColor(category) {
-      const fallbacks = {
-        primary: { r: 0.149, g: 0.376, b: 0.894 },
-        // Blue #2563EB
-        secondary: { r: 0.596, g: 0.525, b: 0.843 },
-        // Purple #9A8ED7
-        tertiary: { r: 0.627, g: 0.627, b: 0.627 },
-        // Gray #A0A0A0
-        neutral: { r: 0.627, g: 0.627, b: 0.627 },
-        // Gray #A0A0A0
-        semantic: { r: 0, g: 0.7, b: 0.3 },
-        // Green #00B53F
-        surface: { r: 0.98, g: 0.98, b: 0.98 },
-        // Light Gray #FAFAFA
-        other: { r: 0, g: 0, b: 0 }
-        // Black #000000
-      };
-      console.log(`\u{1F3A8} Using fallback color for category "${category}"`);
-      return fallbacks[category];
+      console.warn(`\u26A0\uFE0F Could not find color style "${colorStyleName}"`);
+      console.log(`Available color styles:`, allCategories.map((s) => s.name));
+      return { r: 0, g: 0, b: 0 };
     }
     /**
      * Convert hex color to RGB values (0-1 range)
@@ -3340,13 +3503,19 @@ ${llmErrors}`);
       return false;
     }
     /**
-     * Helper method to resolve and apply semantic colors to any node with fills
+     * Helper method to resolve and apply color styles to any node with fills
      */
-    static applySemanticFillColor(node, semanticColorName) {
+    static async applySemanticFillColor(node, semanticColorName) {
+      const colorStyle = await this.resolveColorStyleReference(semanticColorName);
+      if (colorStyle && "setFillStyleIdAsync" in node) {
+        await node.setFillStyleIdAsync(colorStyle.id);
+        console.log(`\u2705 Applied color style "${semanticColorName}" to node (as style reference)`);
+        return true;
+      }
       const rgb = this.resolveSemanticColor(semanticColorName);
       if (rgb && "fills" in node) {
         node.fills = [this.createSolidPaint(rgb)];
-        console.log(`\u2705 Applied semantic fill color "${semanticColorName}" to node`);
+        console.log(`\u2705 Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
         return true;
       }
       return false;
@@ -6053,6 +6222,18 @@ Native Element Patterns
   }
 }
 
+// Native Text with Color Style Name (when provided by UX Designer)
+{
+  "type": "native-text",
+  "text": "Welcome Back!",
+  "properties": {
+    "fontSize": 24,
+    "fontWeight": "bold",
+    "colorStyleName": "Primary/primary80",
+    "horizontalSizing": "FILL"
+  }
+}
+
 // Native Circle with Media Content
 {
   "type": "native-circle",
@@ -6188,7 +6369,11 @@ Native Elements: Use text at root level + properties object for styling
 Component Elements: Use properties object for all content and variants
 {"type": "list-item", "properties": {"text": "Content", "variants": {}}}
 
-Color Format: Always use RGB object format
+Color Format: ALWAYS preserve colorStyleName when provided by UX Designer
+- When UX Designer provides colorStyleName: Include it in properties object
+- When UX Designer provides color object: Use RGB format
+- NEVER convert colorStyleName to RGB - preserve the style reference
+{"colorStyleName": "Primary/primary80"}
 {"color": {"r": 0.1, "g": 0.1, "b": 0.1}}
 
 Template Variables: Use \${variableName} for component IDs that need resolution
