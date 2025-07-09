@@ -829,13 +829,11 @@
 
     <!-- Tab 3: AI Generator -->
     <div class="tab-content" id="ai-generator">
-        <div class="context-bar" id="contextBar">
-            <span class="context-info" id="currentContext">Ready for new UI</span>
-            <button class="btn btn-secondary btn-small" onclick="startFresh()" id="resetBtn">🗂️ New UI</button>
-        </div>
+        <!-- Simple status bar -->
+        <div id="jsonStatus" style="margin-bottom: 16px; padding: 8px; border-radius: 4px; display: none;"></div>
 
     <!-- INSERT PLATFORM TOGGLE HERE -->
-    <div class="platform-toggle-container">
+    <div class="platform-toggle-container" style="display: none;">
         <label class="toggle-label">Platform:</label>
         <div class="toggle-buttons">
             <button id="mobile-toggle" class="toggle-btn active" data-platform="mobile">
@@ -848,7 +846,7 @@
     </div>
     <!-- END PLATFORM TOGGLE -->
         <!-- Image Upload Section -->
-        <div class="section">
+        <div class="section" style="display: none;">
             <h3>Reference Image (Optional)</h3>
             <div class="image-upload-area" id="imageUploadArea">
                 <input type="file" id="imageInput" accept="image/jpeg, image/png, image/webp, image/gif" style="display: none;">
@@ -862,7 +860,7 @@
             </div>
         </div>
 
-        <div class="section">
+        <div class="section" style="display: none;">
             <div class="generation-area">
                 <div class="input-group">
                     <label for="userPrompt" id="userPromptLabel">Describe the UI you want to create:</label>
@@ -886,7 +884,7 @@
             </div>
         </div>
 
-        <div id="generationStatus"></div>
+        <div id="generationStatus" style="display: none;"></div>
 
         <!-- JSON Debug Section -->
         <div class="section" id="jsonDebugSection" style="display: none;">
@@ -898,14 +896,14 @@
             <pre id="jsonOutput" style="display: none; background: #f6f8fa; border: 1px solid #d1d5da; border-radius: 4px; padding: 12px; font-size: 11px; overflow-x: auto; max-height: 300px; overflow-y: auto; font-family: 'Monaco', 'Consolas', monospace;"></pre>
         </div>
 
-        <!-- Manual JSON input as fallback -->
-        <div class="section" style="margin-top: 32px; border-top: 1px solid #e1e4e8; padding-top: 16px;">
-            <h3>Manual Mode (Fallback)</h3>
+        <!-- Simplified JSON-only interface -->
+        <div class="section">
+            <h3>JSON Renderer</h3>
             <div class="input-group">
-                <label for="jsonInput">Paste JSON directly:</label>
-                <textarea id="jsonInput" placeholder='{"layoutContainer": {...}, "items": [...]}'></textarea>
+                <label for="manualJsonInput">Paste JSON to render:</label>
+                <textarea id="manualJsonInput" placeholder='{"layoutContainer": {...}, "items": [...]}' style="height: 200px; font-family: monospace; font-size: 12px;"></textarea>
             </div>
-            <button class="btn btn-secondary" onclick="generateFromJSON()">📄 Generate from JSON</button>
+            <button class="btn" onclick="generateFromJSON()" style="background: #28a745; color: white; width: 100%;">🎨 Render JSON</button>
         </div>
     </div>
 
@@ -2348,20 +2346,23 @@ function isValidImageSelected() {
 
 
         function generateFromJSON() {
-            const jsonInput = document.getElementById('jsonInput');
+            const jsonInput = document.getElementById('manualJsonInput');
             if (!jsonInput || !jsonInput.value.trim()) {
-                showStatus('generationStatus', 'Please paste JSON data', 'error');
+                showStatus('jsonStatus', 'Please paste JSON data', 'error');
                 return;
             }
             
-            // Manual generation always starts a fresh session
-            startFresh(); 
+            showStatus('jsonStatus', '🎨 Rendering JSON...', 'info');
+            
+            // Send message to plugin
             parent.postMessage({
                 pluginMessage: {
                     type: 'generate-ui-from-json',
                     payload: jsonInput.value.trim()
                 }
             }, '*');
+            
+            console.log('📤 Sent generate-ui-from-json message to plugin');
         }
         
         
@@ -2731,8 +2732,13 @@ function isValidImageSelected() {
 
                 // UI generation handlers
                 case 'ui-generated-success':
-                    clearStatus('generationStatus');
-                    document.getElementById('userPrompt').value = '';
+                    console.log('📥 Received ui-generated-success from plugin');
+                    showStatus('jsonStatus', '✅ UI generated successfully!', 'success');
+                    // Clear the JSON input for next use
+                    const jsonInput = document.getElementById('manualJsonInput');
+                    if (jsonInput) {
+                        jsonInput.value = '';
+                    }
                     break;
                 
                 case 'ui-modified-success':
@@ -2741,7 +2747,8 @@ function isValidImageSelected() {
                     break;
                 
                 case 'ui-generation-error':
-                    showStatus('generationStatus', `❌ Generation error: ${msg.error}`, 'error');
+                    console.log('📥 Received ui-generation-error from plugin:', msg.error);
+                    showStatus('jsonStatus', `❌ Generation error: ${msg.error}`, 'error');
                     break;
 
                 // Pipeline handlers

@@ -543,6 +543,13 @@ class HTTPServer:
                 if not data or 'prompt' not in data:
                     return jsonify({"error": "Missing prompt in request"}), 400
                 
+                # 🔥 TESTING: Override prompt with user-request.txt if it exists
+                prompt = data['prompt']
+                if os.path.exists("user-request.txt"):
+                    with open("user-request.txt", "r", encoding="utf-8") as f:
+                        prompt = f.read().strip()
+                    print(f"📁 HTTP Server: Reading input from user-request.txt: {prompt}")
+                
                 # Create a fresh pipeline instance for this request
                 fresh_pipeline = Alternative3StagePipeline(self.pipeline.api_key)
                 
@@ -557,7 +564,7 @@ class HTTPServer:
                 
                 try:
                     result = loop.run_until_complete(
-                        fresh_pipeline.run_all_alt_stages(data['prompt'])
+                        fresh_pipeline.run_all_alt_stages(prompt)
                     )
                     return jsonify(result)
                 finally:
@@ -606,7 +613,15 @@ def main():
         # Alternative 3-stage pipeline
         alt_runner = Alternative3StagePipeline(api_key)
         default_input = "create a login page for a SaaS app"
-        initial_input = args.input or default_input
+        
+        # 🔥 TESTING: Read from user-request.txt if it exists
+        if os.path.exists("user-request.txt"):
+            with open("user-request.txt", "r", encoding="utf-8") as f:
+                initial_input = f.read().strip()
+            print(f"📁 Reading input from user-request.txt: {initial_input}")
+        else:
+            initial_input = args.input or default_input
+            
         asyncio.run(alt_runner.run_all_alt_stages(initial_input))
     
     
