@@ -271,11 +271,17 @@ async function initializeSession() {
     
     if (savedScan && savedScan.components && savedScan.components.length > 0) {
       if (savedScan.fileKey === currentFileKey) {
-        console.log(`✅ Design system loaded: ${savedScan.components.length} components`);
+        const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+        const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
+        console.log(`✅ Design system loaded: ${savedScan.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles`);
         figma.ui.postMessage({ 
           type: 'saved-scan-loaded', 
           components: savedScan.components,
-          scanTime: savedScan.scanTime 
+          colorStyles: savedScan.colorStyles,
+          textStyles: savedScan.textStyles,
+          scanTime: savedScan.scanTime,
+          colorStylesCount: colorStylesCount,
+          textStylesCount: textStylesCount
         });
       } else {
         console.log("ℹ️ Scan from different file, clearing cache");
@@ -299,9 +305,9 @@ async function initializeSession() {
 
 async function handleScanCommand() {
   try {
-    figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
+    figma.notify("🔍 Scanning design system with color styles and text styles...", { timeout: 30000 });
     
-    // Use comprehensive scanner that includes both components and color styles
+    // Use comprehensive scanner that includes components, color styles, and text styles
     const scanSession = await ComponentScanner.scanDesignSystem();
     
     // Save complete scan session using the new method
@@ -311,17 +317,20 @@ async function handleScanCommand() {
     await ComponentPropertyEngine.initialize();
     
     const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+    const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
     
     // Send scan results to UI (same as manual scan)
     figma.ui.postMessage({ 
       type: 'scan-results', 
       components: scanSession.components,
       colorStyles: scanSession.colorStyles,
+      textStyles: scanSession.textStyles,
       scanTime: scanSession.scanTime,
-      colorStylesCount: colorStylesCount
+      colorStylesCount: colorStylesCount,
+      textStylesCount: textStylesCount
     });
     
-    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
+    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles and initialized systematic engine!`);
     
     // Optional: Show debug info for a sample component
     if (scanSession.components.length > 0) {
@@ -641,7 +650,7 @@ figma.ui.onmessage = async (msg: any) => {
 
         case 'scan-design-system':
             try {
-                figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
+                figma.notify("🔍 Scanning design system with color styles and text styles...", { timeout: 30000 });
                 
                 // Use comprehensive scanner from DesignSystemScannerService
                 const scanSession = await DesignSystemScannerService.scanDesignSystem();
@@ -650,17 +659,20 @@ figma.ui.onmessage = async (msg: any) => {
                 await DesignSystemScannerService.saveScanSession(scanSession);
                 
                 const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+                const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
                 
                 // Send scan results to UI (what the UI expects)
                 figma.ui.postMessage({ 
                     type: 'scan-results', 
                     components: scanSession.components,
                     colorStyles: scanSession.colorStyles,
+                    textStyles: scanSession.textStyles,
                     scanTime: scanSession.scanTime,
-                    colorStylesCount: colorStylesCount
+                    colorStylesCount: colorStylesCount,
+                    textStylesCount: textStylesCount
                 });
                 
-                figma.notify(`✅ Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3000 });
+                figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles!`, { timeout: 3000 });
             } catch (error) {
                 console.error("Scan failed:", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
@@ -1105,10 +1117,16 @@ figma.ui.onmessage = async (msg: any) => {
             try {
                 const savedScan = await DesignSystemScannerService.getScanSession();
                 if (savedScan && savedScan.components && savedScan.fileKey === figma.root.id) {
+                    const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+                    const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
                     figma.ui.postMessage({ 
                         type: 'saved-scan-loaded', 
                         components: savedScan.components,
-                        scanTime: savedScan.scanTime 
+                        colorStyles: savedScan.colorStyles,
+                        textStyles: savedScan.textStyles,
+                        scanTime: savedScan.scanTime,
+                        colorStylesCount: colorStylesCount,
+                        textStylesCount: textStylesCount
                     });
                 } else {
                     figma.ui.postMessage({ type: 'no-saved-scan' });

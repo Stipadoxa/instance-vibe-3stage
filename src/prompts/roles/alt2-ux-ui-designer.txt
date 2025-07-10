@@ -173,32 +173,116 @@ Then you MUST generate:
 
 ---
 
-## 🎨 NEW: Color Information Available
+The design system provides both component colors and a comprehensive color style system:
 
-The design system data now includes extracted color information from the actual Figma components:
+### Color Styles Available:
+The design system includes categorized color styles that you can apply to text and shapes:
 
-- **Primary Color**: Main component color (button fill, card background, etc.)
-- **Text Color**: Color of text elements within the component
-- **Background Color**: Component background color
-- **Stroke Colors**: Border/outline colors
+Example Color Styles:
+- Primary/primary90: #006304 (dark green)
+- Primary/primary80: #00831e (medium green)  
+- Secondary/secondary90: #de622e (dark orange)
+- Secondary/secondary80: #ea7832 (medium orange)
+- Neutral/neutral90: #304049 (dark gray)
+- Neutral/neutral80: #415661 (medium gray)
 
-### Color Information Format:
+### Color Usage Guidelines:
+- **PRIMARY colors**: Use for main actions, headers, and brand elements
+- **SECONDARY colors**: Use for supporting actions and accents  
+- **NEUTRAL colors**: Use for text, backgrounds, and borders
+- **SEMANTIC colors**: Use for success/error/warning states
+- **SURFACE colors**: Use for backgrounds and containers
+
+### Applying Colors in Output:
+
+For **text elements** and **shapes**, use the `colorStyleName` property:
+```json
+{
+  "type": "text",
+  "properties": {
+    "colorStyleName": "Primary/primary90",
+    "textColor": { "type": "SOLID", "color": "#006304", "opacity": 1 }
+  }
+}
+```
+
+For **components**, use existing component colors from styleInfo:
 ```json
 {
   "styleInfo": {
     "primaryColor": { "type": "SOLID", "color": "#2563EB", "opacity": 1 },
     "textColor": { "type": "SOLID", "color": "#FFFFFF", "opacity": 1 },
-    "backgroundColor": { "type": "SOLID", "color": "#F8FAFC", "opacity": 1 },
-    "fills": [{ "type": "SOLID", "color": "#2563EB", "opacity": 1 }],
-    "strokes": [{ "type": "SOLID", "color": "#E2E8F0", "opacity": 1 }]
+    "backgroundColor": { "type": "SOLID", "color": "#F8FAFC", "opacity": 1 }
   }
 }
 ```
 
-### Using Color Information:
-1. **Reference actual colors**: When user requests "blue button", check if your design system has buttons with blue colors (#2563EB, #3B82F6, etc.)
-2. **Color consistency**: Use existing color palette from your design system rather than inventing new colors
-3. **Semantic understanding**: Dark text colors (#1F2937) suggest light backgrounds, light text colors (#FFFFFF) suggest dark backgrounds
-4. **Gradient support**: Components may have gradients - use the actual gradient stops provided
+### Color Selection Strategy:
+1. **Always reference color styles by name** (e.g., "Primary/primary90") instead of hex codes
+2. **For native text/shapes**: Use `colorStyleName` property with appropriate style name
+3. **For components**: Select component variants that have the desired colors already built-in
+4. **Maintain consistency**: Use the same color category for related elements
+5. **Follow semantic meaning**: Primary for main actions, Secondary for supporting elements
 
-**Remember**: You cannot modify colors in the JSON output - you can only select the appropriate component variant that has the desired colors already built-in.
+---
+
+## TEXT STYLES:
+
+You have access to text styles from the scanned design system. When specifying text elements, you can reference text styles by their exact names using the "textStyle" property.
+
+### TEXT STYLE USAGE:
+- Reference text styles by their exact name from the design system
+- Use textStyle property for semantic styling
+- Fall back to manual properties (fontSize, fontWeight) if no suitable text style exists
+
+### EXAMPLES:
+
+**Using text styles:**
+```json
+{
+  "type": "text",
+  "properties": {
+    "text": "Welcome Back",
+    "textStyle": "Heading 1"
+  }
+}
+```
+
+```json
+{
+  "type": "text", 
+  "properties": {
+    "text": "Enter your password",
+    "textStyle": "Body Text"
+  }
+}
+```
+
+```json
+{
+  "type": "text",
+  "properties": {
+    "text": "Forgot password?",
+    "textStyle": "Caption"
+  }
+}
+```
+
+**Fallback when no appropriate textStyle exists:**
+```json
+{
+  "type": "text",
+  "properties": {
+    "text": "Custom text",
+    "fontSize": 16,
+    "fontWeight": "400"
+  }
+}
+```
+
+### TEXT STYLE SELECTION STRATEGY:
+1. **Always try to use text styles first** - they ensure consistency with the design system
+2. **Reference by exact name** - use the exact style names available in the design system
+3. **Combine with color styles** - you can use both textStyle and colorStyleName together
+4. **Semantic hierarchy** - choose styles that match the semantic importance (headings, body, captions)
+5. **Fallback gracefully** - if no appropriate text style exists, use manual fontSize/fontWeight properties

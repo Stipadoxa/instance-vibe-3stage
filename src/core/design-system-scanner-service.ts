@@ -12,21 +12,29 @@ interface ScanProgressCallback {
 export class DesignSystemScannerService {
     
     /**
-     * Main scanning function - scans all pages for components and Color Styles
+     * Main scanning function - scans all pages for components, Color Styles, and Text Styles
      */
     static async scanDesignSystem(progressCallback?: ScanProgressCallback): Promise<ScanSession> {
-        console.log("🔍 Starting comprehensive design system scan with Color Styles...");
+        console.log("🔍 Starting comprehensive design system scan with Color Styles and Text Styles...");
         
         try {
             progressCallback?.({ current: 0, total: 100, status: "Initializing comprehensive scan..." });
             
-            // Use the enhanced ComponentScanner that includes Color Styles
+            // Use the enhanced ComponentScanner that includes Color Styles and Text Styles
             const scanSession = await ComponentScanner.scanDesignSystem();
             
-            progressCallback?.({ current: 50, total: 100, status: "Integrating Color Styles with renderer..." });
+            progressCallback?.({ current: 50, total: 100, status: "Integrating Color Styles and Text Styles with renderer..." });
             
             // Initialize the FigmaRenderer with the scanned Color Styles
             FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
+            
+            // Initialize the FigmaRenderer with the scanned Text Styles
+            if (scanSession.textStyles && scanSession.textStyles.length > 0) {
+                FigmaRenderer.setTextStyles(scanSession.textStyles);
+                console.log(`📝 Loaded ${scanSession.textStyles.length} text styles into renderer`);
+            } else {
+                console.log("📝 No text styles found in scan session");
+            }
             
             progressCallback?.({ current: 100, total: 100, status: "Comprehensive scan complete!" });
             
@@ -57,6 +65,22 @@ export class DesignSystemScannerService {
             return colorStyles;
         } catch (e) {
             console.error("❌ Error scanning Color Styles:", e);
+            throw e;
+        }
+    }
+    
+    /**
+     * Scan only Text Styles without components
+     */
+    static async scanTextStyles(): Promise<any> {
+        console.log("📝 Scanning only Text Styles...");
+        
+        try {
+            const textStyles = await ComponentScanner.scanFigmaTextStyles();
+            FigmaRenderer.setTextStyles(textStyles);
+            return textStyles;
+        } catch (e) {
+            console.error("❌ Error scanning Text Styles:", e);
             throw e;
         }
     }
@@ -322,13 +346,14 @@ export class DesignSystemScannerService {
 
 
     /**
-     * Save scan results to Figma storage - supports full scan session with color styles
+     * Save scan results to Figma storage - supports full scan session with color styles and text styles
      */
-    static async saveScanResults(components: ComponentInfo[], colorStyles?: any): Promise<void> {
+    static async saveScanResults(components: ComponentInfo[], colorStyles?: any, textStyles?: any): Promise<void> {
         try {
             const scanSession: ScanSession = {
                 components,
                 colorStyles: colorStyles || undefined,
+                textStyles: textStyles || undefined,
                 scanTime: Date.now(),
                 version: "2.0.0",
                 fileKey: figma.fileKey || figma.root.id
@@ -338,7 +363,8 @@ export class DesignSystemScannerService {
             await figma.clientStorage.setAsync('last-scan-results', components);
             
             const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
-            console.log(`💾 Saved ${components.length} components and ${colorStylesCount} color styles with session data`);
+            const textStylesCount = textStyles ? textStyles.length : 0;
+            console.log(`💾 Saved ${components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles with session data`);
         } catch (error) {
             console.error("❌ Error saving scan results:", error);
             try {
@@ -352,7 +378,7 @@ export class DesignSystemScannerService {
     }
     
     /**
-     * Save complete scan session including color styles
+     * Save complete scan session including color styles and text styles
      */
     static async saveScanSession(scanSession: ScanSession): Promise<void> {
         try {
@@ -360,7 +386,8 @@ export class DesignSystemScannerService {
             await figma.clientStorage.setAsync('last-scan-results', scanSession.components);
             
             const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
-            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components and ${colorStylesCount} color styles`);
+            const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles`);
         } catch (error) {
             console.error("❌ Error saving scan session:", error);
             throw error;

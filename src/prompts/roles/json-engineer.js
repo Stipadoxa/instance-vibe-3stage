@@ -486,6 +486,40 @@ Native Element Patterns
   }
 }
 
+// Native Text with Color Style Name (when provided by UX Designer)
+{
+  "type": "native-text",
+  "text": "Welcome Back!",
+  "properties": {
+    "fontSize": 24,
+    "fontWeight": "bold",
+    "colorStyleName": "Primary/primary80",
+    "horizontalSizing": "FILL"
+  }
+}
+
+// Native Text with Text Style (when provided by UX Designer)
+{
+  "type": "native-text",
+  "text": "Account Settings",
+  "properties": {
+    "textStyle": "Heading 1",
+    "colorStyleName": "Primary/primary90",
+    "horizontalSizing": "FILL"
+  }
+}
+
+// Native Text with Both Text Style and Manual Override
+{
+  "type": "native-text",
+  "text": "Quick action",
+  "properties": {
+    "textStyle": "Body Text",
+    "color": {"r": 0.2, "g": 0.2, "b": 0.2},
+    "horizontalSizing": "FILL"
+  }
+}
+
 // Native Circle with Media Content
 {
   "type": "native-circle",
@@ -621,8 +655,19 @@ Native Elements: Use text at root level + properties object for styling
 Component Elements: Use properties object for all content and variants
 {"type": "list-item", "properties": {"text": "Content", "variants": {}}}
 
-Color Format: Always use RGB object format
+Color Format: ALWAYS preserve colorStyleName when provided by UX Designer
+- When UX Designer provides colorStyleName: Include it in properties object
+- When UX Designer provides color object: Use RGB format
+- NEVER convert colorStyleName to RGB - preserve the style reference
+{"colorStyleName": "Primary/primary80"}
 {"color": {"r": 0.1, "g": 0.1, "b": 0.1}}
+
+Text Style Format: ALWAYS preserve textStyle when provided by UX Designer
+- When UX Designer provides textStyle: Include it in properties object
+- When UX Designer provides manual properties: Use fontSize, fontWeight, etc.
+- NEVER convert textStyle to manual properties - preserve the style reference
+{"textStyle": "Heading 1"}
+{"fontSize": 24, "fontWeight": "bold"}
 
 Template Variables: Use \${variableName} for component IDs that need resolution
 {"componentNodeId": "\${settingsItemId}"}

@@ -1,7 +1,7 @@
 // src/core/figma-renderer.ts
 // UI generation and rendering engine for AIDesigner
 
-import { ComponentScanner, ColorStyleCollection, ColorStyle } from './component-scanner';
+import { ComponentScanner, ColorStyleCollection, ColorStyle, TextStyle } from './component-scanner';
 import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, SessionManager } from './session-manager';
 import { ComponentPropertyEngine, PropertyValidationResult, PerformanceTracker } from './component-property-engine';
 import { JSONMigrator } from './json-migrator';
@@ -22,6 +22,9 @@ export class FigmaRenderer {
   
   // Static storage for Color Styles scanned from the design system
   private static cachedColorStyles: ColorStyleCollection | null = null;
+  
+  // Static storage for Text Styles scanned from the design system
+  private static cachedTextStyles: TextStyle[] | null = null;
 
   /**
    * Main UI generation function - creates UI from structured JSON data
@@ -417,6 +420,19 @@ export class FigmaRenderer {
       } catch (error) {
         console.error(`❌ Error applying color style "${props.colorStyleName}":`, error);
         // Continue without color if there's an error
+      }
+    }
+    
+    // Text style support (new feature) - applies actual Figma text style
+    if (props.textStyle || props.textStyleName) {
+      const styleName = props.textStyle || props.textStyleName;
+      console.log(`📝 Attempting to apply text style: "${styleName}"`);
+      
+      try {
+        await FigmaRenderer.applyTextStyle(textNode, styleName);
+      } catch (error) {
+        console.error(`❌ Error applying text style "${styleName}":`, error);
+        // Continue without text style if there's an error
       }
     }
     
@@ -1879,5 +1895,81 @@ export class FigmaRenderer {
       return true;
     }
     return false;
+  }
+  
+  // Text Styles Caching and Resolution
+  
+  /**
+   * Sets the cached text styles for the renderer
+   * Mirrors setColorStyles pattern exactly
+   */
+  static setTextStyles(textStyles: TextStyle[]): void {
+    FigmaRenderer.cachedTextStyles = textStyles;
+    console.log(`📝 Cached ${textStyles.length} text styles for rendering`);
+    
+    // Log available text styles for debugging
+    if (textStyles.length > 0) {
+      console.log('Available text styles:', textStyles.map(s => s.name).join(', '));
+    }
+  }
+
+  /**
+   * Resolves text style name to Figma text style ID
+   * Mirrors resolveColorStyleReference pattern
+   */
+  static async resolveTextStyleReference(textStyleName: string): Promise<TextStyle | null> {
+    console.log(`📝 Resolving text style reference: "${textStyleName}"`);
+    
+    try {
+      // Get all local text styles from Figma
+      const localTextStyles = await figma.getLocalTextStylesAsync();
+      console.log(`📋 Found ${localTextStyles.length} local text styles in Figma`);
+      
+      // Debug: Show first few style names
+      if (localTextStyles.length > 0) {
+        console.log(`📋 First 5 text style names:`, localTextStyles.slice(0, 5).map(s => s.name));
+      }
+      
+      // Find exact match first
+      const exactMatch = localTextStyles.find(style => style.name === textStyleName);
+      if (exactMatch) {
+        console.log(`✅ Found exact text style: ${exactMatch.name}`);
+        return exactMatch;
+      }
+      
+      // Fallback: case-insensitive search
+      const caseInsensitiveMatch = localTextStyles.find(style => 
+        style.name.toLowerCase() === textStyleName.toLowerCase()
+      );
+      if (caseInsensitiveMatch) {
+        console.log(`✅ Found case-insensitive text style: ${caseInsensitiveMatch.name}`);
+        return caseInsensitiveMatch;
+      }
+      
+      console.warn(`⚠️ Could not find text style "${textStyleName}"`);
+      console.log(`📋 All available text styles:`, localTextStyles.map(s => s.name));
+      return null;
+      
+    } catch (error) {
+      console.error(`❌ Error resolving text style "${textStyleName}":`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Applies text style to a text node
+   */
+  static async applyTextStyle(textNode: TextNode, textStyleName: string): Promise<void> {
+    try {
+      const textStyle = await FigmaRenderer.resolveTextStyleReference(textStyleName);
+      if (textStyle) {
+        textNode.textStyleId = textStyle.id;
+        console.log(`✅ Applied text style "${textStyleName}" to text node`);
+      } else {
+        console.warn(`❌ Could not apply text style "${textStyleName}" - style not found`);
+      }
+    } catch (error) {
+      console.error(`❌ Error applying text style "${textStyleName}":`, error);
+    }
   }
 }

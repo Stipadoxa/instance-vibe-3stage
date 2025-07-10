@@ -23,9 +23,32 @@ export interface ColorStyleCollection {
   other: ColorStyle[];
 }
 
+export interface TextStyle {
+  id: string;
+  name: string;
+  description?: string;
+  
+  // Core Typography Properties
+  fontSize: number;
+  fontName: FontName;
+  lineHeight: LineHeight;
+  letterSpacing: LetterSpacing;
+  
+  // Enhanced Properties
+  textDecoration?: TextDecoration; // 'NONE' | 'UNDERLINE' | 'STRIKETHROUGH'
+  textCase?: TextCase; // 'ORIGINAL' | 'UPPER' | 'LOWER' | 'TITLE' | 'SMALL_CAPS'
+  textAlignHorizontal?: 'LEFT' | 'CENTER' | 'RIGHT' | 'JUSTIFIED';
+  textAlignVertical?: 'TOP' | 'CENTER' | 'BOTTOM';
+  
+  // Spacing Properties (if available)
+  paragraphSpacing?: number;
+  paragraphIndent?: number;
+}
+
 export interface ScanSession {
   components: ComponentInfo[];
   colorStyles?: ColorStyleCollection;
+  textStyles?: TextStyle[]; // Simple array, no categorization
   scanTime: number;
   version: string;
   fileKey?: string;
@@ -89,6 +112,66 @@ export class ComponentScanner {
         surface: [],
         other: []
       };
+    }
+  }
+  
+  /**
+   * Scans all local text styles in the current Figma file
+   * Mirrors the scanFigmaColorStyles pattern exactly
+   */
+  static async scanFigmaTextStyles(): Promise<TextStyle[]> {
+    try {
+      console.log('🔍 Scanning text styles...');
+      const figmaTextStyles = await figma.getLocalTextStylesAsync();
+      
+      console.log(`Found ${figmaTextStyles.length} text styles`);
+      
+      const textStyles: TextStyle[] = figmaTextStyles.map(style => {
+        // Build text style object with safe property access
+        const textStyle: TextStyle = {
+          id: style.id,
+          name: style.name,
+          description: style.description || '',
+          fontSize: style.fontSize,
+          fontName: style.fontName,
+          lineHeight: style.lineHeight,
+          letterSpacing: style.letterSpacing,
+        };
+        
+        // Add optional properties if they exist
+        if (style.textDecoration) {
+          textStyle.textDecoration = style.textDecoration;
+        }
+        
+        if (style.textCase) {
+          textStyle.textCase = style.textCase;
+        }
+        
+        if (style.textAlignHorizontal) {
+          textStyle.textAlignHorizontal = style.textAlignHorizontal;
+        }
+        
+        if (style.textAlignVertical) {
+          textStyle.textAlignVertical = style.textAlignVertical;
+        }
+        
+        if (style.paragraphSpacing !== undefined) {
+          textStyle.paragraphSpacing = style.paragraphSpacing;
+        }
+        
+        if (style.paragraphIndent !== undefined) {
+          textStyle.paragraphIndent = style.paragraphIndent;
+        }
+        
+        console.log(`✅ Processed text style: ${style.name} (${style.fontSize}px)`);
+        return textStyle;
+      });
+
+      console.log(`📝 Successfully scanned ${textStyles.length} text styles`);
+      return textStyles;
+    } catch (error) {
+      console.error('❌ Error scanning text styles:', error);
+      throw new Error(`Failed to scan text styles: ${error.message}`);
     }
   }
   
@@ -199,6 +282,7 @@ export class ComponentScanner {
     console.log("🔍 Starting comprehensive design system scan...");
     const components: ComponentInfo[] = [];
     let colorStyles: ColorStyleCollection | undefined;
+    let textStyles: TextStyle[] | undefined;
     
     try {
       await figma.loadAllPagesAsync();
@@ -213,8 +297,17 @@ export class ComponentScanner {
         colorStyles = undefined;
       }
       
+      // Second, scan Text Styles
+      console.log("\n📝 Phase 2: Scanning Text Styles...");
+      try {
+        textStyles = await this.scanFigmaTextStyles();
+      } catch (error) {
+        console.warn("⚠️ Text Styles scanning failed, continuing without text styles:", error);
+        textStyles = undefined;
+      }
+      
       // Then, scan components
-      console.log("\n🧩 Phase 2: Scanning Components...");
+      console.log("\n🧩 Phase 3: Scanning Components...");
       for (const page of figma.root.children) {
         console.log(`📋 Scanning page: "${page.name}"`);
         try {
@@ -255,6 +348,7 @@ export class ComponentScanner {
       const scanSession: ScanSession = {
         components,
         colorStyles,
+        textStyles,
         scanTime: Date.now(),
         version: "2.0.0",
         fileKey: figma.fileKey || undefined
@@ -263,6 +357,7 @@ export class ComponentScanner {
       console.log(`\n🎉 Comprehensive scan complete!`);
       console.log(`   📦 Components: ${components.length}`);
       console.log(`   🎨 Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+      console.log(`   📝 Text Styles: ${textStyles ? textStyles.length : 0}`);
       console.log(`   📄 File Key: ${scanSession.fileKey || 'Unknown'}`);
       
       return scanSession;
