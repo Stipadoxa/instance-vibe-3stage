@@ -3635,15 +3635,24 @@ ${llmErrors}`);
      */
     static async applyTextStyle(textNode, textStyleName) {
       try {
+        console.log(`\u{1F4DD} Attempting to apply text style: "${textStyleName}"`);
         const textStyle = await _FigmaRenderer.resolveTextStyleReference(textStyleName);
         if (textStyle) {
-          textNode.textStyleId = textStyle.id;
+          console.log(`\u{1F4DD} Text style found - ID: ${textStyle.id}, Name: ${textStyle.name}`);
+          await textNode.setTextStyleIdAsync(textStyle.id);
           console.log(`\u2705 Applied text style "${textStyleName}" to text node`);
         } else {
           console.warn(`\u274C Could not apply text style "${textStyleName}" - style not found`);
         }
       } catch (error) {
         console.error(`\u274C Error applying text style "${textStyleName}":`, error);
+        console.error(`\u274C Error details:`, {
+          errorMessage: error.message,
+          errorStack: error.stack,
+          textStyleName,
+          textNodeType: textNode == null ? void 0 : textNode.type,
+          textNodeId: textNode == null ? void 0 : textNode.id
+        });
       }
     }
   };

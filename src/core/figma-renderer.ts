@@ -1961,15 +1961,24 @@ export class FigmaRenderer {
    */
   static async applyTextStyle(textNode: TextNode, textStyleName: string): Promise<void> {
     try {
+      console.log(`📝 Attempting to apply text style: "${textStyleName}"`);
       const textStyle = await FigmaRenderer.resolveTextStyleReference(textStyleName);
       if (textStyle) {
-        textNode.textStyleId = textStyle.id;
+        console.log(`📝 Text style found - ID: ${textStyle.id}, Name: ${textStyle.name}`);
+        await textNode.setTextStyleIdAsync(textStyle.id);
         console.log(`✅ Applied text style "${textStyleName}" to text node`);
       } else {
         console.warn(`❌ Could not apply text style "${textStyleName}" - style not found`);
       }
     } catch (error) {
       console.error(`❌ Error applying text style "${textStyleName}":`, error);
+      console.error(`❌ Error details:`, {
+        errorMessage: error.message,
+        errorStack: error.stack,
+        textStyleName: textStyleName,
+        textNodeType: textNode?.type,
+        textNodeId: textNode?.id
+      });
     }
   }
 }

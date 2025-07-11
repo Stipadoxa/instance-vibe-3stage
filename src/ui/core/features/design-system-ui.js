@@ -213,6 +213,16 @@ export class DesignSystemUI {
             this.elements.scanBtn.textContent = '🔍 Scan Design System';
         }
 
+        // DEBUG: Log received message data
+        console.log('🔍 DesignSystemUI received scan-results message:', {
+            hasComponents: !!(msg.components),
+            componentCount: msg.components?.length || 0,
+            hasColorStyles: !!(msg.colorStyles),
+            hasTextStyles: !!(msg.textStyles),
+            textStylesCount: msg.textStylesCount || 0,
+            textStylesArray: msg.textStyles ? msg.textStyles.length : 0
+        });
+
         // Store the full scan session data
         this.fullScanSession = {
             components: msg.components || [],
@@ -648,6 +658,14 @@ export class DesignSystemUI {
             this.showScanStatus('❌ No scan data available to export', 'error');
             return;
         }
+
+        // DEBUG: Log full scan session data before export
+        console.log('📥 Export Debug - fullScanSession:', {
+            hasColorStyles: !!(this.fullScanSession.colorStyles),
+            hasTextStyles: !!(this.fullScanSession.textStyles),
+            textStylesCount: this.fullScanSession.textStyles ? this.fullScanSession.textStyles.length : 0,
+            textStylesPreview: this.fullScanSession.textStyles ? this.fullScanSession.textStyles.slice(0, 3).map(s => s.name) : []
+        });
 
         try {
             // Calculate style counts for metadata

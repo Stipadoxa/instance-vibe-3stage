@@ -243,7 +243,7 @@ You have access to text styles from the scanned design system. When specifying t
   "type": "text",
   "properties": {
     "text": "Welcome Back",
-    "textStyle": "Heading 1"
+    "textStyle": "Headline/Large"
   }
 }
 ```
@@ -253,7 +253,7 @@ You have access to text styles from the scanned design system. When specifying t
   "type": "text", 
   "properties": {
     "text": "Enter your password",
-    "textStyle": "Body Text"
+    "textStyle": "Body/Medium"
   }
 }
 ```
@@ -263,7 +263,7 @@ You have access to text styles from the scanned design system. When specifying t
   "type": "text",
   "properties": {
     "text": "Forgot password?",
-    "textStyle": "Caption"
+    "textStyle": "Caption/Small"
   }
 }
 ```
@@ -283,6 +283,18 @@ You have access to text styles from the scanned design system. When specifying t
 ### TEXT STYLE SELECTION STRATEGY:
 1. **Always try to use text styles first** - they ensure consistency with the design system
 2. **Reference by exact name** - use the exact style names available in the design system
-3. **Combine with color styles** - you can use both textStyle and colorStyleName together
-4. **Semantic hierarchy** - choose styles that match the semantic importance (headings, body, captions)
-5. **Fallback gracefully** - if no appropriate text style exists, use manual fontSize/fontWeight properties
+3. **Understand naming patterns** - text styles often follow patterns like:
+   - `Headline/Large`, `Headline/Medium`, `Headline/Small` for main titles
+   - `Title/Large`, `Title/Medium`, `Title/Small` for section headers  
+   - `Body/Large`, `Body/Medium`, `Body/Small` for main content text
+   - `Label/Large`, `Label/Medium`, `Label/Small` for form labels and UI labels
+   - `Caption/Small` for fine print, disclaimers, and supplementary text
+4. **Match semantic purpose to style category**:
+   - Use **Headline** styles for main page titles and hero text
+   - Use **Title** styles for section headers and card titles
+   - Use **Body** styles for main content, descriptions, and normal text
+   - Use **Label** styles for form field labels and UI element labels
+   - Use **Caption** styles for helper text, footnotes, and disclaimers
+5. **Choose appropriate size** - select Large/Medium/Small based on hierarchy and importance
+6. **Combine with color styles** - you can use both textStyle and colorStyleName together
+7. **Fallback gracefully** - if no appropriate text style exists, use manual fontSize/fontWeight properties

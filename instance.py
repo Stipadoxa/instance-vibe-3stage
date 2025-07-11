@@ -348,8 +348,8 @@ class Alternative3StagePipeline:
             else:
                 return str(self.live_design_system_data)
         
-        # Fallback to static file
-        design_system_file = "design-system-raw-data-2025-07-07T18-45-53.json"
+        # Fallback to static file (updated to latest version with text styles)
+        design_system_file = "design-system-raw-data-2025-07-11T08-44-31.json"
         if not os.path.exists(design_system_file):
             return "No design system data available"
         
