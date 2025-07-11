@@ -481,6 +481,53 @@
       }
     }
     /**
+     * Scans all local text styles in the current Figma file
+     * Mirrors the scanFigmaColorStyles pattern exactly
+     */
+    static async scanFigmaTextStyles() {
+      try {
+        console.log("\u{1F50D} Scanning text styles...");
+        const figmaTextStyles = await figma.getLocalTextStylesAsync();
+        console.log(`Found ${figmaTextStyles.length} text styles`);
+        const textStyles = figmaTextStyles.map((style) => {
+          const textStyle = {
+            id: style.id,
+            name: style.name,
+            description: style.description || "",
+            fontSize: style.fontSize,
+            fontName: style.fontName,
+            lineHeight: style.lineHeight,
+            letterSpacing: style.letterSpacing
+          };
+          if (style.textDecoration) {
+            textStyle.textDecoration = style.textDecoration;
+          }
+          if (style.textCase) {
+            textStyle.textCase = style.textCase;
+          }
+          if (style.textAlignHorizontal) {
+            textStyle.textAlignHorizontal = style.textAlignHorizontal;
+          }
+          if (style.textAlignVertical) {
+            textStyle.textAlignVertical = style.textAlignVertical;
+          }
+          if (style.paragraphSpacing !== void 0) {
+            textStyle.paragraphSpacing = style.paragraphSpacing;
+          }
+          if (style.paragraphIndent !== void 0) {
+            textStyle.paragraphIndent = style.paragraphIndent;
+          }
+          console.log(`\u2705 Processed text style: ${style.name} (${style.fontSize}px)`);
+          return textStyle;
+        });
+        console.log(`\u{1F4DD} Successfully scanned ${textStyles.length} text styles`);
+        return textStyles;
+      } catch (error) {
+        console.error("\u274C Error scanning text styles:", error);
+        throw new Error(`Failed to scan text styles: ${error.message}`);
+      }
+    }
+    /**
      * Convert Figma PaintStyle to our ColorStyle interface
      */
     static async convertPaintStyleToColorStyle(paintStyle) {
@@ -558,6 +605,7 @@
       console.log("\u{1F50D} Starting comprehensive design system scan...");
       const components = [];
       let colorStyles;
+      let textStyles;
       try {
         await figma.loadAllPagesAsync();
         console.log("\u2705 All pages loaded");
@@ -568,7 +616,14 @@
           console.warn("\u26A0\uFE0F Color Styles scanning failed, continuing without color styles:", error);
           colorStyles = void 0;
         }
-        console.log("\n\u{1F9E9} Phase 2: Scanning Components...");
+        console.log("\n\u{1F4DD} Phase 2: Scanning Text Styles...");
+        try {
+          textStyles = await this.scanFigmaTextStyles();
+        } catch (error) {
+          console.warn("\u26A0\uFE0F Text Styles scanning failed, continuing without text styles:", error);
+          textStyles = void 0;
+        }
+        console.log("\n\u{1F9E9} Phase 3: Scanning Components...");
         for (const page of figma.root.children) {
           console.log(`\u{1F4CB} Scanning page: "${page.name}"`);
           try {
@@ -606,6 +661,7 @@
         const scanSession = {
           components,
           colorStyles,
+          textStyles,
           scanTime: Date.now(),
           version: "2.0.0",
           fileKey: figma.fileKey || void 0
@@ -614,6 +670,7 @@
 \u{1F389} Comprehensive scan complete!`);
         console.log(`   \u{1F4E6} Components: ${components.length}`);
         console.log(`   \u{1F3A8} Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+        console.log(`   \u{1F4DD} Text Styles: ${textStyles ? textStyles.length : 0}`);
         console.log(`   \u{1F4C4} File Key: ${scanSession.fileKey || "Unknown"}`);
         return scanSession;
       } catch (e) {
@@ -2139,7 +2196,7 @@
   };
 
   // src/core/figma-renderer.ts
-  var FigmaRenderer = class {
+  var _FigmaRenderer = class _FigmaRenderer {
     /**
      * Main UI generation function - creates UI from structured JSON data
      */
@@ -2433,6 +2490,15 @@
           }
         } catch (error) {
           console.error(`\u274C Error applying color style "${props.colorStyleName}":`, error);
+        }
+      }
+      if (props.textStyle || props.textStyleName) {
+        const styleName = props.textStyle || props.textStyleName;
+        console.log(`\u{1F4DD} Attempting to apply text style: "${styleName}"`);
+        try {
+          await _FigmaRenderer.applyTextStyle(textNode, styleName);
+        } catch (error) {
+          console.error(`\u274C Error applying text style "${styleName}":`, error);
         }
       }
       this.applyChildLayoutProperties(textNode, props);
@@ -3520,22 +3586,91 @@ ${llmErrors}`);
       }
       return false;
     }
+    // Text Styles Caching and Resolution
+    /**
+     * Sets the cached text styles for the renderer
+     * Mirrors setColorStyles pattern exactly
+     */
+    static setTextStyles(textStyles) {
+      _FigmaRenderer.cachedTextStyles = textStyles;
+      console.log(`\u{1F4DD} Cached ${textStyles.length} text styles for rendering`);
+      if (textStyles.length > 0) {
+        console.log("Available text styles:", textStyles.map((s) => s.name).join(", "));
+      }
+    }
+    /**
+     * Resolves text style name to Figma text style ID
+     * Mirrors resolveColorStyleReference pattern
+     */
+    static async resolveTextStyleReference(textStyleName) {
+      console.log(`\u{1F4DD} Resolving text style reference: "${textStyleName}"`);
+      try {
+        const localTextStyles = await figma.getLocalTextStylesAsync();
+        console.log(`\u{1F4CB} Found ${localTextStyles.length} local text styles in Figma`);
+        if (localTextStyles.length > 0) {
+          console.log(`\u{1F4CB} First 5 text style names:`, localTextStyles.slice(0, 5).map((s) => s.name));
+        }
+        const exactMatch = localTextStyles.find((style) => style.name === textStyleName);
+        if (exactMatch) {
+          console.log(`\u2705 Found exact text style: ${exactMatch.name}`);
+          return exactMatch;
+        }
+        const caseInsensitiveMatch = localTextStyles.find(
+          (style) => style.name.toLowerCase() === textStyleName.toLowerCase()
+        );
+        if (caseInsensitiveMatch) {
+          console.log(`\u2705 Found case-insensitive text style: ${caseInsensitiveMatch.name}`);
+          return caseInsensitiveMatch;
+        }
+        console.warn(`\u26A0\uFE0F Could not find text style "${textStyleName}"`);
+        console.log(`\u{1F4CB} All available text styles:`, localTextStyles.map((s) => s.name));
+        return null;
+      } catch (error) {
+        console.error(`\u274C Error resolving text style "${textStyleName}":`, error);
+        return null;
+      }
+    }
+    /**
+     * Applies text style to a text node
+     */
+    static async applyTextStyle(textNode, textStyleName) {
+      try {
+        const textStyle = await _FigmaRenderer.resolveTextStyleReference(textStyleName);
+        if (textStyle) {
+          textNode.textStyleId = textStyle.id;
+          console.log(`\u2705 Applied text style "${textStyleName}" to text node`);
+        } else {
+          console.warn(`\u274C Could not apply text style "${textStyleName}" - style not found`);
+        }
+      } catch (error) {
+        console.error(`\u274C Error applying text style "${textStyleName}":`, error);
+      }
+    }
   };
   // Static storage for Color Styles scanned from the design system
-  FigmaRenderer.cachedColorStyles = null;
+  _FigmaRenderer.cachedColorStyles = null;
+  // Static storage for Text Styles scanned from the design system
+  _FigmaRenderer.cachedTextStyles = null;
+  var FigmaRenderer = _FigmaRenderer;
 
   // src/core/design-system-scanner-service.ts
   var DesignSystemScannerService = class {
     /**
-     * Main scanning function - scans all pages for components and Color Styles
+     * Main scanning function - scans all pages for components, Color Styles, and Text Styles
      */
     static async scanDesignSystem(progressCallback) {
-      console.log("\u{1F50D} Starting comprehensive design system scan with Color Styles...");
+      console.log("\u{1F50D} Starting comprehensive design system scan with Color Styles and Text Styles...");
       try {
         progressCallback == null ? void 0 : progressCallback({ current: 0, total: 100, status: "Initializing comprehensive scan..." });
         const scanSession = await ComponentScanner.scanDesignSystem();
-        progressCallback == null ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles with renderer..." });
+        progressCallback == null ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles and Text Styles with renderer..." });
         FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
+        if (scanSession.textStyles && scanSession.textStyles.length > 0) {
+          FigmaRenderer.setTextStyles(scanSession.textStyles);
+          console.log(`\u{1F4DD} Loaded ${scanSession.textStyles.length} text styles into renderer`);
+        } else {
+          console.log("\u{1F4DD} No text styles found in scan session");
+        }
         progressCallback == null ? void 0 : progressCallback({ current: 100, total: 100, status: "Comprehensive scan complete!" });
         return scanSession;
       } catch (e) {
@@ -3561,6 +3696,20 @@ ${llmErrors}`);
         return colorStyles;
       } catch (e) {
         console.error("\u274C Error scanning Color Styles:", e);
+        throw e;
+      }
+    }
+    /**
+     * Scan only Text Styles without components
+     */
+    static async scanTextStyles() {
+      console.log("\u{1F4DD} Scanning only Text Styles...");
+      try {
+        const textStyles = await ComponentScanner.scanFigmaTextStyles();
+        FigmaRenderer.setTextStyles(textStyles);
+        return textStyles;
+      } catch (e) {
+        console.error("\u274C Error scanning Text Styles:", e);
         throw e;
       }
     }
@@ -3816,13 +3965,14 @@ ${llmErrors}`);
       return textLayers;
     }
     /**
-     * Save scan results to Figma storage - supports full scan session with color styles
+     * Save scan results to Figma storage - supports full scan session with color styles and text styles
      */
-    static async saveScanResults(components, colorStyles) {
+    static async saveScanResults(components, colorStyles, textStyles) {
       try {
         const scanSession = {
           components,
           colorStyles: colorStyles || void 0,
+          textStyles: textStyles || void 0,
           scanTime: Date.now(),
           version: "2.0.0",
           fileKey: figma.fileKey || figma.root.id
@@ -3830,7 +3980,8 @@ ${llmErrors}`);
         await figma.clientStorage.setAsync("design-system-scan", scanSession);
         await figma.clientStorage.setAsync("last-scan-results", components);
         const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-        console.log(`\u{1F4BE} Saved ${components.length} components and ${colorStylesCount} color styles with session data`);
+        const textStylesCount = textStyles ? textStyles.length : 0;
+        console.log(`\u{1F4BE} Saved ${components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles with session data`);
       } catch (error) {
         console.error("\u274C Error saving scan results:", error);
         try {
@@ -3842,14 +3993,15 @@ ${llmErrors}`);
       }
     }
     /**
-     * Save complete scan session including color styles
+     * Save complete scan session including color styles and text styles
      */
     static async saveScanSession(scanSession) {
       try {
         await figma.clientStorage.setAsync("design-system-scan", scanSession);
         await figma.clientStorage.setAsync("last-scan-results", scanSession.components);
         const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-        console.log(`\u{1F4BE} Saved complete scan session: ${scanSession.components.length} components and ${colorStylesCount} color styles`);
+        const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+        console.log(`\u{1F4BE} Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles`);
       } catch (error) {
         console.error("\u274C Error saving scan session:", error);
         throw error;
@@ -6234,6 +6386,28 @@ Native Element Patterns
   }
 }
 
+// Native Text with Text Style (when provided by UX Designer)
+{
+  "type": "native-text",
+  "text": "Account Settings",
+  "properties": {
+    "textStyle": "Heading 1",
+    "colorStyleName": "Primary/primary90",
+    "horizontalSizing": "FILL"
+  }
+}
+
+// Native Text with Both Text Style and Manual Override
+{
+  "type": "native-text",
+  "text": "Quick action",
+  "properties": {
+    "textStyle": "Body Text",
+    "color": {"r": 0.2, "g": 0.2, "b": 0.2},
+    "horizontalSizing": "FILL"
+  }
+}
+
 // Native Circle with Media Content
 {
   "type": "native-circle",
@@ -6375,6 +6549,13 @@ Color Format: ALWAYS preserve colorStyleName when provided by UX Designer
 - NEVER convert colorStyleName to RGB - preserve the style reference
 {"colorStyleName": "Primary/primary80"}
 {"color": {"r": 0.1, "g": 0.1, "b": 0.1}}
+
+Text Style Format: ALWAYS preserve textStyle when provided by UX Designer
+- When UX Designer provides textStyle: Include it in properties object
+- When UX Designer provides manual properties: Use fontSize, fontWeight, etc.
+- NEVER convert textStyle to manual properties - preserve the style reference
+{"textStyle": "Heading 1"}
+{"fontSize": 24, "fontWeight": "bold"}
 
 Template Variables: Use \${variableName} for component IDs that need resolution
 {"componentNodeId": "\${settingsItemId}"}
@@ -7977,11 +8158,17 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       const currentFileKey = figma.fileKey || figma.root.id;
       if (savedScan && savedScan.components && savedScan.components.length > 0) {
         if (savedScan.fileKey === currentFileKey) {
-          console.log(`\u2705 Design system loaded: ${savedScan.components.length} components`);
+          const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+          const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
+          console.log(`\u2705 Design system loaded: ${savedScan.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles`);
           figma.ui.postMessage({
             type: "saved-scan-loaded",
             components: savedScan.components,
-            scanTime: savedScan.scanTime
+            colorStyles: savedScan.colorStyles,
+            textStyles: savedScan.textStyles,
+            scanTime: savedScan.scanTime,
+            colorStylesCount,
+            textStylesCount
           });
         } else {
           console.log("\u2139\uFE0F Scan from different file, clearing cache");
@@ -8000,19 +8187,22 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
   }
   async function handleScanCommand() {
     try {
-      figma.notify("\u{1F50D} Scanning design system with color styles...", { timeout: 3e4 });
+      figma.notify("\u{1F50D} Scanning design system with color styles and text styles...", { timeout: 3e4 });
       const scanSession = await ComponentScanner.scanDesignSystem();
       await DesignSystemScannerService.saveScanSession(scanSession);
       await ComponentPropertyEngine.initialize();
       const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+      const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
       figma.ui.postMessage({
         type: "scan-results",
         components: scanSession.components,
         colorStyles: scanSession.colorStyles,
+        textStyles: scanSession.textStyles,
         scanTime: scanSession.scanTime,
-        colorStylesCount
+        colorStylesCount,
+        textStylesCount
       });
-      figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
+      figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles and initialized systematic engine!`);
       if (scanSession.components.length > 0) {
         const sampleComponent = scanSession.components.find((c) => c.suggestedType === "tab") || scanSession.components[0];
         ComponentPropertyEngine.debugSchema(sampleComponent.id);
@@ -8288,18 +8478,21 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           break;
         case "scan-design-system":
           try {
-            figma.notify("\u{1F50D} Scanning design system with color styles...", { timeout: 3e4 });
+            figma.notify("\u{1F50D} Scanning design system with color styles and text styles...", { timeout: 3e4 });
             const scanSession = await DesignSystemScannerService.scanDesignSystem();
             await DesignSystemScannerService.saveScanSession(scanSession);
             const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+            const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
             figma.ui.postMessage({
               type: "scan-results",
               components: scanSession.components,
               colorStyles: scanSession.colorStyles,
+              textStyles: scanSession.textStyles,
               scanTime: scanSession.scanTime,
-              colorStylesCount
+              colorStylesCount,
+              textStylesCount
             });
-            figma.notify(`\u2705 Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3e3 });
+            figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles!`, { timeout: 3e3 });
           } catch (error) {
             console.error("Scan failed:", error);
             const errorMessage = error instanceof Error ? error.message : String(error);
@@ -8664,10 +8857,16 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           try {
             const savedScan = await DesignSystemScannerService.getScanSession();
             if (savedScan && savedScan.components && savedScan.fileKey === figma.root.id) {
+              const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+              const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
               figma.ui.postMessage({
                 type: "saved-scan-loaded",
                 components: savedScan.components,
-                scanTime: savedScan.scanTime
+                colorStyles: savedScan.colorStyles,
+                textStyles: savedScan.textStyles,
+                scanTime: savedScan.scanTime,
+                colorStylesCount,
+                textStylesCount
               });
             } else {
               figma.ui.postMessage({ type: "no-saved-scan" });

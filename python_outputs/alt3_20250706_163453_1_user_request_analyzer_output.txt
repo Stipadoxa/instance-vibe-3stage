@@ -1,0 +1,21 @@
+Domain & Context
+Domain: Authentication domain with secure access control
+User Type: Mobile users needing to access their personal accounts
+Platform Impact: Mobile users often in distracting environments, need quick secure access with touch-friendly interface, limited screen real estate necessitates efficient form design.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account.
+Secondary Goals: Recover forgotten credentials, use convenient login options (e.g., social login, biometric authentication if appropriate).
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions, potential for typos due to touch keyboard.
+Ready for handoff if: Login button is the most prominent element, password recovery link is clearly visible, form fields are appropriately sized for mobile touch interaction, error messages are displayed clearly with suggested resolutions, and sufficient spacing is provided for comfortable touch interaction.
+
+Content Requirements
+Critical: Username/email field, password field, login button.
+Supporting: Password recovery link, "Remember me" checkbox,  social login options (if applicable).
+Contextual: Error messages (invalid credentials, empty fields), loading indicator during authentication, security notices (e.g., https indication).
+
+Screen Requirements
+Primary Actions: Login with credentials.
+Secondary Actions: Initiate password recovery, access account creation (if applicable), social login (if applicable).
+Screen States: Default state (empty form), loading state (while authenticating), error state (incorrect credentials), success state (redirects to the appropriate screen).
+Feedback Needs: Real-time validation for email format and password strength (optional, but recommended), clear and concise error messages for login failures, loading indicators during authentication, and visual cues to indicate successful login (e.g., navigation to the next screen).

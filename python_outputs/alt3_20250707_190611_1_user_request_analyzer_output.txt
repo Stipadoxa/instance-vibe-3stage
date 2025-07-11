@@ -1,0 +1,27 @@
+Domain & Context
+Domain:  Generic dialog system within a mobile application.  The specific context is unclear and requires further information.
+User Type: Mobile application users who need to interact with system-level dialogs presenting information and requiring a decision.
+Platform Impact: Mobile users interact via touch, have limited screen real estate, and may be easily distracted.  The dialog should be concise and easy to understand.
+
+User Requirements
+Primary Goals: Understand the information presented in the title and subtitle, and make a decision by interacting with the red button.
+Secondary Goals:  The dialog should be easy to dismiss (if applicable, method of dismissal needs clarification).
+User Constraints: Limited screen real estate, touch-only interaction, potential for interruptions.
+Ready for handoff if: Title and subtitle text are clearly legible, the red button is appropriately sized for touch interaction, and the dialog's visual hierarchy is clear.
+
+Content Requirements
+Critical: Title (short and descriptive), Subtitle (supplementary information), Red button (with clear label indicating action).
+Supporting:  None specified, but potentially an icon to represent the dialog's purpose.
+Contextual: None specified.  Further information is needed to determine if the content changes based on different scenarios.
+
+Structural & Component Directives
+* Layout:  Single-column layout, vertically stacking title, subtitle, and button.
+* Components:  Title (Text component), Subtitle (Text component), Red Button (Button component).
+* Styling: Button background color: Red.
+
+
+Screen Requirements
+Primary Actions: Tap the red button.
+Secondary Actions:  Dismiss the dialog (method needs clarification - e.g., tap outside the dialog, back button).
+Screen States:  Only one state is specified - the default state with title, subtitle and button.
+Feedback Needs:  Visual feedback (e.g., button press state) on interaction with the button.  Haptic feedback may also be desirable.

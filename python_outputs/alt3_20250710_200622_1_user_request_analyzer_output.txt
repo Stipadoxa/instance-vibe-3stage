@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users needing to access their personal accounts.
+Platform Impact: Mobile users often in distracting environments, need quick and secure access with a touch-friendly interface, limited screen real estate.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account.
+Secondary Goals: Create a new account, recover forgotten credentials (implied).
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions.
+Ready for handoff if:  "Sign in" button is clearly the primary action, error state for password field is displayed correctly with helpful text, all interactive elements meet minimum tap target sizes,  links are styled correctly, and footnote text is visible and appropriately sized.
+
+Content Requirements
+Critical: Email field with pre-filled value ("123@example.ua"), password field, "Sign in" button, "Sign up" button,  "By continuing you agree to the Policy and Rules" footnote with linked "Policy" and "Rules".
+Supporting:  (None explicitly stated, but could include a "Forgot Password" link for improved UX).
+Contextual: Error message within the password field ("Please enter your password").
+
+Structural & Component Directives
+*   Layout: Two input fields vertically stacked above a primary button ("Sign in"), followed by a secondary button ("Sign up"), and finally a footnote at the very bottom.
+*   Components: Email input field (pre-filled with "123@example.ua"), password input field (with error state and supporting text), "Sign in" button (primary), "Sign up" button (text only), footnote text with styled hyperlinks ("Policy" and "Rules").
+*   Styling:  "Sign in" button styled as a primary button, "Policy" and "Rules" links styled in primary color.  Error state for password field clearly visible.
+
+Screen Requirements
+Primary Actions: Sign in.
+Secondary Actions: Sign up.
+Screen States: Default state (with pre-filled email and empty password field), error state for password field.
+Feedback Needs: Clear visual feedback for error states (e.g., red border, error message), confirmation of successful login (e.g., navigation to the next screen).
+

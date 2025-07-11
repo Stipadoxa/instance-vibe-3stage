@@ -1,0 +1,29 @@
+Domain & Context
+Domain: E-commerce domain focused on product discovery
+User Type: Mobile users browsing and searching for products within specific categories.
+Platform Impact: Mobile users expect a streamlined, touch-friendly interface with quick access to search and category browsing. Limited screen real estate necessitates efficient use of space.
+
+User Requirements
+Primary Goals:  Quickly search for products, browse products within specific categories.
+Secondary Goals: Efficiently switch between product categories, potentially refine search results.
+User Constraints: Limited screen space, touch-only interaction, potential for interruptions.  Users may be browsing in various environments with differing network conditions.
+Ready for handoff if: Search bar is functional and prominent within the app bar, tabs are clearly labeled, scrollable, and easily tappable, and the transition between tabs and search results is smooth and responsive.  A clear visual indication of loading or error states is present.
+
+
+Content Requirements
+Critical: Search bar, "electronics," "home goods," "vehicles" tabs, product listings (within each tab).
+Supporting:  Loading indicator while fetching products, filtering/sorting options (potentially).
+Contextual:  Search results display, error messages (network issues, no results found).
+
+
+Structural & Component Directives
+* Layout: App bar containing search bar, scrollable tabs below app bar, scrollable product listing area below tabs.
+* Components: App bar with search bar (text input field, possibly a clear button and search icon), tabs (text labels, potentially visual indicators for selected tab), product listing area (display of products, potentially with images, titles, and prices).
+* Styling:  To be determined based on application branding.
+
+
+Screen Requirements
+Primary Actions: Search for products, select a product category tab.
+Secondary Actions:  (Potentially) filtering or sorting of product listings, additional navigation.
+Screen States:  Default state (display of tabs and potentially recent searches/suggestions), loading state (while fetching data), search results state, error states (network issues, no results).
+Feedback Needs:  Visual feedback on search query (auto-suggestions during input), loading indicators, clear error messages.

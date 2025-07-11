@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users needing to access their personal accounts.
+Platform Impact: Mobile users often in distracting environments, need quick secure access with touch-friendly interface and limited screen real estate.  Touch interaction is primary.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account.
+Secondary Goals: Create a new account (sign-up).
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions.
+Ready for handoff if: All fields are appropriately sized for mobile touch interaction, error states are clearly visible and provide helpful context, primary action ("Sign in") is prominent and easily tappable, and all interactive elements meet minimum touch target sizes.
+
+
+Content Requirements
+Critical: "Your e-mail" field (pre-filled with "123@example.ua"), password field, "Sign in" button, "Sign up" button.
+Supporting: Error message for password field ("Please enter your password"), footnote text ("By continuing you agree to the Policy and Rules").
+Contextual:  Updated error messages based on password field input (e.g., incorrect password).
+
+
+Structural & Component Directives
+* Layout: Single column layout with top-to-bottom arrangement of fields, buttons, and footnote.
+* Components:  "Your e-mail" text input field (pre-filled), password text input field (with error state), "Sign in" primary button, "Sign up" text button, footnote text with hyperlink ("Policy and Rules").
+* Styling:  "Sign in" button should have primary color styling. "Policy and Rules" link should be styled with primary color.  Error message text within password field should have clear visual distinction (e.g., red text).
+
+
+Screen Requirements
+Primary Actions: Sign in with email and password.
+Secondary Actions: Sign up for an account.
+Screen States: Default state, error state (password field), potentially a loading state during authentication.
+Feedback Needs: Clear error messages for invalid inputs, visual feedback indicating successful login or navigation to sign-up.

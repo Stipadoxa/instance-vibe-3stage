@@ -1,0 +1,30 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users needing to access their personal accounts.
+Platform Impact: Mobile users often in distracting environments, need quick and secure access with a touch-friendly interface, limited screen real estate.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account.
+Secondary Goals: Create a new account, recover forgotten credentials.
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions.
+Ready for handoff if:  "Sign in" button is the most prominent element, all form fields are appropriately sized for mobile, error messages are clearly displayed,  touch targets meet minimum size requirements, and all text is legible.
+
+
+Content Requirements
+Critical: "Your e-mail" field (pre-filled with "123@example.ua"), password field, "Sign in" button, "By continuing you agree to the Policy and Rules" footnote (with "Policy and Rules" linked).
+Supporting: "Sign up" button.
+Contextual: Error message for password field ("Please enter your password").
+
+
+Structural & Component Directives
+*   **Layout:** Vertical layout with a large title at the top, followed by form fields, buttons, and footnote.
+*   **Components:** Large title ("Welcome"), "Your e-mail" text input (pre-filled), password text input (with error state and supportive text), "Sign in" primary button, "Sign up" text button, footnote text with link.
+*   **Styling:**  Large title font size and styling needs to be specified.  Error state styling for the password field needs to be defined (e.g., red text, border).
+
+
+Screen Requirements
+Primary Actions: Sign in using email and password.
+Secondary Actions: Sign up for a new account.
+Screen States: Default state, error state (password field).
+Feedback Needs: Clear error message display for invalid password input.
+

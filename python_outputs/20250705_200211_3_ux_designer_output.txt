@@ -1,0 +1,127 @@
+## Information Architecture Specification:  [Feature Name:  Example - Product Catalog]
+
+**Screen Architecture**
+
+**Layout Structure:**
+* **Screen Pattern:** Multi-screen (product list, product detail, cart)
+* **Navigation Flow:** Tab-based sections (Browse, Search, Cart) + List-based browsing within product lists.
+* **Content Organization:** Fixed header (search, filter), scrollable content, fixed footer (cart icon).
+
+**Mobile Framework:**
+* **Primary Interactions:** Tap to select product, swipe to browse, long-press for options. Thumb navigation prioritizes the bottom for primary actions (add to cart) and top for filtering/searching.
+* **Content Prioritization:** Product image, name, and price must be immediately visible.  Ratings, reviews, and detailed specifications are discoverable through scrolling.
+* **Action Accessibility:** Add to cart button is positioned prominently in the bottom section within easy reach of the thumb.
+
+**Content Requirements**
+
+**1. Product List [Priority: Critical]**
+
+**Content Structure:**
+* **Primary Content:** Product image, name, price.
+* **Secondary Content:** Short description, rating (star rating).
+* **Metadata:** Stock availability (in-stock/out-of-stock), sale badge.
+* **Interactive Elements:** Tap to view product details.
+
+**Functional Requirements:**
+* **Display Capability:** Scrollable list, grid layout option.
+* **Interaction Patterns:** Tap to navigate to product detail, swipe to refresh.
+* **Content Adaptation:** Image: Adaptive sizing, Description: Truncated with "more".
+
+**Implementation Options:**
+* **Primary Approach:** List item with leading image, title, and trailing price/availability.
+* **Alternative Approaches:** Card with image, title, and price; Grid layout with image thumbnails.
+* **Content Mapping:** Title -> `text`, Description -> `subtitle`, Price -> `trailing-text`, Availability -> `badge`.
+* **Mobile Considerations:** Touch target minimum 44px on interactive elements, thumb zone placement for "add to cart".
+
+**Semantic Keywords:** product, list, item, image, price, availability, status
+
+**Component Fallback Strategy:**
+* **Design System Priority:** High
+* **Fallback Guidance:** If a dedicated product list component is unavailable, use a custom `RecyclerView` (Android) or `UITableView` (iOS) with custom cells designed to match the style.  Native list components should only be used as a last resort for non-interactive elements.
+
+
+**2. Product Detail [Priority: High]**
+
+**Content Structure:**
+* **Primary Content:** Product image gallery, name, price, description.
+* **Secondary Content:** Specifications table, customer reviews.
+* **Metadata:** SKU, Availability.
+* **Interactive Elements:** Add to cart button, image swiping, review expansion.
+
+**Functional Requirements:**
+* **Display Capability:** Scrollable content, image carousel, expandable sections.
+* **Interaction Patterns:** Tap to add to cart, swipe to change images.
+* **Content Adaptation:** Description: Expandable, Specifications: Collapsible sections.
+
+**Implementation Options:**
+* **Primary Approach:** Scrollable screen with image carousel, header with title/price, and expandable content sections.
+* **Alternative Approaches:**  Tabs for different sections (images, specifications, reviews).
+* **Content Mapping:** Title -> `title`, Description -> `longText`, Price -> `price`, Specifications -> `list`, Reviews -> `list`.
+* **Mobile Considerations:** Ensure sufficient touch targets on all interactive elements. Images should be optimized for loading speed.
+
+
+**Semantic Keywords:** product, detail, image, description, specification, review, cart
+
+**Component Fallback Strategy:**
+* **Design System Priority:** Medium
+* **Fallback Guidance:** Use native scrolling mechanisms. For images, native image viewers are acceptable.  If the design system lacks a suitable specification table component, fallback to a native table implementation.
+
+
+**3. Shopping Cart [Priority: High]**
+
+**Content Structure:**
+* **Primary Content:** List of added products, total price.
+* **Secondary Content:** Quantity, price per item.
+* **Metadata:** Total items.
+* **Interactive Elements:** Update quantity, remove item, proceed to checkout.
+
+**Functional Requirements:**
+* **Display Capability:** Scrollable list, total summary.
+* **Interaction Patterns:** Tap to update quantity, swipe to delete item, tap to proceed to checkout.
+* **Content Adaptation:** Item list: Adjustable rows, price display: clearly formatted.
+
+**Implementation Options:**
+* **Primary Approach:** Scrollable list of items with quantity controls and a fixed footer showing total price and checkout button.
+* **Alternative Approaches:** Card-based display for each item in the cart.
+* **Content Mapping:** Item Name -> `text`, Quantity -> `numberInput`, Price -> `price`.
+* **Mobile Considerations:** Prominent checkout button in the bottom section.
+
+
+**Semantic Keywords:** cart, item, quantity, total, price, checkout
+
+**Component Fallback Strategy:**
+* **Design System Priority:** High
+* **Fallback Guidance:**  Prioritize using design system components, even if requires custom styling. If a suitable cart component is absent, implement with a native list view and a custom footer.
+
+
+
+**Navigation Architecture**
+
+**Inter-Section Navigation:**
+* **Flow Pattern:** Tab navigation between Browse, Search, and Cart.
+* **Entry Mechanisms:** Tabs for direct access. Search bar in the header for product discovery.
+* **Context Preservation:**  Standard tab-based navigation maintains context within each section.
+
+**Intra-Section Navigation:**
+* **Content Discovery:**  Search filter, sorting options (price, rating).
+* **Task Completion:** Add to cart, view product details, proceed to checkout.
+
+
+**Implementation Guidance**
+
+See "Implementation Options" within each Content Requirements section above.
+
+**Mobile Optimization Patterns:**
+
+* **Touch Target Requirements:** Minimum 44px for interactive elements, 48px for primary actions.
+* **Thumb Navigation Zones:** Primary actions (Add to Cart, Checkout) in the bottom third.  Secondary navigation (filters, back buttons) in the top third.
+* **Content Scaling:** Use responsive design techniques to adapt content to different screen sizes and orientations.
+
+
+**Design System Flexibility:**
+
+See "Component Fallback Strategy" within each Content Requirements section above.
+
+**Success Validation:**
+
+See the Success Validation section in the original brief - all criteria should be met.  Specific testing plans would need to be defined based on the chosen design system.

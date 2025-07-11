@@ -22,6 +22,9 @@ export class DesignSystemUI {
         this.scanResults = [];
         this.currentFilter = 'all';
         this.searchQuery = '';
+        
+        // Full scan session data including color styles and text styles
+        this.fullScanSession = null;
 
         // DOM elements
         this.elements = {
@@ -149,7 +152,7 @@ export class DesignSystemUI {
         // Register handlers with MessageHandler if available
         if (window.messageHandler) {
             window.messageHandler.register('scan-results', (msg) => {
-                this.handleScanResults(msg.components);
+                this.handleScanResults(msg);
             });
 
             window.messageHandler.register('scan-error', (msg) => {
@@ -157,6 +160,17 @@ export class DesignSystemUI {
             });
 
             window.messageHandler.register('saved-scan-loaded', (msg) => {
+                // Store the full scan session data if available
+                if (msg.colorStyles || msg.textStyles) {
+                    this.fullScanSession = {
+                        components: msg.components || [],
+                        colorStyles: msg.colorStyles || null,
+                        textStyles: msg.textStyles || null,
+                        scanTime: msg.scanTime || Date.now(),
+                        colorStylesCount: msg.colorStylesCount || 0,
+                        textStylesCount: msg.textStylesCount || 0
+                    };
+                }
                 this.displaySavedScan(msg.components, msg.scanTime);
             });
 
@@ -193,14 +207,29 @@ export class DesignSystemUI {
     /**
      * Handle scan results from backend
      */
-    handleScanResults(components) {
+    handleScanResults(msg) {
         if (this.elements.scanBtn) {
             this.elements.scanBtn.disabled = false;
             this.elements.scanBtn.textContent = '🔍 Scan Design System';
         }
 
-        this.displaySavedScan(components, Date.now());
-        console.log(`✅ Scan completed: ${components?.length || 0} components found`);
+        // Store the full scan session data
+        this.fullScanSession = {
+            components: msg.components || [],
+            colorStyles: msg.colorStyles || null,
+            textStyles: msg.textStyles || null,
+            scanTime: msg.scanTime || Date.now(),
+            colorStylesCount: msg.colorStylesCount || 0,
+            textStylesCount: msg.textStylesCount || 0
+        };
+
+        this.displaySavedScan(msg.components, msg.scanTime);
+        
+        const totalComponents = msg.components?.length || 0;
+        const totalColorStyles = msg.colorStylesCount || 0;
+        const totalTextStyles = msg.textStylesCount || 0;
+        
+        console.log(`✅ Scan completed: ${totalComponents} components, ${totalColorStyles} color styles, ${totalTextStyles} text styles found`);
     }
 
     /**
@@ -615,21 +644,32 @@ export class DesignSystemUI {
      * Export raw scan data as JSON file
      */
     exportRawScanData() {
-        if (!this.scanResults || this.scanResults.length === 0) {
+        if (!this.fullScanSession || !this.scanResults || this.scanResults.length === 0) {
             this.showScanStatus('❌ No scan data available to export', 'error');
             return;
         }
 
         try {
-            // Prepare export data with metadata
+            // Calculate style counts for metadata
+            const colorStylesCount = this.fullScanSession.colorStyles ? 
+                Object.values(this.fullScanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+            const textStylesCount = this.fullScanSession.textStyles ? 
+                this.fullScanSession.textStyles.length : 0;
+
+            // Prepare comprehensive export data including text styles and color styles
             const exportData = {
                 metadata: {
                     exportedAt: new Date().toISOString(),
                     componentCount: this.scanResults.length,
-                    exportVersion: '1.0',
+                    colorStylesCount: colorStylesCount,
+                    textStylesCount: textStylesCount,
+                    scanTime: this.fullScanSession.scanTime,
+                    exportVersion: '2.0',
                     source: 'Figma Design System Scanner'
                 },
-                components: this.scanResults
+                components: this.scanResults,
+                colorStyles: this.fullScanSession.colorStyles,
+                textStyles: this.fullScanSession.textStyles
             };
 
             // Generate filename with timestamp
@@ -639,8 +679,8 @@ export class DesignSystemUI {
             // Download the JSON file
             this.downloadJsonFile(exportData, filename);
 
-            this.showScanStatus('✅ Raw data exported successfully', 'success');
-            console.log(`📥 Exported ${this.scanResults.length} components to ${filename}`);
+            this.showScanStatus('✅ Complete design system data exported successfully', 'success');
+            console.log(`📥 Exported ${this.scanResults.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles to ${filename}`);
         } catch (error) {
             console.error('Export failed:', error);
             this.showScanStatus('❌ Export failed. Please try again.', 'error');

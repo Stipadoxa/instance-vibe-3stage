@@ -1,0 +1,29 @@
+Domain & Context
+Domain: E-commerce domain focused on product discovery
+User Type: Mobile users browsing and searching for products within specific categories (electronics, home goods, vehicles).
+Platform Impact: Mobile users expect a streamlined search experience with easily accessible categories and a smooth scrolling interface. Limited screen real estate necessitates efficient use of space.  Touch interaction is primary.
+
+User Requirements
+Primary Goals: Search for products using keywords, browse products within specific categories.
+Secondary Goals: Quickly navigate between product categories, filter search results (this is implied but not explicitly stated in the request).
+User Constraints: Limited screen space, reliance on touch input, potential for interruptions (e.g., notifications, phone calls).
+Ready for handoff if: Search bar is functional and clearly visible in the app bar, tabs are easily tappable and visually distinct, scrolling is smooth and responsive, and a loading indicator is present during search.
+
+
+Content Requirements
+Critical: Search bar, "electronics," "home goods," "vehicles" tabs, product listings (placeholder content is acceptable until actual integration).
+Supporting:  Filter options (this is an expansion based on domain knowledge – to improve the user experience).
+Contextual: Loading indicator during search, empty state message if no products are found in a category or match the search query.
+
+
+Structural & Component Directives
+*   **Layout:** App bar containing a search bar, scrollable tabs below the app bar displaying product listings.  Each tab displays product listings in a scrollable list view.
+*   **Components:** App Bar (with search bar), Scrollable Tab Layout, Product List (placeholder).
+*   **Styling:**  Styling details are not specified in the request, but should adhere to platform conventions and maintain visual consistency.
+
+
+Screen Requirements
+Primary Actions: Search for products, select category tabs.
+Secondary Actions:  Filter search results (implied).
+Screen States: Default (tabs displayed, search bar ready), searching (loading indicator), results displayed (products listed), empty state (message indicating no results), error state (message indicating search failure or network issue).
+Feedback Needs: Loading indicator during search, clear visual feedback on which tab is currently selected, error messages in case of search failures or network issues.

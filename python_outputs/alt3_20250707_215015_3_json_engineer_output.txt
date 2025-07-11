@@ -1,0 +1,111 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 20,
+    "paddingTop": 40,
+    "paddingBottom": 40,
+    "paddingLeft": 20,
+    "paddingRight": 20,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Username Input Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "text input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Username or Email",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Password Input Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "text input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Password",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Login Button Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Login",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Forgot Password Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "text",
+          "componentNodeId": "10:8619",
+          "properties": {
+            "label-text": "Forgot Password?",
+            "variants": {
+              "Platform": "Android+Web",
+              "Type": "Empty",
+              "State": "Enabled"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

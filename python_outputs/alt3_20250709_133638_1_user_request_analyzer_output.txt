@@ -1,0 +1,32 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users needing to access their accounts.
+Platform Impact: Mobile users often in distracting environments, need quick and secure access with a touch-friendly interface and limited screen real estate.  Design must account for touch interaction and potential interruptions.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely to access their account.
+Secondary Goals: Create a new account (sign-up).
+User Constraints: Small screen size, touch-only interaction, potential interruptions, varying network conditions.
+Ready for handoff if: All fields are appropriately sized for mobile touch interaction, error states are clearly displayed and provide helpful information, and all interactive elements (buttons, links) meet minimum tappable area guidelines.  The visual hierarchy clearly prioritizes the "Sign in" button.
+
+Content Requirements
+Critical: "Your e-mail" field (pre-filled with "123@example.ua"), password field, "Sign in" button, "By continuing you agree to the Policy and Rules" footnote with linked "Policy" and "Rules".
+Supporting: "Sign up" button.
+Contextual: Error message within the password field ("Please enter your password").
+
+Structural & Component Directives
+* Layout: Single column layout for all elements, vertically stacked.
+* Components:
+    * Email Field: Label "Your e-mail", pre-filled with "123@example.ua", input field.
+    * Password Field: Label implied (place-holder text or visual cue recommended), input field, error state display area.
+    * Sign in Button: Primary button, text "Sign in".
+    * Sign up Button: Text-only button, text "Sign up".
+    * Footnote: Small text, "By continuing you agree to the Policy and Rules", with "Policy" and "Rules" styled as primary color links.
+* Styling:  Primary color should be defined and applied consistently to buttons and links. Error messages should have clear visual distinction (e.g., color, icon).
+
+
+Screen Requirements
+Primary Actions: Sign in (submit credentials).
+Secondary Actions: Sign up (navigate to account creation).
+Screen States: Default state (fields displayed), error state (password field with error message), success state (transition to account access).
+Feedback Needs: Clear visual indication of error state in the password field.  Loading indicator may be considered if authentication takes noticeable time.

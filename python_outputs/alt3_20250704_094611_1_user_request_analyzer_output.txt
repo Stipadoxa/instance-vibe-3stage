@@ -1,0 +1,36 @@
+User Request: "Manage subscriptions"
+Platform: Desktop
+
+
+**Domain & Context**
+
+Domain: Business/SaaS domain, likely involving recurring billing and user account management.
+User Type:  Desktop users managing their active subscriptions for a service, likely requiring detailed information and control.
+Platform Impact: Desktop users expect detailed information, complex interactions, and efficient management of multiple subscriptions.  The larger screen real estate allows for more complex layouts and detailed data presentation compared to mobile.
+
+
+**User Requirements**
+
+Primary Goals: View active subscriptions, cancel or modify subscriptions.
+Secondary Goals:  View billing history for each subscription, update payment information, download invoices.
+
+User Constraints: Users may manage multiple subscriptions, requiring efficient navigation and filtering.  They may need to understand the implications of cancelling or modifying subscriptions (e.g., data loss, service interruption).
+
+
+Ready for handoff if:  All active subscriptions are clearly displayed in a list format, with key information (name, status, billing date, cost) immediately visible.  Cancel/modify actions are clearly labelled and require confirmation.  A clear and concise billing history is accessible for each subscription.
+
+
+**Content Requirements**
+
+Critical: List of active subscriptions with status (active, cancelled, paused), subscription name, billing date, cost, and action buttons (cancel, modify).
+Supporting: Billing history for each subscription (dates, amounts, descriptions), payment method information, download invoice option.
+Contextual:  Clear indication of upcoming renewal dates, tooltips explaining subscription details, help/support links for billing questions.
+
+
+**Screen Requirements**
+
+Primary Actions:  Cancel subscription, modify subscription details.
+Secondary Actions: View billing history, update payment information, download invoice.
+Screen States: Default (list of subscriptions), loading state (fetching data), empty state (no active subscriptions), error state (data fetch failure).
+
+Feedback Needs: Clear visual indication of successful actions (cancellation, modification), confirmation dialogs before irreversible actions, loading indicators during data retrieval, informative error messages.

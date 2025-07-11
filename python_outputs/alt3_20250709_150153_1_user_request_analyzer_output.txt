@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users needing to access their personal accounts.
+Platform Impact: Mobile users often in distracting environments, need quick and secure access with a touch-friendly interface and limited screen real estate.  Error handling needs to be clear and concise.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account.
+Secondary Goals: Create a new account, recover forgotten credentials.
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions, limited attention span.
+Ready for handoff if: All fields are appropriately sized for mobile touch interaction, error messages are clear and concise, primary action (Sign in) is prominent, and all interactive elements meet minimum tappable area guidelines.  The design addresses potential error states (e.g., incorrect password).
+
+Content Requirements
+Critical: Email field (pre-filled with "123@example.ua"), password field, "Sign in" button, "Sign up" button, "By continuing you agree to the Policy and Rules" footnote with linked "Policy" and "Rules".
+Supporting:  Password recovery link (implied, consider adding explicitly for usability).
+Contextual: Error message ("Please enter your password") displayed only when the password field is empty and the user attempts to submit the form.
+
+Structural & Component Directives
+*   **Layout:** Vertical layout with email field, password field, Sign in button, Sign up button, and footnote at the bottom.
+*   **Components:**  Email input field (pre-filled), password input field, primary button ("Sign in"), text button ("Sign up"), footnote with hyperlinked text ("Policy" and "Rules").
+*   **Styling:**  "Sign in" button uses primary color;  "Policy" and "Rules" links are styled with primary color. Error message text should be visually distinct (e.g., red).
+
+Screen Requirements
+Primary Actions: Sign in.
+Secondary Actions: Sign up.
+Screen States: Default state (fields visible, no errors), error state (password field error message displayed).
+Feedback Needs: Clear error messages for invalid inputs, visual indication of successful login (e.g., navigation to next screen).

@@ -1,0 +1,76 @@
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Discovery",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375,
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Search",
+        "subheadline": "Find what you need",
+        "variants": {
+          "Type": "search-field"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Category Tabs Container",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "tab",
+          "componentNodeId": "10:7852",
+          "properties": {
+            "Label": "Electronics"
+          }
+        },
+        {
+          "type": "tab",
+          "componentNodeId": "10:7852",
+          "properties": {
+            "Label": "Home Goods"
+          }
+        },
+        {
+          "type": "tab",
+          "componentNodeId": "10:7852",
+          "properties": {
+            "Label": "Vehicles"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product List Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "list",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "variants": {
+              "view": "list"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
