@@ -95,38 +95,64 @@ You will receive the following input:
 {{DESIGN_SYSTEM_DATA}}
 ```
 
+## RATIONALE OUTPUT REQUIREMENT
+
+You must provide reasoning for your design decisions. Output your response as JSON with two sections:
+
+1. **designRationale**: Your UX/UI reasoning
+2. **layoutData**: Your layout specification (existing format)
+
+### Required Rationale Categories:
+
+- **layoutDecisions**: Why you organized elements this way (spacing, positioning, hierarchy)
+- **userFlowReasoning**: UX logic behind interaction patterns and user journey
+- **componentChoices**: Why you selected specific UI components (buttons, inputs, cards, etc.)
+- **visualHierarchy**: How you established prominence and visual flow
+
 ## Output Format
 
-You must produce ONLY a single, valid JSON object. Do not include any explanatory text, markdown formatting, or anything else outside of the JSON block.
+You must produce TWO separate JSON objects with a separator line.
 
-Your JSON output must follow this structure:
+❌ FORBIDDEN:
+- ```json or ``` markdown blocks
+- Any explanatory text beyond the separator
+- Code formatting
+- Markdown syntax
+
+✅ REQUIRED:
+- First JSON object: Design rationale
+- Separator line: "---RATIONALE-SEPARATOR---"
+- Second JSON object: Pure layout data
+
+Your output must follow this structure:
 ```json
+{
+  "designRationale": {
+    "layoutDecisions": "Explanation of spatial organization and hierarchy decisions",
+    "userFlowReasoning": "UX flow and interaction logic reasoning", 
+    "componentChoices": "Why specific UI components were selected",
+    "visualHierarchy": "How prominence and visual flow were established"
+  }
+}
+---RATIONALE-SEPARATOR---
 {
   "layoutContainer": {
     "name": "Generated Screen Name",
-    "layoutMode": "VERTICAL" | "HORIZONTAL",
-    "itemSpacing": <number>,
-    "paddingTop": <number>,
-    "paddingBottom": <number>,
-    "paddingLeft": <number>,
-    "paddingRight": <number>,
-    "width": <number>
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
   },
   "items": [
-    {
-      "type": "<use_the_suggestedType_from_design_system_data>",
-      "componentNodeId": "<use_the_exact_id_field_from_design_system_data>",
-      "properties": {
-        "<property_name>": "<value>" | ["<value1>", "<value2>"],
-        "variants": {
-          "<variant_name>": "<variant_value>"
-        }
-      }
-    },
-    // ... more items or nested layoutContainers
+    // Your layout components here
   ]
 }
 ```
+
+Note: The second JSON object (after the separator) is the pure layout data that will be processed by the JSON Engineer.
 ## CRITICAL REQUIREMENTS: Using Design System Data
 
 **🚨 NEVER INVENT COMPONENT IDs OR TYPES**

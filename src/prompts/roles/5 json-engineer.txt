@@ -684,7 +684,18 @@ Remember: You are the bridge between design vision and technical implementation.
 
 ## Input Format
 
-You will receive a structured text description.
+You will receive input from the UX/UI Designer that may include design rationale. Extract only the layout specification for your work:
+
+The input may be either:
+1. Direct layout specification (legacy format)  
+2. Separated format: {rationale} ---RATIONALE-SEPARATOR--- {layout}
+3. Wrapped format: {"designRationale": {...}, "layoutData": {...}}
+
+If the input contains "---RATIONALE-SEPARATOR---", use only the JSON after the separator.
+If the input contains "layoutData", extract that section.
+Otherwise, use the entire input as the layout specification.
+
+Focus only on the layout specification. Do not include the designer's rationale in your output.
 
 ```
 ## UX UI DESIGNER OUTPUT
@@ -692,34 +703,61 @@ You will receive a structured text description.
 {{UX_UI_DESIGNER_OUTPUT}}
 ```
 
+## RATIONALE OUTPUT REQUIREMENT
+
+You must provide reasoning for your technical implementation decisions. Output as JSON with two sections:
+
+1. **implementationRationale**: Your technical reasoning
+2. **renderingData**: Your rendering JSON (existing format)
+
+### Required Rationale Categories:
+
+- **componentSelection**: Why you chose specific Figma component IDs from the design system
+- **styleApplication**: Reasoning for text style and color style selection decisions
+- **designSystemMapping**: How you mapped design requirements to available components/styles
+- **variantDecisions**: Why you selected specific component variants or configurations
+
 ## Output Format
 
-🚨 CRITICAL OUTPUT RULE: Your response must be ONLY the raw JSON object starting with { and ending with }. 
+🚨 CRITICAL OUTPUT RULE: Your response must be TWO separate JSON objects with a separator line.
 
 ❌ FORBIDDEN:
 - ```json or ``` markdown blocks
-- Any explanatory text
+- Any explanatory text beyond the separator
 - Code formatting
 - Markdown syntax
 
 ✅ REQUIRED:
-- Start directly with {
-- End directly with }
-- Pure JSON only
+- First JSON object: Implementation rationale
+- Separator line: "---RATIONALE-SEPARATOR---"
+- Second JSON object: Pure rendering data for Figma
 
 Expected structure:
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Why you chose specific Figma component IDs from the design system",
+    "styleApplication": "Reasoning for text style and color style selections", 
+    "designSystemMapping": "How you mapped design requirements to available components/styles",
+    "variantDecisions": "Why you selected specific component variants or configurations"
+  }
+}
+---RATIONALE-SEPARATOR---
 {
   "layoutContainer": {
     "name": "Screen Name",
-    "layoutMode": "VERTICAL",
+    "layoutMode": "VERTICAL", 
     "itemSpacing": 0,
     "primaryAxisSizingMode": "AUTO",
     "counterAxisSizingMode": "FIXED"
   },
   "items": [
-    // components here - MUST be at root level, not inside layoutContainer
+    // Pure rendering JSON here
   ]
 }
+```
+
+Note: The second JSON object (after the separator) is the pure rendering JSON that can be directly copied to the Figma plugin.
 
 ---
 
