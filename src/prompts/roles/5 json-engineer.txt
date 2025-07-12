@@ -787,3 +787,80 @@ When you encounter a sequence of identical components (e.g., multiple `tab` or `
     }
     ```
 This is the most important rule. It ensures the final JSON is efficient and correct for the rendering engine.
+
+## 🚨 CRITICAL: Array vs Individual Component Rules
+
+### ✅ USE ARRAYS ONLY FOR:
+
+1. **Navigation Components with `textLayers` property:**
+   ```json
+   {
+     "type": "bottom navigation",
+     "componentNodeId": "10:4724",
+     "properties": {
+       "textLayers": ["Home", "Saved", "Sell", "Messages", "Profile"]
+     }
+   }
+   ```
+
+2. **Tab/Chip Components with `Label` property:**
+   ```json
+   {
+     "type": "tab",
+     "properties": {
+       "Label": ["Tab 1", "Tab 2", "Tab 3"]
+     }
+   }
+   ```
+
+### ❌ NEVER USE ARRAYS FOR:
+
+1. **Individual Text Properties (Headline, Supporting text, etc.):**
+   ```json
+   // ❌ WRONG - This causes renderer errors:
+   {
+     "type": "list-item",
+     "properties": {
+       "Headline": ["Text 1", "Text 2", "Text 3"],          // ❌ ERROR!
+       "Supporting text": ["Sub 1", "Sub 2", "Sub 3"]      // ❌ ERROR!
+     }
+   }
+   ```
+
+2. **Any Component Properties Expecting Single Values**
+
+### ✅ CORRECT APPROACH FOR MULTIPLE ITEMS:
+
+Instead of arrays for individual text properties, create multiple individual components:
+
+```json
+// ✅ CORRECT - Multiple individual components:
+{
+  "type": "layoutContainer",
+  "name": "NotificationList",
+  "layoutMode": "VERTICAL",
+  "items": [
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "New message from John",
+        "Supporting text": "Check this out!"
+      }
+    },
+    {
+      "type": "list-item", 
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Meeting reminder",
+        "Supporting text": "Meeting at 3 PM"
+      }
+    }
+  ]
+}
+```
+
+### 🎯 RULE SUMMARY:
+- **Arrays**: Only for properties explicitly designed for multiple values (textLayers, Label)
+- **Individual Components**: For all other cases requiring multiple items
+- **Single Strings**: For all individual text properties (Headline, Supporting text, etc.)
