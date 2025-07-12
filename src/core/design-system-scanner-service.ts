@@ -36,6 +36,14 @@ export class DesignSystemScannerService {
                 console.log("📝 No text styles found in scan session");
             }
             
+            // Initialize the FigmaRenderer with the scanned Design Tokens
+            if (scanSession.designTokens && scanSession.designTokens.length > 0) {
+                FigmaRenderer.setDesignTokens(scanSession.designTokens);
+                console.log(`🔧 Loaded ${scanSession.designTokens.length} design tokens into renderer`);
+            } else {
+                console.log("🔧 No design tokens found in scan session");
+            }
+            
             progressCallback?.({ current: 100, total: 100, status: "Comprehensive scan complete!" });
             
             return scanSession;
@@ -81,6 +89,22 @@ export class DesignSystemScannerService {
             return textStyles;
         } catch (e) {
             console.error("❌ Error scanning Text Styles:", e);
+            throw e;
+        }
+    }
+    
+    /**
+     * Scan only Design Tokens without components
+     */
+    static async scanDesignTokens(): Promise<any> {
+        console.log("🔧 Scanning only Design Tokens...");
+        
+        try {
+            const designTokens = await ComponentScanner.scanFigmaVariables();
+            FigmaRenderer.setDesignTokens(designTokens);
+            return designTokens;
+        } catch (e) {
+            console.error("❌ Error scanning Design Tokens:", e);
             throw e;
         }
     }
@@ -346,16 +370,17 @@ export class DesignSystemScannerService {
 
 
     /**
-     * Save scan results to Figma storage - supports full scan session with color styles and text styles
+     * Save scan results to Figma storage - supports full scan session with color styles, text styles, and design tokens
      */
-    static async saveScanResults(components: ComponentInfo[], colorStyles?: any, textStyles?: any): Promise<void> {
+    static async saveScanResults(components: ComponentInfo[], colorStyles?: any, textStyles?: any, designTokens?: any): Promise<void> {
         try {
             const scanSession: ScanSession = {
                 components,
                 colorStyles: colorStyles || undefined,
                 textStyles: textStyles || undefined,
+                designTokens: designTokens || undefined,
                 scanTime: Date.now(),
-                version: "2.0.0",
+                version: "2.1.0",
                 fileKey: figma.fileKey || figma.root.id
             };
             
@@ -364,7 +389,8 @@ export class DesignSystemScannerService {
             
             const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
             const textStylesCount = textStyles ? textStyles.length : 0;
-            console.log(`💾 Saved ${components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles with session data`);
+            const designTokensCount = designTokens ? designTokens.length : 0;
+            console.log(`💾 Saved ${components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens with session data`);
         } catch (error) {
             console.error("❌ Error saving scan results:", error);
             try {
@@ -378,7 +404,7 @@ export class DesignSystemScannerService {
     }
     
     /**
-     * Save complete scan session including color styles and text styles
+     * Save complete scan session including color styles, text styles, and design tokens
      */
     static async saveScanSession(scanSession: ScanSession): Promise<void> {
         try {
@@ -387,7 +413,8 @@ export class DesignSystemScannerService {
             
             const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum: number, styles: any[]) => sum + styles.length, 0) : 0;
             const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
-            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles`);
+            const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
+            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens`);
         } catch (error) {
             console.error("❌ Error saving scan session:", error);
             throw error;
@@ -472,13 +499,19 @@ export class DesignSystemScannerService {
     }
 
     /**
-     * Clear all scan data
+     * Clear all scan data and renderer cache
      */
     static async clearScanData(): Promise<void> {
         try {
             await figma.clientStorage.setAsync('design-system-scan', null);
             await figma.clientStorage.setAsync('last-scan-results', null);
-            console.log("✅ Scan data cleared");
+            
+            // Clear renderer caches
+            FigmaRenderer.setColorStyles(null);
+            FigmaRenderer.setTextStyles([]);
+            FigmaRenderer.setDesignTokens([]);
+            
+            console.log("✅ Scan data and renderer cache cleared");
         } catch (error) {
             console.error("❌ Error clearing scan data:", error);
         }

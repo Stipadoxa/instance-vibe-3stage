@@ -1,7 +1,7 @@
 // src/core/figma-renderer.ts
 // UI generation and rendering engine for AIDesigner
 
-import { ComponentScanner, ColorStyleCollection, ColorStyle, TextStyle } from './component-scanner';
+import { ComponentScanner, ColorStyleCollection, ColorStyle, TextStyle, DesignToken } from './component-scanner';
 import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, SessionManager } from './session-manager';
 import { ComponentPropertyEngine, PropertyValidationResult, PerformanceTracker } from './component-property-engine';
 import { JSONMigrator } from './json-migrator';
@@ -22,6 +22,7 @@ export class FigmaRenderer {
   
   // Static storage for Color Styles scanned from the design system
   private static cachedColorStyles: ColorStyleCollection | null = null;
+  private static cachedDesignTokens: DesignToken[] | null = null; // NEW: Design tokens cache
   
   // Static storage for Text Styles scanned from the design system
   private static cachedTextStyles: TextStyle[] | null = null;
@@ -254,8 +255,8 @@ export class FigmaRenderer {
       // Enable performance optimizations
       figma.skipInvisibleInstanceChildren = true;
       
-      // Load color styles if not already cached
-      await this.ensureColorStylesLoaded();
+      // Load design system data if not already cached
+      await this.ensureDesignSystemDataLoaded();
       
       // Skip ComponentPropertyEngine for testing if no schemas available
       console.log('🔧 Checking ComponentPropertyEngine schemas...');
@@ -378,7 +379,7 @@ export class FigmaRenderer {
               console.log(`✅ Applied semantic color "${props.color}" to text (as style reference)`);
             } else {
               // Fallback to RGB color if style not found
-              const resolvedColor = this.resolveSemanticColor(props.color);
+              const resolvedColor = this.resolveColorReference(props.color);
               if (resolvedColor) {
                 textNode.fills = [this.createSolidPaint(resolvedColor)];
                 console.log(`✅ Applied semantic color "${props.color}" to text (as RGB fallback)`);
@@ -409,7 +410,7 @@ export class FigmaRenderer {
           console.log(`✅ Applied color style "${props.colorStyleName}" to text (as style reference)`);
         } else {
           // Fallback to RGB color if style not found
-          const resolvedColor = this.resolveSemanticColor(props.colorStyleName);
+          const resolvedColor = this.resolveColorReference(props.colorStyleName);
           if (resolvedColor) {
             textNode.fills = [this.createSolidPaint(resolvedColor)];
             console.log(`✅ Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
@@ -1739,6 +1740,37 @@ export class FigmaRenderer {
   }
 
   /**
+   * Ensure design tokens are loaded before UI generation
+   */
+  static async ensureDesignTokensLoaded(): Promise<void> {
+    if (!this.cachedDesignTokens) {
+      console.log('🔧 Design tokens not cached, attempting to load from storage...');
+      try {
+        const scanSession = await SessionManager.loadLastScanSession();
+        if (scanSession?.designTokens) {
+          this.setDesignTokens(scanSession.designTokens);
+          console.log('✅ Design tokens loaded from scan session');
+        } else {
+          console.warn('⚠️ No design tokens found in storage. Run a design system scan first.');
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to load design tokens from storage:', e);
+      }
+    } else {
+      console.log('✅ Design tokens already cached');
+    }
+  }
+
+  /**
+   * Ensure all cached design system data is loaded (color styles, text styles, design tokens)
+   */
+  static async ensureDesignSystemDataLoaded(): Promise<void> {
+    await this.ensureColorStylesLoaded();
+    await this.ensureDesignTokensLoaded();
+    // Note: Text styles are loaded differently since they don't have a caching mechanism like colors/tokens
+  }
+
+  /**
    * Initialize Color Styles from a scan session
    */
   static setColorStyles(colorStyles: ColorStyleCollection | null): void {
@@ -1749,6 +1781,88 @@ export class FigmaRenderer {
     }
   }
   
+  /**
+   * NEW: Set cached design tokens for renderer to use
+   */
+  static setDesignTokens(designTokens: DesignToken[]): void {
+    this.cachedDesignTokens = designTokens;
+    console.log(`🔧 Cached ${designTokens?.length || 0} design tokens for renderer`);
+  }
+
+  /**
+   * NEW: Resolve design token names to RGB values
+   * Supports various token naming patterns: 'button.primary', 'color-primary-500', 'Primary/500'
+   */
+  static resolveDesignTokenReference(tokenName: string): RGB | null {
+    if (!this.cachedDesignTokens || this.cachedDesignTokens.length === 0) {
+      return null;
+    }
+    
+    console.log(`🔧 Resolving design token: "${tokenName}"`);
+    
+    // Find exact match first
+    const exactMatch = this.cachedDesignTokens.find(token => 
+      token.type === 'COLOR' && token.name === tokenName
+    );
+    
+    if (exactMatch) {
+      console.log(`✅ Found exact design token: ${exactMatch.name}`);
+      return this.convertTokenValueToRgb(exactMatch.value);
+    }
+    
+    // Try case-insensitive match
+    const caseInsensitiveMatch = this.cachedDesignTokens.find(token => 
+      token.type === 'COLOR' && token.name.toLowerCase() === tokenName.toLowerCase()
+    );
+    
+    if (caseInsensitiveMatch) {
+      console.log(`✅ Found case-insensitive design token: ${caseInsensitiveMatch.name}`);
+      return this.convertTokenValueToRgb(caseInsensitiveMatch.value);
+    }
+    
+    // Try pattern matching: 'collection/name' format
+    const collectionMatch = this.cachedDesignTokens.find(token => 
+      token.type === 'COLOR' && `${token.collection}/${token.name}`.toLowerCase() === tokenName.toLowerCase()
+    );
+    
+    if (collectionMatch) {
+      console.log(`✅ Found collection-based design token: ${collectionMatch.collection}/${collectionMatch.name}`);
+      return this.convertTokenValueToRgb(collectionMatch.value);
+    }
+    
+    console.warn(`⚠️ Could not find design token "${tokenName}"`);
+    return null;
+  }
+  
+  /**
+   * NEW: Convert design token value to RGB
+   */
+  private static convertTokenValueToRgb(tokenValue: any): RGB | null {
+    try {
+      // Handle Figma Variables color format: {r: 0.1, g: 0.2, b: 0.3}
+      if (typeof tokenValue === 'object' && tokenValue !== null) {
+        if ('r' in tokenValue && 'g' in tokenValue && 'b' in tokenValue) {
+          return {
+            r: Math.max(0, Math.min(1, Number(tokenValue.r) || 0)),
+            g: Math.max(0, Math.min(1, Number(tokenValue.g) || 0)),
+            b: Math.max(0, Math.min(1, Number(tokenValue.b) || 0))
+          };
+        }
+      }
+      
+      // Handle hex string format: "#ff0000"
+      if (typeof tokenValue === 'string' && tokenValue.startsWith('#')) {
+        return this.hexToRgb(tokenValue);
+      }
+      
+      console.warn(`⚠️ Unsupported token value format:`, tokenValue);
+      return null;
+    } catch (error) {
+      console.error(`❌ Error converting token value:`, error);
+      return null;
+    }
+  }
+
   /**
    * Resolve color style names to actual Figma color styles (for style application)
    * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
@@ -1790,6 +1904,34 @@ export class FigmaRenderer {
       console.error(`❌ Error resolving color style "${colorStyleName}":`, error);
       return null;
     }
+  }
+
+  /**
+   * ENHANCED: Resolve color references with 3-tier fallback system
+   * 1. Design Tokens (preferred) 
+   * 2. Color Styles (legacy)
+   * 3. Semantic color fallback
+   */
+  static resolveColorReference(colorName: string): RGB | null {
+    console.log(`🎨 Resolving color: "${colorName}" with 3-tier system`);
+    
+    // Tier 1: Try design tokens first (modern approach)
+    const tokenColor = this.resolveDesignTokenReference(colorName);
+    if (tokenColor) {
+      console.log(`✅ Resolved via design token`);
+      return tokenColor;
+    }
+    
+    // Tier 2: Fallback to color styles (legacy approach)
+    const styleColor = this.resolveSemanticColor(colorName);
+    if (styleColor && !(styleColor.r === 0 && styleColor.g === 0 && styleColor.b === 0)) {
+      console.log(`✅ Resolved via color style`);
+      return styleColor;
+    }
+    
+    // Tier 3: Ultimate fallback
+    console.warn(`⚠️ Could not resolve color "${colorName}" through any method`);
+    return { r: 0, g: 0, b: 0 }; // Black fallback
   }
 
   /**
@@ -1866,7 +2008,7 @@ export class FigmaRenderer {
    * Helper method to resolve and apply semantic colors to text nodes
    */
   static applySemanticTextColor(textNode: TextNode, semanticColorName: string): boolean {
-    const rgb = this.resolveSemanticColor(semanticColorName);
+    const rgb = this.resolveColorReference(semanticColorName);
     if (rgb) {
       textNode.fills = [this.createSolidPaint(rgb)];
       console.log(`✅ Applied semantic color "${semanticColorName}" to text node`);
@@ -1888,7 +2030,7 @@ export class FigmaRenderer {
     }
     
     // Fallback to RGB color if style not found
-    const rgb = this.resolveSemanticColor(semanticColorName);
+    const rgb = this.resolveColorReference(semanticColorName);
     if (rgb && 'fills' in node) {
       (node as any).fills = [this.createSolidPaint(rgb)];
       console.log(`✅ Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);

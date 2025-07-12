@@ -430,6 +430,136 @@
   // src/core/component-scanner.ts
   var ComponentScanner = class {
     /**
+     * NEW: Scan Figma Variables (Design Tokens) from the local file
+     */
+    static async scanFigmaVariables() {
+      console.log("\u{1F527} Scanning Figma Variables (Design Tokens)...");
+      try {
+        if (!figma.variables) {
+          console.warn("\u274C figma.variables API not available in this Figma version");
+          return [];
+        }
+        console.log("\u2705 figma.variables API is available");
+        const collections = await figma.variables.getLocalVariableCollectionsAsync();
+        console.log(`\u2705 Found ${collections.length} variable collections`);
+        if (collections.length === 0) {
+          console.warn("\u26A0\uFE0F No variable collections found. Possible reasons:");
+          console.warn("  1. File has no Variables/Design Tokens defined");
+          console.warn("  2. Variables are in a different library/file");
+          console.warn("  3. Variables API permissions issue");
+          try {
+            console.log("\u{1F50D} Checking for non-local variables...");
+          } catch (e) {
+            console.log("\u{1F4DD} Non-local variable check not available");
+          }
+          return [];
+        }
+        const tokens = [];
+        for (const collection of collections) {
+          console.log(`\u{1F4E6} Processing collection: "${collection.name}" (ID: ${collection.id})`);
+          try {
+            const variables = await figma.variables.getVariablesByCollectionAsync(collection.id);
+            console.log(`  Found ${variables.length} variables in "${collection.name}"`);
+            console.log(`  Collection modes:`, Object.keys(collection.modes || {}));
+            for (const variable of variables) {
+              try {
+                console.log(`    Processing variable: "${variable.name}" (Type: ${variable.resolvedType})`);
+                const modes = Object.keys(variable.valuesByMode);
+                console.log(`      Available modes: [${modes.join(", ")}]`);
+                if (modes.length === 0) {
+                  console.warn(`      \u26A0\uFE0F Variable "${variable.name}" has no modes`);
+                  continue;
+                }
+                const firstMode = modes[0];
+                const value = variable.valuesByMode[firstMode];
+                console.log(`      Using mode "${firstMode}" with value:`, value);
+                const token = {
+                  id: variable.id,
+                  name: variable.name,
+                  type: variable.resolvedType,
+                  value,
+                  collection: collection.name,
+                  mode: firstMode,
+                  description: variable.description || void 0
+                };
+                tokens.push(token);
+                if (variable.resolvedType === "COLOR") {
+                  console.log(`\u{1F3A8} Color token: "${variable.name}" = ${JSON.stringify(value)}`);
+                } else {
+                  console.log(`\u{1F527} ${variable.resolvedType} token: "${variable.name}"`);
+                }
+              } catch (varError) {
+                console.warn(`\u26A0\uFE0F Failed to process variable "${variable.name}":`, varError);
+              }
+            }
+          } catch (collectionError) {
+            console.warn(`\u26A0\uFE0F Failed to process collection "${collection.name}":`, collectionError);
+          }
+        }
+        const colorTokens = tokens.filter((t) => t.type === "COLOR");
+        const otherTokens = tokens.filter((t) => t.type !== "COLOR");
+        console.log(`\u{1F527} Design Tokens Summary:`);
+        console.log(`   Color Tokens: ${colorTokens.length}`);
+        console.log(`   Other Tokens: ${otherTokens.length}`);
+        console.log(`   Total: ${tokens.length} tokens`);
+        if (tokens.length === 0) {
+          console.log("\u{1F914} Debug suggestions:");
+          console.log("  1. Check if this file has Variables in the right panel");
+          console.log("  2. Try creating a simple color variable as a test");
+          console.log("  3. Check if Variables are published from a library");
+        }
+        return tokens;
+      } catch (error) {
+        console.warn("\u26A0\uFE0F Failed to scan design tokens:", error);
+        console.warn("  This could be due to:");
+        console.warn("  - Variables API not available in this Figma version");
+        console.warn("  - Plugin permissions");
+        console.warn("  - File access restrictions");
+        return [];
+      }
+    }
+    /**
+     * NEW: Fallback - Create design tokens from color styles for testing
+     * This allows testing the token system even when Variables API doesn't work
+     */
+    static async createDesignTokensFromColorStyles() {
+      console.log("\u{1F504} Creating fallback design tokens from color styles...");
+      try {
+        const colorStyleCollection = await this.scanFigmaColorStyles();
+        const tokens = [];
+        Object.entries(colorStyleCollection).forEach(([category, styles]) => {
+          styles.forEach((style) => {
+            const tokenName = style.name.toLowerCase().replace(/[\/\s]+/g, "-").replace(/[^a-z0-9\-]/g, "");
+            let rgbValue = { r: 0, g: 0, b: 0 };
+            if (style.colorInfo.type === "SOLID" && style.colorInfo.color) {
+              const hex = style.colorInfo.color.replace("#", "");
+              rgbValue = {
+                r: parseInt(hex.substr(0, 2), 16) / 255,
+                g: parseInt(hex.substr(2, 2), 16) / 255,
+                b: parseInt(hex.substr(4, 2), 16) / 255
+              };
+            }
+            const token = {
+              id: `fallback-${style.id}`,
+              name: tokenName,
+              type: "COLOR",
+              value: rgbValue,
+              collection: `${category}-colors`,
+              mode: "default",
+              description: `Fallback token from color style: ${style.name}`
+            };
+            tokens.push(token);
+            console.log(`\u{1F3A8} Created fallback token: "${tokenName}" from "${style.name}"`);
+          });
+        });
+        console.log(`\u{1F504} Created ${tokens.length} fallback design tokens from color styles`);
+        return tokens;
+      } catch (error) {
+        console.warn("\u26A0\uFE0F Failed to create fallback design tokens:", error);
+        return [];
+      }
+    }
+    /**
      * Scan Figma Color Styles from the local file
      */
     static async scanFigmaColorStyles() {
@@ -609,21 +739,48 @@
       try {
         await figma.loadAllPagesAsync();
         console.log("\u2705 All pages loaded");
-        console.log("\n\u{1F3A8} Phase 1: Scanning Color Styles...");
+        console.log("\n\u{1F527} Phase 1: Scanning Design Tokens...");
+        let designTokens;
+        try {
+          designTokens = await this.scanFigmaVariables();
+          console.log(`\u{1F50D} Variables API returned:`, designTokens);
+          console.log(`\u{1F50D} Type: ${typeof designTokens}, Length: ${designTokens ? designTokens.length : "undefined"}`);
+          if (!designTokens || designTokens.length === 0) {
+            console.log("\u{1F504} No Variables found, trying fallback design tokens from color styles...");
+            designTokens = await this.createDesignTokensFromColorStyles();
+            if (designTokens && designTokens.length > 0) {
+              console.log("\u2705 Using fallback design tokens created from color styles");
+            } else {
+              console.log("\u26A0\uFE0F Fallback also returned no tokens");
+            }
+          } else {
+            console.log("\u2705 Using Variables API design tokens");
+          }
+        } catch (error) {
+          console.warn("\u26A0\uFE0F Design Tokens scanning failed, trying fallback:", error);
+          try {
+            designTokens = await this.createDesignTokensFromColorStyles();
+            console.log("\u2705 Using fallback design tokens despite Variables API error");
+          } catch (fallbackError) {
+            console.warn("\u26A0\uFE0F Fallback design tokens also failed:", fallbackError);
+            designTokens = void 0;
+          }
+        }
+        console.log("\n\u{1F3A8} Phase 2: Scanning Color Styles...");
         try {
           colorStyles = await this.scanFigmaColorStyles();
         } catch (error) {
           console.warn("\u26A0\uFE0F Color Styles scanning failed, continuing without color styles:", error);
           colorStyles = void 0;
         }
-        console.log("\n\u{1F4DD} Phase 2: Scanning Text Styles...");
+        console.log("\n\u{1F4DD} Phase 3: Scanning Text Styles...");
         try {
           textStyles = await this.scanFigmaTextStyles();
         } catch (error) {
           console.warn("\u26A0\uFE0F Text Styles scanning failed, continuing without text styles:", error);
           textStyles = void 0;
         }
-        console.log("\n\u{1F9E9} Phase 3: Scanning Components...");
+        console.log("\n\u{1F9E9} Phase 4: Scanning Components...");
         for (const page of figma.root.children) {
           console.log(`\u{1F4CB} Scanning page: "${page.name}"`);
           try {
@@ -662,13 +819,17 @@
           components,
           colorStyles,
           textStyles,
+          designTokens,
+          // NEW: Include design tokens
           scanTime: Date.now(),
-          version: "2.0.0",
+          version: "2.1.0",
+          // Bump version for token support
           fileKey: figma.fileKey || void 0
         };
         console.log(`
 \u{1F389} Comprehensive scan complete!`);
         console.log(`   \u{1F4E6} Components: ${components.length}`);
+        console.log(`   \u{1F527} Design Tokens: ${designTokens ? designTokens.length : 0}`);
         console.log(`   \u{1F3A8} Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
         console.log(`   \u{1F4DD} Text Styles: ${textStyles ? textStyles.length : 0}`);
         console.log(`   \u{1F4C4} File Key: ${scanSession.fileKey || "Unknown"}`);
@@ -2369,7 +2530,7 @@
       }
       try {
         figma.skipInvisibleInstanceChildren = true;
-        await this.ensureColorStylesLoaded();
+        await this.ensureDesignSystemDataLoaded();
         console.log("\u{1F527} Checking ComponentPropertyEngine schemas...");
         const existingSchemas = ComponentPropertyEngine.getAllSchemas();
         if (existingSchemas.length === 0) {
@@ -2456,7 +2617,7 @@
                 await textNode.setFillStyleIdAsync(colorStyle.id);
                 console.log(`\u2705 Applied semantic color "${props.color}" to text (as style reference)`);
               } else {
-                const resolvedColor = this.resolveSemanticColor(props.color);
+                const resolvedColor = this.resolveColorReference(props.color);
                 if (resolvedColor) {
                   textNode.fills = [this.createSolidPaint(resolvedColor)];
                   console.log(`\u2705 Applied semantic color "${props.color}" to text (as RGB fallback)`);
@@ -2480,7 +2641,7 @@
             await textNode.setFillStyleIdAsync(colorStyle.id);
             console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as style reference)`);
           } else {
-            const resolvedColor = this.resolveSemanticColor(props.colorStyleName);
+            const resolvedColor = this.resolveColorReference(props.colorStyleName);
             if (resolvedColor) {
               textNode.fills = [this.createSolidPaint(resolvedColor)];
               console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
@@ -3464,6 +3625,34 @@ ${llmErrors}`);
       }
     }
     /**
+     * Ensure design tokens are loaded before UI generation
+     */
+    static async ensureDesignTokensLoaded() {
+      if (!this.cachedDesignTokens) {
+        console.log("\u{1F527} Design tokens not cached, attempting to load from storage...");
+        try {
+          const scanSession = await SessionManager.loadLastScanSession();
+          if (scanSession == null ? void 0 : scanSession.designTokens) {
+            this.setDesignTokens(scanSession.designTokens);
+            console.log("\u2705 Design tokens loaded from scan session");
+          } else {
+            console.warn("\u26A0\uFE0F No design tokens found in storage. Run a design system scan first.");
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to load design tokens from storage:", e);
+        }
+      } else {
+        console.log("\u2705 Design tokens already cached");
+      }
+    }
+    /**
+     * Ensure all cached design system data is loaded (color styles, text styles, design tokens)
+     */
+    static async ensureDesignSystemDataLoaded() {
+      await this.ensureColorStylesLoaded();
+      await this.ensureDesignTokensLoaded();
+    }
+    /**
      * Initialize Color Styles from a scan session
      */
     static setColorStyles(colorStyles) {
@@ -3471,6 +3660,70 @@ ${llmErrors}`);
       if (colorStyles) {
         const totalStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
         console.log(`\u{1F3A8} FigmaRenderer: Loaded ${totalStyles} Color Styles for semantic color resolution`);
+      }
+    }
+    /**
+     * NEW: Set cached design tokens for renderer to use
+     */
+    static setDesignTokens(designTokens) {
+      this.cachedDesignTokens = designTokens;
+      console.log(`\u{1F527} Cached ${(designTokens == null ? void 0 : designTokens.length) || 0} design tokens for renderer`);
+    }
+    /**
+     * NEW: Resolve design token names to RGB values
+     * Supports various token naming patterns: 'button.primary', 'color-primary-500', 'Primary/500'
+     */
+    static resolveDesignTokenReference(tokenName) {
+      if (!this.cachedDesignTokens || this.cachedDesignTokens.length === 0) {
+        return null;
+      }
+      console.log(`\u{1F527} Resolving design token: "${tokenName}"`);
+      const exactMatch = this.cachedDesignTokens.find(
+        (token) => token.type === "COLOR" && token.name === tokenName
+      );
+      if (exactMatch) {
+        console.log(`\u2705 Found exact design token: ${exactMatch.name}`);
+        return this.convertTokenValueToRgb(exactMatch.value);
+      }
+      const caseInsensitiveMatch = this.cachedDesignTokens.find(
+        (token) => token.type === "COLOR" && token.name.toLowerCase() === tokenName.toLowerCase()
+      );
+      if (caseInsensitiveMatch) {
+        console.log(`\u2705 Found case-insensitive design token: ${caseInsensitiveMatch.name}`);
+        return this.convertTokenValueToRgb(caseInsensitiveMatch.value);
+      }
+      const collectionMatch = this.cachedDesignTokens.find(
+        (token) => token.type === "COLOR" && `${token.collection}/${token.name}`.toLowerCase() === tokenName.toLowerCase()
+      );
+      if (collectionMatch) {
+        console.log(`\u2705 Found collection-based design token: ${collectionMatch.collection}/${collectionMatch.name}`);
+        return this.convertTokenValueToRgb(collectionMatch.value);
+      }
+      console.warn(`\u26A0\uFE0F Could not find design token "${tokenName}"`);
+      return null;
+    }
+    /**
+     * NEW: Convert design token value to RGB
+     */
+    static convertTokenValueToRgb(tokenValue) {
+      try {
+        if (typeof tokenValue === "object" && tokenValue !== null) {
+          if ("r" in tokenValue && "g" in tokenValue && "b" in tokenValue) {
+            return {
+              r: Math.max(0, Math.min(1, Number(tokenValue.r) || 0)),
+              g: Math.max(0, Math.min(1, Number(tokenValue.g) || 0)),
+              b: Math.max(0, Math.min(1, Number(tokenValue.b) || 0))
+            };
+          }
+        }
+        if (typeof tokenValue === "string" && tokenValue.startsWith("#")) {
+          return this.hexToRgb(tokenValue);
+        }
+        console.warn(`\u26A0\uFE0F Unsupported token value format:`, tokenValue);
+        return null;
+      } catch (error) {
+        console.error(`\u274C Error converting token value:`, error);
+        return null;
       }
     }
     /**
@@ -3504,6 +3757,27 @@ ${llmErrors}`);
         console.error(`\u274C Error resolving color style "${colorStyleName}":`, error);
         return null;
       }
+    }
+    /**
+     * ENHANCED: Resolve color references with 3-tier fallback system
+     * 1. Design Tokens (preferred) 
+     * 2. Color Styles (legacy)
+     * 3. Semantic color fallback
+     */
+    static resolveColorReference(colorName) {
+      console.log(`\u{1F3A8} Resolving color: "${colorName}" with 3-tier system`);
+      const tokenColor = this.resolveDesignTokenReference(colorName);
+      if (tokenColor) {
+        console.log(`\u2705 Resolved via design token`);
+        return tokenColor;
+      }
+      const styleColor = this.resolveSemanticColor(colorName);
+      if (styleColor && !(styleColor.r === 0 && styleColor.g === 0 && styleColor.b === 0)) {
+        console.log(`\u2705 Resolved via color style`);
+        return styleColor;
+      }
+      console.warn(`\u26A0\uFE0F Could not resolve color "${colorName}" through any method`);
+      return { r: 0, g: 0, b: 0 };
     }
     /**
      * Resolve color style names to actual RGB values from scanned Color Styles (fallback)
@@ -3560,7 +3834,7 @@ ${llmErrors}`);
      * Helper method to resolve and apply semantic colors to text nodes
      */
     static applySemanticTextColor(textNode, semanticColorName) {
-      const rgb = this.resolveSemanticColor(semanticColorName);
+      const rgb = this.resolveColorReference(semanticColorName);
       if (rgb) {
         textNode.fills = [this.createSolidPaint(rgb)];
         console.log(`\u2705 Applied semantic color "${semanticColorName}" to text node`);
@@ -3578,7 +3852,7 @@ ${llmErrors}`);
         console.log(`\u2705 Applied color style "${semanticColorName}" to node (as style reference)`);
         return true;
       }
-      const rgb = this.resolveSemanticColor(semanticColorName);
+      const rgb = this.resolveColorReference(semanticColorName);
       if (rgb && "fills" in node) {
         node.fills = [this.createSolidPaint(rgb)];
         console.log(`\u2705 Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
@@ -3658,6 +3932,8 @@ ${llmErrors}`);
   };
   // Static storage for Color Styles scanned from the design system
   _FigmaRenderer.cachedColorStyles = null;
+  _FigmaRenderer.cachedDesignTokens = null;
+  // NEW: Design tokens cache
   // Static storage for Text Styles scanned from the design system
   _FigmaRenderer.cachedTextStyles = null;
   var FigmaRenderer = _FigmaRenderer;
@@ -3679,6 +3955,12 @@ ${llmErrors}`);
           console.log(`\u{1F4DD} Loaded ${scanSession.textStyles.length} text styles into renderer`);
         } else {
           console.log("\u{1F4DD} No text styles found in scan session");
+        }
+        if (scanSession.designTokens && scanSession.designTokens.length > 0) {
+          FigmaRenderer.setDesignTokens(scanSession.designTokens);
+          console.log(`\u{1F527} Loaded ${scanSession.designTokens.length} design tokens into renderer`);
+        } else {
+          console.log("\u{1F527} No design tokens found in scan session");
         }
         progressCallback == null ? void 0 : progressCallback({ current: 100, total: 100, status: "Comprehensive scan complete!" });
         return scanSession;
@@ -3719,6 +4001,20 @@ ${llmErrors}`);
         return textStyles;
       } catch (e) {
         console.error("\u274C Error scanning Text Styles:", e);
+        throw e;
+      }
+    }
+    /**
+     * Scan only Design Tokens without components
+     */
+    static async scanDesignTokens() {
+      console.log("\u{1F527} Scanning only Design Tokens...");
+      try {
+        const designTokens = await ComponentScanner.scanFigmaVariables();
+        FigmaRenderer.setDesignTokens(designTokens);
+        return designTokens;
+      } catch (e) {
+        console.error("\u274C Error scanning Design Tokens:", e);
         throw e;
       }
     }
@@ -3974,23 +4270,25 @@ ${llmErrors}`);
       return textLayers;
     }
     /**
-     * Save scan results to Figma storage - supports full scan session with color styles and text styles
+     * Save scan results to Figma storage - supports full scan session with color styles, text styles, and design tokens
      */
-    static async saveScanResults(components, colorStyles, textStyles) {
+    static async saveScanResults(components, colorStyles, textStyles, designTokens) {
       try {
         const scanSession = {
           components,
           colorStyles: colorStyles || void 0,
           textStyles: textStyles || void 0,
+          designTokens: designTokens || void 0,
           scanTime: Date.now(),
-          version: "2.0.0",
+          version: "2.1.0",
           fileKey: figma.fileKey || figma.root.id
         };
         await figma.clientStorage.setAsync("design-system-scan", scanSession);
         await figma.clientStorage.setAsync("last-scan-results", components);
         const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
         const textStylesCount = textStyles ? textStyles.length : 0;
-        console.log(`\u{1F4BE} Saved ${components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles with session data`);
+        const designTokensCount = designTokens ? designTokens.length : 0;
+        console.log(`\u{1F4BE} Saved ${components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens with session data`);
       } catch (error) {
         console.error("\u274C Error saving scan results:", error);
         try {
@@ -4002,7 +4300,7 @@ ${llmErrors}`);
       }
     }
     /**
-     * Save complete scan session including color styles and text styles
+     * Save complete scan session including color styles, text styles, and design tokens
      */
     static async saveScanSession(scanSession) {
       try {
@@ -4010,7 +4308,8 @@ ${llmErrors}`);
         await figma.clientStorage.setAsync("last-scan-results", scanSession.components);
         const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
         const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
-        console.log(`\u{1F4BE} Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles`);
+        const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
+        console.log(`\u{1F4BE} Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens`);
       } catch (error) {
         console.error("\u274C Error saving scan session:", error);
         throw error;
@@ -4084,13 +4383,16 @@ ${llmErrors}`);
       }
     }
     /**
-     * Clear all scan data
+     * Clear all scan data and renderer cache
      */
     static async clearScanData() {
       try {
         await figma.clientStorage.setAsync("design-system-scan", null);
         await figma.clientStorage.setAsync("last-scan-results", null);
-        console.log("\u2705 Scan data cleared");
+        FigmaRenderer.setColorStyles(null);
+        FigmaRenderer.setTextStyles([]);
+        FigmaRenderer.setDesignTokens([]);
+        console.log("\u2705 Scan data and renderer cache cleared");
       } catch (error) {
         console.error("\u274C Error clearing scan data:", error);
       }

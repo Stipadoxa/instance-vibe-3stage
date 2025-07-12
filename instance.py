@@ -360,11 +360,89 @@ class Alternative3StagePipeline:
             print(f"❌ Failed to load design system data: {e}")
             return "Design system data loading failed"
     
+    def extract_design_tokens_context(self, design_system_data: str) -> str:
+        """NEW: Extract and format design tokens for AI prompt context"""
+        try:
+            data = json.loads(design_system_data)
+            context_parts = []
+            
+            # Extract Design Tokens (if available)
+            design_tokens = data.get('designTokens', [])
+            if design_tokens:
+                context_parts.append("\n=== DESIGN TOKENS (PREFERRED) ===")
+                
+                # Group tokens by collection and type
+                token_groups = {}
+                for token in design_tokens:
+                    collection = token.get('collection', 'Default')
+                    token_type = token.get('type', 'OTHER')
+                    key = f"{collection}:{token_type}"
+                    if key not in token_groups:
+                        token_groups[key] = []
+                    token_groups[key].append(token)
+                
+                # Simplified: Only show summary, not all token details
+                total_tokens = len(design_tokens)
+                color_tokens = [t for t in design_tokens if t.get('type') == 'COLOR']
+                
+                context_parts.append(f"\nAVAILABLE: {total_tokens} design tokens ({len(color_tokens)} color tokens)")
+                context_parts.append("USAGE: Reference tokens by converting style names to token format:")
+                context_parts.append("  - 'Primary/primary90' → 'primary-primary90'")
+                context_parts.append("  - 'Secondary/secondary80' → 'secondary-secondary80'")
+                context_parts.append("  - Use existing colorStyleName format - tokens will be resolved automatically")
+                
+                print(f"🎨 Found {len(design_tokens)} design tokens for AI context (summarized)")
+            
+            # Extract Color Styles (fallback support)
+            color_styles = data.get('colorStyles', {})
+            if color_styles and any(styles for styles in color_styles.values()):
+                context_parts.append("\n\n=== COLOR STYLES (FALLBACK) ===")
+                
+                for category, styles in color_styles.items():
+                    if styles:
+                        context_parts.append(f"\n{category.upper()} COLORS:")
+                        for style in styles[:8]:  # Limit to first 8 per category
+                            name = style.get('name', '')
+                            color = style.get('colorInfo', {}).get('color', '')
+                            context_parts.append(f"  - {name}: {color}")
+                
+                print(f"🎨 Found color styles in {len([k for k, v in color_styles.items() if v])} categories")
+            
+            # If no tokens or styles found
+            if not design_tokens and not any(styles for styles in color_styles.values()):
+                context_parts.append("\n=== NO DESIGN TOKENS AVAILABLE ===")
+                context_parts.append("No design tokens or color styles found. Use semantic color names.")
+                print("⚠️ No design tokens or color styles available")
+            
+            return '\n'.join(context_parts)
+            
+        except Exception as e:
+            print(f"⚠️ Failed to extract design tokens context: {e}")
+            return "\n=== DESIGN TOKENS EXTRACTION FAILED ===\nUsing fallback color approach."
+    
+    def _rgb_to_hex(self, rgb_dict: dict) -> str:
+        """Helper: Convert RGB dict to hex color"""
+        try:
+            r = int(rgb_dict.get('r', 0) * 255)
+            g = int(rgb_dict.get('g', 0) * 255) 
+            b = int(rgb_dict.get('b', 0) * 255)
+            return f"#{r:02x}{g:02x}{b:02x}"
+        except:
+            return str(rgb_dict)
+    
     def format_ux_ui_prompt(self, prompt_template: str, analyzer_output: str, design_system_data: str) -> str:
         """Format UX UI Designer prompt with analyzer output and design system data"""
+        # NEW: Extract design tokens context for enhanced AI understanding
+        design_tokens_context = self.extract_design_tokens_context(design_system_data)
+        
         # Replace placeholders in prompt with actual content
         formatted_prompt = prompt_template.replace('{{USER_REQUEST_ANALYZER_OUTPUT}}', analyzer_output)
         formatted_prompt = formatted_prompt.replace('{{DESIGN_SYSTEM_DATA}}', design_system_data)
+        
+        # NEW: Add design tokens context at the end for immediate AI reference
+        if design_tokens_context:
+            formatted_prompt += f"\n\n{design_tokens_context}"
+            print("✅ Enhanced prompt with design tokens context")
         
         return formatted_prompt
     
@@ -487,7 +565,14 @@ class Alternative3StagePipeline:
         # Apply JSON migration
         final_json_str = results["stage_3"].content
         
-        # Use regex to extract the JSON
+        # Handle rationale separator format from JSON Engineer
+        if "---RATIONALE-SEPARATOR---" in final_json_str:
+            parts = final_json_str.split("---RATIONALE-SEPARATOR---")
+            if len(parts) >= 2:
+                final_json_str = parts[1].strip()
+                print("✅ Extracted JSON after rationale separator")
+        
+        # Use regex to extract the JSON if wrapped in markdown
         match = re.search(r'```json\n(.*)\n```', final_json_str, re.DOTALL)
         if match:
             final_json_str = match.group(1)
