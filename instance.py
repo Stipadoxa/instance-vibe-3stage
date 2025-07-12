@@ -349,7 +349,7 @@ class Alternative3StagePipeline:
                 return str(self.live_design_system_data)
         
         # Fallback to static file (updated to latest version with text styles)
-        design_system_file = "design-system-raw-data-2025-07-11T08-13-11.json"
+        design_system_file = "design-system-raw-data-2025-07-12T17-51-20.json"
         if not os.path.exists(design_system_file):
             return "No design system data available"
         
@@ -562,6 +562,20 @@ class Alternative3StagePipeline:
             results[f"stage_{stage_num}"] = result
             current_input = result.content
             
+        # Extract and collect rationales from all stages
+        rationales = {
+            "originalRequest": initial_input,
+            "stage1Analysis": results["stage_1"].content,
+            "stage2Rationale": None,
+            "stage3Rationale": None
+        }
+        
+        # Extract Stage 2 rationale if present
+        stage2_content = results["stage_2"].content
+        if "---RATIONALE-SEPARATOR---" in stage2_content:
+            stage2_parts = stage2_content.split("---RATIONALE-SEPARATOR---")
+            rationales["stage2Rationale"] = stage2_parts[0].strip()
+        
         # Apply JSON migration
         final_json_str = results["stage_3"].content
         
@@ -569,19 +583,34 @@ class Alternative3StagePipeline:
         if "---RATIONALE-SEPARATOR---" in final_json_str:
             parts = final_json_str.split("---RATIONALE-SEPARATOR---")
             if len(parts) >= 2:
+                rationales["stage3Rationale"] = parts[0].strip()
                 final_json_str = parts[1].strip()
                 print("✅ Extracted JSON after rationale separator")
         
         # Use regex to extract the JSON if wrapped in markdown
-        match = re.search(r'```json\n(.*)\n```', final_json_str, re.DOTALL)
+        # Try with json language identifier first
+        match = re.search(r'```json\n(.*?)\n```', final_json_str, re.DOTALL)
         if match:
-            final_json_str = match.group(1)
+            final_json_str = match.group(1).strip()
+        else:
+            # Try with generic code blocks
+            match = re.search(r'```\n(.*?)\n```', final_json_str, re.DOTALL)
+            if match:
+                final_json_str = match.group(1).strip()
+            else:
+                # If no markdown wrapper, just strip whitespace
+                final_json_str = final_json_str.strip()
 
         try:
             final_json = json.loads(final_json_str)
             # Skip JSONMigrator for now (TypeScript only)
-            results["stage_3"].content = json.dumps(final_json, indent=2)
+            clean_json_str = json.dumps(final_json, indent=2)
+            results["stage_3"].content = clean_json_str
             print("✅ JSON parsing successful (migration skipped)")
+            
+            # Create rationale file and clean Figma JSON file
+            self._create_output_files(run_id, rationales, clean_json_str)
+            
         except json.JSONDecodeError as e:
             print(f"❌ Could not parse final JSON: {e}")
 
@@ -601,6 +630,41 @@ class Alternative3StagePipeline:
             "stages": results,
             "summary": summary
         }
+    
+    def _create_output_files(self, run_id: str, rationales: dict, clean_json: str):
+        """Create rationale file and clean Figma JSON file"""
+        
+        # Create rationale content
+        rationale_content = f"""🎯 User Request:
+{rationales['originalRequest']}
+
+📝 Stage 1 - User Request Analysis:
+{rationales['stage1Analysis']}
+
+🎨 Stage 2 - UX UI Designer Rationale:
+{rationales['stage2Rationale'] if rationales['stage2Rationale'] else 'No rationale provided'}
+
+🔧 Stage 3 - JSON Engineer Rationale:
+{rationales['stage3Rationale'] if rationales['stage3Rationale'] else 'No rationale provided'}
+"""
+        
+        # Write rationale file to root directory
+        rationale_filename = f"rationale_{run_id}.txt"
+        try:
+            with open(rationale_filename, 'w', encoding='utf-8') as f:
+                f.write(rationale_content)
+            print(f"📝 Rationale saved to: {rationale_filename}")
+        except Exception as e:
+            print(f"❌ Failed to save rationale file: {e}")
+        
+        # Write clean JSON file to root directory
+        figma_filename = f"figma_ready_{run_id}.json"
+        try:
+            with open(figma_filename, 'w', encoding='utf-8') as f:
+                f.write(clean_json)
+            print(f"📄 Clean Figma JSON saved to: {figma_filename}")
+        except Exception as e:
+            print(f"❌ Failed to save Figma JSON file: {e}")
     
 
 
