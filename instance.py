@@ -26,6 +26,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import asyncio
 import threading
+import glob
 
 # Add path for src modules
 sys.path.append(os.path.abspath('src'))
@@ -70,6 +71,31 @@ class PipelineRunner:
         self.output_dir.mkdir(exist_ok=True)
         
         # Initialize Gemini if API key provided
+        if api_key:
+            genai.configure(api_key=api_key)
+            self.gemini_client = genai.GenerativeModel('gemini-1.5-flash')
+            print("🤖 Initialized with Gemini AI")
+        else:
+            print("📋 Running in placeholder mode (no API key)")
+
+
+def load_visual_references():
+    """Load all images from visual-references folder"""
+    ref_folder = "visual-references"
+    if not os.path.exists(ref_folder):
+        return []
+    
+    images = []
+    for file in os.listdir(ref_folder):
+        if file.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
+            images.append(os.path.join(ref_folder, file))
+    
+    return sorted(images)  # Consistent order
+
+
+class PipelineRunner:
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key
         if api_key:
             genai.configure(api_key=api_key)
             self.gemini_client = genai.GenerativeModel('gemini-1.5-flash')
@@ -446,14 +472,37 @@ class Alternative3StagePipeline:
         
         return formatted_prompt
     
-    async def call_ai(self, prompt: str) -> tuple[str, Dict[str, Any]]:
-        """Call Gemini AI with prompt"""
+    def format_visual_context(self, num_refs: int) -> str:
+        """Format visual reference context for AI prompt"""
+        return f"""
+VISUAL REFERENCES:
+You have {num_refs} reference images showing desired visual style.
+Use these to inform your design decisions while staying within the design system constraints.
+Focus on: layout patterns, color schemes, visual hierarchy, component arrangements.
+"""
+    
+    async def call_ai(self, prompt: str, visual_refs: List[str] = None) -> tuple[str, Dict[str, Any]]:
+        """Call Gemini AI with prompt and optional visual references"""
         if not self.gemini_client:
             # Placeholder response
             return f"[PLACEHOLDER RESPONSE - No AI client available]\n\nPrompt was: {prompt[:200]}...", {}
         
         try:
-            response = await self.gemini_client.generate_content_async(prompt)
+            # Prepare content for API call
+            content = [prompt]
+            
+            # Add images if provided
+            if visual_refs:
+                import PIL.Image
+                for img_path in visual_refs:
+                    try:
+                        img = PIL.Image.open(img_path)
+                        content.append(img)
+                        print(f"📸 Added image: {os.path.basename(img_path)}")
+                    except Exception as e:
+                        print(f"⚠️ Failed to load image {img_path}: {e}")
+            
+            response = await self.gemini_client.generate_content_async(content)
             token_usage = {
                 'prompt_tokens': len(prompt.split()) // 1.3,  # Rough estimate
                 'completion_tokens': len(response.text.split()) // 1.3,
@@ -495,11 +544,11 @@ class Alternative3StagePipeline:
         
         print(f"📄 Alt AI output saved to: {filepath}")
     
-    async def run_alt_stage(self, stage_num: int, input_data: str, run_id: str) -> StageResult:
+    async def run_alt_stage(self, stage_num: int, input_data: str, run_id: str, visual_refs: List[str] = None) -> StageResult:
         """Run a single alternative pipeline stage"""
         alt_stage_names = {
             1: "User Request Analyzer",
-            2: "UX UI Designer",
+            2: "UX UI Designer", 
             3: "JSON Engineer"
         }
         
@@ -512,6 +561,11 @@ class Alternative3StagePipeline:
         # Load prompt and format it based on stage
         prompt_template = self.load_alt_prompt(stage_num)
         
+        # Add visual reference context for stages 1 and 2
+        if visual_refs and stage_num in [1, 2]:
+            visual_context = self.format_visual_context(len(visual_refs))
+            prompt_template = prompt_template + "\n\n" + visual_context
+        
         if stage_num == 2:  # UX UI Designer stage needs design system data
             design_system_data = self.load_design_system_data()
             prompt = self.format_ux_ui_prompt(prompt_template, input_data, design_system_data)
@@ -519,8 +573,9 @@ class Alternative3StagePipeline:
         else:
             prompt = self.format_prompt(prompt_template, input_data)
         
-        # Execute AI call
-        ai_response, token_usage = await self.call_ai(prompt)
+        # Execute AI call (pass visual refs only for stages 1 and 2)
+        visual_refs_for_stage = visual_refs if stage_num in [1, 2] else None
+        ai_response, token_usage = await self.call_ai(prompt, visual_refs_for_stage)
         
         execution_time = time.time() - start_time
         
@@ -548,17 +603,19 @@ class Alternative3StagePipeline:
         
         return result
     
-    async def run_all_alt_stages(self, initial_input: str) -> Dict[str, Any]:
+    async def run_all_alt_stages(self, initial_input: str, visual_refs: List[str] = None) -> Dict[str, Any]:
         """Run all alternative pipeline stages"""
         run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
         print(f"🎯 Starting Alternative 3-Stage Pipeline run: {run_id}")
         print(f"📝 Initial input: {initial_input[:100]}...")
+        if visual_refs:
+            print(f"📸 Using {len(visual_refs)} visual references")
         
         results = {}
         current_input = initial_input
         
         for stage_num in range(1, 4):  # Only 3 stages
-            result = await self.run_alt_stage(stage_num, current_input, run_id)
+            result = await self.run_alt_stage(stage_num, current_input, run_id, visual_refs)
             results[f"stage_{stage_num}"] = result
             current_input = result.content
             
@@ -699,8 +756,13 @@ def main():
             print(f"📁 Reading input from user-request.txt: {initial_input}")
         else:
             initial_input = args.input or default_input
+        
+        # 📸 Load visual references
+        visual_refs = load_visual_references()
+        if visual_refs:
+            print(f"📸 Found {len(visual_refs)} visual references: {[os.path.basename(ref) for ref in visual_refs]}")
             
-        asyncio.run(alt_runner.run_all_alt_stages(initial_input))
+        asyncio.run(alt_runner.run_all_alt_stages(initial_input, visual_refs))
     
     
     elif args.stage.startswith("alt3-"):
