@@ -486,6 +486,10 @@ class Alternative3StagePipeline:
     
     def save_alt_ai_output(self, stage_num: int, stage_name: str, content: str, run_id: str):
         """Save just the AI output content to a text file for easy viewing"""
+        # Extract clean content if rationale separator exists
+        if "---RATIONALE-SEPARATOR---" in content and stage_num in [2, 3]:
+            content = content.split("---RATIONALE-SEPARATOR---")[1].strip()
+        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"alt3_{run_id}_{stage_num}_{stage_name.lower().replace(' ', '_')}_output.txt"
         filepath = self.output_dir / filename
@@ -598,8 +602,10 @@ class Alternative3StagePipeline:
             if match:
                 final_json_str = match.group(1).strip()
             else:
-                # If no markdown wrapper, just strip whitespace
+                # If no markdown wrapper, strip whitespace and trailing backticks
                 final_json_str = final_json_str.strip()
+                if final_json_str.endswith('```'):
+                    final_json_str = final_json_str[:-3].strip()
 
         try:
             final_json = json.loads(final_json_str)

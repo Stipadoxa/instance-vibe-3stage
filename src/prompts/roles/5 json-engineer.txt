@@ -726,14 +726,16 @@ You must provide reasoning for your technical implementation decisions. Output a
 - Any explanatory text beyond the separator
 - Code formatting
 - Markdown syntax
+- Backticks of any kind (```)
 
 ✅ REQUIRED:
-- First JSON object: Implementation rationale
+- First JSON object: Implementation rationale (raw JSON, no formatting)
 - Separator line: "---RATIONALE-SEPARATOR---"
-- Second JSON object: Pure rendering data for Figma
+- Second JSON object: Pure rendering data for Figma (raw JSON, no formatting)
+
+🚨 CRITICAL: Output must be PURE JSON only - no markdown, no code blocks, no backticks, no formatting. Start directly with { and end with }.
 
 Expected structure:
-```json
 {
   "implementationRationale": {
     "componentSelection": "Why you chose specific Figma component IDs from the design system",
@@ -755,7 +757,6 @@ Expected structure:
     // Pure rendering JSON here
   ]
 }
-```
 
 Note: The second JSON object (after the separator) is the pure rendering JSON that can be directly copied to the Figma plugin.
 

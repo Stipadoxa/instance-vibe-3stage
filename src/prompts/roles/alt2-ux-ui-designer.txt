@@ -118,14 +118,16 @@ You must produce TWO separate JSON objects with a separator line.
 - Any explanatory text beyond the separator
 - Code formatting
 - Markdown syntax
+- Backticks of any kind (```)
 
 ✅ REQUIRED:
-- First JSON object: Design rationale
+- First JSON object: Design rationale (raw JSON, no formatting)
 - Separator line: "---RATIONALE-SEPARATOR---"
-- Second JSON object: Pure layout data
+- Second JSON object: Pure layout data (raw JSON, no formatting)
+
+🚨 CRITICAL: Output must be PURE JSON only - no markdown, no code blocks, no backticks, no formatting. Start directly with { and end with }.
 
 Your output must follow this structure:
-```json
 {
   "designRationale": {
     "layoutDecisions": "Explanation of spatial organization and hierarchy decisions",
@@ -150,7 +152,6 @@ Your output must follow this structure:
     // Your layout components here
   ]
 }
-```
 
 Note: The second JSON object (after the separator) is the pure layout data that will be processed by the JSON Engineer.
 ## CRITICAL REQUIREMENTS: Using Design System Data
