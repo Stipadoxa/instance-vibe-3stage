@@ -374,13 +374,22 @@ class Alternative3StagePipeline:
             else:
                 return str(self.live_design_system_data)
         
-        # Fallback to static file (updated to latest version with text styles)
-        design_system_file = "design-system-raw-data-2025-07-11T08-44-31.json"
-        if not os.path.exists(design_system_file):
-            return "No design system data available"
+        # Auto-select newest design system file from design-system folder
+        design_system_folder = "design-system"
+        if not os.path.exists(design_system_folder):
+            return "No design system data available - folder not found"
+        
+        # Find all design system files and get the newest one
+        design_files = glob.glob(os.path.join(design_system_folder, "design-system-raw-data-*.json"))
+        if not design_files:
+            return "No design system data available - no files found"
+        
+        # Sort by filename (which includes timestamp) to get newest
+        newest_file = sorted(design_files)[-1]
+        print(f"📊 Using design system: {os.path.basename(newest_file)}")
         
         try:
-            with open(design_system_file, 'r', encoding='utf-8') as f:
+            with open(newest_file, 'r', encoding='utf-8') as f:
                 return f.read()
         except Exception as e:
             print(f"❌ Failed to load design system data: {e}")
