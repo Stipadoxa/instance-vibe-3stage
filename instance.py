@@ -648,6 +648,17 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             # Skip JSONMigrator for now (TypeScript only)
             results["stage_3"].content = json.dumps(final_json, indent=2)
             print("✅ JSON parsing successful (migration skipped)")
+            
+            # Create figma-ready folder if it doesn't exist
+            figma_ready_dir = Path("figma-ready")
+            figma_ready_dir.mkdir(exist_ok=True)
+            
+            # Save figma-ready JSON file
+            figma_ready_file = figma_ready_dir / f"figma_ready_{run_id}.json"
+            with open(figma_ready_file, 'w') as f:
+                json.dump(final_json, f, indent=2)
+            print(f"💾 Figma-ready JSON saved: {figma_ready_file}")
+            
         except json.JSONDecodeError as e:
             print(f"❌ Could not parse final JSON: {e}")
 
