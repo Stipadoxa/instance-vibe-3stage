@@ -571,7 +571,16 @@ export class FigmaRenderer {
     
     for (const [propKey, propValue] of Object.entries(properties)) {
       if (!propValue || typeof propValue !== 'string' || !propValue.trim()) continue;
-      if (propKey === 'horizontalSizing' || propKey === 'variants') continue;
+      
+      // Exclude non-text properties (styles, icons, layout configs)
+      const nonTextProperties = new Set([
+        'horizontalSizing', 'variants', 'textStyle', 'colorStyleName', 
+        'leading-icon', 'trailing-icon', 'layoutAlign', 'layoutGrow'
+      ]);
+      
+      if (nonTextProperties.has(propKey) || propKey.endsWith('Style') || propKey.includes('icon')) {
+        continue;
+      }
       
       console.log(`🔧 Trying to set ${propKey} = "${propValue}"`);
       
