@@ -1,0 +1,247 @@
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "text": "Settings",
+      "properties": {
+        "textStyle": "Title/Large",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "SettingsList",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Primary/primary50",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "trailing-text": "Active",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "trailing-text": "What is it?",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          },
+          "componentInstances": [
+            {
+              "type": "tooltip",
+              "componentNodeId": "24:10330",
+              "properties": {
+                "text": "Explanation of Verified ID"
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "leading-icon": "switch",
+            "componentNodeId": "10:9912",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Icon",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "leading-icon": "switch",
+            "componentNodeId": "10:9912",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Icon",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

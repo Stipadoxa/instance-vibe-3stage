@@ -104,9 +104,15 @@ export class FigmaRenderer {
       }
       
       if (containerData.width) {
-        currentFrame.resize(containerData.width, currentFrame.height);
-        if (!containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = "FIXED";
+        if (currentFrame.layoutMode !== 'NONE') {
+          // For auto-layout frames, set width directly and let auto-layout handle height
+          currentFrame.width = containerData.width;
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "FIXED";
+          }
+        } else {
+          // For regular frames, use resize
+          currentFrame.resize(containerData.width, currentFrame.height);
         }
       } else if (!containerData.counterAxisSizingMode) {
         currentFrame.counterAxisSizingMode = "AUTO";
@@ -246,7 +252,7 @@ export class FigmaRenderer {
    * Dynamic UI generation with component ID resolution
    */
   static async generateUIFromDataDynamic(layoutData: any): Promise<FrameNode | null> {
-    if (!layoutData || !layoutData.items) {
+    if (!layoutData || (!layoutData.items && !layoutData.layoutContainer)) {
       figma.notify("Invalid JSON structure", { error: true });
       return null;
     }
@@ -565,7 +571,16 @@ export class FigmaRenderer {
     
     for (const [propKey, propValue] of Object.entries(properties)) {
       if (!propValue || typeof propValue !== 'string' || !propValue.trim()) continue;
-      if (propKey === 'horizontalSizing' || propKey === 'variants') continue;
+      
+      // Exclude non-text properties (styles, icons, layout configs)
+      const nonTextProperties = new Set([
+        'horizontalSizing', 'variants', 'textStyle', 'colorStyleName', 
+        'leading-icon', 'trailing-icon', 'layoutAlign', 'layoutGrow'
+      ]);
+      
+      if (nonTextProperties.has(propKey) || propKey.endsWith('Style') || propKey.includes('icon')) {
+        continue;
+      }
       
       console.log(`🔧 Trying to set ${propKey} = "${propValue}"`);
       
@@ -1571,7 +1586,9 @@ export class FigmaRenderer {
         name: containerData.name,
         layoutMode: containerData.layoutMode,
         itemSpacing: containerData.itemSpacing,
-        primaryAxisSizingMode: containerData.primaryAxisSizingMode
+        primaryAxisSizingMode: containerData.primaryAxisSizingMode,
+        width: containerData.width,
+        hasWidth: !!containerData.width
       });
       
       currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
@@ -1632,9 +1649,17 @@ export class FigmaRenderer {
       }
       
       if (containerData.width) {
-        currentFrame.resize(containerData.width, currentFrame.height);
-        if (!containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = "FIXED";
+        if (currentFrame.layoutMode !== 'NONE') {
+          // For auto-layout frames, set width directly and let auto-layout handle height
+          currentFrame.width = containerData.width;
+          console.log('🔧 Set auto-layout frame width to:', containerData.width);
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "FIXED";
+          }
+        } else {
+          // For regular frames, use resize
+          currentFrame.resize(containerData.width, currentFrame.height);
+          console.log('🔧 Resized regular frame to width:', containerData.width);
         }
       } else if (!containerData.counterAxisSizingMode) {
         currentFrame.counterAxisSizingMode = "AUTO";
@@ -1675,6 +1700,13 @@ export class FigmaRenderer {
       }
     }
     
+    // Post-processing: Ensure frame maintains intended dimensions after content is added
+    const containerData = layoutData.layoutContainer || layoutData;
+    if (containerData && containerData.width && currentFrame.layoutMode !== 'NONE') {
+      console.log('🔧 Post-processing: Re-enforcing frame width to:', containerData.width);
+      currentFrame.width = containerData.width;
+    }
+
     if (parentNode.type === 'PAGE') {
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);

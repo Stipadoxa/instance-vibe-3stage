@@ -33,9 +33,9 @@ else
 fi
 
 # Create timestamped output files
-FIGMA_JSON_FILE="figma_ready_${TIMESTAMP}.json"
+FIGMA_JSON_FILE="figma-ready/figma_ready_${TIMESTAMP}.json"
 FIGMA_JSON_PYTHON_FILE="python_outputs/figma_ready_${TIMESTAMP}.json"
-RATIONALE_FILE="rationale_${TIMESTAMP}.txt"
+RATIONALE_FILE="figma-ready/rationale_${TIMESTAMP}.txt"
 RATIONALE_PYTHON_FILE="python_outputs/rationale_${TIMESTAMP}.txt"
 
 echo "📁 Extracting from pipeline run: $TIMESTAMP"
