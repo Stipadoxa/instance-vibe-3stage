@@ -637,6 +637,11 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             if len(parts) >= 2:
                 final_json_str = parts[1].strip()
                 print("✅ Extracted JSON after rationale separator")
+        elif "---RATIONALE_SEPARATOR---" in final_json_str:
+            parts = final_json_str.split("---RATIONALE_SEPARATOR---")
+            if len(parts) >= 2:
+                final_json_str = parts[1].strip()
+                print("✅ Extracted JSON after rationale separator (underscore format)")
         
         # Use regex to extract the JSON if wrapped in markdown
         match = re.search(r'```json\n(.*)\n```', final_json_str, re.DOTALL)
