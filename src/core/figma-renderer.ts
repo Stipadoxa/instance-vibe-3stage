@@ -89,18 +89,37 @@ export class FigmaRenderer {
         }
       }
       
-      // Size constraints
-      if (containerData.minWidth !== undefined) {
-        currentFrame.minWidth = containerData.minWidth;
+      // Size constraints - wrapped in try-catch to prevent property setter errors
+      try {
+        if (containerData.minWidth !== undefined) {
+          currentFrame.minWidth = containerData.minWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minWidth:', e.message);
       }
-      if (containerData.maxWidth !== undefined) {
-        currentFrame.maxWidth = containerData.maxWidth;
+      
+      try {
+        if (containerData.maxWidth !== undefined) {
+          currentFrame.maxWidth = containerData.maxWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxWidth:', e.message);
       }
-      if (containerData.minHeight !== undefined) {
-        currentFrame.minHeight = containerData.minHeight;
+      
+      try {
+        if (containerData.minHeight !== undefined) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minHeight:', e.message);
       }
-      if (containerData.maxHeight !== undefined) {
-        currentFrame.maxHeight = containerData.maxHeight;
+      
+      try {
+        if (containerData.maxHeight !== undefined) {
+          currentFrame.maxHeight = containerData.maxHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxHeight:', e.message);
       }
       
       if (containerData.width) {
@@ -1559,11 +1578,18 @@ export class FigmaRenderer {
    * Enhanced dynamic generation using systematic approach
    */
   static async generateUIFromDataSystematic(layoutData: any, parentNode: FrameNode | PageNode): Promise<FrameNode> {
-    // Skip ComponentPropertyEngine if no schemas available
-    const schemas = ComponentPropertyEngine.getAllSchemas();
-    if (schemas.length === 0) {
-      console.log('⚠️ No schemas - running systematic generation in basic mode');
-    }
+    try {
+      console.log('🔧 Starting generateUIFromDataSystematic with data:', {
+        hasLayoutContainer: !!layoutData.layoutContainer,
+        hasItems: !!layoutData.items,
+        parentType: parentNode.type
+      });
+      
+      // Skip ComponentPropertyEngine if no schemas available
+      const schemas = ComponentPropertyEngine.getAllSchemas();
+      if (schemas.length === 0) {
+        console.log('⚠️ No schemas - running systematic generation in basic mode');
+      }
     
     let currentFrame: FrameNode;
     const containerData = layoutData.layoutContainer || layoutData;
@@ -1591,78 +1617,153 @@ export class FigmaRenderer {
         hasWidth: !!containerData.width
       });
       
-      currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
-        ? containerData.layoutMode : "NONE";
-        
-      console.log('🔧 Frame layoutMode set to:', currentFrame.layoutMode);
+      try {
+        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
+          ? containerData.layoutMode : "NONE";
+        console.log('🔧 Frame layoutMode set to:', currentFrame.layoutMode);
+      } catch (e) {
+        console.warn('⚠️ Failed to set layoutMode:', e.message);
+      }
         
       if (currentFrame.layoutMode !== 'NONE') {
-        currentFrame.paddingTop = typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0;
-        currentFrame.paddingBottom = typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0;
-        currentFrame.paddingLeft = typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0;
-        currentFrame.paddingRight = typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0;
+        try {
+          currentFrame.paddingTop = typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingTop:', e.message);
+        }
+        
+        try {
+          currentFrame.paddingBottom = typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingBottom:', e.message);
+        }
+        
+        try {
+          currentFrame.paddingLeft = typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingLeft:', e.message);
+        }
+        
+        try {
+          currentFrame.paddingRight = typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingRight:', e.message);
+        }
         
         // Enhanced auto-layout properties
-        if (containerData.itemSpacing === 'AUTO') {
-          (currentFrame as any).itemSpacing = 'AUTO';
-        } else {
-          currentFrame.itemSpacing = typeof containerData.itemSpacing === 'number' ? containerData.itemSpacing : 0;
+        try {
+          if (containerData.itemSpacing === 'AUTO') {
+            (currentFrame as any).itemSpacing = 'AUTO';
+          } else {
+            currentFrame.itemSpacing = typeof containerData.itemSpacing === 'number' ? containerData.itemSpacing : 0;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set itemSpacing:', e.message);
         }
         
         // Layout wrap support
-        if (containerData.layoutWrap !== undefined) {
-          currentFrame.layoutWrap = containerData.layoutWrap;
+        try {
+          if (containerData.layoutWrap !== undefined) {
+            currentFrame.layoutWrap = containerData.layoutWrap;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set layoutWrap:', e.message);
         }
         
         // Primary axis alignment
-        if (containerData.primaryAxisAlignItems) {
-          currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+        try {
+          if (containerData.primaryAxisAlignItems) {
+            currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set primaryAxisAlignItems:', e.message);
         }
         
         // Counter axis alignment
-        if (containerData.counterAxisAlignItems) {
-          currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+        try {
+          if (containerData.counterAxisAlignItems) {
+            currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisAlignItems:', e.message);
         }
         
         // Sizing modes
-        if (containerData.primaryAxisSizingMode) {
-          currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+        try {
+          if (containerData.primaryAxisSizingMode) {
+            currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set primaryAxisSizingMode:', e.message);
         }
         
-        if (containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+        try {
+          if (containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisSizingMode:', e.message);
         }
       }
       
-      // Size constraints
-      if (containerData.minWidth !== undefined) {
-        currentFrame.minWidth = containerData.minWidth;
+      // Size constraints - wrapped in try-catch to prevent property setter errors
+      try {
+        if (containerData.minWidth !== undefined) {
+          currentFrame.minWidth = containerData.minWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minWidth:', e.message);
       }
-      if (containerData.maxWidth !== undefined) {
-        currentFrame.maxWidth = containerData.maxWidth;
+      
+      try {
+        if (containerData.maxWidth !== undefined) {
+          currentFrame.maxWidth = containerData.maxWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxWidth:', e.message);
       }
-      if (containerData.minHeight !== undefined) {
-        currentFrame.minHeight = containerData.minHeight;
+      
+      try {
+        if (containerData.minHeight !== undefined) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minHeight:', e.message);
       }
-      if (containerData.maxHeight !== undefined) {
-        currentFrame.maxHeight = containerData.maxHeight;
+      
+      try {
+        if (containerData.maxHeight !== undefined) {
+          currentFrame.maxHeight = containerData.maxHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxHeight:', e.message);
       }
       
       if (containerData.width) {
-        if (currentFrame.layoutMode !== 'NONE') {
-          // For auto-layout frames, set width directly and let auto-layout handle height
-          currentFrame.width = containerData.width;
-          console.log('🔧 Set auto-layout frame width to:', containerData.width);
-          if (!containerData.counterAxisSizingMode) {
-            currentFrame.counterAxisSizingMode = "FIXED";
+        try {
+          if (currentFrame.layoutMode !== 'NONE') {
+            // For auto-layout frames, set width directly and let auto-layout handle height
+            currentFrame.width = containerData.width;
+            console.log('🔧 Set auto-layout frame width to:', containerData.width);
+            if (!containerData.counterAxisSizingMode) {
+              currentFrame.counterAxisSizingMode = "FIXED";
+            }
+          } else {
+            // For regular frames, use resize
+            currentFrame.resize(containerData.width, currentFrame.height);
+            console.log('🔧 Resized regular frame to width:', containerData.width);
           }
-        } else {
-          // For regular frames, use resize
-          currentFrame.resize(containerData.width, currentFrame.height);
-          console.log('🔧 Resized regular frame to width:', containerData.width);
+        } catch (e) {
+          console.warn('⚠️ Failed to set width:', e.message);
         }
-      } else if (!containerData.counterAxisSizingMode) {
-        currentFrame.counterAxisSizingMode = "AUTO";
+      } else {
+        try {
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "AUTO";
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisSizingMode (AUTO):', e.message);
+        }
       }
     }
     
@@ -1701,10 +1802,10 @@ export class FigmaRenderer {
     }
     
     // Post-processing: Ensure frame maintains intended dimensions after content is added
-    const containerData = layoutData.layoutContainer || layoutData;
-    if (containerData && containerData.width && currentFrame.layoutMode !== 'NONE') {
-      console.log('🔧 Post-processing: Re-enforcing frame width to:', containerData.width);
-      currentFrame.width = containerData.width;
+    const postProcessContainerData = layoutData.layoutContainer || layoutData;
+    if (postProcessContainerData && postProcessContainerData.width && currentFrame.layoutMode !== 'NONE') {
+      console.log('🔧 Post-processing: Re-enforcing frame width to:', postProcessContainerData.width);
+      currentFrame.width = postProcessContainerData.width;
     }
 
     if (parentNode.type === 'PAGE') {
@@ -1719,6 +1820,29 @@ export class FigmaRenderer {
     }
     
     return currentFrame;
+    
+    } catch (error) {
+      console.error('❌ generateUIFromDataSystematic error:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        layoutData: layoutData,
+        parentNodeType: parentNode.type
+      });
+      
+      // Create a basic frame as fallback
+      const fallbackFrame = figma.createFrame();
+      fallbackFrame.name = "Error Frame";
+      fallbackFrame.resize(375, 100);
+      
+      if (parentNode.type === 'PAGE') {
+        parentNode.appendChild(fallbackFrame);
+      }
+      
+      figma.notify(`❌ Error creating UI: ${error.message}`, { error: true });
+      return fallbackFrame;
+    }
   }
 
   /**

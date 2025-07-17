@@ -847,6 +847,96 @@
       return session.components;
     }
     /**
+     * Recursively searches for auto-layout containers with padding to find visual padding
+     */
+    static findNestedAutolayoutPadding(node, depth = 0) {
+      if (depth > 3) return null;
+      try {
+        if (node.layoutMode && node.layoutMode !== "NONE") {
+          const padding = {
+            paddingTop: node.paddingTop || 0,
+            paddingLeft: node.paddingLeft || 0,
+            paddingRight: node.paddingRight || 0,
+            paddingBottom: node.paddingBottom || 0
+          };
+          if (padding.paddingTop > 0 || padding.paddingLeft > 0 || padding.paddingRight > 0 || padding.paddingBottom > 0) {
+            console.log(`  \u{1F50D} Found nested auto-layout padding at depth ${depth}:`, padding, `(${node.name})`);
+            return padding;
+          }
+        }
+        if (node.children && node.children.length > 0) {
+          for (const child of node.children) {
+            const childPadding = this.findNestedAutolayoutPadding(child, depth + 1);
+            if (childPadding) {
+              return childPadding;
+            }
+          }
+        }
+        return null;
+      } catch (error) {
+        console.warn(`\u26A0\uFE0F Error searching nested padding at depth ${depth}:`, error);
+        return null;
+      }
+    }
+    /**
+     * Extracts internal padding information from a component, including nested auto-layout containers
+     */
+    static extractInternalPadding(comp) {
+      try {
+        let targetNode = comp;
+        if (comp.type === "COMPONENT_SET") {
+          const defaultVariant = comp.defaultVariant || comp.children[0];
+          if (defaultVariant && defaultVariant.type === "COMPONENT") {
+            targetNode = defaultVariant;
+          }
+        }
+        if (targetNode.type === "COMPONENT") {
+          console.log(`\u{1F50D} Analyzing component "${comp.name}" for padding...`);
+          if (targetNode.layoutMode !== "NONE") {
+            const rootPadding = {
+              paddingTop: targetNode.paddingTop || 0,
+              paddingLeft: targetNode.paddingLeft || 0,
+              paddingRight: targetNode.paddingRight || 0,
+              paddingBottom: targetNode.paddingBottom || 0
+            };
+            if (rootPadding.paddingTop > 0 || rootPadding.paddingLeft > 0 || rootPadding.paddingRight > 0 || rootPadding.paddingBottom > 0) {
+              console.log(`  \u2705 Found root auto-layout padding:`, rootPadding);
+              return rootPadding;
+            }
+          }
+          const nestedPadding = this.findNestedAutolayoutPadding(targetNode);
+          if (nestedPadding) {
+            console.log(`  \u2705 Using nested auto-layout padding:`, nestedPadding);
+            return nestedPadding;
+          }
+          if (targetNode.children && targetNode.children.length > 0) {
+            const firstChild = targetNode.children[0];
+            if (firstChild.x !== void 0 && firstChild.y !== void 0) {
+              const paddingLeft = firstChild.x;
+              const paddingTop = firstChild.y;
+              const paddingRight = targetNode.width - (firstChild.x + firstChild.width);
+              const paddingBottom = targetNode.height - (firstChild.y + firstChild.height);
+              if (paddingLeft >= 0 && paddingTop >= 0 && paddingRight >= 0 && paddingBottom >= 0 && paddingLeft <= 100 && paddingTop <= 100 && paddingRight <= 100 && paddingBottom <= 100) {
+                const geometricPadding = {
+                  paddingTop: Math.round(paddingTop),
+                  paddingLeft: Math.round(paddingLeft),
+                  paddingRight: Math.round(paddingRight),
+                  paddingBottom: Math.round(paddingBottom)
+                };
+                console.log(`  \u2705 Using geometric padding detection:`, geometricPadding);
+                return geometricPadding;
+              }
+            }
+          }
+          console.log(`  \u274C No meaningful padding found for "${comp.name}"`);
+        }
+        return null;
+      } catch (error) {
+        console.warn(`\u26A0\uFE0F Error extracting padding for component ${comp.name}:`, error);
+        return null;
+      }
+    }
+    /**
      * Analyzes a single component to extract metadata
      */
     static async analyzeComponent(comp) {
@@ -859,6 +949,10 @@
       const vectorNodes = this.findVectorNodes(comp);
       const imageNodes = this.findImageNodes(comp);
       const styleInfo = this.extractStyleInfo(comp);
+      const internalPadding = this.extractInternalPadding(comp);
+      if (internalPadding) {
+        console.log(`\u{1F4CF} Found internal padding for "${comp.name}":`, internalPadding);
+      }
       let variants = [];
       const variantDetails = {};
       if (comp.type === "COMPONENT_SET") {
@@ -888,6 +982,8 @@
         imageNodes: imageNodes.length > 0 ? imageNodes : void 0,
         styleInfo,
         // NEW: Include color and style information
+        internalPadding,
+        // NEW: Include internal padding information
         isFromLibrary: false
       };
     }
@@ -2404,22 +2500,42 @@
             currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
           }
         }
-        if (containerData.minWidth !== void 0) {
-          currentFrame.minWidth = containerData.minWidth;
+        try {
+          if (containerData.minWidth !== void 0) {
+            currentFrame.minWidth = containerData.minWidth;
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to set minWidth:", e.message);
         }
-        if (containerData.maxWidth !== void 0) {
-          currentFrame.maxWidth = containerData.maxWidth;
+        try {
+          if (containerData.maxWidth !== void 0) {
+            currentFrame.maxWidth = containerData.maxWidth;
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to set maxWidth:", e.message);
         }
-        if (containerData.minHeight !== void 0) {
-          currentFrame.minHeight = containerData.minHeight;
+        try {
+          if (containerData.minHeight !== void 0) {
+            currentFrame.minHeight = containerData.minHeight;
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to set minHeight:", e.message);
         }
-        if (containerData.maxHeight !== void 0) {
-          currentFrame.maxHeight = containerData.maxHeight;
+        try {
+          if (containerData.maxHeight !== void 0) {
+            currentFrame.maxHeight = containerData.maxHeight;
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to set maxHeight:", e.message);
         }
         if (containerData.width) {
-          currentFrame.resize(containerData.width, currentFrame.height);
-          if (!containerData.counterAxisSizingMode) {
-            currentFrame.counterAxisSizingMode = "FIXED";
+          if (currentFrame.layoutMode !== "NONE") {
+            currentFrame.width = containerData.width;
+            if (!containerData.counterAxisSizingMode) {
+              currentFrame.counterAxisSizingMode = "FIXED";
+            }
+          } else {
+            currentFrame.resize(containerData.width, currentFrame.height);
           }
         } else if (!containerData.counterAxisSizingMode) {
           currentFrame.counterAxisSizingMode = "AUTO";
@@ -2524,7 +2640,7 @@
      * Dynamic UI generation with component ID resolution
      */
     static async generateUIFromDataDynamic(layoutData) {
-      if (!layoutData || !layoutData.items) {
+      if (!layoutData || !layoutData.items && !layoutData.layoutContainer) {
         figma.notify("Invalid JSON structure", { error: true });
         return null;
       }
@@ -2758,7 +2874,19 @@
       };
       for (const [propKey, propValue] of Object.entries(properties)) {
         if (!propValue || typeof propValue !== "string" || !propValue.trim()) continue;
-        if (propKey === "horizontalSizing" || propKey === "variants") continue;
+        const nonTextProperties = /* @__PURE__ */ new Set([
+          "horizontalSizing",
+          "variants",
+          "textStyle",
+          "colorStyleName",
+          "leading-icon",
+          "trailing-icon",
+          "layoutAlign",
+          "layoutGrow"
+        ]);
+        if (nonTextProperties.has(propKey) || propKey.endsWith("Style") || propKey.includes("icon")) {
+          continue;
+        }
         console.log(`\u{1F527} Trying to set ${propKey} = "${propValue}"`);
         let textNode = null;
         let matchMethod = "none";
@@ -3476,109 +3604,216 @@ ${llmErrors}`);
      * Enhanced dynamic generation using systematic approach
      */
     static async generateUIFromDataSystematic(layoutData, parentNode) {
-      const schemas = ComponentPropertyEngine.getAllSchemas();
-      if (schemas.length === 0) {
-        console.log("\u26A0\uFE0F No schemas - running systematic generation in basic mode");
-      }
-      let currentFrame;
-      const containerData = layoutData.layoutContainer || layoutData;
-      if (parentNode.type === "PAGE" && containerData) {
-        currentFrame = figma.createFrame();
-        parentNode.appendChild(currentFrame);
-      } else if (parentNode.type === "FRAME") {
-        currentFrame = parentNode;
-      } else {
-        figma.notify("Cannot add items without a parent frame.", { error: true });
-        return figma.createFrame();
-      }
-      if (containerData && containerData !== layoutData) {
-        currentFrame.name = containerData.name || "Generated Frame";
-        console.log("\u{1F527} Applying container properties:", {
-          name: containerData.name,
-          layoutMode: containerData.layoutMode,
-          itemSpacing: containerData.itemSpacing,
-          primaryAxisSizingMode: containerData.primaryAxisSizingMode
+      try {
+        console.log("\u{1F527} Starting generateUIFromDataSystematic with data:", {
+          hasLayoutContainer: !!layoutData.layoutContainer,
+          hasItems: !!layoutData.items,
+          parentType: parentNode.type
         });
-        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
-        console.log("\u{1F527} Frame layoutMode set to:", currentFrame.layoutMode);
-        if (currentFrame.layoutMode !== "NONE") {
-          currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
-          currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
-          currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
-          currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
-          if (containerData.itemSpacing === "AUTO") {
-            currentFrame.itemSpacing = "AUTO";
-          } else {
-            currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
-          }
-          if (containerData.layoutWrap !== void 0) {
-            currentFrame.layoutWrap = containerData.layoutWrap;
-          }
-          if (containerData.primaryAxisAlignItems) {
-            currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
-          }
-          if (containerData.counterAxisAlignItems) {
-            currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
-          }
-          if (containerData.primaryAxisSizingMode) {
-            currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-          }
-          if (containerData.counterAxisSizingMode) {
-            currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
-          }
+        const schemas = ComponentPropertyEngine.getAllSchemas();
+        if (schemas.length === 0) {
+          console.log("\u26A0\uFE0F No schemas - running systematic generation in basic mode");
         }
-        if (containerData.minWidth !== void 0) {
-          currentFrame.minWidth = containerData.minWidth;
-        }
-        if (containerData.maxWidth !== void 0) {
-          currentFrame.maxWidth = containerData.maxWidth;
-        }
-        if (containerData.minHeight !== void 0) {
-          currentFrame.minHeight = containerData.minHeight;
-        }
-        if (containerData.maxHeight !== void 0) {
-          currentFrame.maxHeight = containerData.maxHeight;
-        }
-        if (containerData.width) {
-          currentFrame.resize(containerData.width, currentFrame.height);
-          if (!containerData.counterAxisSizingMode) {
-            currentFrame.counterAxisSizingMode = "FIXED";
-          }
-        } else if (!containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = "AUTO";
-        }
-      }
-      const items = layoutData.items || containerData.items;
-      if (!items || !Array.isArray(items)) return currentFrame;
-      for (const item of items) {
-        if (item.type === "layoutContainer") {
-          console.log("\u{1F527} Creating nested layoutContainer:", item.name, "layoutMode:", item.layoutMode);
-          const nestedFrame = figma.createFrame();
-          currentFrame.appendChild(nestedFrame);
-          this.applyChildLayoutProperties(nestedFrame, item);
-          await this.generateUIFromDataSystematic({ layoutContainer: item, items: item.items }, nestedFrame);
-        } else if (item.type === "frame" && item.layoutContainer) {
-          const nestedFrame = figma.createFrame();
-          currentFrame.appendChild(nestedFrame);
-          await this.generateUIFromDataSystematic(item, nestedFrame);
-        } else if (item.type === "native-text" || item.type === "text") {
-          await this.createTextNode(item, currentFrame);
-        } else if (item.type === "native-rectangle") {
-          await this.createRectangleNode(item, currentFrame);
-        } else if (item.type === "native-circle") {
-          await this.createEllipseNode(item, currentFrame);
+        let currentFrame;
+        const containerData = layoutData.layoutContainer || layoutData;
+        if (parentNode.type === "PAGE" && containerData) {
+          currentFrame = figma.createFrame();
+          parentNode.appendChild(currentFrame);
+        } else if (parentNode.type === "FRAME") {
+          currentFrame = parentNode;
         } else {
-          await this.createComponentInstanceSystematic(item, currentFrame);
+          figma.notify("Cannot add items without a parent frame.", { error: true });
+          return figma.createFrame();
         }
+        if (containerData && containerData !== layoutData) {
+          currentFrame.name = containerData.name || "Generated Frame";
+          console.log("\u{1F527} Applying container properties:", {
+            name: containerData.name,
+            layoutMode: containerData.layoutMode,
+            itemSpacing: containerData.itemSpacing,
+            primaryAxisSizingMode: containerData.primaryAxisSizingMode,
+            width: containerData.width,
+            hasWidth: !!containerData.width
+          });
+          try {
+            currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
+            console.log("\u{1F527} Frame layoutMode set to:", currentFrame.layoutMode);
+          } catch (e) {
+            console.warn("\u26A0\uFE0F Failed to set layoutMode:", e.message);
+          }
+          if (currentFrame.layoutMode !== "NONE") {
+            try {
+              currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set paddingTop:", e.message);
+            }
+            try {
+              currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set paddingBottom:", e.message);
+            }
+            try {
+              currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set paddingLeft:", e.message);
+            }
+            try {
+              currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set paddingRight:", e.message);
+            }
+            try {
+              if (containerData.itemSpacing === "AUTO") {
+                currentFrame.itemSpacing = "AUTO";
+              } else {
+                currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set itemSpacing:", e.message);
+            }
+            try {
+              if (containerData.layoutWrap !== void 0) {
+                currentFrame.layoutWrap = containerData.layoutWrap;
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set layoutWrap:", e.message);
+            }
+            try {
+              if (containerData.primaryAxisAlignItems) {
+                currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set primaryAxisAlignItems:", e.message);
+            }
+            try {
+              if (containerData.counterAxisAlignItems) {
+                currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set counterAxisAlignItems:", e.message);
+            }
+            try {
+              if (containerData.primaryAxisSizingMode) {
+                currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set primaryAxisSizingMode:", e.message);
+            }
+            try {
+              if (containerData.counterAxisSizingMode) {
+                currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set counterAxisSizingMode:", e.message);
+            }
+          }
+          try {
+            if (containerData.minWidth !== void 0) {
+              currentFrame.minWidth = containerData.minWidth;
+            }
+          } catch (e) {
+            console.warn("\u26A0\uFE0F Failed to set minWidth:", e.message);
+          }
+          try {
+            if (containerData.maxWidth !== void 0) {
+              currentFrame.maxWidth = containerData.maxWidth;
+            }
+          } catch (e) {
+            console.warn("\u26A0\uFE0F Failed to set maxWidth:", e.message);
+          }
+          try {
+            if (containerData.minHeight !== void 0) {
+              currentFrame.minHeight = containerData.minHeight;
+            }
+          } catch (e) {
+            console.warn("\u26A0\uFE0F Failed to set minHeight:", e.message);
+          }
+          try {
+            if (containerData.maxHeight !== void 0) {
+              currentFrame.maxHeight = containerData.maxHeight;
+            }
+          } catch (e) {
+            console.warn("\u26A0\uFE0F Failed to set maxHeight:", e.message);
+          }
+          if (containerData.width) {
+            try {
+              if (currentFrame.layoutMode !== "NONE") {
+                currentFrame.width = containerData.width;
+                console.log("\u{1F527} Set auto-layout frame width to:", containerData.width);
+                if (!containerData.counterAxisSizingMode) {
+                  currentFrame.counterAxisSizingMode = "FIXED";
+                }
+              } else {
+                currentFrame.resize(containerData.width, currentFrame.height);
+                console.log("\u{1F527} Resized regular frame to width:", containerData.width);
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set width:", e.message);
+            }
+          } else {
+            try {
+              if (!containerData.counterAxisSizingMode) {
+                currentFrame.counterAxisSizingMode = "AUTO";
+              }
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set counterAxisSizingMode (AUTO):", e.message);
+            }
+          }
+        }
+        const items = layoutData.items || containerData.items;
+        if (!items || !Array.isArray(items)) return currentFrame;
+        for (const item of items) {
+          if (item.type === "layoutContainer") {
+            console.log("\u{1F527} Creating nested layoutContainer:", item.name, "layoutMode:", item.layoutMode);
+            const nestedFrame = figma.createFrame();
+            currentFrame.appendChild(nestedFrame);
+            this.applyChildLayoutProperties(nestedFrame, item);
+            await this.generateUIFromDataSystematic({ layoutContainer: item, items: item.items }, nestedFrame);
+          } else if (item.type === "frame" && item.layoutContainer) {
+            const nestedFrame = figma.createFrame();
+            currentFrame.appendChild(nestedFrame);
+            await this.generateUIFromDataSystematic(item, nestedFrame);
+          } else if (item.type === "native-text" || item.type === "text") {
+            await this.createTextNode(item, currentFrame);
+          } else if (item.type === "native-rectangle") {
+            await this.createRectangleNode(item, currentFrame);
+          } else if (item.type === "native-circle") {
+            await this.createEllipseNode(item, currentFrame);
+          } else {
+            await this.createComponentInstanceSystematic(item, currentFrame);
+          }
+        }
+        const postProcessContainerData = layoutData.layoutContainer || layoutData;
+        if (postProcessContainerData && postProcessContainerData.width && currentFrame.layoutMode !== "NONE") {
+          console.log("\u{1F527} Post-processing: Re-enforcing frame width to:", postProcessContainerData.width);
+          currentFrame.width = postProcessContainerData.width;
+        }
+        if (parentNode.type === "PAGE") {
+          figma.currentPage.selection = [currentFrame];
+          figma.viewport.scrollAndZoomIntoView([currentFrame]);
+          const perfReport = ComponentPropertyEngine.getPerformanceReport();
+          console.log("\u26A1 Performance Report:", perfReport);
+          figma.notify(`UI generated with systematic validation!`, { timeout: 2500 });
+        }
+        return currentFrame;
+      } catch (error) {
+        console.error("\u274C generateUIFromDataSystematic error:", error);
+        console.error("\u274C Error details:", {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+          layoutData,
+          parentNodeType: parentNode.type
+        });
+        const fallbackFrame = figma.createFrame();
+        fallbackFrame.name = "Error Frame";
+        fallbackFrame.resize(375, 100);
+        if (parentNode.type === "PAGE") {
+          parentNode.appendChild(fallbackFrame);
+        }
+        figma.notify(`\u274C Error creating UI: ${error.message}`, { error: true });
+        return fallbackFrame;
       }
-      if (parentNode.type === "PAGE") {
-        figma.currentPage.selection = [currentFrame];
-        figma.viewport.scrollAndZoomIntoView([currentFrame]);
-        const perfReport = ComponentPropertyEngine.getPerformanceReport();
-        console.log("\u26A1 Performance Report:", perfReport);
-        figma.notify(`UI generated with systematic validation!`, { timeout: 2500 });
-      }
-      return currentFrame;
     }
     /**
      * Modify existing UI frame by replacing its content

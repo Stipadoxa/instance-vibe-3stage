@@ -595,6 +595,133 @@ export class ComponentScanner {
   }
 
   /**
+   * Recursively searches for auto-layout containers with padding to find visual padding
+   */
+  static findNestedAutolayoutPadding(node: any, depth: number = 0): {
+    paddingTop: number;
+    paddingLeft: number;
+    paddingRight: number;
+    paddingBottom: number;
+  } | null {
+    // Limit recursion depth to prevent infinite loops
+    if (depth > 3) return null;
+
+    try {
+      // Check if current node has auto-layout with meaningful padding
+      if (node.layoutMode && node.layoutMode !== 'NONE') {
+        const padding = {
+          paddingTop: node.paddingTop || 0,
+          paddingLeft: node.paddingLeft || 0,
+          paddingRight: node.paddingRight || 0,
+          paddingBottom: node.paddingBottom || 0
+        };
+
+        // If this auto-layout has meaningful padding, return it
+        if (padding.paddingTop > 0 || padding.paddingLeft > 0 || 
+            padding.paddingRight > 0 || padding.paddingBottom > 0) {
+          console.log(`  🔍 Found nested auto-layout padding at depth ${depth}:`, padding, `(${node.name})`);
+          return padding;
+        }
+      }
+
+      // Recursively search children
+      if (node.children && node.children.length > 0) {
+        for (const child of node.children) {
+          const childPadding = this.findNestedAutolayoutPadding(child, depth + 1);
+          if (childPadding) {
+            return childPadding;
+          }
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.warn(`⚠️ Error searching nested padding at depth ${depth}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Extracts internal padding information from a component, including nested auto-layout containers
+   */
+  static extractInternalPadding(comp: ComponentNode | ComponentSetNode): {
+    paddingTop: number;
+    paddingLeft: number;
+    paddingRight: number;
+    paddingBottom: number;
+  } | null {
+    try {
+      // For component sets, analyze the default variant
+      let targetNode = comp;
+      if (comp.type === 'COMPONENT_SET') {
+        const defaultVariant = comp.defaultVariant || comp.children[0];
+        if (defaultVariant && defaultVariant.type === 'COMPONENT') {
+          targetNode = defaultVariant;
+        }
+      }
+
+      if (targetNode.type === 'COMPONENT') {
+        console.log(`🔍 Analyzing component "${comp.name}" for padding...`);
+        
+        // Method 1: Check if root component has auto-layout with padding
+        if (targetNode.layoutMode !== 'NONE') {
+          const rootPadding = {
+            paddingTop: targetNode.paddingTop || 0,
+            paddingLeft: targetNode.paddingLeft || 0,
+            paddingRight: targetNode.paddingRight || 0,
+            paddingBottom: targetNode.paddingBottom || 0
+          };
+
+          // If root has meaningful padding, return it
+          if (rootPadding.paddingTop > 0 || rootPadding.paddingLeft > 0 || 
+              rootPadding.paddingRight > 0 || rootPadding.paddingBottom > 0) {
+            console.log(`  ✅ Found root auto-layout padding:`, rootPadding);
+            return rootPadding;
+          }
+        }
+
+        // Method 2: Search for nested auto-layout containers with padding
+        const nestedPadding = this.findNestedAutolayoutPadding(targetNode);
+        if (nestedPadding) {
+          console.log(`  ✅ Using nested auto-layout padding:`, nestedPadding);
+          return nestedPadding;
+        }
+
+        // Method 3: Fallback to geometric detection (original method)
+        if (targetNode.children && targetNode.children.length > 0) {
+          const firstChild = targetNode.children[0];
+          if (firstChild.x !== undefined && firstChild.y !== undefined) {
+            const paddingLeft = firstChild.x;
+            const paddingTop = firstChild.y;
+            const paddingRight = targetNode.width - (firstChild.x + firstChild.width);
+            const paddingBottom = targetNode.height - (firstChild.y + firstChild.height);
+            
+            // Only return if padding values are reasonable (between 0 and 100)
+            if (paddingLeft >= 0 && paddingTop >= 0 && paddingRight >= 0 && paddingBottom >= 0 &&
+                paddingLeft <= 100 && paddingTop <= 100 && paddingRight <= 100 && paddingBottom <= 100) {
+              const geometricPadding = {
+                paddingTop: Math.round(paddingTop),
+                paddingLeft: Math.round(paddingLeft),
+                paddingRight: Math.round(paddingRight),
+                paddingBottom: Math.round(paddingBottom)
+              };
+              console.log(`  ✅ Using geometric padding detection:`, geometricPadding);
+              return geometricPadding;
+            }
+          }
+        }
+
+        console.log(`  ❌ No meaningful padding found for "${comp.name}"`);
+      }
+
+      return null;
+    } catch (error) {
+      console.warn(`⚠️ Error extracting padding for component ${comp.name}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Analyzes a single component to extract metadata
    */
   static async analyzeComponent(comp: ComponentNode | ComponentSetNode): Promise<ComponentInfo> {
@@ -609,6 +736,12 @@ export class ComponentScanner {
       
       // NEW: Extract color and style information
       const styleInfo = this.extractStyleInfo(comp);
+      
+      // NEW: Extract internal padding information
+      const internalPadding = this.extractInternalPadding(comp);
+      if (internalPadding) {
+          console.log(`📏 Found internal padding for "${comp.name}":`, internalPadding);
+      }
       
       let variants: string[] = [];
       const variantDetails: { [key: string]: string[] } = {};
@@ -642,6 +775,7 @@ export class ComponentScanner {
           vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined,
           imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
           styleInfo: styleInfo, // NEW: Include color and style information
+          internalPadding: internalPadding, // NEW: Include internal padding information
           isFromLibrary: false
       };
   }

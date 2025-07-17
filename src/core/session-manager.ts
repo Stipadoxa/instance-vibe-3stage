@@ -70,6 +70,12 @@ export interface ComponentInfo {
   vectorNodes?: VectorNode[];
   imageNodes?: ImageNode[];
   styleInfo?: StyleInfo; // NEW: Color and styling information
+  internalPadding?: { // NEW: Internal padding information
+    paddingTop: number;
+    paddingLeft: number;
+    paddingRight: number;
+    paddingBottom: number;
+  };
 }
 
 export interface SessionState {
