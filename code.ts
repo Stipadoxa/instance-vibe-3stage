@@ -427,23 +427,6 @@ figma.ui.onmessage = async (msg: any) => {
         case 'test-migration':
             handleMigrationTest();
             break;
-        case 'generate-ui-from-json':
-            try {
-                const layoutData = JSON.parse(msg.payload);
-                const newFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
-                if (newFrame) {
-                    figma.ui.postMessage({ 
-                        type: 'ui-generated-success', 
-                        frameId: newFrame.id, 
-                        generatedJSON: layoutData 
-                    });
-                }
-            } catch (e: any) {
-                const errorMessage = e instanceof Error ? e.message : String(e);
-                figma.notify("JSON parsing error: " + errorMessage, { error: true });
-                figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
-            }
-            break;
 // ... (rest of the file)
 
         // ENHANCED: API-driven UI generation with validation
@@ -687,51 +670,7 @@ figma.ui.onmessage = async (msg: any) => {
             }
             break;
 
-        case 'test-color-styles':
-            try {
-                console.log("🎨 Testing color styles scanning...");
-                const colorStyles = await ComponentScanner.scanFigmaColorStyles();
-                
-                // Count total color styles across all categories
-                const totalCount = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
-                
-                figma.ui.postMessage({ 
-                    type: 'color-styles-result', 
-                    colorStyles: colorStyles,
-                    count: totalCount
-                });
-                
-                figma.notify(`✅ Found ${totalCount} color styles`, { timeout: 2000 });
-                
-            } catch (error) {
-                console.error("❌ Color styles scan failed:", error);
-                const errorMessage = error instanceof Error ? error.message : String(error);
-                figma.ui.postMessage({ 
-                    type: 'color-styles-error', 
-                    error: errorMessage 
-                });
-                figma.notify("❌ Color styles scan failed", { error: true });
-            }
-            break;
 
-        case 'generate-llm-prompt':
-            try {
-                const scanSession = await DesignSystemScannerService.getScanSession();
-                if (scanSession && scanSession.components?.length) {
-                    const llmPrompt = DesignSystemScannerService.generateLLMPrompt(
-                        scanSession.components, 
-                        scanSession.colorStyles
-                    );
-                    figma.ui.postMessage({ type: 'llm-prompt-generated', prompt: llmPrompt });
-                } else {
-                    figma.notify("Scan components first", { error: true });
-                }
-            } catch (e: any) {
-                const errorMessage = e instanceof Error ? e.message : String(e);
-                console.error("❌ Error generating LLM prompt:", errorMessage);
-                figma.notify("Error generating prompt", { error: true });
-            }
-            break;
 
         case 'update-component-type':
             const { componentId, newType } = msg.payload;
@@ -1073,45 +1012,6 @@ figma.ui.onmessage = async (msg: any) => {
             }
             break;
 
-        case 'get-debug-log':
-            try {
-                console.log('📄 Retrieving debug log from storage...');
-                
-                // Try to get the latest debug log
-                const debugData = await figma.clientStorage.getAsync('pipeline-debug-log-latest');
-                
-                if (debugData && debugData.content) {
-                    console.log(`✅ Debug log found: ${debugData.lines} lines, ${debugData.chars} chars`);
-                    
-                    figma.ui.postMessage({
-                        type: 'debug-log-result',
-                        success: true,
-                        content: debugData.content,
-                        runId: debugData.runId,
-                        lines: debugData.lines,
-                        chars: debugData.chars,
-                        timestamp: debugData.timestamp
-                    });
-                } else {
-                    console.log('⚠️ No debug log found in storage');
-                    
-                    figma.ui.postMessage({
-                        type: 'debug-log-result',
-                        success: false,
-                        message: 'No debug log found. Run the pipeline first.'
-                    });
-                }
-                
-            } catch (error) {
-                console.error('❌ Error retrieving debug log:', error);
-                
-                figma.ui.postMessage({
-                    type: 'debug-log-result',
-                    success: false,
-                    message: `Failed to retrieve debug log: ${error.message}`
-                });
-            }
-            break;
         
         case 'get-saved-scan':
             try {

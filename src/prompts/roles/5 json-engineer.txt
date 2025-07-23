@@ -77,6 +77,150 @@ You are an expert JSON Engineer specializing in translating UI Designer specific
 }
 ```
 
+## 🔍 TIER 1.5 CRITICAL: Nested Component Detection
+
+### 🔴 Rule 1.5: Detect and Handle Nested Components
+**Before applying textLayers arrays, analyze the component structure to detect nested components.**
+
+#### Nested Component Detection Logic:
+```javascript
+// Detection Pattern: Multi-level semicolon-separated nodeIds
+// Examples of nested component nodeIds:
+// "I147:3809;684:47926;31:9851" - 3 levels deep
+// "I10:12239;10:8652" - 2 levels deep  
+// "10:8492" - Simple component (not nested)
+
+function isNestedComponent(designSystemComponent) {
+  // Check if any textHierarchy nodeIds contain semicolons (nested structure)
+  const hasNestedTextNodes = designSystemComponent.textHierarchy?.some(
+    textNode => textNode.nodeId.includes(';')
+  );
+  
+  // Check if any componentInstances nodeIds contain semicolons
+  const hasNestedComponents = designSystemComponent.componentInstances?.some(
+    instance => instance.nodeId.includes(';')
+  );
+  
+  // If semicolons found in nodeIds, this is a nested component structure
+  return hasNestedTextNodes || hasNestedComponents;
+}
+```
+
+#### Nested Component Handling Rules:
+```json
+✅ CORRECT - Simple component with textLayers arrays:
+{
+  "type": "tab",
+  "componentNodeId": "10:5620", // Simple nodeId - no semicolons
+  "properties": {
+    "Label": ["Home", "Search", "Profile"] // ✅ Array allowed for simple components
+  }
+}
+
+❌ WRONG - Nested component with textLayers arrays:
+{
+  "type": "list-item",
+  "componentNodeId": "147:3805", // Component contains nested nodeIds like "I147:3809;684:47926;31:9851"
+  "properties": {
+    "headlines": ["Title 1", "Title 2", "Title 3"] // ❌ NEVER use arrays for nested components
+  }
+}
+
+✅ CORRECT - Nested component handling options:
+// Option 1: Use default text (recommended)
+{
+  "type": "list-item",
+  "componentNodeId": "147:3805",
+  "properties": {
+    "Headline": "Product Title" // ✅ Single value only
+  }
+}
+
+// Option 2: Individual property mapping
+{
+  "type": "list-item", 
+  "componentNodeId": "147:3805",
+  "properties": {
+    "Headline": "Main Product",
+    "Supporting text": "Product description",
+    "variants": {
+      "Condition": "2-line",
+      "Trailing": "Icon"
+    }
+  }
+}
+
+// Option 3: Recognize as complex nested component
+{
+  "type": "nested-component-wrapper",
+  "componentNodeId": "147:3805",
+  "name": "Complex Product Card",
+  "properties": {
+    "content-type": "structured-data"
+    // No text arrays - let component handle internal structure
+  }
+}
+```
+
+### 🚨 Detection and Prevention Algorithm:
+
+Add this logic **BEFORE** processing any component properties:
+
+```javascript
+// Step 1: Analyze component structure
+const componentInfo = DESIGN_SYSTEM_DATA.find(comp => comp.id === componentNodeId);
+
+// Step 2: Check for nested structure indicators
+const isNested = isNestedComponent(componentInfo);
+
+// Step 3: Apply appropriate text handling strategy
+if (isNested) {
+  // NESTED COMPONENT DETECTED
+  console.log(`🔍 Nested component detected: ${componentInfo.name}`);
+  console.log(`📋 TextLayers available: ${componentInfo.textLayers}`);
+  console.log(`⚠️  Avoiding array text properties due to complex internal structure`);
+  
+  // Use individual properties only - NO ARRAYS
+  return {
+    "type": componentInfo.suggestedType,
+    "componentNodeId": componentInfo.id,
+    "properties": {
+      // Map to first textLayer only, or use variants for complexity
+      [componentInfo.textLayers[0]]: "Single text value",
+      "variants": { /* appropriate variants */ }
+    }
+  };
+} else {
+  // SIMPLE COMPONENT - Arrays allowed
+  console.log(`✅ Simple component: ${componentInfo.name}`);
+  console.log(`📋 TextLayers arrays can be used safely`);
+  
+  // Proceed with normal array text processing
+  return {
+    "type": componentInfo.suggestedType,
+    "componentNodeId": componentInfo.id,
+    "properties": {
+      // Arrays are safe for simple components
+      [textLayerKey]: ["Item 1", "Item 2", "Item 3"]
+    }
+  };
+}
+```
+
+### 📚 Nested Component Examples from Design System:
+
+```javascript
+// NESTED EXAMPLES (avoid arrays):
+"nodeId": "I147:3809;684:47926;31:9851"  // 3-level nested
+"nodeId": "I10:12239;10:8652"            // 2-level nested  
+"nodeId": "I147:3810;82:8384;65:7367"   // 3-level nested
+
+// SIMPLE EXAMPLES (arrays allowed):
+"nodeId": "10:5620"                      // Simple component
+"nodeId": "147:3602"                     // Simple component
+"nodeId": "10:10214"                     // Simple component
+```
+
 ## ⚡ TIER 2 CORE PATTERNS (High-Impact Rules)
 
 ### 📐 Auto-Layout Container Pattern
@@ -160,6 +304,12 @@ Before submitting ANY JSON, verify:
 - [ ] NO "items" nested inside "layoutContainer" object
 - [ ] "layoutContainer" contains ONLY layout properties
 
+### Nested Component Detection ✓
+- [ ] Analyzed componentNodeId structure for semicolons
+- [ ] Checked textHierarchy nodeIds for nested patterns (`;` separators)
+- [ ] Checked componentInstances for nested structures
+- [ ] Applied appropriate handling strategy based on component complexity
+
 ### Component Styling ✓  
 - [ ] NO textStyle on list-item, button, appbar, chip, tab components
 - [ ] textStyle ONLY on native-text elements
@@ -175,6 +325,12 @@ Before submitting ANY JSON, verify:
 - [ ] horizontalSizing: "FILL" on ALL native-text
 - [ ] textAutoResize: "HEIGHT" on ALL native-text
 - [ ] layoutAlign: "STRETCH" on ALL native-text
+
+### TextLayers Array Safety ✓
+- [ ] If nested component detected: Use individual properties only
+- [ ] If simple component: Arrays are allowed for repetitive elements
+- [ ] Never force arrays on complex nested structures
+- [ ] Provide fallback to default text when structure is too complex
 
 ## 📚 TIER 4 DETAILED REFERENCE
 
@@ -194,7 +350,6 @@ Before submitting ANY JSON, verify:
     "paddingRight": 0
   },
   "items": [
-}
     {
       "type": "appbar", 
       "componentNodeId": "10:5620"
@@ -349,7 +504,8 @@ Extract layout specification from UX/UI Designer input:
     "componentSelection": "Why you chose specific Figma component IDs",
     "styleApplication": "Reasoning for text/color style selections",
     "designSystemMapping": "How you mapped requirements to components", 
-    "variantDecisions": "Why you selected specific variants"
+    "variantDecisions": "Why you selected specific variants",
+    "nestedComponentHandling": "How you detected and handled nested component structures"
   }
 }
 ---RATIONALE-SEPARATOR---

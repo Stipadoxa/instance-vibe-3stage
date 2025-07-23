@@ -135,47 +135,6 @@
             width: auto;
             margin: 0 4px 0 0;
         }
-.platform-toggle-container {
-  margin-bottom: 16px;
-}
-
-.toggle-label {
-  display: block;
-  font-weight: 600;
-  font-size: 12px;
-  margin-bottom: 8px;
-  color: #374151;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.toggle-btn {
-  flex: 1;
-  padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  background: white;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #6b7280;
-}
-
-.toggle-btn:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.toggle-btn.active {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border-color: #3b82f6;
-  font-weight: 600;
-}
         .input-group {
             margin-bottom: 12px;
         }
@@ -431,25 +390,8 @@
             color: #d73a49;
         }
 
-        .context-bar {
-            background: #f8f9fa;
-            padding: 8px 16px;
-            border-bottom: 1px solid #e1e4e8;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-        }
 
-        .context-info {
-            color: #586069;
-        }
 
-        .generation-area {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
 
         .button-row {
             display: flex;
@@ -458,6 +400,7 @@
 
         .button-row .btn {
             margin-bottom: 0;
+            flex: 1;
         }
 
         .scan-status {
@@ -483,40 +426,6 @@
             display: none;
         }
         
-        .image-upload-area {
-            border: 2px dashed #d1d5da;
-            border-radius: 6px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s;
-            margin-bottom: 16px;
-        }
-
-        .image-upload-area:hover {
-            border-color: #0366d6;
-        }
-
-        .image-upload-area.has-image {
-            border-style: solid;
-            border-color: #28a745;
-            padding: 10px;
-        }
-
-        .upload-prompt {
-            color: #586069;
-            font-size: 12px;
-        }
-
-        .image-preview {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-        }
-        .image-preview button {
-            margin-top: 8px;
-        }
 
         .iteration-context {
             border: 1px solid #d1ecf1;
@@ -695,12 +604,6 @@
             font-size: 9px;
             font-weight: 500;
         }
-        .toggle-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: #f3f4f6;
-    color: #9ca3af;
-}
     </style>
 </head>
 <body>
@@ -773,9 +676,10 @@
 
         <div class="section">
             <h3>Scan Components</h3>
-            <button class="btn" onclick="scanDesignSystem()" id="scanBtn">🔍 Scan Design System</button>
-            <button class="btn btn-secondary" onclick="testColorStyles()" id="colorStylesBtn">🎨 Test Color Styles</button>
-            
+            <div class="button-row">
+                <button class="btn" onclick="scanDesignSystem()" id="scanBtn">🔍 Scan Design System</button>
+                <button class="btn btn-secondary" onclick="exportRawScanData()" id="exportRawBtn" style="display: none;">📤 Export Raw Data</button>
+            </div>
         </div>
 
         <div class="section" id="componentsSection" style="display: none;">
@@ -799,10 +703,6 @@
             <div class="component-list" id="componentsList"></div>
         </div>
 
-        <div class="section" id="promptSection" style="display: none;">
-            <h3>LLM Prompt</h3>
-            <button class="btn btn-secondary" onclick="generateLLMPrompt()">📋 Generate & Copy Prompt</button>
-        </div>
     </div>
 
     <!-- Tab 2: API Settings -->
@@ -822,68 +722,18 @@
             <div id="connectionStatus"></div>
         </div>
 
-        <div class="section">
-            <h3>Debug Options</h3>
-        </div>
     </div>
 
     <!-- Tab 3: AI Generator -->
     <div class="tab-content" id="ai-generator">
-        <div class="context-bar" id="contextBar">
-            <span class="context-info" id="currentContext">Ready for new UI</span>
-            <button class="btn btn-secondary btn-small" onclick="startFresh()" id="resetBtn">🗂️ New UI</button>
-        </div>
 
-    <!-- INSERT PLATFORM TOGGLE HERE -->
-    <div class="platform-toggle-container">
-        <label class="toggle-label">Platform:</label>
-        <div class="toggle-buttons">
-            <button id="mobile-toggle" class="toggle-btn active" data-platform="mobile">
-                📱 Mobile
-            </button>
-            <button id="desktop-toggle" class="toggle-btn" data-platform="desktop" disabled>
-                🖥️ Desktop <span style="font-size: 9px; opacity: 0.7;">(Soon)</span>
-            </button>
-        </div>
-    </div>
-    <!-- END PLATFORM TOGGLE -->
-        <!-- Image Upload Section -->
-        <div class="section">
-            <h3>Reference Image (Optional)</h3>
-            <div class="image-upload-area" id="imageUploadArea">
-                <input type="file" id="imageInput" accept="image/jpeg, image/png, image/webp, image/gif" style="display: none;">
-                <div class="upload-prompt" id="uploadPrompt">
-                    📷 Click to upload or drag & drop a reference image
-                </div>
-                <div class="image-preview" id="imagePreview" style="display: none;">
-                    <img id="previewImg" style="max-width: 100%; max-height: 150px; border-radius: 4px;">
-                    <button class="btn btn-secondary btn-small" onclick="clearImageSelection()">❌ Remove Image</button>
-                </div>
-            </div>
-        </div>
 
         <div class="section">
-            <div class="generation-area">
-                <div class="input-group">
-                    <label for="userPrompt" id="userPromptLabel">Describe the UI you want to create:</label>
-                    <textarea id="userPrompt" placeholder="create a login form with email and password fields..."></textarea>
-                </div>
-                
-                <div class="button-row">
-                </div>
-                <div class="button-row">
-                    <button class="btn btn-pipeline" onclick="generateWith3StagePipeline()" id="pipeline3Btn" style="background: #28a745;">Generate</button>
-                </div>
-                
-                <div class="form-group">
-                    <label for="jsonInput">Or paste 3-stage pipeline JSON result:</label>
-                    <textarea id="jsonInput" placeholder="Paste JSON from python3 instance.py alt3 output..." style="height: 100px; font-family: monospace; font-size: 10px;"></textarea>
-                    <button class="btn btn-secondary" onclick="renderFromJSON()" id="jsonRenderBtn">🎨 Render JSON</button>
-                </div>
-                <div class="button-row">
-                    <button class="btn btn-secondary" onclick="getDebugLog()" id="debugLogBtn">📄 Get Debug Log</button>
-                </div>
+            <div class="input-group">
+                <label for="jsonInput">Paste 3-stage pipeline JSON result:</label>
+                <textarea id="jsonInput" placeholder="Paste JSON from python3 instance.py alt3 output..." style="height: 100px; font-family: monospace; font-size: 10px;"></textarea>
             </div>
+            <button class="btn" onclick="renderFromJSON()" id="jsonRenderBtn">🎨 Render JSON</button>
         </div>
 
         <div id="generationStatus"></div>
@@ -898,15 +748,6 @@
             <pre id="jsonOutput" style="display: none; background: #f6f8fa; border: 1px solid #d1d5da; border-radius: 4px; padding: 12px; font-size: 11px; overflow-x: auto; max-height: 300px; overflow-y: auto; font-family: 'Monaco', 'Consolas', monospace;"></pre>
         </div>
 
-        <!-- Manual JSON input as fallback -->
-        <div class="section" style="margin-top: 32px; border-top: 1px solid #e1e4e8; padding-top: 16px;">
-            <h3>Manual Mode (Fallback)</h3>
-            <div class="input-group">
-                <label for="jsonInput">Paste JSON directly:</label>
-                <textarea id="jsonInput" placeholder='{"layoutContainer": {...}, "items": [...]}'></textarea>
-            </div>
-            <button class="btn btn-secondary" onclick="generateFromJSON()">📄 Generate from JSON</button>
-        </div>
     </div>
 
     <!-- Load pattern intelligence before main script -->
@@ -1357,30 +1198,6 @@ Each item in the "items" array must be a complete, separate object.
     <!-- MAIN UI SCRIPT WITH SESSION MANAGEMENT -->
     <script>
         // Platform toggle functionality
-let currentPlatform = 'mobile'; // Default to mobile
-
-document.getElementById('mobile-toggle').addEventListener('click', function() {
-  setActivePlatform('mobile');
-});
-
-document.getElementById('desktop-toggle').addEventListener('click', function() {
-  setActivePlatform('desktop');
-});
-
-function setActivePlatform(platform) {
-  currentPlatform = platform;
-  
-  // Update button states
-  document.querySelectorAll('.toggle-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  document.getElementById(platform + '-toggle').classList.add('active');
-  
-  // Just log for now (no persistence needed)
-console.log('Platform switched to:', platform);
-  
-  console.log('Platform switched to:', platform);
-}
 
 
         // Global Variables and Core Functions
@@ -1832,33 +1649,12 @@ function isValidImageSelected() {
             scanDesignSystem();
         }
 
-        function testColorStyles() {
-            console.log('🎨 testColorStyles called');
-            const btn = document.getElementById('colorStylesBtn');
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = '🎨 Testing...';
-            }
-            parent.postMessage({ pluginMessage: { type: 'test-color-styles' } }, '*');
-        }
 
         function createExportButton() {
-            const scanBtn = document.getElementById('scanBtn');
-            if (!scanBtn) return;
-
-            // Create export button if it doesn't exist
-            if (!document.getElementById('exportRawBtn')) {
-                const exportBtn = document.createElement('button');
-                exportBtn.id = 'exportRawBtn';
-                exportBtn.className = 'btn btn-secondary';
-                exportBtn.innerHTML = '📤 Export Raw Data';
-                exportBtn.style.display = 'none';
-                exportBtn.style.marginLeft = '8px';
+            // Export button now exists in HTML, just ensure it's properly configured
+            const exportBtn = document.getElementById('exportRawBtn');
+            if (exportBtn) {
                 exportBtn.title = 'Export raw scan results as JSON';
-                exportBtn.onclick = exportRawScanData;
-                
-                // Insert after scan button
-                scanBtn.parentNode.insertBefore(exportBtn, scanBtn.nextSibling);
             }
         }
 
@@ -2197,9 +1993,6 @@ function isValidImageSelected() {
             });
         }
 
-        function generateLLMPrompt() {
-            parent.postMessage({ pluginMessage: { type: 'generate-llm-prompt' } }, '*');
-        }
 
         // API Functions
         function setupApiKeyHandling() {
@@ -2323,21 +2116,9 @@ function isValidImageSelected() {
             } catch (error) {
                 console.error('Error processing image:', error);
                 showStatus('generationStatus', '❌ Could not process the image file.', 'error');
-                clearImageSelection();
             }
         }
 
-        function clearImageSelection() {
-            selectedImage = null;
-            const imageInput = document.getElementById('imageInput');
-            if(imageInput) imageInput.value = '';
-            
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('uploadPrompt').style.display = 'block';
-            document.getElementById('imageUploadArea').classList.remove('has-image');
-            
-            clearStatus('generationStatus');
-        }
 
         // AI Generator & Iteration Functions
         function startFresh() {
@@ -2353,42 +2134,15 @@ function isValidImageSelected() {
     console.log('🔄 startFresh called, selectedImage reset to:', selectedImage);
 
     // Update UI elements
-    document.getElementById('userPromptLabel').textContent = 'Describe the UI you want to create:';
-    document.getElementById('userPrompt').placeholder = 'create a login form with email and password fields...';
-    document.getElementById('currentContext').textContent = 'Ready for new UI';
-    document.getElementById('userPrompt').value = '';
-    document.getElementById('imageUploadArea').style.display = 'block';
-
-    // Reset button text to normal mode
-    const pipeline3Btn = document.getElementById('pipeline3Btn');
-    if (pipeline3Btn) {
-        pipeline3Btn.textContent = 'Generate';
-    }
+    // (Most UI elements removed in cleanup)
 
     clearStatus('generationStatus');
-    clearImageSelection(); // This will also clear the UI state
 }
 
         
         
 
 
-        function generateFromJSON() {
-            const jsonInput = document.getElementById('jsonInput');
-            if (!jsonInput || !jsonInput.value.trim()) {
-                showStatus('generationStatus', 'Please paste JSON data', 'error');
-                return;
-            }
-            
-            // Manual generation always starts a fresh session
-            startFresh(); 
-            parent.postMessage({
-                pluginMessage: {
-                    type: 'generate-ui-from-json',
-                    payload: jsonInput.value.trim()
-                }
-            }, '*');
-        }
         
         
 
@@ -2450,41 +2204,6 @@ function isValidImageSelected() {
         }
 
 
-        async function generateWith3StagePipeline() {
-            const userPrompt = document.getElementById('userPrompt').value.trim();
-            const pipeline3Btn = document.getElementById('pipeline3Btn');
-            
-            if (!userPrompt) {
-                showStatus('generationStatus', '❌ Please describe the UI you want to create.', 'error');
-                return;
-            }
-            
-            // Disable button and show loading
-            pipeline3Btn.disabled = true;
-            pipeline3Btn.textContent = '🔄 Running 3-Stage Pipeline...';
-            showStatus('generationStatus', '⚡ Starting 3-stage AI pipeline...', 'info');
-            
-            try {
-                // Send pipeline message for new generation
-                parent.postMessage({
-                    pluginMessage: {
-                        type: 'run-3stage-pipeline',
-                        payload: {
-                            prompt: userPrompt,
-                            timestamp: Date.now()
-                        }
-                    }
-                }, '*');
-                
-            } catch (error) {
-                console.error('❌ 3-Stage Pipeline error:', error);
-                showStatus('generationStatus', `❌ 3-Stage Pipeline failed: ${error.message}`, 'error');
-                
-                // Reset button
-                pipeline3Btn.disabled = false;
-                pipeline3Btn.textContent = '⚡ 3-Stage Pipeline (NEW)';
-            }
-        }
 
         async function renderFromJSON() {
             const jsonInput = document.getElementById('jsonInput').value.trim();
@@ -2526,109 +2245,7 @@ function isValidImageSelected() {
             }
         }
 
-        async function getDebugLog() {
-            const debugLogBtn = document.getElementById('debugLogBtn');
-            debugLogBtn.disabled = true;
-            debugLogBtn.textContent = '📄 Getting log...';
-            
-            try {
-                // Request debug log from backend
-                parent.postMessage({ 
-                    pluginMessage: { 
-                        type: 'get-debug-log' 
-                    } 
-                }, '*');
-                
-            } catch (error) {
-                console.error('❌ Error getting debug log:', error);
-                showStatus('generationStatus', `❌ Failed to get debug log: ${error.message}`, 'error');
-                
-                // Reset button
-                debugLogBtn.disabled = false;
-                debugLogBtn.textContent = '📄 Get Debug Log';
-            }
-        }
 
-        function showDebugLogModal(content, runId, lines, chars) {
-            // Create modal overlay
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.8);
-                z-index: 1000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                box-sizing: border-box;
-            `;
-            
-            // Create modal content
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background: white;
-                border-radius: 8px;
-                width: 90%;
-                height: 80%;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-            `;
-            
-            modalContent.innerHTML = `
-                <div style="padding: 16px; border-bottom: 1px solid #e1e4e8; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h3 style="margin: 0; font-size: 14px;">📄 Pipeline Debug Log</h3>
-                        <div style="font-size: 11px; color: #586069; margin-top: 4px;">
-                            Run ID: ${runId} • ${lines} lines • ${chars} characters
-                        </div>
-                    </div>
-                    <div>
-                        <button onclick="copyDebugLog()" style="margin-right: 8px; padding: 6px 12px; background: #0366d6; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer;">📋 Copy</button>
-                        <button onclick="closeDebugModal()" style="padding: 6px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer;">✕ Close</button>
-                    </div>
-                </div>
-                <div style="flex: 1; overflow: auto; padding: 16px;">
-                    <pre id="debugLogContent" style="margin: 0; font-family: 'SF Mono', Monaco, monospace; font-size: 10px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word;">${content}</pre>
-                </div>
-            `;
-            
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-            
-            // Store content for copying
-            window.currentDebugLogContent = content;
-            
-            // Close on overlay click
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeDebugModal();
-                }
-            });
-        }
-        
-        function copyDebugLog() {
-            if (window.currentDebugLogContent) {
-                navigator.clipboard.writeText(window.currentDebugLogContent).then(() => {
-                    showStatus('generationStatus', '✅ Debug log copied to clipboard!', 'success');
-                }).catch(() => {
-                    console.log('Debug log content:', window.currentDebugLogContent);
-                    showStatus('generationStatus', '📄 Debug log printed to console', 'info');
-                });
-            }
-        }
-        
-        function closeDebugModal() {
-            const modal = document.querySelector('div[style*="position: fixed"]');
-            if (modal) {
-                modal.remove();
-            }
-            window.currentDebugLogContent = null;
-        }
 
         function toggleJSONView() {
             const jsonOutput = document.getElementById('jsonOutput');
@@ -2864,18 +2481,6 @@ function isValidImageSelected() {
                     showStatus('generationStatus', `❌ JSON render failed: ${msg.error}`, 'error');
                     break;
 
-                case 'debug-log-result':
-                    const debugLogBtn = document.getElementById('debugLogBtn');
-                    debugLogBtn.disabled = false;
-                    debugLogBtn.textContent = '📄 Get Debug Log';
-                    
-                    if (msg.success && msg.content) {
-                        // Show debug log in popup/modal
-                        showDebugLogModal(msg.content, msg.runId, msg.lines, msg.chars);
-                    } else {
-                        showStatus('generationStatus', '⚠️ No debug log found. Run pipeline first.', 'warning');
-                    }
-                    break;
 
                 // NEW: Session management handlers
                 case 'session-found':
@@ -2951,49 +2556,7 @@ function isValidImageSelected() {
                     location.reload();
                     break;
 
-                case 'color-styles-result':
-                    const completedColorBtn = document.getElementById('colorStylesBtn');
-                    if (completedColorBtn) {
-                        completedColorBtn.disabled = false;
-                        completedColorBtn.textContent = '🎨 Test Color Styles';
-                    }
-                    
-                    // Display the color styles results in the scan status area
-                    const colorStylesStatusElement = document.getElementById('scanStatusText');
-                    if (colorStylesStatusElement) {
-                        const totalCount = msg.count || 0;
-                        const message = totalCount > 0 
-                            ? `✅ Found ${totalCount} color styles across ${Object.keys(msg.colorStyles).length} categories`
-                            : `ℹ️ No formal Color Styles found - using component colors`;
-                        showStatus('scanStatusContainer', message, totalCount > 0 ? 'success' : 'info');
-                    }
-                    
-                    // Log detailed results to console for debugging
-                    console.log("🎨 Color Styles Test Results:", {
-                        total: msg.count,
-                        breakdown: msg.colorStyles,
-                        categories: Object.keys(msg.colorStyles).map(cat => ({
-                            category: cat,
-                            count: msg.colorStyles[cat].length,
-                            styles: msg.colorStyles[cat].map(style => style.name)
-                        }))
-                    });
-                    break;
 
-                case 'color-styles-error':
-                    const errorColorBtn = document.getElementById('colorStylesBtn');
-                    if (errorColorBtn) {
-                        errorColorBtn.disabled = false;
-                        errorColorBtn.textContent = '🎨 Test Color Styles';
-                    }
-                    
-                    const colorStylesErrorElement = document.getElementById('scanStatusText');
-                    if (colorStylesErrorElement) {
-                        showStatus('scanStatusContainer', `❌ Color styles test failed: ${msg.error}`, 'error');
-                    }
-                    
-                    console.error("❌ Color Styles Test Error:", msg.error);
-                    break;
 
                 default:
                     // Ignore unknown messages
@@ -3075,7 +2638,6 @@ function isValidImageSelected() {
             console.log('🚀 UI initialized');
             setupComponentListeners();
             setupApiKeyHandling();
-            setupImageUploadListeners();
            try {
     console.log('🔍 DEBUG: About to create AIDesignerPromptGenerator');
     promptGenerator = new AIDesignerPromptGenerator();
@@ -3108,10 +2670,6 @@ startFresh();
             if (typeof window.scanDesignSystem === 'undefined') {
                 window.scanDesignSystem = scanDesignSystem;
                 console.log('✅ scanDesignSystem fallback enabled');
-            }
-            if (typeof window.testColorStyles === 'undefined') {
-                window.testColorStyles = testColorStyles;
-                console.log('✅ testColorStyles fallback enabled');
             }
         });
     </script>
