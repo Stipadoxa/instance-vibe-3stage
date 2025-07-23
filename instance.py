@@ -384,9 +384,36 @@ class Alternative3StagePipeline:
         if not design_files:
             return "No design system data available - no files found"
         
-        # Sort by filename (which includes timestamp) to get newest
-        newest_file = sorted(design_files)[-1]
-        print(f"📊 Using design system: {os.path.basename(newest_file)}")
+        # IMPROVED: Parse timestamps from filenames for proper datetime sorting
+        def get_file_timestamp(filepath):
+            """Extract timestamp from filename and parse it as datetime"""
+            import re
+            from datetime import datetime
+            
+            filename = os.path.basename(filepath)
+            # Extract ISO timestamp from filename: design-system-raw-data-2025-07-23T20-03-48.json
+            match = re.search(r'(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})', filename)
+            if match:
+                try:
+                    timestamp_str = match.group(1)
+                    # Convert from 2025-07-23T20-03-48 to 2025-07-23T20:03:48
+                    # Split by T to handle date and time parts separately
+                    date_part, time_part = timestamp_str.split('T')
+                    time_part_fixed = time_part.replace('-', ':')  # Only fix time part
+                    timestamp_iso = f"{date_part}T{time_part_fixed}"
+                    return datetime.fromisoformat(timestamp_iso)
+                except ValueError:
+                    pass
+            
+            # Fallback: use file modification time
+            return datetime.fromtimestamp(os.path.getmtime(filepath))
+        
+        # Sort by parsed timestamp to get truly newest file
+        newest_file = max(design_files, key=get_file_timestamp)
+        
+        # Get the timestamp for logging
+        newest_timestamp = get_file_timestamp(newest_file)
+        print(f"📊 Using design system: {os.path.basename(newest_file)} (timestamp: {newest_timestamp})")
         
         try:
             with open(newest_file, 'r', encoding='utf-8') as f:
