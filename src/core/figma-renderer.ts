@@ -1594,8 +1594,46 @@ export class FigmaRenderer {
     let currentFrame: FrameNode;
     const containerData = layoutData.layoutContainer || layoutData;
     
+    // DEBUG LOG 1: Input data verification + Full debug output
+    const debugData = {
+      timestamp: new Date().toISOString(),
+      inputData: layoutData,
+      containerData: containerData,
+      parentNodeType: parentNode.type
+    };
+    
+    console.log('📁 FULL INPUT DATA FOR DEBUGGING:', JSON.stringify(debugData, null, 2));
+    
+    // Create downloadable debug file
+    try {
+      const debugContent = JSON.stringify(debugData, null, 2);
+      const blob = new Blob([debugContent], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // Auto-download the file
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'debug-renderer-input.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      console.log('💾 Debug file auto-downloaded as: debug-renderer-input.json');
+    } catch (e) {
+      console.warn('⚠️ Could not auto-download debug file:', e.message);
+      console.log('📋 Copy this JSON manually:', JSON.stringify(debugData, null, 2));
+    }
+    
+    console.log('🔍 INPUT DATA:', {
+      containerData: containerData,
+      hasWidth: !!containerData?.width,
+      widthValue: containerData?.width
+    });
+    
     if (parentNode.type === 'PAGE' && containerData) {
       currentFrame = figma.createFrame();
+      currentFrame.resize(containerData.width || 800, containerData.height || 600);
       parentNode.appendChild(currentFrame);
     } else if (parentNode.type === 'FRAME') {
       currentFrame = parentNode;
@@ -1605,7 +1643,13 @@ export class FigmaRenderer {
     }
     
     // Apply container properties
-    if (containerData && containerData !== layoutData) {
+    // DEBUG LOG 2: Container condition check
+    console.log('🔍 CONTAINER CONDITION:', {
+      hasContainerData: !!containerData,
+      containerEqualsLayout: containerData === layoutData,
+      conditionPassed: !!(containerData && containerData !== layoutData)
+    });
+    if (containerData) {
       currentFrame.name = containerData.name || "Generated Frame";
       
       console.log('🔧 Applying container properties:', {
@@ -1688,13 +1732,25 @@ export class FigmaRenderer {
           console.warn('⚠️ Failed to set counterAxisAlignItems:', e.message);
         }
         
-        // Sizing modes
-        try {
-          if (containerData.primaryAxisSizingMode) {
-            currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+        // Sizing modes - Skip primaryAxisSizingMode here if we have explicit width
+        // (it will be set to FIXED later in the width setting block)
+        console.log('🔍 EARLY CHECK:', {
+          hasWidth: !!containerData.width,
+          widthValue: containerData.width,
+          skipEarlySetting: !containerData.width
+        });
+        
+        if (!containerData.width || containerData.width === 0) {
+          try {
+            if (containerData.primaryAxisSizingMode) {
+              currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+              console.log('🔍 Set primaryAxisSizingMode early:', containerData.primaryAxisSizingMode);
+            }
+          } catch (e) {
+            console.warn('⚠️ Failed to set primaryAxisSizingMode:', e.message);
           }
-        } catch (e) {
-          console.warn('⚠️ Failed to set primaryAxisSizingMode:', e.message);
+        } else {
+          console.log('🔍 SKIPPED early primaryAxisSizingMode setting (has width)');
         }
         
         try {
@@ -1742,12 +1798,34 @@ export class FigmaRenderer {
       if (containerData.width) {
         try {
           if (currentFrame.layoutMode !== 'NONE') {
+            // DEBUG LOG 3: Before width setting
+            console.log('🔍 BEFORE width set:', {
+              specified: containerData.width,
+              current: currentFrame.width,
+              layoutMode: currentFrame.layoutMode
+            });
+            
+            // CRITICAL: Set sizing modes BEFORE width
+            // When setting explicit width, primaryAxisSizingMode must be FIXED
+            currentFrame.primaryAxisSizingMode = "FIXED";
+            currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
+            
             // For auto-layout frames, set width directly and let auto-layout handle height
+            const frameState = {
+              primaryAxis: currentFrame.primaryAxisSizingMode,
+              counterAxis: currentFrame.counterAxisSizingMode,
+              layoutMode: currentFrame.layoutMode,
+              currentWidth: currentFrame.width
+            };
+            
+            console.log('🔍 FRAME STATE before width:', frameState);
+            console.log('📋 FRAME STATE for file:', JSON.stringify(frameState, null, 2));
             currentFrame.width = containerData.width;
+            
+            // DEBUG LOG 4: After width setting
+            console.log('🔍 AFTER width set:', currentFrame.width);
+            
             console.log('🔧 Set auto-layout frame width to:', containerData.width);
-            if (!containerData.counterAxisSizingMode) {
-              currentFrame.counterAxisSizingMode = "FIXED";
-            }
           } else {
             // For regular frames, use resize
             currentFrame.resize(containerData.width, currentFrame.height);

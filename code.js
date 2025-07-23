@@ -3616,8 +3616,37 @@ ${llmErrors}`);
         }
         let currentFrame;
         const containerData = layoutData.layoutContainer || layoutData;
+        const debugData = {
+          timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+          inputData: layoutData,
+          containerData,
+          parentNodeType: parentNode.type
+        };
+        console.log("\u{1F4C1} FULL INPUT DATA FOR DEBUGGING:", JSON.stringify(debugData, null, 2));
+        try {
+          const debugContent = JSON.stringify(debugData, null, 2);
+          const blob = new Blob([debugContent], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "debug-renderer-input.json";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          console.log("\u{1F4BE} Debug file auto-downloaded as: debug-renderer-input.json");
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Could not auto-download debug file:", e.message);
+          console.log("\u{1F4CB} Copy this JSON manually:", JSON.stringify(debugData, null, 2));
+        }
+        console.log("\u{1F50D} INPUT DATA:", {
+          containerData,
+          hasWidth: !!(containerData == null ? void 0 : containerData.width),
+          widthValue: containerData == null ? void 0 : containerData.width
+        });
         if (parentNode.type === "PAGE" && containerData) {
           currentFrame = figma.createFrame();
+          currentFrame.resize(containerData.width || 800, containerData.height || 600);
           parentNode.appendChild(currentFrame);
         } else if (parentNode.type === "FRAME") {
           currentFrame = parentNode;
@@ -3625,7 +3654,12 @@ ${llmErrors}`);
           figma.notify("Cannot add items without a parent frame.", { error: true });
           return figma.createFrame();
         }
-        if (containerData && containerData !== layoutData) {
+        console.log("\u{1F50D} CONTAINER CONDITION:", {
+          hasContainerData: !!containerData,
+          containerEqualsLayout: containerData === layoutData,
+          conditionPassed: !!(containerData && containerData !== layoutData)
+        });
+        if (containerData) {
           currentFrame.name = containerData.name || "Generated Frame";
           console.log("\u{1F527} Applying container properties:", {
             name: containerData.name,
@@ -3692,12 +3726,22 @@ ${llmErrors}`);
             } catch (e) {
               console.warn("\u26A0\uFE0F Failed to set counterAxisAlignItems:", e.message);
             }
-            try {
-              if (containerData.primaryAxisSizingMode) {
-                currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+            console.log("\u{1F50D} EARLY CHECK:", {
+              hasWidth: !!containerData.width,
+              widthValue: containerData.width,
+              skipEarlySetting: !containerData.width
+            });
+            if (!containerData.width || containerData.width === 0) {
+              try {
+                if (containerData.primaryAxisSizingMode) {
+                  currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+                  console.log("\u{1F50D} Set primaryAxisSizingMode early:", containerData.primaryAxisSizingMode);
+                }
+              } catch (e) {
+                console.warn("\u26A0\uFE0F Failed to set primaryAxisSizingMode:", e.message);
               }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set primaryAxisSizingMode:", e.message);
+            } else {
+              console.log("\u{1F50D} SKIPPED early primaryAxisSizingMode setting (has width)");
             }
             try {
               if (containerData.counterAxisSizingMode) {
@@ -3738,11 +3782,24 @@ ${llmErrors}`);
           if (containerData.width) {
             try {
               if (currentFrame.layoutMode !== "NONE") {
+                console.log("\u{1F50D} BEFORE width set:", {
+                  specified: containerData.width,
+                  current: currentFrame.width,
+                  layoutMode: currentFrame.layoutMode
+                });
+                currentFrame.primaryAxisSizingMode = "FIXED";
+                currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
+                const frameState = {
+                  primaryAxis: currentFrame.primaryAxisSizingMode,
+                  counterAxis: currentFrame.counterAxisSizingMode,
+                  layoutMode: currentFrame.layoutMode,
+                  currentWidth: currentFrame.width
+                };
+                console.log("\u{1F50D} FRAME STATE before width:", frameState);
+                console.log("\u{1F4CB} FRAME STATE for file:", JSON.stringify(frameState, null, 2));
                 currentFrame.width = containerData.width;
+                console.log("\u{1F50D} AFTER width set:", currentFrame.width);
                 console.log("\u{1F527} Set auto-layout frame width to:", containerData.width);
-                if (!containerData.counterAxisSizingMode) {
-                  currentFrame.counterAxisSizingMode = "FIXED";
-                }
               } else {
                 currentFrame.resize(containerData.width, currentFrame.height);
                 console.log("\u{1F527} Resized regular frame to width:", containerData.width);
