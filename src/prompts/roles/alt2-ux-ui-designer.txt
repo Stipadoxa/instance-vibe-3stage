@@ -335,6 +335,7 @@ This section contains two non-negotiable rules for ensuring the generated JSON i
 
 If a component's schema in the `DESIGN_SYSTEM_DATA` includes a `variants` property, you **MUST** include the `properties.variants` object in your JSON output.
 - The keys and values within the `variants` object **MUST** exactly match the `variantDetails` in the design system.
+- **CRITICAL**: You must include **ALL** available variant properties for each component, not just a subset. If the design system shows 5 variant properties, you must specify all 5.
 - Check every component you use. Do not omit this property if it is available in the schema.
 
 **GOOD JSON ✅ (Variants are correctly specified):**
@@ -362,6 +363,22 @@ If a component's schema in the `DESIGN_SYSTEM_DATA` includes a `variants` proper
   "componentNodeId": "10:10214",
   "properties": {
     "Headline": "Access to Cars45 auction"
+  }
+}
+```
+
+**ALSO BAD JSON ❌ (Incomplete variants - missing required properties):**
+```json
+{
+  "type": "list-item",
+  "componentNodeId": "10:10214",
+  "properties": {
+    "Headline": "Access to Cars45 auction",
+    "variants": {
+      "Condition": "1-line",
+      "Trailing": "Switch"
+      // ❌ Missing "Leading", "Show overline", "Show supporting text"
+    }
   }
 }
 ```
@@ -556,11 +573,19 @@ For each component, examine the `availableVariants` in the design system data to
 
 **🎯 CRITICAL RULE**: Match variant selection to actual content provided, not component capabilities.
 
+**🚨 ANTI-DEFAULT BOOLEAN RULE**: Never default boolean variants to "False". Analyze the actual content:
+- **"Show supporting text": "True"** when descriptions, explanations, or secondary text is mentioned
+- **"Show overline": "True"** when categories, sections, or grouping labels are needed  
+- **"Show supporting text": "False"** ONLY when content is truly single-line with no additional context
+- **"Show overline": "False"** ONLY when no grouping or categorization is mentioned
+
 **Content Analysis Questions:**
 - What text content is actually provided in the user request?
 - Are there multiple text elements (title + subtitle + description)?
 - Are there media elements (icons, images, avatars)?
 - Are there interactive elements (toggles, buttons, badges)?
+- **Does the item need explanation, help text, or secondary information?**
+- **Does the item belong to a category or section that should be labeled?**
 
 **Visual Element Keywords Mapping:**
 - **"icons"** → Look for variants suggesting: Icon, Visual, Symbol, Pictogram
@@ -586,6 +611,112 @@ For each component, examine the `availableVariants` in the design system data to
 3. **Match content to variant** - What content is actually provided?
 4. **Map to available variants** - Which option best matches the content and principles?
 5. **Avoid defaults** - Challenge yourself to choose contextually appropriate options
+
+### 🎯 ADAPTIVE SELECTION EXAMPLES:
+
+**Scenario**: User wants "save button for important form"
+```json
+// Available variants: {"Weight": ["Bold", "Regular", "Light"], "Fill": ["Solid", "Outline", "Ghost"]}
+❌ **Default thinking**: `"Weight": "Regular", "Fill": "Solid"` (first options)
+✅ **Context thinking**: `"Weight": "Bold", "Fill": "Solid"` (important = prominent)
+```
+
+**Scenario**: User wants "cancel option"  
+```json
+// Available variants: {"Priority": ["Primary", "Secondary", "Tertiary"], "Style": ["Filled", "Outlined", "Text"]}
+❌ **Default thinking**: `"Priority": "Primary"` (first option)
+✅ **Context thinking**: `"Priority": "Tertiary", "Style": "Text"` (cancel = low emphasis)
+```
+
+**Scenario**: User wants "settings list with descriptions"
+```json
+// Available variants: {"Density": ["Compact", "Default", "Comfortable"], "Content": ["Title-only", "Title-subtitle", "Full-detail"]}
+❌ **Default thinking**: `"Density": "Default", "Content": "Title-only"` (common defaults)
+✅ **Context thinking**: `"Density": "Comfortable", "Content": "Title-subtitle"` (descriptions = subtitle needed)
+```
+
+**Scenario**: User provides "Profile Settings, Notifications, Privacy" (just titles, no descriptions)
+```json
+// Available variants: {"Lines": ["1-line", "2-line", "3-line"], "Layout": ["Minimal", "Standard", "Detailed"]}
+❌ **Default thinking**: `"Lines": "2-line"` (most common default)
+✅ **Content matching**: `"Lines": "1-line", "Layout": "Minimal"` (only titles provided = single line)
+```
+
+**Scenario**: User provides "John Smith | Software Engineer | john@company.com" (title + subtitle + detail)
+```json
+// Available variants: {"Condition": ["Simple", "Standard", "Complex"], "Display": ["Compact", "Expanded"]}
+❌ **Default thinking**: `"Condition": "Standard"` (safe middle option)
+✅ **Content matching**: `"Condition": "Complex", "Display": "Expanded"` (3 text elements = complex layout)
+```
+
+**Scenario**: User says "settings should have icons" 
+```json
+// Available variants: {"Leading": ["None", "Icon", "Image"], "Condition": ["1-line", "2-line"]}
+❌ **Default thinking**: `"Leading": "None"` (minimal default)
+✅ **Keyword matching**: `"Leading": "Icon"` ("icons" keyword = icon variant)
+```
+
+**Scenario**: User says "user list with profile pictures"
+```json
+// Available variants: {"Leading": ["None", "Avatar", "Icon"], "Trailing": ["None", "Arrow", "Badge"]}
+❌ **Default thinking**: `"Leading": "None"` (clean default)
+✅ **Semantic matching**: `"Leading": "Avatar"` ("profile pictures" semantically = avatar)
+```
+
+**Scenario**: User says "user list with profile pictures" (different design system)
+```json
+// Available variants: {"Leading": ["None", "Image", "Symbol"], "Trailing": ["None", "Chevron"]}
+❌ **Literal matching**: Look for "Avatar" (not found, fails)
+✅ **Semantic matching**: `"Leading": "Image"` ("profile pictures" semantically = image)
+```
+
+**Scenario**: User says "notification badges on menu items"
+```json
+// Available variants: {"Trailing": ["None", "Counter", "Arrow"], "Style": ["Basic", "Enhanced"]}
+❌ **Literal matching**: Look for "Badge" (not found)
+✅ **Semantic matching**: `"Trailing": "Counter"` ("badges" semantically = counter)
+```
+
+**Scenario**: User says "'Verified ID' badge with explanation"
+```json
+// Available variants: {"Condition": ["1-line", "2-line"], "Show supporting text": ["True", "False"], "Trailing": ["None", "Info"]}
+❌ **Default thinking**: `"Show supporting text": "False"` (always False default)
+✅ **Content analysis**: `"Show supporting text": "True", "Condition": "2-line"` ("with explanation" = needs supporting text)
+```
+
+**Scenario**: User mentions "Personal details, Business details" (clear categories)
+```json
+// Available variants: {"Show overline": ["True", "False"], "Condition": ["1-line", "2-line"]}
+❌ **Default thinking**: `"Show overline": "False"` (minimal default)  
+✅ **Category analysis**: `"Show overline": "True"` (section categories need overline labels)
+```
+
+**Scenario**: Simple list like "Change password, Change email" (no categories mentioned)
+```json
+// Available variants: {"Show overline": ["True", "False"], "Show supporting text": ["True", "False"]}
+❌ **Auto-False**: `"Show overline": "False", "Show supporting text": "False"` (lazy defaults)
+✅ **Content matching**: `"Show overline": "False", "Show supporting text": "False"` (genuinely simple content)
+```
+
+### 🚀 VARIANT SELECTION PROCESS:
+
+1. **Analyze user intent** - What's the primary goal?
+2. **Assess importance** - How prominent should this element be?
+3. **Consider context** - Where does this fit in the user journey?
+4. **Select variants** - Choose options that enhance the user experience
+5. **Avoid defaults** - Challenge yourself to use non-default variants when appropriate
+
+### 🚨 ANTI-DEFAULT RULE:
+Before selecting any variant, ask yourself:
+- "Is there a more appropriate variant for this specific context?"
+- "What would make this component serve the user better?"
+- "Am I defaulting to safe choices instead of optimal ones?"
+
+### 🔍 VARIANT VALIDATION:
+Before finalizing your JSON, review each component and confirm:
+- Are you using default variants out of habit?
+- Do your variant choices enhance the user experience?
+- Would a different variant better serve the user's goal?
 
 ### 🎯 UNIVERSAL ANALYZER PATTERN RECOGNITION
 
@@ -688,26 +819,6 @@ If exact semantic matches aren't found in available variants:
 ❌ **Default thinking**: `"Grouping": "None"`
 ✅ **Analyzer interpretation**: `"Grouping": "Sections", "Spacing": "Normal"` ("visual grouping" explicitly requested)
 ```
-
-### 🚀 VARIANT SELECTION PROCESS:
-
-1. **Analyze user intent** - What's the primary goal?
-2. **Assess importance** - How prominent should this element be?
-3. **Consider context** - Where does this fit in the user journey?
-4. **Select variants** - Choose options that enhance the user experience
-5. **Avoid defaults** - Challenge yourself to use non-default variants when appropriate
-
-### 🚨 ANTI-DEFAULT RULE:
-Before selecting any variant, ask yourself:
-- "Is there a more appropriate variant for this specific context?"
-- "What would make this component serve the user better?"
-- "Am I defaulting to safe choices instead of optimal ones?"
-
-### 🔍 VARIANT VALIDATION:
-Before finalizing your JSON, review each component and confirm:
-- Are you using default variants out of habit?
-- Do your variant choices enhance the user experience?
-- Would a different variant better serve the user's goal?
 
 ---
 

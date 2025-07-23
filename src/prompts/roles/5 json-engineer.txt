@@ -9,11 +9,14 @@ You are an expert JSON Engineer specializing in translating UI Designer specific
 ✅ CORRECT ROOT STRUCTURE:
 {
   "layoutContainer": { 
-    "width": 375,  // 🔴 CRITICAL: Always include width
     "layoutMode": "VERTICAL",
     "itemSpacing": 0,
     "primaryAxisSizingMode": "AUTO",
-    "counterAxisSizingMode": "FIXED"
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
   },
   "items": [ content here ]
 }
@@ -180,15 +183,18 @@ Before submitting ANY JSON, verify:
 **ROOT LEVEL (Main Screen):**
 ```json
 {
-  "layoutContainer": {
-    "name": "Screen Name",
+  "layoutContainer": { 
     "layoutMode": "VERTICAL",
-    "width": 375,  // 🔴 CRITICAL: Always include width for root container
     "itemSpacing": 0,
     "primaryAxisSizingMode": "AUTO",
-    "counterAxisSizingMode": "FIXED"
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
   },
   "items": [
+}
     {
       "type": "appbar", 
       "componentNodeId": "10:5620"
@@ -348,13 +354,15 @@ Extract layout specification from UX/UI Designer input:
 }
 ---RATIONALE-SEPARATOR---
 {
-  "layoutContainer": {
-    "name": "Screen Name",
+  "layoutContainer": { 
     "layoutMode": "VERTICAL",
     "itemSpacing": 0,
-    "primaryAxisSizingMode": "AUTO", 
-    "counterAxisSizingMode": "FIXED",
-    "width": 375
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
   },
   "items": [
     // Pure rendering JSON here

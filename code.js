@@ -2596,7 +2596,13 @@
                   Object.entries(variants).forEach(([propName, propValue]) => {
                     const availableProp = availableVariants[propName];
                     if (availableProp && availableProp.values) {
-                      const stringValue = String(propValue);
+                      let stringValue;
+                      if (typeof propValue === "boolean") {
+                        stringValue = propValue ? "True" : "False";
+                        console.log(`\u{1F504} Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+                      } else {
+                        stringValue = String(propValue);
+                      }
                       if (availableProp.values.includes(stringValue)) {
                         validVariants[propName] = stringValue;
                         hasValidVariants = true;
@@ -3402,7 +3408,13 @@ ${llmErrors}`);
               var _a;
               const propertyDef = propertyDefinitions[propName];
               if (propertyDef && propertyDef.type === "VARIANT") {
-                const stringValue = String(propValue);
+                let stringValue;
+                if (typeof propValue === "boolean") {
+                  stringValue = propValue ? "True" : "False";
+                  console.log(`\u{1F504} Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+                } else {
+                  stringValue = String(propValue);
+                }
                 if (propertyDef.variantOptions && propertyDef.variantOptions.includes(stringValue)) {
                   validVariants[propName] = stringValue;
                   console.log(`\u2705 Valid variant: ${propName} = "${stringValue}"`);

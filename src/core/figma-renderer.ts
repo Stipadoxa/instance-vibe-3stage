@@ -218,7 +218,15 @@ export class FigmaRenderer {
                 Object.entries(variants).forEach(([propName, propValue]) => {
                   const availableProp = availableVariants[propName];
                   if (availableProp && availableProp.values) {
-                    const stringValue = String(propValue);
+                    // Convert boolean values to capitalized strings for Figma
+                    let stringValue: string;
+                    if (typeof propValue === 'boolean') {
+                      stringValue = propValue ? 'True' : 'False';
+                      console.log(`🔄 Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+                    } else {
+                      stringValue = String(propValue);
+                    }
+                    
                     if (availableProp.values.includes(stringValue)) {
                       validVariants[propName] = stringValue;
                       hasValidVariants = true;
@@ -1318,7 +1326,15 @@ export class FigmaRenderer {
           Object.entries(variants).forEach(([propName, propValue]) => {
             const propertyDef = propertyDefinitions[propName];
             if (propertyDef && propertyDef.type === 'VARIANT') {
-              const stringValue = String(propValue);
+              // Convert boolean values to capitalized strings for Figma
+              let stringValue: string;
+              if (typeof propValue === 'boolean') {
+                stringValue = propValue ? 'True' : 'False';
+                console.log(`🔄 Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+              } else {
+                stringValue = String(propValue);
+              }
+              
               if (propertyDef.variantOptions && propertyDef.variantOptions.includes(stringValue)) {
                 validVariants[propName] = stringValue;
                 console.log(`✅ Valid variant: ${propName} = "${stringValue}"`);
