@@ -1,0 +1,235 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized as a vertically scrolling list because settings screens typically present numerous options efficiently.  Each setting is a list item, creating a clear visual hierarchy. Top and bottom navigation bars are included based on the requirement analysis.",
+    "userFlowReasoning": "Toggle switches are used for boolean settings (on/off) because this is an intuitive interaction pattern for quick changes.  Navigation actions (e.g., to Personal Details) employ a trailing arrow to indicate a subsequent screen.",
+    "componentChoices": "The 'list' component was chosen over alternatives like 'card' because the design prioritizes efficient use of space and a simple list is visually appropriate.  The 'appbar' component was selected to contain top navigation because appbars provide built-in functionality for leading and trailing actions, enhancing navigation consistency. The 'Toggle + Text' component is selected for toggle settings instead of just the 'Toggle' component to enhance visibility and touch target size for mobile.",
+    "visualHierarchy": "Visual hierarchy is created using a consistent vertical list structure, clear section headers (using text styles), and consistent trailing elements to indicate actions.  Important settings are visually grouped to avoid cognitive overload.",
+    "variantSelectionRationale": "The 'Trailing' variant is used with 'Switch' for toggle settings. 'Leading' is set to 'None' for most list-items to avoid visual clutter and maintain consistency. For 'Personal details' and 'Business details', 'Trailing' is set to 'Icon' to signal further screen navigation. For the 'Verified ID' badge, 'Trailing' variant is used with a 'link' to provide contextual information as specified in the requirements."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "118:1617",
+        "properties": {
+          "Title": "Settings",
+          "variants": {
+            "Leading": "Icon",
+            "Trailing": "None"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Personal details",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Business details",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "81:1231",
+            "properties": {
+              "Placeholder": "Access to Cars45 auction",
+              "variants": {
+                "Text Side": "Left",
+                "State": "Default",
+                "Leading": "None",
+                "Trailing": "Switch"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "\"Verified ID\" badge",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "link"
+              }
+            },
+            "componentInstances": [
+              {
+                "type": "badge",
+                "componentNodeId": "94:1634",
+                "properties": {
+                  "Badge": "Verified",
+                  "variants": {
+                    "Size": "Small",
+                    "State": "Success",
+                    "Style": "Filled"
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "properties": {
+                  "text": "What is it?",
+                  "textStyle": "Caption/Small",
+                  "colorStyleName": "Neutral/neutral80"
+                }
+              }
+            ]
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change phone number",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change email",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change language",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "81:1231",
+            "properties": {
+              "Placeholder": "Disable chats",
+              "variants": {
+                "Text Side": "Left",
+                "State": "Default",
+                "Leading": "None",
+                "Trailing": "Switch"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "81:1231",
+            "properties": {
+              "Placeholder": "Disable Feedback",
+              "variants": {
+                "Text Side": "Left",
+                "State": "Default",
+                "Leading": "None",
+                "Trailing": "Switch"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Manage notifications",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change password",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Delete my account permanently",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Log out",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "appbar",
+        "componentNodeId": "116:1662",
+        "properties": {
+          "variants": {
+            "Amount": "2",
+            "Style": "Text + Icon"
+          }
+        }
+      }
+    ]
+  }
+}
+```

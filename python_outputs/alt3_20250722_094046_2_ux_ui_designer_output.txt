@@ -1,0 +1,306 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertically organized to mirror the reference image, ensuring a clear and intuitive user flow from top to bottom.  Spacing between elements is consistent to create a visually balanced design, with padding added for content breathing room where components have minimal built-in spacing. The keyboard is placed at the bottom, following the reference image to ensure optimal screen real estate usage and accommodate the on-screen keyboard.",
+    "userFlowReasoning": "The user flow starts with the email/username field, followed by the password field, the primary login button, and then the social login options. This hierarchy prioritizes the primary login method while offering convenient alternatives. The password recovery and sign-up options are placed at the bottom to prevent interrupting the main login flow.",
+    "componentChoices": "The design uses the InputSingleline component for email/username and password input, Button component for the primary login action and social login buttons, and Link component for password recovery. These components are standard form elements and provide a familiar and user-friendly experience.  The keyboard component is taken directly from the Design System. ",
+    "visualHierarchy": "Visual hierarchy is established through the use of size, spacing, and color. The 'Log in or sign up' title is the most prominent element, followed by the input fields and the primary button. Social login options have secondary visual emphasis, and the password recovery link is the least prominent element. Color styles are used to maintain consistency with the design system and the reference image.",
+    "variantSelectionRationale": "The InputSingleline component's 'State' variant is set to 'filled' to match the reference image. The Button component's 'Type' variant is set to 'Elevated' for the main action button to highlight it and to 'Secondary' for social login buttons. The 'Link' component is used with default styling for the password recovery and signup options. The keyboard component from the Design System has built-in styling and is used as is.  The 'Passwords' label is created as a Text component with the appropriate text style."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Login Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Login Content",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 48,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "paddingBottom": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "text",
+              "properties": {
+                "text": "Log in or sign up",
+                "textStyle": "Title/title_l",
+                "colorStyleName": "Neutral/black"
+              }
+            },
+            {
+              "type": "input",
+              "componentNodeId": "1902:3230",
+              "properties": {
+                "placeholder": "jsmith.mobbin1@gmail.com",
+                "variants": {
+                  "State": "placeholder"
+                },
+                "colorStyleName": "Neutral/light"
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "text": "Continue",
+                "variants": {
+                  "Type": "Elevated",
+                  "Configuration": "Text",
+                  "State": "Default"
+                },
+                "colorStyleName": "Neutral/black"
+              }
+            },
+            {
+              "type": "text",
+              "properties": {
+                "text": "or",
+                "textStyle": "Other/small",
+                "colorStyleName": "Neutral/gray"
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "text": "Continue with Google",
+                "variants": {
+                  "Type": "Secondary",
+                  "Configuration": "Text + Icon left",
+                  "State": "Default"
+                },
+                "colorStyleName": "Neutral/white"
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "text": "Continue with Apple",
+                "variants": {
+                  "Type": "Secondary",
+                  "Configuration": "Text + Icon left",
+                  "State": "Default"
+                },
+                "colorStyleName": "Neutral/white"
+              }
+            },
+            {
+              "type": "text",
+              "properties": {
+                "text": "Passwords",
+                "textStyle": "Other/small",
+                "colorStyleName": "Neutral/gray"
+              }
+            }
+          ]
+        },
+        {
+          "type": "iOS_Keyboard",
+          "componentNodeId": "1841:4105",
+          "properties": {
+            "variants": {
+              "Type": "Text",
+              "Style": "White"
+            },
+            "colorStyleName": "Neutral/white"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Bottom Navigation",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 24,
+          "paddingTop": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "paddingBottom": 24,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "text",
+              "properties": {
+                "text": "Patreon",
+                "textStyle": "Other/small",
+                "colorStyleName": "Neutral/gray"
+              }
+            },
+             {
+              "type": "text",
+              "properties": {
+                "text": "curated by Mobbin",
+                "textStyle": "Other/small",
+                "colorStyleName": "Neutral/gray"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Login Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 48,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "paddingBottom": 0,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "text",
+            "properties": {
+              "text": "Log in or sign up",
+              "textStyle": "Title/title_l",
+              "colorStyleName": "Neutral/black"
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "1902:3230",
+            "properties": {
+              "placeholder": "jsmith.mobbin1@gmail.com",
+              "variants": {
+                "State": "placeholder"
+              },
+              "colorStyleName": "Neutral/light"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue",
+              "variants": {
+                "Type": "Elevated",
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "colorStyleName": "Neutral/black"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "or",
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Google",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text + Icon left",
+                "State": "Default"
+              },
+              "colorStyleName": "Neutral/white"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Apple",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text + Icon left",
+                "State": "Default"
+              },
+              "colorStyleName": "Neutral/white"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Passwords",
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray"
+            }
+          }
+        ]
+      },
+      {
+        "type": "iOS_Keyboard",
+        "componentNodeId": "1841:4105",
+        "properties": {
+          "variants": {
+            "Type": "Text",
+            "Style": "White"
+          },
+          "colorStyleName": "Neutral/white"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Bottom Navigation",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "paddingBottom": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "text",
+            "properties": {
+              "text": "Patreon",
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray"
+            }
+          },
+           {
+            "type": "text",
+            "properties": {
+              "text": "curated by Mobbin",
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

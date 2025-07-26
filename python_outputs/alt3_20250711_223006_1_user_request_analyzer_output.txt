@@ -1,0 +1,26 @@
+Domain & Context
+Domain: E-commerce domain focused on product display and purchase initiation.
+User Type: Mobile shoppers browsing product listings.
+Platform Impact: Mobile users expect concise product information, large tap targets, and a streamlined purchase flow.  Screen real estate is limited, requiring efficient use of space.
+
+User Requirements
+Primary Goals: Quickly view product details (image, title, price), initiate purchase.
+Secondary Goals:  Potentially view product rating or reviews (if space allows), access more product information (e.g., description).
+User Constraints: Limited screen space, reliance on touch input, potential for interruptions, varying network conditions.
+Ready for handoff if: Image is clearly visible, title is concise, price is prominently displayed, "Buy" button is large and easily tappable, all elements are appropriately sized for mobile touch interaction.
+
+Content Requirements
+Critical: Product image, product title, product price, "Buy" button.
+Supporting: Product rating (stars), short product description (if space allows).
+Contextual: Out-of-stock indicator, sale price/discount indicator.
+
+Structural & Component Directives
+* Layout: Single vertical stack of content (image at top, then title, price, button). Consider image aspect ratio optimization for mobile screens.
+* Components: Product Image (high quality, responsive), Title (concise), Price (clearly formatted), Buy Button (prominent call to action).
+* Styling:  Use a consistent design language with other mobile UI elements.  Ensure sufficient contrast between text and background.
+
+Screen Requirements
+Primary Actions: Initiate purchase ("Buy" button).
+Secondary Actions:  Potentially view more details (if a separate details page exists, indicated via a small icon or link).
+Screen States: Default (showing product information), Loading (if data is still fetching), Out-of-stock (if applicable).
+Feedback Needs:  Visual feedback for button tap (e.g., change in color or appearance), loading indicator while data is fetching.

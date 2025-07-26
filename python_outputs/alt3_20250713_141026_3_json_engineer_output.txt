@@ -1,0 +1,214 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided design utilizes Figma's built-in 'appbar' and 'list-item' components for consistency and efficiency.  These components are assumed to be part of a pre-existing design system, hence their componentNodeIds are used directly. The 'button' component is used for the 'Log out' action.  Component IDs are placeholders and should be replaced with actual IDs from the Figma file.",
+    "styleApplication": "Text styles ('Title/Medium', 'Body/Medium') and color styles ('Primary/primary50', 'Neutral/neutral90') are applied directly to the list items as per the design spec. These styles are assumed to be defined within the design system.  The specific color and text styles are placeholders and should be replaced with actual style names from the design system.",
+    "designSystemMapping": "The design directly maps to available components in the assumed design system. No custom components or styling are needed.  Variants of the 'list-item' component (Leading, Trailing) are used to handle icons and switches as per the design requirements.",
+    "variantDecisions": "Variants are used to configure 'list-item' components based on their content. 'Trailing: Icon' signifies a trailing chevron icon indicating navigation, 'Trailing: Switch' indicates a toggle switch, and 'Leading: Badge' displays a badge icon. Variants are applied consistently according to the design specifications."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Personal details",
+        "colorStyleName": "Primary/primary50",
+        "textStyle": "Title/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Business details",
+        "textStyle": "Title/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Access to Cars45 auction",
+        "Supporting text": "Active",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "toggle-switch",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Switch"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "\"Verified ID\" badge",
+        "Supporting text": "What is it?",
+        "textStyle": "Body/Medium",
+        "leading-icon": "verified-badge",
+        "variants": {
+          "Leading": "Badge",
+          "Trailing": "None"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change phone number",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change email",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change language",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable chats",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "toggle-switch",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Switch"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "toggle-switch",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Switch"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage notifications",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change password",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Delete my account permanently",
+        "textStyle": "Body/Medium",
+        "trailing-icon": "chevron-right",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    }
+  ]
+}
+```

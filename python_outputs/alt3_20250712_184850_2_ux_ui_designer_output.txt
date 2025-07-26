@@ -1,0 +1,127 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized vertically to efficiently display a list of notifications within the limited screen real estate of a mobile application.  Each notification item is displayed as a horizontal row with an image on the left and text details on the right, providing a clear visual separation and facilitating easy scanning. Top and bottom app bars are included to provide navigation and consistent UI elements.",
+    "userFlowReasoning": "The user flow is designed to allow users to quickly scan through notifications and take appropriate actions.  The vertical list prioritizes the most recent notifications at the top.  Each notification item presents key information (image, title, subtitle, timestamp) concisely.  Additional actions (mark as read, dismiss) are implied or could be provided via a context menu for each item.",
+    "componentChoices": "Standard UI components are used for familiarity and ease of use, such as a top app bar for navigation, a scrollable list for notifications, and bottom navigation bar for app switching.",
+    "visualHierarchy": "Visual hierarchy is established through the use of size, spacing, and color.  The notification title is most prominent, followed by the subtitle, and then the timestamp.  Read/unread states could be indicated through subtle color changes or iconography."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appBar",
+      "componentNodeId": "appBar",
+      "properties": {
+        "title": "Notifications"
+      },
+      "styleInfo": {
+        "backgroundColor": {
+          "type": "SOLID",
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        "textColor": {
+          "type": "SOLID",
+          "color": "#000000",
+          "opacity": 1
+        }
+      }
+    },
+    {
+      "type": "scrollList",
+      "componentNodeId": "scrollList",
+      "items": [
+        {
+          "type": "notificationItem",
+          "componentNodeId": "notificationItem",
+          "properties": {
+            "image": {
+              "url": "placeholder.jpg"
+            },
+            "title": "New Message from John Doe",
+            "subtitle": "Check out this cool thing!",
+            "timestamp": "10:00 AM"
+          },
+          "styleInfo": {
+            "backgroundColor": {
+              "type": "SOLID",
+              "color": "#FFFFFF",
+              "opacity": 1
+            },
+            "textColor": {
+              "type": "SOLID",
+              "color": "#000000",
+              "opacity": 1
+            }
+          }
+        },
+        {
+          "type": "notificationItem",
+          "componentNodeId": "notificationItem",
+          "properties": {
+            "image": {
+              "url": "placeholder.jpg"
+            },
+            "title": "App Update Available",
+            "subtitle": "Version 2.0 is here!",
+            "timestamp": "9:30 AM"
+          },
+          "styleInfo": {
+            "backgroundColor": {
+              "type": "SOLID",
+              "color": "#FFFFFF",
+              "opacity": 1
+            },
+            "textColor": {
+              "type": "SOLID",
+              "color": "#000000",
+              "opacity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "bottomNavigationBar",
+      "componentNodeId": "bottomNavigationBar",
+      "properties": {
+        "tabs": [
+          {
+            "label": "Home"
+          },
+          {
+            "label": "Profile"
+          },
+          {
+            "label": "Settings"
+          }
+        ]
+      },
+      "styleInfo": {
+        "backgroundColor": {
+          "type": "SOLID",
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        "textColor": {
+          "type": "SOLID",
+          "color": "#000000",
+          "opacity": 1
+        }
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user profile management and account settings
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear touch targets due to limited screen real estate.  Interruptions are likely, so the design should be intuitive and require minimal cognitive load.
+
+User Requirements
+Primary Goals: Access and modify personal and business details, manage notification preferences, change account security settings, and log out of the application.
+Secondary Goals: Easily find and access specific settings, understand the implications of each setting change.
+User Constraints: Small screen size, touch-only interaction, potential interruptions during use, limited attention span.
+Ready for handoff if: All listed settings are present and clearly labeled, each setting has appropriate input controls (e.g., text fields, toggles), top app bar and bottom navigation are implemented correctly, and all actions have clear visual feedback.
+
+Content Requirements
+Critical: Personal details (editable), business details (editable),  Change phone number (input field and validation), Change email (input field and validation), Change language (dropdown or selection), Disable chats (toggle), Disable Feedback (toggle), Manage notifications (link to a dedicated screen), Change password (link to a dedicated screen), Delete my account permanently (confirmation dialog required), Log out (button).
+Supporting:  Help or information links for less obvious settings (e.g., Manage notifications).
+Contextual:  Error messages for invalid input, success messages after saving changes, confirmation dialog before deleting the account.
+
+Structural & Component Directives
+* Layout:  Vertical list of settings with clear section headers for Personal and Business details.
+* Components: Top app bar (with back navigation), list items with labels and appropriate input controls (e.g., text fields, toggles, dropdown menus), bottom navigation bar (if required by the overall app navigation).
+* Styling:  Consistent with the overall app styling guidelines.
+
+Screen Requirements
+Primary Actions: Modify settings, log out.
+Secondary Actions: Access detailed views for password change, notification management.
+Screen States: Default state (displaying current settings), loading state (while saving changes), error state (for invalid input).
+Feedback Needs:  Visual feedback for successful changes (e.g., checkmarks, success messages), clear error messages for invalid input, loading indicators for long-running operations.

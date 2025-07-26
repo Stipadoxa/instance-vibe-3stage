@@ -1,0 +1,26 @@
+Domain & Context
+Domain: E-commerce domain, specifically a mobile classified app for buying and selling products.
+User Type: Mobile users browsing and purchasing products through a classifieds app.  They are likely looking for specific items and comparing prices.
+Platform Impact: Mobile users need a visually appealing and easy-to-navigate product page optimized for touch interaction.  Limited screen real estate necessitates prioritizing key information.
+
+User Requirements
+Primary Goals: View product details (images, price, description), make purchasing decisions.
+Secondary Goals: Contact the seller, view similar products, save product for later.
+User Constraints: Small screen size, touch-only interaction, potential for slow network speeds, varying levels of digital literacy.
+Ready for handoff if: All critical content is displayed clearly, images load quickly, key actions (e.g., contact seller, report listing) are easily accessible, and the layout is responsive to different screen sizes.
+
+Content Requirements
+Critical: Main product image (high-quality, zoomable), product title, price, detailed description, seller information (name/rating/location), contact option.
+Supporting: Additional images (carousel or gallery), product specifications, user reviews, related products.
+Contextual: Loading indicators, error messages, similar products suggestions.
+
+Structural & Component Directives
+* Layout: Vertical scrolling layout, image at the top, followed by title and price, then description, seller information and contact button.
+* Components: Top navigation bar (with back button), large main product image (zoomable), clear title and pricing, detailed description with bullet points (if applicable), seller details section, contact button.
+* Styling:  Mimic the visual style of the provided reference image (using light background and potentially a green accent color).  Maintain consistent spacing and typography.
+
+Screen Requirements
+Primary Actions: Contact Seller, View Seller Profile, Save Product.
+Secondary Actions: Report Listing, Share Product.
+Screen States: Default state, loading state (while images/information are loading).
+Feedback Needs: Loading indicators, confirmation messages (after contacting the seller or saving the product), error messages for invalid inputs.

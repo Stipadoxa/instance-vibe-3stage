@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear touch targets due to limited screen real estate and potential interruptions.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences, securely log out.
+Secondary Goals:  Easily change contact information, manage notification settings, delete account if desired.
+User Constraints: Limited screen space, touch-only interaction, potential for interruptions, need for clear and concise information presentation.
+Ready for handoff if: All settings items are clearly listed and accessible via touch targets that meet minimum size requirements; top and bottom app bars are present and functional;  actions like account deletion require confirmation.
+
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Change phone number (action), Change email (action), Change language (action), Disable chats (toggle), Disable Feedback (toggle), Manage notifications (action), Change password (action), Delete my account permanently (action), Log out (action).
+Supporting:  Help/support links for individual settings (optional).
+Contextual: Confirmation dialogs for potentially destructive actions (account deletion).
+
+
+Structural & Component Directives
+* Layout:  Vertical list of settings items, divided into logical groups (Personal, Business, Account Management, Notifications, etc.). Top app bar and bottom app bar present.
+* Components: Top app bar with app title/back button;  List items with clear labels and potentially toggles or navigation arrows depending on the item; Bottom app bar (functionality to be defined).
+* Styling:  Follow the established style guide for the app; use consistent visual cues for different types of settings items (toggles, editable fields etc.).
+
+
+Screen Requirements
+Primary Actions: Modifying personal/business details, changing account preferences (language, notifications, etc.), logging out, deleting account.
+Secondary Actions: Accessing help for specific settings, navigating to other parts of the app (via bottom app bar).
+Screen States: Default state (all settings displayed),  loading states (if applicable, e.g., during data save), confirmation dialogs for destructive actions.
+Feedback Needs:  Clear visual feedback (e.g., checkmarks, success messages) after settings changes are saved; error messages for invalid inputs; loading indicators when appropriate.

@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user profile management
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings screen with clear labels and easily accessible options due to limited screen real estate.  Touch interaction is primary.
+
+User Requirements
+Primary Goals: Access and modify personal and business details, manage notification preferences, update account security settings, log out of the application.
+Secondary Goals: Easily locate specific settings options, understand the impact of each setting change.
+User Constraints: Limited screen space, touch-only interaction, potential for interruptions, reliance on clear visual cues.
+Ready for handoff if: All listed settings are present and accessible, top app bar and bottom navigation are implemented,  clear labels and visual hierarchy are established, and touch targets are appropriately sized.
+
+Content Requirements
+Critical: Personal Details (editable fields), Business Details (editable fields), Phone Number (editable field), Email (editable field), Language selection (dropdown or list), Notifications toggle switch (on/off), Security settings (link to a separate security screen), Log out button.
+Supporting:  Help/support link related to settings.
+Contextual:  Error messages for invalid input, confirmation dialogs before significant changes (e.g., changing email address), success messages after saving changes.
+
+Structural & Component Directives
+* Layout:  Vertical list of settings options, potentially grouped by category (Personal, Business, Account).
+* Components: Top app bar (with app icon and title), list items with clear labels and potentially icons, editable text fields, toggle switches, dropdown menus, buttons (Log Out). Bottom navigation bar (with other app sections).
+* Styling:  Consistent with overall app design language, clear visual separation between settings groups.
+
+Screen Requirements
+Primary Actions:  Edit settings, toggle notification settings, log out.
+Secondary Actions: Access security settings, access help/support.
+Screen States: Default view, loading state (if saving changes), error states (invalid input), success state (changes saved).
+Feedback Needs:  Real-time validation for editable fields, visual feedback on toggle switch states, success/error messages after saving changes, loading indicators during data saving.

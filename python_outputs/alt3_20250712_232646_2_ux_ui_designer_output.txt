@@ -1,0 +1,176 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column list view, mirroring the provided reference image.  This is appropriate for mobile devices with limited screen real estate and prioritizes a clear, top-to-bottom flow for settings. Items are vertically stacked with consistent spacing to ensure readability and tappability. ",
+    "userFlowReasoning": "The user flow is simple and intuitive. Users can tap on each setting to access it and make changes.  Navigation to secondary screens (Change Password, Manage Notifications) is handled through clear labels and standard navigation patterns. Confirmation prompts and feedback mechanisms enhance user understanding. ",
+    "componentChoices": "Standard UI components are used for consistency and ease of understanding.  List items are used for each setting, paired with input fields, toggles, or navigation indicators as appropriate for each setting.   This promotes a familiar and streamlined user experience.",
+    "visualHierarchy": "Visual hierarchy is established through consistent spacing, clear labeling, and the use of visual indicators like arrows (for navigation) and status indicators (e.g., \"Active\").  The header provides clear context, while the settings are presented in a simple, ordered list.  The use of color is minimal and consistent with neutral shades to avoid visual clutter."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "header",
+      "componentNodeId": "header",
+      "properties": {
+        "title": "Settings",
+        "leftIcon": {
+          "type": "icon",
+          "iconName": "back-arrow"
+        }
+      },
+       "styleInfo": {
+        "backgroundColor": {
+          "type": "SOLID",
+          "color": "#FFFFFF",
+          "opacity": 1
+        },
+        "textColor": {
+          "type": "SOLID",
+          "color": "#000000",
+          "opacity": 1
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Personal details",
+        "colorStyleName": "Primary/primary80"
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Business details",
+        "rightIcon": {
+          "type": "icon",
+          "iconName": "right-arrow"
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Access to Cars45 auction",
+        "detail": "Active"
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "\"Verified ID\" badge",
+        "rightLabel": "What is it?",
+        "tooltip": {
+          "text": "Tooltip content here",
+          "placement": "top"
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Change phone number",
+        "input": {
+          "type": "text",
+          "placeholder": "Enter phone number"
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Change email",
+        "input": {
+          "type": "email",
+          "placeholder": "Enter email"
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Change language",
+        "dropdown": {
+          "options": [ "English", "French", "Spanish" ]
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Disable chats",
+        "toggle": {
+          "state": false
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Disable Feedback",
+        "toggle": {
+          "state": false
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Manage notifications",
+        "rightIcon": {
+          "type": "icon",
+          "iconName": "right-arrow"
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Change password",
+        "rightIcon": {
+          "type": "icon",
+          "iconName": "right-arrow"
+        }
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Delete my account permanently",
+        "destructive": true
+      }
+    },
+    {
+      "type": "listItem",
+      "componentNodeId": "listItem",
+      "properties": {
+        "title": "Log out"
+      }
+    }
+  ]
+}
+```

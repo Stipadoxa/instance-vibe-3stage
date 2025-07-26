@@ -1,0 +1,88 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column vertical stack, optimizing for mobile screen real estate.  Top-down arrangement prioritizes the login form, followed by the password recovery link.  Sufficient padding is used between components for touch-friendly interaction.",
+    "userFlowReasoning": "The user flow is straightforward: 1. Input credentials, 2. Tap 'Login', 3. Handle success or failure.  Password recovery is easily accessible via a clear link. Error messages are displayed directly below the relevant input field.",
+    "componentChoices": "Text input fields are used for username/email and password, providing clear visual cues for input. A 'Button' component is used for the primary login action, ensuring clear visual distinction.  A simple text link is used for password recovery. ",
+    "visualHierarchy": "The login button is given the most visual prominence, using a large size and primary color.  The password recovery link is clearly visible and has a secondary emphasis.  The order of elements guides the user through the login process."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "text",
+      "componentNodeId": null,
+      "properties": {
+        "text": "Welcome Back!",
+        "textStyle": "Headline/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "label-text": "Username or Email",
+        "placeholder-text": "Enter your username or email",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "label-text": "Password",
+        "placeholder-text": "Enter your password",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "type": "password"
+      }
+    },
+    {
+      "type": "checkbox",
+      "componentNodeId": "10:9586",
+      "properties": {
+        "label-text": "Remember me",
+        "textStyle": "Body/Small",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Login",
+        "textStyle": "Label/Large",
+        "colorStyleName": "Primary/primary50",
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "componentNodeId": null,
+      "properties": {
+        "text": "Forgot Password?",
+        "textStyle": "Caption/Small",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    }
+  ]
+}
+```

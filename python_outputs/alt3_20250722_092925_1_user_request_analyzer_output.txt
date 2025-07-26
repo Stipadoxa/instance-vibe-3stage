@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a streamlined settings page with clear, concise options and intuitive navigation.  Limited screen real estate necessitates prioritization of key settings. Touch interaction is primary.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notifications, and control app preferences.
+Secondary Goals:  Access help information, understand account status (e.g., "Verified ID"), securely manage account deletion.
+User Constraints: Limited screen space, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings listed in the reference image are included, navigation is intuitive, and all components adhere to the existing design system.  Touch targets meet minimum size requirements.
+
+Content Requirements
+Critical: Personal details (with ability to edit), Business details (with ability to edit), Access to Cars45 auction (toggle), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear visual indicators for toggles (on/off).
+Contextual: Error messages for invalid input, loading indicators during processing (e.g., password change).
+
+Structural & Component Directives
+*   Layout:  Vertical list of settings options, similar to the reference image.
+*   Components:  Use existing app components for list items (including appropriate icons and right-aligned indicators where applicable), top and bottom app navigation bars.  "What is it?" links should open a help modal or another screen providing details.
+*   Styling:  Adhere to existing app styling guidelines.
+
+Screen Requirements
+Primary Actions: Selecting a setting to modify.
+Secondary Actions: Accessing help/information related to a setting.
+Screen States: Default state, loading state (during processing), error states (for invalid inputs).
+Feedback Needs: Confirmation of setting changes, clear error messages, loading indicators during processing.

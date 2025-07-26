@@ -1,0 +1,116 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The screen is organized vertically to maximize use of limited screen real estate on mobile. The app bar is placed at the top for consistent mobile app navigation, and the bottom navigation bar is at the bottom for easy access to other app sections.  The notification itself occupies the central space, ensuring prominence.",
+    "userFlowReasoning": "The primary user flow is viewing the notification.  A tap on the notification is expected to lead to detailed view.  Dismissal could be implemented via a swipe gesture (not explicitly defined in the requirements but a common mobile interaction), or a close button could be added to the notification component if space permits.  Accessing other notifications could be a secondary action, potentially handled by visual cues or navigation.",
+    "componentChoices": "The `appbar` component provides standard app top bar functionality.  A custom notification item is suggested (although no specific component exactly matches in the design system), but it can be approximated using a combination of text and possibly an image, if required, with visual styling to indicate unread status. The `Bottom navigation` component from the design system handles bottom navigation.",
+    "visualHierarchy": "Visual hierarchy is established by the vertical layout. The notification item is the largest element, visually dominant in the center.  The app bar and bottom navigation are smaller and less prominent.  Color contrast can be used to emphasize unread notifications, if applicable.  Font size and weight variations could also enhance visual hierarchy within the notification itself."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notification Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notification",
+        "subheadline": "",
+        "Settings": "",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      "styleInfo": {
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#fcfdfd",
+            "opacity": 1
+          }
+        ],
+        "primaryColor": {
+          "type": "SOLID",
+          "color": "#fcfdfd",
+          "opacity": 1
+        },
+        "strokes": [
+          {
+            "type": "SOLID",
+            "color": "#d1dfe5",
+            "opacity": 1
+          }
+        ],
+        "textColor": {
+          "type": "SOLID",
+          "color": "#304049",
+          "opacity": 1
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "You have a new message from John Doe",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Check out this amazing deal!",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "Bottom navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": [
+          "Home",
+          "Saved",
+          "Sell",
+          "Sell",
+          "Profile"
+        ]
+      },
+      "styleInfo": {
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": "#fcfdfd",
+            "opacity": 1
+          }
+        ],
+        "primaryColor": {
+          "type": "SOLID",
+          "color": "#fcfdfd",
+          "opacity": 1
+        },
+        "textColor": {
+          "type": "SOLID",
+          "color": "#00b53f",
+          "opacity": 1
+        }
+      }
+    }
+  ]
+}
+```

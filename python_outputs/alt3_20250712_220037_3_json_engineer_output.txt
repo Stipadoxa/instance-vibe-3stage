@@ -1,0 +1,215 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., `10:5620` for appbar, `10:10214` for list-item) are directly used from the provided design specifications to maintain consistency with the design system.",
+    "styleApplication": "Text styles and color styles (e.g., `Title/Medium`, `Body/Medium`, `Neutral/neutral90`, `Error/error50`) are applied as specified in the input JSON to ensure visual fidelity.",
+    "designSystemMapping": "The JSON directly maps the provided design specifications to the corresponding Figma components and styles. No interpretations or modifications are made.",
+    "variantDecisions": "Component variants are selected based on the explicit `Trailing` and `Leading` properties in the input JSON.  For instance, `Trailing: \"Icon\" ` indicates the use of a trailing icon in a list-item component."
+  }
+}
+---RATIONALE-SEPARATOR---
+```
+```json
+{
+  "layoutContainer": {
+    "name": "User Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Personal Details Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Personal Details",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Name",
+            "trailing-icon": "chevron-right",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            },
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Phone Number",
+            "trailing-icon": "chevron-right",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            },
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Email",
+            "trailing-icon": "chevron-right",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            },
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Language",
+            "trailing-icon": "chevron-right",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            },
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459"
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Notifications Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Notifications",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Enable Notifications",
+            "Leading": "switch",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Switch",
+              "Trailing": "None"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459"
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Security Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Security",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change Password",
+            "trailing-icon": "chevron-right",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            },
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Error/error50"
+      }
+    },
+    {
+      "type": "bottom navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "textLayers": ["Home", "Saved", "Sell", "Chat", "Profile"]
+      }
+    }
+  ]
+}
+```

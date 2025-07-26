@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Authentication domain with secure access control
+User Type: Mobile users needing to access their personal accounts
+Platform Impact: Mobile users often in distracting environments, need quick secure access with touch-friendly interface, limited screen real estate necessitates concise design.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account
+Secondary Goals: Recover forgotten credentials (though not explicitly requested, it's a standard for good UX in this context)
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions
+Ready for handoff if: Login button is most prominent, password recovery link is visible, form fields are appropriately sized for mobile, error messages have designated space, and visual hierarchy is clear.
+
+Content Requirements
+Critical: Heading (Login), email field (with label), password field (with label), submit button (e.g., "Login")
+Supporting: Password recovery link, "Remember me" checkbox (optional but recommended for improved UX)
+Contextual: Error messages for invalid credentials, loading indicator during authentication
+
+Structural & Component Directives
+* Layout:  Single column layout optimized for mobile vertical scrolling.
+* Components: Heading (H1 or similar prominent styling), Email field (standard text input with keyboard type email), Password field (standard text input with keyboard type password and secure input masking), Submit button (clearly styled button).
+* Styling:  Consider platform-appropriate styling guidelines (e.g., Material Design or Cupertino) for consistency and usability.
+
+Screen Requirements
+Primary Actions: Login with credentials
+Secondary Actions: Initiate password recovery (link)
+Screen States: Default (form displayed), loading (indicator shown), error (error message displayed), success (redirect or confirmation message)
+Feedback Needs: Real-time validation for email format (visual cues), clear error messages for login failures (specific and actionable), loading indicators during authentication.

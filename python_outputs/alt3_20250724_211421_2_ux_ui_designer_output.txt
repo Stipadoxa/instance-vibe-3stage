@@ -1,0 +1,197 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a single column vertical list to maximize screen real estate on mobile, consistent with the reference image.  Item spacing is minimal for compactness.",
+    "userFlowReasoning": "Each setting is presented as a list item.  Tapping an item either navigates to a sub-page (for complex settings) or directly toggles a setting (for simple on/off options). The user can easily scan and access settings.",
+    "componentChoices": "I chose `231:4151` (List (5 Rows)) as the primary container for settings.  I considered using `277:3078` (Card (Vertical)) or a series of individual `230:3882` (List (Left Item)) components but rejected them because the list provides better compactness and visual consistency for a settings screen.  A card would be more suitable for presenting larger chunks of information.  Individual list items would be more suitable for presenting separate and independent items that may or may not link to pages.",
+    "visualHierarchy": "The visual hierarchy is established through clear typography and consistent spacing.  Primary actions such as toggles have distinctive visual cues to indicate on/off states.",
+    "variantSelectionRationale": "I chose `Left Item='Icon + Text'` for the list item component to accommodate both the label and trailing indicator.  I considered using `Left Item='Avatar + Text'` if the design system had an appropriate icon, or to keep just the text as in the reference image, but rejected those since `Icon + Text` offers better visual consistency for the design system and the reference image did not offer an avatar."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 12,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "118:1617",
+        "suggestedType": "appbar",
+        "name": "Navbar Top",
+        "variants": {
+          "Content": "Title + Secondary Text"
+        },
+        "textLayers": {
+          "Title": "Settings",
+          "Label": ""
+        }
+      },
+      {
+        "id": "231:4151",
+        "suggestedType": "list",
+        "name": "List (5 Rows)",
+        "items": [
+          {
+            "id": "230:3931",
+            "suggestedType": "list",
+            "name": "List",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "items": [
+              {
+                "id": "230:3882",
+                "suggestedType": "list",
+                "name": "List (Left Item)",
+                "textLayers": {
+                  "Title": "Personal details"
+                },
+                "componentInstances": {
+                  "star": {
+                    "id": "57:1722",
+                    "variants": {
+                      "Size": "Small",
+                      "State": "Default",
+                      "Content": "Only Icons",
+                      "Style": "Filled"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "230:3919",
+                "suggestedType": "list",
+                "name": "List (Right Item)",
+                "variants": {
+                  "Right Item": "Text + Icon"
+                },
+                "componentInstances": {
+                  "nav-arrow-right": {
+                    "id": "34:859",
+                    "variants": {}
+                  }
+                },
+                "textLayers": {
+                  "Details": ""
+                }
+              }
+            ]
+          },
+          {
+            "id": "230:3931",
+            "suggestedType": "list",
+            "name": "List",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "items": [
+              {
+                "id": "230:3882",
+                "suggestedType": "list",
+                "name": "List (Left Item)",
+                "textLayers": {
+                  "Title": "Business details"
+                },
+                "componentInstances": {
+                  "star": {
+                    "id": "57:1722",
+                    "variants": {
+                      "Size": "Small",
+                      "State": "Default",
+                      "Content": "Only Icons",
+                      "Style": "Filled"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "230:3919",
+                "suggestedType": "list",
+                "name": "List (Right Item)",
+                "variants": {
+                  "Right Item": "Text + Icon"
+                },
+                "componentInstances": {
+                  "nav-arrow-right": {
+                    "id": "34:859",
+                    "variants": {}
+                  }
+                },
+                "textLayers": {
+                  "Details": ""
+                }
+              }
+            ]
+          },
+          {
+            "id": "230:3931",
+            "suggestedType": "list",
+            "name": "List",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "items": [
+              {
+                "id": "230:3882",
+                "suggestedType": "list",
+                "name": "List (Left Item)",
+                "textLayers": {
+                  "Title": "Access to Cars45 auction"
+                },
+                "componentInstances": {
+                  "star": {
+                    "id": "57:1722",
+                    "variants": {
+                      "Size": "Small",
+                      "State": "Default",
+                      "Content": "Only Icons",
+                      "Style": "Filled"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "230:3919",
+                "suggestedType": "list",
+                "name": "List (Right Item)",
+                "variants": {
+                  "Right Item": "Badge + Icon"
+                },
+                "componentInstances": {
+                  "nav-arrow-right": {
+                    "id": "34:859",
+                    "variants": {}
+                  },
+                  "badge": {
+                    "id": "94:1634",
+                    "variants": {
+                      "Size": "Small",
+                      "State": "Default",
+                      "Content": "Text",
+                      "Style": "Filled"
+                    },
+                    "textLayers": {
+                      "Badge": "Active"
+                    }
+                  }
+                },
+                "textLayers": {
+                  "Details": ""
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

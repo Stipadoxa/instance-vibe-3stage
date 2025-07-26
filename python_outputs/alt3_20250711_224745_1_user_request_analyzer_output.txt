@@ -1,0 +1,26 @@
+Domain & Context
+Domain: E-commerce domain within a mobile classifieds app context.
+User Type: Mobile users browsing and considering purchasing products listed in a classifieds app.
+Platform Impact: Mobile users need concise product information, large touch targets, quick loading times, and easy navigation within the app's constraints.  Screen real estate is limited.
+
+User Requirements
+Primary Goals: View product details, assess product value, decide whether to contact the seller.
+Secondary Goals: Save product for later, share product with others, view seller profile.
+User Constraints: Small screen size, touch-only interaction, potential slow network connectivity, short attention spans.
+Ready for handoff if: All critical content is clearly visible and accessible, primary action (e.g., contact seller) is prominent, and loading times are under 2 seconds.
+
+Content Requirements
+Critical: Product image (large), title, price, description, seller contact information (potentially obscured until user action).
+Supporting: Product condition, posting date, location, similar products.
+Contextual: Seller rating/reviews (if available), loading indicator, error messages (e.g., if content fails to load).
+
+Structural & Component Directives
+*   Layout: Single-column layout optimized for mobile, prioritizing key information above the fold.
+*   Components: Top navigation bar (with back button and potentially search), large product image at the top, clear price display immediately below the image, title below the price, description below the title,  "Contact Seller" button prominently displayed.
+*   Styling: Use of consistent app branding, clear visual hierarchy, high-contrast text for readability.
+
+Screen Requirements
+Primary Actions: Contact seller, save product.
+Secondary Actions: View seller profile, report listing.
+Screen States: Default state (all content loaded), loading state, error state (e.g., network error).
+Feedback Needs: Loading indicator during image and data retrieval, clear confirmation of actions (e.g., product saved).

@@ -1,0 +1,30 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear touch targets and minimal scrolling.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage app preferences, securely log out.
+Secondary Goals: Access help resources for specific settings, understand the implications of actions (e.g., "Delete my account permanently").
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings from the reference image are included, using existing app components; top and bottom navigation is implemented; touch targets meet minimum size requirements;  all actions have clear visual feedback.
+
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Access to Cars45 auction (toggle), "Verified ID" badge (info link), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" explanation for "Verified ID" badge.
+Contextual:  Success/failure messages for settings changes, loading indicators where appropriate.
+
+
+Structural & Component Directives
+* Layout: Single column list of settings, following the visual pattern in the reference image.
+* Components: Use existing app components for list items, toggles, and buttons.  Header with "Settings" title and back button. Bottom navigation bar consistent with app design.
+* Styling: Adhere to existing app styling guidelines.
+
+
+Screen Requirements
+Primary Actions:  Modify settings (various actions depending on setting), log out.
+Secondary Actions: Access help/information related to settings.
+Screen States: Default (settings displayed), Loading (during a settings change), Success (confirmation of a settings change), Error (if settings change fails).
+Feedback Needs: Confirmation messages for changes, clear visual indicators for toggles (on/off), error messages for invalid inputs.
+

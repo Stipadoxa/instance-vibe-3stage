@@ -1,0 +1,152 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout mirrors the provided reference image, employing a simple, vertical list for settings.  This prioritizes readability and ease of navigation on a mobile screen.  The `itemSpacing` is set to 16 to provide comfortable visual breathing room between list items. The appbar and content container are vertically stacked without padding, ensuring optimal use of space.",
+    "userFlowReasoning": "The user flows from top to bottom through the settings list.  Each setting is a tap target leading to its own configuration or action.  Critical settings are placed higher in the list for quick access.",
+    "componentChoices": "The `appbar` component provides clear navigation.  The `listItem` component is used for each setting to present the labels and status information concisely.  Toggles are used for settings that can be turned on or off.  Buttons are used for actions like \"Change Password\" and \"Log out\".  A confirmation dialog will be implemented (using the `dialog` component) for the \"Delete Account\" option.",
+    "visualHierarchy": "Visual hierarchy is established through vertical positioning in the list.  The topmost items are most prominent.  Color and typography are used to emphasize critical information (e.g., Primary/primary50 color for list items).  The `Badge` component with the 'Verified ID' status is used to highlight the verified status.",
+    "colorRationale": "Color styles are used consistently. The list items use Neutral/neutral5 and Neutral/neutral80 colors, maintaining a clean background and distinct text.  The Primary color style is used for primary actions.",
+    "textStyleRationale": "Text styles are used from the design system following the hierarchy: Headline for the screen title, Body/Medium for setting descriptions, Caption/Small for secondary text such as \"What is it?\""
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Cars45 Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "colorStyleName": "Primary/primary50",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "Supporting text": "Active",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral80"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "Trailing supporting text": "What is it?",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral80"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Body/Medium"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

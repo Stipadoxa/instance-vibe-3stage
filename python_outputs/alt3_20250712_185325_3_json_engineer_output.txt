@@ -1,0 +1,71 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided JSON uses existing Figma component Node IDs (e.g., \"10:5620\" for appbar, \"10:10214\" for list-item, \"10:4724\" for bottom navigation).  These IDs are assumed to be valid and present in the design system's component library.  The selection is based on the functional requirements of each UI section.",
+    "styleApplication": "Color styles are applied directly using the \"colorStyleName\" property, referencing styles from the design system (e.g., \"Neutral/neutral90\"). This approach ensures consistency with the design system and allows for easy updates to the design system's color palette.  Text styles are implicitly handled by the chosen components (appbar, list-item).  The JSON relies on the components' internal text styling, and no explicit styling is done in this JSON.",
+    "designSystemMapping": "The design requirements are directly mapped to the corresponding components in the design system.  The \"appbar\" component is used for the top bar, \"list-item\" for notifications, and \"bottom navigation\" for the bottom navigation bar. This mapping assumes the components are designed to meet the visual and functional requirements.  The list item's `Headline` and `Supporting text` use arrays to consolidate multiple similar list items into a single component instance.",
+    "variantDecisions": "No explicit variant decisions are made within this JSON.  It is assumed that the selected components (appbar, list-item, bottom navigation) have default or appropriate variants for their respective roles. The variants for the `list-item` would be determined by the component itself and therefore are not specified within this JSON.  If further customization is required, adjustments would need to be made within the Figma component settings."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notifications",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "NotificationList",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 12,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": [
+              "New message from John Doe",
+              "Meeting reminder",
+              "Order confirmation"
+            ],
+            "Supporting text": [
+              "Check out the latest updates",
+              "Meeting at 3 PM today",
+              "Your order #1234 has been shipped"
+            ],
+            "colorStyleName": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bottom navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": ["Home", "Settings", "Profile"]
+      }
+    }
+  ]
+}
+```

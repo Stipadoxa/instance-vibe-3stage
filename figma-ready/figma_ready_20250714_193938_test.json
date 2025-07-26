@@ -1,0 +1,109 @@
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details",
+        "subheadline": "",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "items": [
+        {
+          "type": "image",
+          "componentNodeId": "10:7816",
+          "properties": {
+            "variants": {
+              "Type": "1 image"
+            },
+            "image": "REPLACE_WITH_PRODUCT_IMAGE_URL"
+          },
+          "styleInfo": {
+            "backgroundColor": {
+              "type": "SOLID",
+              "color": "#f2f2f2",
+              "opacity": 1
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Product Title",
+          "properties": {
+            "textStyle": "Headline/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "$19.99",
+          "properties": {
+            "textStyle": "Title/Large",
+            "colorStyleName": "Primary/primary50",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Product Description",
+          "properties": {
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

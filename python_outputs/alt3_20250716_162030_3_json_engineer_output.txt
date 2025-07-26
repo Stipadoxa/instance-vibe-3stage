@@ -1,0 +1,163 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Used Figma component IDs provided in the input JSON for consistency and to leverage existing design system components.  `appbar`, `listItem`, `switch`, and `bottomNavigation` components were selected based on their suitability for the UI elements.",
+    "styleApplication": "Color styles are applied directly where provided in the input JSON.  Text styles are handled by the components themselves; textStyle properties were removed from list items as per the rule set. The components are designed to inherit styles automatically.",
+    "designSystemMapping": "The design system's components are used directly, ensuring consistency.  The input JSON's component IDs reference existing design system components.  This approach minimizes manual style adjustments and ensures adherence to the design system.",
+    "variantDecisions": "Variants are selected based on the input JSON where applicable, particularly for list items (e.g., 2-line variant for items with both headline and supporting text).  Where variants are not explicitly provided, the default variant is assumed."
+  }
+}
+---RATIONALE_SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "colorStyleName": "Primary/primary50"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "Trailing supporting text": "Active"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "Trailing supporting text": "What is it?"
+          },
+          "items": [
+            {
+              "type": "tooltip",
+              "componentNodeId": "24:10330",
+              "properties": {
+                "text": "This is a verified ID badge"
+              }
+            }
+          ]
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "Trailing": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "Trailing": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bottomNavigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "labels": ["Home", "Saved", "Sell", "Chat", "Profile"]
+      }
+    }
+  ]
+}

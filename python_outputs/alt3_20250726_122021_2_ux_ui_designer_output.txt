@@ -1,0 +1,156 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications. The top app bar is placed at the top for user information and the bottom navigation bar at the bottom for navigation.  Consistent spacing between items is maintained for readability.",
+    "userFlowReasoning": "Users can view notification details by tapping on a notification item.  The read/unread status will be implicitly updated upon tap.  Navigation is handled through the bottom navigation bar. This direct interaction streamlines the user experience.",
+    "componentChoices": "I chose `10:10214` (List item) for the notification items because it provides a flexible structure for the required content (avatar, title, description, timestamp), supporting text for read/unread status and allows for visual distinction between notifications.  I considered `147:3743` (product card) and  `10:10076` (Context Menu), but `10:10214` best balances visual appropriateness for a notification list with efficient use of mobile screen space.  The list item has a clean look fitting the communication/information delivery context.",
+    "visualHierarchy": "Visual hierarchy is achieved through clear spacing, font sizes, and potential color variations in the list items to highlight unread notifications.  The top app bar and bottom navigation are distinct visual components.",
+    "variantSelectionRationale": "For the `10:10214` (List item) component, I chose `Condition: 2-line`, `Leading: Image`, `Trailing: None`, `Show overline: False`, `Show supporting text: True`.  This configuration allows for a user avatar, a title, and a description within each list item. I opted against '3-line+' for the condition to maintain conciseness. I rejected  'Leading: Icon', 'Leading: Check Box', etc., because only a user avatar and supporting text are explicitly mentioned, and no other icons are in the design request.  The 'Trailing' option was set to 'None' as no secondary actions are specified within each list item. The supporting text shows read/unread status.  "
+  }
+}
+```
+```json
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "Recent activity",
+          "avatar": {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          "leading-icon": {
+              "visible": false
+          },
+          "trailing-icon 1": {
+              "visible": false
+          },
+          "trailing-icon 2": {
+              "visible": false
+          },
+          "trailing-icon 3": {
+              "visible": false
+          }
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 1",
+          "Supporting text": "Notification Description 1.  10:00 AM",
+          "Overline": "",
+          "Trailing supporting text": "Unread"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 2",
+          "Supporting text": "Notification Description 2.  9:30 AM",
+          "Overline": "",
+          "Trailing supporting text": "Read"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 3",
+          "Supporting text": "Notification Description 3.  9:00 AM",
+          "Overline": "",
+          "Trailing supporting text": "Unread"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 4",
+          "Supporting text": "Notification Description 4.  8:30 AM",
+          "Overline": "",
+          "Trailing supporting text": "Read"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 5",
+          "Supporting text": "Notification Description 5.  8:00 AM",
+          "Overline": "",
+          "Trailing supporting text": "Unread"
+        }
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "props": {
+          "Label": ["Home", "Saved", "Sell", "Chat", "Profile"]
+        }
+      }
+    ]
+  }
+}
+```

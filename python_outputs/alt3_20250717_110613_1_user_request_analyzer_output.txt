@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with easily accessible options, utilizing touch interactions and adapting to various screen sizes.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage personal information, and control app preferences.
+Secondary Goals: Easily understand each setting's function, receive clear feedback on changes, and securely manage sensitive information like passwords.
+User Constraints: Limited screen real estate on mobile devices, reliance on touch interactions, potential for interruptions, and varying levels of technical proficiency among users.
+Ready for handoff if: All settings from the reference image are included using the provided components. Top and bottom navigation is implemented,  all UI elements are appropriately sized for touch interaction, and clear visual hierarchy exists.
+
+
+Content Requirements
+Critical: Personal details (name, profile picture - if applicable), business details (if applicable), access controls (e.g., Cars45 auction access), contact information (phone number, email), language selection, notification management, password change, account deletion, log out.
+Supporting:  "What is it?" explanatory text for less obvious options like "Verified ID" badge.
+Contextual:  Active/inactive status indicators for toggleable settings, confirmation dialogs for critical actions like account deletion.
+
+
+Structural & Component Directives
+* Layout:  Vertical list of settings, similar to the reference image. Top and bottom app navigation bars are included.
+* Components: Use existing app components for lists, buttons, toggles, and text fields.  The structure must mirror the reference image's organization and information architecture, ensuring consistency with the app's design system.
+* Styling: Adhere to the existing app's style guide for colors, fonts, and spacing.
+
+
+Screen Requirements
+Primary Actions:  Modify settings, navigate to detailed setting screens (e.g., Personal Details), log out.
+Secondary Actions: Access help/support for specific settings.
+Screen States: Default state (showing all settings), loading state (while updating information), success state (after successful modification), and error states (if any settings changes fail).
+Feedback Needs: Visual feedback after each setting change (e.g., checkmark), loading indicators during data updates, and clear error messages in case of failure.

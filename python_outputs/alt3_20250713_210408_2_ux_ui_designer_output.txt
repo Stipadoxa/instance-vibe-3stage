@@ -1,0 +1,168 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a single-column vertical list, mirroring the reference image for intuitive navigation.  This approach optimizes screen real estate on mobile devices.  `itemSpacing` is set to 16px for visual breathing room between list items, enhancing readability and preventing visual clutter.",
+    "userFlowReasoning": "The user flow is linear and straightforward. Users progress through the settings list, making selections and modifications as needed.  High-impact actions like account deletion require confirmation dialogs to mitigate errors.  The back button in the appbar facilitates navigation and allows users to exit the settings page seamlessly.",
+    "componentChoices": "The `listItem` component is used for each setting, offering a clean and consistent presentation.  `switch` components handle on/off settings, while `textInput` components are employed for editable fields.  The `appbar` provides a clear title and back navigation.  Buttons are employed for high-impact actions like logout, with appropriate semantic styling to highlight their importance.",
+    "visualHierarchy": "Visual hierarchy is achieved through typography, color, and spacing.  Section headers are styled using `Title/Medium` text style with `Neutral/neutral90` color for clear grouping.  Primary actions are accentuated using `Primary/primary50` color. The use of `Neutral/neutral50` color for most text ensures readability against the `White/white100` background.  The `listItem` component's design ensures sufficient touch target sizes for mobile users."
+  }
+}
+---RATIONALE-SEPARATOR---
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "Trailing supporting text": "Active",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "Trailing supporting text": "What is it?",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Title/Medium",
+              "Trailing": {
+                "type": "switch",
+                "componentNodeId": "10:9912"
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Title/Medium",
+              "Trailing": {
+                "type": "switch",
+                "componentNodeId": "10:9912"
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Title/Medium"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

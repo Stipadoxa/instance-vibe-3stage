@@ -1,0 +1,28 @@
+Domain & Context
+Domain: User Settings domain within a mobile application
+User Type: Mobile application users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear, tappable elements due to limited screen real estate and touch-based interaction.  Interruptions are likely, so the design should be simple and intuitive.
+
+User Requirements
+Primary Goals: Access and modify personal account information, manage app preferences, securely log out of the application.
+Secondary Goals:  Easily locate specific settings, understand the consequences of actions like deleting an account.
+User Constraints: Limited screen space on mobile devices, reliance on touch input, potential for interruptions, need for clear and concise information.
+Ready for handoff if: All settings are clearly listed, actions are clearly labeled, top app bar and bottom navigation are present and functional, and sufficient tap targets are implemented.  All actions (especially "Delete my account permanently") have appropriate confirmation prompts.
+
+
+Content Requirements
+Critical: Personal details (display-only, editable via a separate screen), "Change phone number", "Change email", "Change language", "Delete my account permanently", "Log out".
+Supporting:  Version number (bottom of screen), Help/Support link (within top app bar or bottom nav).
+Contextual:  Confirmation dialog before deleting the account, success/failure messages after actions are completed.
+
+Structural & Component Directives
+* Layout: Vertical list of settings items, each with a clear label and (if applicable) a navigation arrow to a secondary screen.
+* Components: Top app bar (with app title and back button), list items (each setting as a tappable item), bottom navigation bar (with other app sections).
+* Styling:  Consistent with existing mobile app styling guidelines.
+
+
+Screen Requirements
+Primary Actions:  Change phone number, change email, change language, delete account, log out.
+Secondary Actions: Access personal details (view/edit), access help/support.
+Screen States: Default state (settings list displayed), loading state (while processing actions), confirmation dialog (before account deletion), success/failure state (after action completion).
+Feedback Needs:  Clear visual feedback on successful setting changes (e.g., checkmark), confirmation dialogs for destructive actions, loading indicators during processing, error messages for failed actions.

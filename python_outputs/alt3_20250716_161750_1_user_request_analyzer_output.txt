@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, touch-friendly interface with clear navigation and minimal scrolling.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, log out of the application.
+Secondary Goals:  Update personal and business details, understand account status (e.g., "Verified ID").
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings are accessible without excessive scrolling,  navigation is intuitive and consistent with app standards, and all interactive elements meet minimum touch target sizes.
+
+Content Requirements
+Critical:  Personal details section (with links to edit), Business details section (with links to edit),  Manage notifications setting, Change password setting, Log out option.
+Supporting:  "Verified ID" badge explanation,  Disable chats option, Disable Feedback option, Change language option, Change phone number, Change email.
+Contextual:  Status indicators (e.g., "Active" for Cars45 auction access),  confirmation messages after changes are saved.
+
+Structural & Component Directives
+* Layout:  List view of settings, similar to the reference image. Top and bottom app navigation bars included as per the user request.
+* Components:  Use existing app components for list items, navigation, and buttons. Each setting should be presented as a list item with clear labels.  Right-aligned indicators (e.g., "Active", "What is it?") should be used where applicable.
+* Styling:  Adhere to existing app styling guidelines. Maintain visual consistency with other app screens.
+
+Screen Requirements
+Primary Actions:  Navigate to sub-screens for detailed setting modifications (e.g., personal details, business details), manage notifications, change password, log out.
+Secondary Actions:  Access "What is it?" explanations for unclear settings.
+Screen States: Default state displaying all settings, loading state (if applicable), success state after settings are saved.
+Feedback Needs: Confirmation messages after successful updates, error messages for invalid input (if applicable), loading indicators for asynchronous operations.

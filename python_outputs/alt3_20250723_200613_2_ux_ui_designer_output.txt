@@ -1,0 +1,294 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer clearly specifies an Authentication domain.  The user needs to log in to a mobile application. This requires a form-based layout prioritizing ease of use and touch-friendliness on a smaller screen.",
+    "layoutDecisions": "A vertical, single-column layout is used to optimize for vertical scrolling. Input fields are stacked above the primary action button for clarity.  Social logins are positioned below the main login button to visually de-emphasize them as secondary actions.  Links for password recovery and Terms & Conditions are placed at the bottom for accessibility.",
+    "userFlowReasoning": "The user flow focuses on a straightforward login process.  If login fails, an error message is displayed for immediate feedback. Secondary flows such as password recovery and social login are offered as alternatives for ease of access.",
+    "componentChoices": "The primary components are `text-input` (for email and password), `button` (for login and social logins), and `link` (for password reset and T&C). These are standard components for authentication forms. The `appbar` is used for a standard top navigation bar.",
+    "visualHierarchy": "Visual hierarchy is established through size, position, and color. The primary login button is larger and more prominent than the secondary social login buttons.  Consistent spacing is maintained to create a clean and readable design. Error messages will use a distinct semantic color.",
+    "variantSelectionRationale": "The `button` components use the `Primary` variant for the primary action (Login) and `Secondary` for social logins.  The `text-input` component uses variants for appropriate keyboard types (Email and Password). Links are used with the appropriate text style, and no trailing element is added to the text-inputs. The appbar uses default styling."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Authentication Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "appbar",
+          "componentNodeId": "1424:10009",
+          "properties": {
+            "headline": "Sign In",
+            "variants": {
+              "Right action": "No action"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Content Holder",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 24,
+          "paddingBottom": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "text-input",
+              "properties": {
+                "placeholder": "Email",
+                "variants": {
+                  "Type": "Email",
+                  "State": "enabled"
+                }
+              }
+            },
+            {
+              "type": "text-input",
+              "properties": {
+                "placeholder": "Password",
+                "variants": {
+                  "Type": "Password",
+                  "State": "enabled"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "text": "Sign In",
+                "variants": {
+                  "Type": "Primary",
+                  "Configuration": "Text",
+                  "State": "Default"
+                },
+                "textStyle": "Title/title_m",
+                "colorStyleName": "Accent/brand"
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "text": "Continue with Google",
+                "variants": {
+                  "Type": "Secondary",
+                  "Configuration": "Text",
+                  "State": "Default"
+                },
+                "textStyle": "Paragraph/body",
+                "colorStyleName": "Accent/brand_blue"
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "text": "Continue with Facebook",
+                "variants": {
+                  "Type": "Secondary",
+                  "Configuration": "Text",
+                  "State": "Default"
+                },
+                "textStyle": "Paragraph/body",
+                "colorStyleName": "Accent/brand_blue"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "link",
+              "componentNodeId": "1271:11783",
+              "properties": {
+                "text": "Forgot Password?",
+                "variants": {
+                  "Configuration": "Text",
+                  "State": "Default"
+                },
+                "textStyle": "Other/small",
+                "colorStyleName": "Grayscale/gray"
+              }
+            },
+            {
+              "type": "link",
+              "componentNodeId": "1271:11783",
+              "properties": {
+                "text": "Terms & Conditions",
+                "variants": {
+                  "Configuration": "Text",
+                  "State": "Default"
+                },
+                "textStyle": "Other/small",
+                "colorStyleName": "Grayscale/gray"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "1424:10009",
+        "properties": {
+          "headline": "Sign In",
+          "variants": {
+            "Right action": "No action"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Holder",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingBottom": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "text-input",
+            "properties": {
+              "placeholder": "Email",
+              "variants": {
+                "Type": "Email",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "text-input",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "Type": "Password",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Sign In",
+              "variants": {
+                "Type": "Primary",
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "textStyle": "Title/title_m",
+              "colorStyleName": "Accent/brand"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Google",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "textStyle": "Paragraph/body",
+              "colorStyleName": "Accent/brand_blue"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Facebook",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "textStyle": "Paragraph/body",
+              "colorStyleName": "Accent/brand_blue"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "link",
+            "componentNodeId": "1271:11783",
+            "properties": {
+              "text": "Forgot Password?",
+              "variants": {
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "textStyle": "Other/small",
+              "colorStyleName": "Grayscale/gray"
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "1271:11783",
+            "properties": {
+              "text": "Terms & Conditions",
+              "variants": {
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "textStyle": "Other/small",
+              "colorStyleName": "Grayscale/gray"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

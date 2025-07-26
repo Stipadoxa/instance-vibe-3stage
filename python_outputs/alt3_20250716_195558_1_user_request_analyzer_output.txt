@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear touch targets, given the limitations of screen real estate and touch interaction.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage preferences, control app behavior.
+Secondary Goals: Understand the meaning of less clear settings, easily locate specific settings,  initiate account deletion if desired.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings from the reference image are included, grouped logically, and use existing app components. Top and bottom app navigation is implemented, and touch targets meet minimum size requirements.
+
+Content Requirements
+Critical:  Personal details (editable), Business details (editable), Access to Cars45 auction (toggle), "Verified ID" badge (info link), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" explanation for "Verified ID" badge.
+Contextual:  Error messages for invalid input (if applicable for editable fields).
+
+Structural & Component Directives
+* Layout: Single column list of settings, grouped into sections (Personal details, Business details, etc.) as shown in the reference image.  Top and bottom app navigation bars.
+* Components: Use existing app components for list items, toggles, buttons, and text fields.
+* Styling: Follow existing app style guide for colors, fonts, and spacing.
+
+
+Screen Requirements
+Primary Actions: Access and modify individual settings (e.g., change phone number, toggle disable chats).  Initiate account deletion.  Log out.
+Secondary Actions: Access "What is it?" information for "Verified ID" badge.
+Screen States: Default state showing all settings, loading state (if applicable during settings changes), error state (if applicable after invalid input).
+Feedback Needs: Visual indication of successful setting changes (e.g., updated values, confirmation messages).  Clear error messages and instructions.
+
+

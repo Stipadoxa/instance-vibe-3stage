@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and easily navigable settings page with clear touch targets and minimal scrolling.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notifications, control app behavior.
+Secondary Goals:  Understand the meaning of account-related statuses ("Verified ID" badge).  Easily log out of the application.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included using the specified design system components, top and bottom navigation bars are implemented, and touch targets meet minimum size requirements.
+
+Content Requirements
+Critical: Personal details, business details, access to Cars45 auction (with active/inactive toggle), "Verified ID" badge (with explanation), change phone number, change email, change language, disable chats, disable feedback, manage notifications, change password, delete account permanently, log out.
+Supporting:  Clear visual indicators of active/inactive settings.
+Contextual:  Any contextual information or settings based on user roles or app usage.
+
+Structural & Component Directives
+* Layout:  List-based layout similar to the reference image, using existing app components.  Top and bottom app navigation bars included.
+* Components:  Use existing app components for list items, navigation bars, and any other elements.  Settings should be presented in a list format with clear labels.
+* Styling:  Maintain consistency with the existing app's color palette and design language.
+
+Screen Requirements
+Primary Actions:  Tap to modify settings (e.g., change email, manage notifications), tap to log out.
+Secondary Actions: Access information about "Verified ID" badge.
+Screen States:  Default state, loading state (if any settings require network requests), success/failure states after saving changes.
+Feedback Needs:  Clear visual feedback when a setting is changed (e.g., toggle switch activation), loading indicators during network operations, confirmation messages after successful actions.

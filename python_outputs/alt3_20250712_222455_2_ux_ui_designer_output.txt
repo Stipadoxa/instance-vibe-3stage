@@ -1,0 +1,241 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a single-column vertical list, optimized for mobile screen real estate.  Settings are logically grouped into sections (Personal, Business, Account) with dividers for clarity.  Top and bottom app bars are included for navigation and consistent app structure.  Padding and spacing adhere to the design system guidelines, ensuring comfortable touch targets and visual breathing room.",
+    "userFlowReasoning": "The user journey is straightforward: the user accesses the settings screen, browses categorized settings, selects a setting to modify, makes changes, and receives visual feedback upon saving. Destructive actions (account deletion) require confirmation to prevent accidental actions.  The flow is designed to be intuitive and easily navigable for mobile users.",
+    "componentChoices": "The `appbar` component provides top-level navigation.  The `list-item` component, with its leading/trailing properties, is selected to display each setting. A `switch` component is used for toggle settings (e.g., Disable chats).  `textInput` is used for editable fields, while buttons handle actions.  The `dialog` component provides a modal to confirm destructive actions.   All components are selected from the design system for style consistency.",
+    "visualHierarchy": "Visual hierarchy is achieved through clear section headings (using a larger `text` style), clear labels for each setting (using `Label/Medium` text style), and consistent spacing and padding.  The use of dividers between sections and neutral colors on backgrounds further enhances visual organization and readability. The primary color is used sparingly for key actions."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Personal Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Name",
+        "Supporting text": "John Doe",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Phone Number",
+        "Supporting text": "+1-555-123-4567",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Email",
+        "Supporting text": "john.doe@example.com",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Business Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+      {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Company Name",
+        "Supporting text": "Acme Corp",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Account Settings",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage Notifications",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Language",
+        "Supporting text": "English",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Delete Account",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "colorStyleName": "Semantic/Error/error50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "colorStyleName": "Primary/primary50"
+      }
+    }
+  ]
+}
+```

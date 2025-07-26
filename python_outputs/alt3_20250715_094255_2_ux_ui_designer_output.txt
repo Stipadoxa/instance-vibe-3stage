@@ -1,0 +1,154 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout prioritizes a vertical scrolling structure, placing the most critical information (main image, title, price) at the top for immediate user attention.  Subsequent sections are organized in a logical order based on user flow, guiding them through product details, seller information, and primary actions.  Consistent 16px spacing between content items ensures readability and visual breathing room. The screen adheres to the mandatory screen-level auto-layout structure for consistency and maintainability.",
+    "userFlowReasoning": "The user journey is designed to be linear and intuitive, starting with a clear product view and progressing logically to seller details and purchasing actions. Primary actions (contact seller, view profile, save product) are prominently displayed, while secondary actions are accessible but less emphasized.  This flow aims to reduce cognitive load and facilitate quick purchasing decisions.",
+    "componentChoices": "The `appbar` component provides a standard top navigation with a back button, while the `image` component displays the main product image, allowing for zooming.  The `text` component is used throughout for titles, descriptions, and seller information, leveraging text styles for visual hierarchy.  The `button` component facilitates user interactions, using the green accent color for primary actions and neutral colors for secondary actions.",
+    "visualHierarchy": "Visual hierarchy is established through a combination of layout positioning, typography, and color.  The main product image commands immediate attention, followed by title and price.  Subsequent sections have decreasing visual weight using a combination of text sizes, styles, and gray scale variation. The green accent color is reserved for primary calls to action to highlight their importance."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Product Title",
+          "leadingIcon": {
+            "type": "icon",
+            "componentNodeId": "10:712",
+            "properties": {}
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "items": [
+          {
+            "type": "image",
+            "componentNodeId": "10:7816",
+            "properties": {
+              "source": "placeholder-product-image.jpg",
+              "zoomable": true
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Product Title",
+              "textStyle": "Title/Large",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "₦ 1,200,000",
+              "textStyle": "Headline/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Product Description",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "divider",
+            "componentNodeId": "10:8459",
+            "properties": {
+              "variant": {
+                "Position": "horizontal",
+                "Type": "full-width"
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Info",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items":[
+              {
+                "type": "avatar",
+                "componentNodeId": "10:7773",
+                "properties": {
+                  "photo": "placeholder-seller-image.jpg",
+                  "size": "large"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "VERTICAL",
+                "items": [
+                  {
+                    "type": "text",
+                    "properties": {
+                      "text": "Seller Name",
+                      "textStyle": "Title/Medium",
+                      "colorStyleName": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "properties": {
+                      "text": "Location",
+                      "textStyle": "Body/Small",
+                      "colorStyleName": "Neutral/neutral50"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "text": "Contact Seller",
+              "variant": {
+                "Size": "Medium",
+                "Type": "Filled",
+                "Color": "Green"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "bottomnavigation",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "labels": ["Home", "Saved", "Sell", "Chat", "Profile"]
+        }
+      }
+    ]
+  }
+}
+```

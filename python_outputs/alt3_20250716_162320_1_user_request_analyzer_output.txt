@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with clear actions and easily accessible options due to limited screen real estate.  Touch interaction is primary.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage preferences, and control account features.
+Secondary Goals:  Access help resources for setting-related questions, easily log out of the application.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if:  All settings options from the reference image are included, using the provided components, navigation is functional and consistent with the app's design system, and all touch targets meet minimum size requirements.
+
+Content Requirements
+Critical: Personal details (potentially a link to a more detailed screen), Business details (potentially a link to a more detailed screen), Access to Cars45 auction (toggle), "Verified ID" badge (information link), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications (link to a secondary screen), Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" explanations for relevant settings (e.g., "Verified ID" badge).
+Contextual:  Success/failure messages after saving settings changes.
+
+Structural & Component Directives
+* Layout: Single column list view for settings options, similar to the reference image. Top and bottom app navigation bars are to be used.
+* Components:  Use existing app components for list items (including expandable sections if needed), toggles for on/off settings, and buttons for actions.  Navigation bars should adhere to existing app guidelines.
+* Styling:  Adhere to the existing app's color palette and typography. Maintain visual consistency with the rest of the app.
+
+Screen Requirements
+Primary Actions: Tap on settings options to modify settings, tap on "Log out" to end the session.
+Secondary Actions: Access help information for individual settings.
+Screen States: Default state displaying all settings, loading state (if applicable during setting changes), success and error states after action completion.
+Feedback Needs: Visual confirmation (e.g., checkmarks or updated text) after successful setting changes, clear error messages for invalid inputs or failed actions, loading indicators when appropriate.
+

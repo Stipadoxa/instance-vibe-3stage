@@ -1,0 +1,157 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Used specified Figma component IDs for AppBar (10:5620), List Items (10:10214), and Bottom Navigation (10:4724).  These are assumed to be from a consistent design system.",
+    "styleApplication": "Color styles are applied where specified in the input JSON.  Text styles are NOT applied to list items as per rule 2, instead relying on the component's inherent styling.  Fallback to default styles will be applied where needed based on the design system definition.",
+    "designSystemMapping": "The JSON maps directly to the Figma design system components.  Assumptions are made regarding default styling and variant behavior based on component properties and names.",
+    "variantDecisions": "Variants for list items (e.g., Leading, Trailing) are inferred based on the presence of properties like 'Trailing supporting text', 'Leading', and 'switch'.  The absence of a variant is interpreted as the default variant for the component."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "colorStyleName": "Primary/primary50"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "Trailing supporting text": "Active"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "Trailing supporting text": "What is it?"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "Leading": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "Leading": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Bottom navigation",
+      "componentNodeId": "10:4724"
+    }
+  ]
+}
+```

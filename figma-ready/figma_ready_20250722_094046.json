@@ -1,0 +1,158 @@
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Login Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 48,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "paddingBottom": 0,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "text": "Log in or sign up",
+            "properties": {
+              "textStyle": "Title/title_l",
+              "colorStyleName": "Neutral/black",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "1902:3230",
+            "properties": {
+              "placeholder": "jsmith.mobbin1@gmail.com",
+              "variants": {
+                "State": "placeholder"
+              },
+              "colorStyleName": "Neutral/light"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue",
+              "variants": {
+                "Type": "Elevated",
+                "Configuration": "Text",
+                "State": "Default"
+              },
+              "colorStyleName": "Neutral/black"
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "or",
+            "properties": {
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Google",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text + Icon left",
+                "State": "Default"
+              },
+              "colorStyleName": "Neutral/white"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Apple",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text + Icon left",
+                "State": "Default"
+              },
+              "colorStyleName": "Neutral/white"
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "Passwords",
+            "properties": {
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          }
+        ]
+      },
+      {
+        "type": "iOS_Keyboard",
+        "componentNodeId": "1841:4105",
+        "properties": {
+          "variants": {
+            "Type": "Text",
+            "Style": "White"
+          },
+          "colorStyleName": "Neutral/white"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Bottom Navigation",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "paddingBottom": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "text": "Patreon",
+            "properties": {
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "curated by Mobbin",
+            "properties": {
+              "textStyle": "Other/small",
+              "colorStyleName": "Neutral/gray",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

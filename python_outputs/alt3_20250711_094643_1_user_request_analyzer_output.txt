@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users accessing their accounts, potentially new users.
+Platform Impact: Mobile users need a quick and secure login experience with a touch-friendly interface, considering limited screen real estate and potential interruptions.
+
+User Requirements
+Primary Goals: Authenticate securely and access their account.
+Secondary Goals: Create a new account, recover forgotten credentials (implied).
+User Constraints: Small screen size, touch-only interaction, potential interruptions, varying network conditions.
+Ready for handoff if:  All specified elements are present and correctly styled, the "Sign in" button is the most prominent primary action, error states are clear and appropriately displayed, and touch targets meet minimum size requirements.
+
+Content Requirements
+Critical: "Your e-mail" field (pre-filled with "123@example.ua"), password field, "Sign in" button, "By continuing you agree to the Policy and Rules" footnote (with "Policy and Rules" as a clickable link).
+Supporting: "Sign up" button.
+Contextual: Error message for password field ("Please enter your password").
+
+Structural & Component Directives
+* **Layout:** Vertical layout with a large title at the top, followed by input fields, buttons, and a footnote.
+* **Components:** Large title ("Welcome"), "Your e-mail" text input (pre-filled), password text input (with error state and supportive text), "Sign in" primary button, "Sign up" text-only button, footnote text with a link.
+* **Styling:**  Large title styling needs to be specified (font size, weight, etc.), error state styling for password field needs definition.
+
+Screen Requirements
+Primary Actions: Sign in.
+Secondary Actions: Sign up.
+Screen States: Default state, error state (password field).
+Feedback Needs: Clear error messages in the password field, visual feedback indicating a successful or unsuccessful login attempt (e.g., navigation to the next screen or an error message).

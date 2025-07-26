@@ -1,0 +1,143 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Components were selected based on the provided design system and their suitability for the specified functionality.  `appbar` was used for the header, `text-input` for user input fields, `button` for actions, `link` for the 'Forgot Password' functionality, and `text` for the terms and conditions.  `layoutContainer` components are used extensively to manage the layout.",
+    "styleApplication": "Text styles are applied directly to `text` components as specified.  Button and input variants are chosen based on the design specifications to achieve consistent styling across the screen.",
+    "designSystemMapping": "The components align directly with the provided design system components.  This ensures consistency and maintainability.  Variant specifications in the input JSON directly map to variant properties available in the Figma components.",
+    "variantDecisions": "Variants are selected based on the desired visual appearance and user experience. For example, the main login button utilizes a 'Filled', 'Large', and 'Green' variant for prominence.  Social login buttons use 'Outlined' variants to visually differentiate them.",
+    "nestedComponentHandling": "No nested components were detected.  Therefore, array properties were used where applicable for simplification and maintainability."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Sign In",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 24,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "text-input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder": "Email",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "text-input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder": "Password",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "text": "Sign In",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "divider",
+          "componentNodeId": "10:8459",
+          "properties": {
+            "variants": {
+              "Position": "horizontal",
+              "Type": "full-width"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "text": "Continue with Google",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Outlined",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "text": "Continue with Facebook",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Outlined",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "link",
+          "componentNodeId": "635:4578",
+          "properties": {
+            "text": "Forgot Password?",
+            "variants": {
+              "Style": "Outlined"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "By signing in, you agree to our Terms & Conditions.",
+          "properties": {
+            "textStyle": "Caption/Small",
+            "colorStyleName": "Neutral/neutral50",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        }
+      ]
+    }
+  ]
+}

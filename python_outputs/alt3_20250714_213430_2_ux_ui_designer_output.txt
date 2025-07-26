@@ -1,0 +1,184 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to mirror the provided reference image and prioritize a clear, scannable list of settings.  The `appbar` and bottom navigation components are placed at the top and bottom respectively, adhering to the screen-level auto-layout guidelines.  This ensures these elements are always visible and accessible.  A content-holder auto-layout is used to contain the scrollable list of settings, with 16px spacing between each item to provide visual separation without excessive whitespace.",
+    "userFlowReasoning": "The user flow follows a straightforward linear path: the user accesses the settings screen, scans the available options, and then selects an item to modify or perform an action.  The top navigation bar provides a back button for easy return to the previous screen. Each settings option is presented as a row, providing clear visual cues and tappable areas. For settings with boolean values (toggles), the state is visually indicated. Settings requiring further configuration utilize navigation to detail screens.",
+    "componentChoices": "The `appbar` component is used for top navigation, providing a back button and the screen title.  The `listItem` component is utilized for each setting row, enabling a consistent look and feel with the other app screens. The `switch` component provides visual on/off toggles for boolean settings, enhancing usability and clarity.  A `text` component is used for displaying setting descriptions and static information, such as the auction status.  The `badge` component is used to highlight the \"Verified ID\" status.",
+    "visualHierarchy": "Visual hierarchy is maintained using consistent typography and spacing. Section headers (e.g., \"Personal Details\") are slightly larger to set them apart from the individual settings.  The use of the `badge` component adds emphasis to the \"Verified ID\" status.  The use of `Neutral/neutral90` for primary text, `Neutral/neutral50` for secondary text, and `Primary/primary50` for actions creates a clear visual distinction between content and interactive elements. The consistent use of textStyles ensures a unified and professional look and feel."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "Trailing supporting text": "Active",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "Trailing supporting text": "What is it?",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "Trailing": {
+                "type": "switch",
+                "componentNodeId": "10:9912"
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "Trailing": {
+                "type": "switch",
+                "componentNodeId": "10:9912"
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "bottomNavigation",
+        "componentNodeId": "10:4724"
+      }
+    ]
+  }
+}
+```

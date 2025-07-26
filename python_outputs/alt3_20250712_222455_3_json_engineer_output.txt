@@ -1,0 +1,256 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., 10:5620 for appbar, 10:10214 for list-item, 10:3907 for button, 10:8459 for divider) were selected based on the provided design specification.  These IDs directly map to the components within the design system, ensuring consistent styling and behavior.",
+    "styleApplication": "Text styles ('Title/Medium') and color styles ('Neutral/neutral90') are applied to text components as specified in the input JSON.  Color style names are used directly to maintain consistency with the design system. This allows for easy updates to the design system colors without modification to this JSON.  The colorStyleName property is used to ensure color consistency from the design system.",
+    "designSystemMapping": "The design system's components and styles are directly referenced to maintain design consistency.  The 'variants' property in each component accurately reflects the design specification. For example, the 'list-item' component uses the 'Condition', 'Leading', 'Trailing', 'Show overline', and 'Show supporting text' variants to precisely match the design's requirements.",
+    "variantDecisions": "Component variants (e.g., '1-line', '2-line', 'Icon', 'Text', 'Switch', etc.) are chosen based on the specific requirements for each list-item.  For instance, a 'list-item' displaying only a headline will use 'Condition: 1-line', 'Leading: None', 'Trailing: None', whereas a list item with a headline and supporting text will use 'Condition: 2-line' and appropriately set 'Leading' and 'Trailing' variants. Switch components use 'Leading: Switch' variant."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Personal Details",
+      "properties": {
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Name",
+        "Supporting text": "John Doe",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": true
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Phone Number",
+        "Supporting text": "+1-555-123-4567",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": true
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Email",
+        "Supporting text": "john.doe@example.com",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": true
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Business Details",
+      "properties": {
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Company Name",
+        "Supporting text": "Acme Corp",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": true
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Account Settings",
+      "properties": {
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": false
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage Notifications",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": false
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Language",
+        "Supporting text": "English",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": true
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": false
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": false,
+          "Show supporting text": false
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Delete Account",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "colorStyleName": "Semantic/Error/error50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "colorStyleName": "Primary/primary50"
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,147 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided componentNodeIds (10:5620 for appbar, 10:8132 for chip, 147:3743 for card) are directly used from the design system.  These IDs represent the specific instances of each component to ensure correct styling and behavior. ",
+    "styleApplication": "Text styles and color styles are assumed to be handled internally by the chosen components (appbar, chip, card).  No explicit style application is needed in this JSON as the design system manages the styling for these components.",
+    "designSystemMapping": "The design system components (appbar, chip, card) are mapped directly to their corresponding JSON elements.  Each component's properties are populated with the data provided in the input JSON, reflecting the design requirements precisely.",
+    "variantDecisions": "Component variants are specified for each component instance. For example, the appbar uses \"Mode: Light\", \"Type: search-field\", and \"Elevation: flat\". The chips use \"Style: unselected\" and \"State: enabled\". The cards use \"view: list\" and \"type: normal\". These variant selections reflect the specified design choices."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Search Results Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "variants": {
+          "Mode": "Light",
+          "Type": "search-field",
+          "Elevation": "flat"
+        },
+        "headline": "Search Results",
+        "subheadline": "100+ Results Found"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "FilterChips",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "chip",
+          "componentNodeId": "10:8132",
+          "properties": {
+            "variants": {
+              "Style": "unselected",
+              "State": "enabled"
+            },
+            "label-text": "Price"
+          }
+        },
+        {
+          "type": "chip",
+          "componentNodeId": "10:8132",
+          "properties": {
+            "variants": {
+              "Style": "unselected",
+              "State": "enabled"
+            },
+            "label-text": "Brand"
+          }
+        },
+        {
+          "type": "chip",
+          "componentNodeId": "10:8132",
+          "properties": {
+            "variants": {
+              "Style": "unselected",
+              "State": "enabled"
+            },
+            "label-text": "Category"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "ProductCards",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "card",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "variants": {
+              "view": "list",
+              "type": "normal"
+            },
+            "#title": "Product Title 1",
+            "#price": "19.99",
+            "image": {
+              "url": "image_url_1",
+              "width": 100,
+              "height": 100
+            }
+          }
+        },
+        {
+          "type": "card",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "variants": {
+              "view": "list",
+              "type": "normal"
+            },
+            "#title": "Product Title 2",
+            "#price": "29.99",
+            "image": {
+              "url": "image_url_2",
+              "width": 100,
+              "height": 100
+            }
+          }
+        },
+        {
+          "type": "card",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "variants": {
+              "view": "list",
+              "type": "normal"
+            },
+            "#title": "Product Title 3",
+            "#price": "39.99",
+            "image": {
+              "url": "image_url_3",
+              "width": 100,
+              "height": 100
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

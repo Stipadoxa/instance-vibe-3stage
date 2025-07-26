@@ -1,0 +1,30 @@
+Domain & Context
+Domain: Settings Management within a Mobile Application (Cars45 Auction related)
+User Type: Users of the Cars45 mobile application needing to manage account settings and preferences.  This includes both personal and business users.
+Platform Impact: Mobile platform necessitates a concise and intuitive interface with clear touch targets, and consideration for interruptions and limited screen real estate.  Navigation must be easily accessible.
+
+
+User Requirements
+Primary Goals: Modify account settings (personal and business details, contact information, language, etc.), manage notification preferences, control app behavior (e.g., disabling features).  Log out securely.
+Secondary Goals: Understand the meaning of "Verified ID" badge, easily access account deletion procedures.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span, reliance on clear visual cues.
+Ready for handoff if: All settings options from the reference image are implemented using the provided design system components, top and bottom navigation is present and functional, all touch targets meet minimum size requirements, and text is legible.
+
+
+Content Requirements
+Critical:  All settings options shown in the reference image (Personal details, Business details, Access to Cars45 auction, "Verified ID" badge, Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out).  "What is it?" link for "Verified ID" badge.
+Supporting:  Clear labels and descriptions for each setting.
+Contextual:  Active/Inactive states for toggles (e.g., Access to Cars45 auction, Disable chats, Disable Feedback).  Success/error messages for settings changes.
+
+
+Structural & Component Directives
+* Layout: Vertical list of settings options, similar to reference image.  Top and bottom app navigation bars are included.
+* Components: Use existing app components for list items, toggles, buttons, and navigation.
+* Styling: Adhere to the existing app's style guide, using the color scheme and visual hierarchy illustrated in the reference image.
+
+
+Screen Requirements
+Primary Actions: Selecting a setting to modify, logging out.
+Secondary Actions: Accessing "What is it?" for "Verified ID" badge.
+Screen States: Default state (all settings displayed), loading state (while saving changes), error state (for failed settings changes), success state (confirmation of changes).
+Feedback Needs: Visual feedback (checkmarks, loading indicators) to confirm setting changes, clear error messages when changes fail.

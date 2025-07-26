@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Authentication domain for mobile app access.
+User Type: Mobile app users attempting to log in.
+Platform Impact: Mobile users require a streamlined, touch-friendly interface with clear visual cues.  Limited screen real estate necessitates concise information and large touch targets.  Users may be in distracting environments.
+
+User Requirements
+Primary Goals: Successfully authenticate and gain access to the mobile app.
+Secondary Goals: Utilize convenient social login options or password recovery if needed.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, varying network conditions.
+Ready for handoff if:  All primary and secondary actions are clearly labeled and have appropriately sized tap targets; error states are handled gracefully;  the design is consistent with the provided reference image's visual style and our design system guidelines for spacing, fonts, and color palette.
+
+Content Requirements
+Critical:  Mobile number input field (with country code selector), "Continue" button.
+Supporting: Social login buttons (Google, Apple, Facebook), "or" separator between input field and social logins,  password recovery option (link or button), privacy policy link, terms of service link.
+Contextual: Error messages for invalid input, loading indicator during authentication process.
+
+Structural & Component Directives
+* Layout: Single column layout, similar to the reference image.  Social login buttons below the primary input and button.  Legal text at the bottom.  Back button in the top left.
+* Components:  Input fields (number and country code) styled consistently with our design system,  buttons following our design system (including the "Continue" button's style), standard social login buttons (using our design system implementation),  reCAPTCHA implementation as per our design system guidelines.
+* Styling:  Color scheme and typography should adhere to our design system and match the reference image's visual style as closely as possible.
+
+Screen Requirements
+Primary Actions: Continue with mobile number, Continue with Google, Continue with Apple, Continue with Facebook.
+Secondary Actions:  View Privacy Policy, View Terms of Service, Password recovery.
+Screen States:  Default state, loading state, error states (invalid phone number, network error, etc.), success state (redirect to app).
+Feedback Needs: Clear error messages upon invalid input, loading indicator while processing authentication request, visual confirmation of successful authentication (e.g., navigation to the next screen).

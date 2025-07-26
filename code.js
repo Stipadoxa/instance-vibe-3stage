@@ -9139,24 +9139,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
             figma.notify("\u274C Color styles scan failed", { error: true });
           }
           break;
-        case "generate-llm-prompt":
-          try {
-            const scanSession = await DesignSystemScannerService.getScanSession();
-            if (scanSession && ((_a = scanSession.components) == null ? void 0 : _a.length)) {
-              const llmPrompt = DesignSystemScannerService.generateLLMPrompt(
-                scanSession.components,
-                scanSession.colorStyles
-              );
-              figma.ui.postMessage({ type: "llm-prompt-generated", prompt: llmPrompt });
-            } else {
-              figma.notify("Scan components first", { error: true });
-            }
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            console.error("\u274C Error generating LLM prompt:", errorMessage);
-            figma.notify("Error generating prompt", { error: true });
-          }
-          break;
         case "update-component-type":
           const { componentId, newType } = msg.payload;
           try {

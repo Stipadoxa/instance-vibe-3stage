@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and easily navigable settings page with clear touch targets due to limited screen real estate.  They may be using the app in various contexts and have varying levels of technical proficiency.
+
+User Requirements
+Primary Goals: Modify account information, manage app preferences, control notification settings, log out securely.
+Secondary Goals: Access help resources, understand account status (e.g., "Verified ID"), easily locate specific settings.
+User Constraints: Small screen size, touch-only interaction, potential distractions, varying network conditions.
+Ready for handoff if:  All settings options from the reference image are present and navigable, top and bottom navigation bars are implemented using our design system components, and all interactive elements meet minimum touch target size requirements.
+
+Content Requirements
+Critical: Personal details section (allowing modification), business details section (allowing modification),  Access to Cars45 auction toggle,  Change phone number, Change email, Change language, Disable chats toggle, Disable Feedback toggle, Manage notifications, Change password, Delete my account permanently option, Log out option.
+Supporting: "Verified ID" badge with tooltip/explanation ("What is it?"),  clear visual indicators of active/inactive states (e.g., toggles).
+Contextual:  Error messages for invalid input, loading indicators where applicable, success messages after successful setting changes.
+
+Structural & Component Directives
+* Layout:  List view of settings options, following the vertical layout shown in the reference image.  Top and bottom navigation bars as per our design system.
+* Components: Utilize our existing app's list item component for each setting option.  Use existing toggle components for togglable settings.  Include our standard button component for actions like "Change password" and "Delete account permanently".
+* Styling:  Adhere to our established brand colors and typography.  Maintain visual consistency with the reference image while using our design system components.
+
+
+Screen Requirements
+Primary Actions:  Access and modify settings (e.g., tapping on a setting option), toggle settings on/off.
+Secondary Actions: Access help/information related to a specific setting.
+Screen States:  Default state, loading state (while saving changes), error state (e.g., invalid input), success state (after successful setting changes).
+Feedback Needs:  Visual confirmation of setting changes (e.g., toggle state change), clear error messages, loading indicators where applicable.

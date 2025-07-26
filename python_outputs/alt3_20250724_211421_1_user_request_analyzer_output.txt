@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise settings page with easily accessible options and clear visual hierarchy due to screen size limitations.  Touch interaction requires appropriately sized targets.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Understand account status (e.g., "Verified ID"), easily access help/information ("What is it?").
+User Constraints: Limited screen real estate, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included,  navigation is present and functional, and all interactive elements meet minimum tap target sizes.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Access to Cars45 auction (toggle), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear visual indicators for toggles (Active/Inactive).
+Contextual:  Error messages (if applicable for edits), loading indicators (if applicable for saving).
+
+Structural & Component Directives
+* Layout:  Single column list of settings options similar to reference image. Top and bottom app navigation bars as specified.
+* Components: Use existing app components for list items, toggles, and other interactive elements.
+* Styling: Maintain consistency with the existing app's visual style and color palette.
+
+Screen Requirements
+Primary Actions:  Navigate to each setting sub-page (for those requiring further input), toggle settings, initiate account deletion or logout.
+Secondary Actions: Access help/information links ("What is it?").
+Screen States: Default state, loading state (if applicable), error states (if applicable for edits).
+Feedback Needs: Visual confirmation of changes (e.g., toggle state change), loading indicators, and error messages as needed.

@@ -1,0 +1,91 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The `appbar` component (node ID: 10:5620) is used for the header as specified in the input.  The `card` component (node ID: 147:3743) is reused for the three metric cards to maintain consistency. A `native-rectangle` is used as a placeholder for the chart, as no specific chart component was provided.",
+    "styleApplication": "Color styles are directly applied using the `colorStyleName` property according to the designer's specifications.  These names ('Neutral/neutral90', 'Primary/primary50', 'Secondary/secondary50', 'Tertiary/tertiary50') are assumed to exist in the design system.",
+    "designSystemMapping": "The input's `appbar`, `card`, and `rectangle` components are mapped directly to corresponding components in the design system.  Properties within each component (e.g., `headline`, `title`, `value`, `unit`) are mapped to the corresponding slots within these components.",
+    "variantDecisions": "No specific component variants were specified in the input, so default variants are assumed for all components."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Analytics Dashboard",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Analytics Dashboard",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "MetricCards",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "card",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "title": "Users",
+            "value": "12,345",
+            "unit": "users",
+            "colorStyleName": "Primary/primary50"
+          }
+        },
+        {
+          "type": "card",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "title": "Revenue",
+            "value": "$10,000",
+            "unit": "$",
+            "colorStyleName": "Secondary/secondary50"
+          }
+        },
+        {
+          "type": "card",
+          "componentNodeId": "147:3743",
+          "properties": {
+            "title": "Growth",
+            "value": "15%",
+            "unit": "%",
+            "colorStyleName": "Tertiary/tertiary50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "height": 200,
+        "width": 375,
+        "fill": {
+          "r": 0.941,
+          "g": 0.941,
+          "b": 0.941
+        },
+        "cornerRadius": 8,
+        "horizontalSizing": "FILL"
+      }
+    }
+  ]
+}
+```

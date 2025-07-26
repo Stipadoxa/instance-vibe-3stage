@@ -1,0 +1,126 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs were selected based on the provided design system data and their suitability for the specified UI elements.  Input components were chosen for email and password fields, button components for login and social login options, and link components for the password recovery option.",
+    "styleApplication": "Text styles were applied according to the design system's text styles and were applied only to native-text elements.  Button variants were used to visually distinguish the primary login button from secondary social login buttons.",
+    "designSystemMapping": "The design system's components were mapped directly to the UI elements specified in the design.  Variants were chosen based on the desired functionality and appearance, as documented in the design specification.",
+    "variantDecisions": "Variants were chosen based on the design system's pre-defined variants. For example, 'Primary', 'Secondary', 'Large', and 'Medium' variants were chosen for buttons to clearly indicate their function and importance. Input variants were selected based on their type and state (e.g., Email, Password, placeholder).",
+    "nestedComponentHandling": "Nested components were handled by using single values for properties instead of arrays.  No textLayers arrays were used for nested components to prevent conflicts with the built-in component styling.",
+    "textPropertyMapping": "User text inputs were mapped to the exact property names defined in the design system's component schemas, ensuring accurate rendering and preventing generic property naming conflicts.  Specifically, 'placeholder' was mapped to 'placeholder-text', and 'text' was mapped to the 'Default' property for buttons and 'text' for native-text components."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "input",
+          "componentNodeId": "1902:3230",
+          "properties": {
+            "placeholder-text": "Email",
+            "variants": {
+              "State": "placeholder",
+              "Type": "Email"
+            }
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "1989:4040",
+          "properties": {
+            "placeholder-text": "Password",
+            "variants": {
+              "State": "placeholder",
+              "Type": "Password",
+              "Right icon": "open"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "1748:2883",
+          "properties": {
+            "Default": "Login",
+            "variants": {
+              "Type": "Primary",
+              "Size": "Large",
+              "State": "Default"
+            }
+          }
+        },
+        {
+          "type": "link",
+          "componentNodeId": "1271:11783",
+          "properties": {
+            "text": "Forgot Password?",
+            "variants": {
+              "Configuration": "Text",
+              "State": "Default"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "Default": "Continue with Google",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium",
+                  "State": "Default"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "1748:2883",
+              "properties": {
+                "Default": "Continue with Facebook",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium",
+                  "State": "Default"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Terms and Conditions",
+            "textStyle": "Caption/Small",
+            "colorStyleName": "Grayscale/gray",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a single-column list for settings, mirroring the provided reference image for intuitive navigation.  This vertical arrangement prioritizes readability and ease of scanning.  The `appbar` and `bottom navigation` components are placed at the top and bottom of the screen, respectively, to adhere to standard mobile app design conventions and ensure consistent navigational touch points across the application.",
+    "userFlowReasoning": "The user flow is linear, allowing users to sequentially access and modify settings. Toggles and forms are used for direct interaction, providing immediate feedback.  Navigation to additional screens is explicitly indicated through a label.",
+    "componentChoices": "The `list-item` component is used to represent each setting, enhancing clarity and consistency.  Forms (`text input`, `text area`) facilitate data entry for editable fields. Toggles (`switch`) handle on/off settings, Buttons (`Button`) are used for actions such as logout and account deletion.",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear labels and spacing between settings.  The use of the `list-item` component provides a structured visual layout with clear separation between settings. Text styles and color styles from the design system reinforce the hierarchy, using primary colors for headers and secondary colors for supporting text."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "textStyle": "Body/Medium",
+              "Trailing supporting text": "Active",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "textStyle": "Body/Medium",
+              "Trailing supporting text": "What is it?",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Body/Medium"
+            }
+          }
+        ]
+      },
+      {
+        "type": "bottom navigation",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "Label": ["Home", "Saved", "Sell", "Chat", "Profile"]
+        }
+      }
+    ]
+  }
+}
+```

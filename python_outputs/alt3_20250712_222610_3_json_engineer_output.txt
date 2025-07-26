@@ -1,0 +1,158 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (10:5620 for appbar, 10:10214 for list-item, 10:3907 for button) were selected based on the provided design specifications.  These IDs are assumed to represent the correct components within the design system.",
+    "styleApplication": "Text styles ('Title/Medium', 'Body/Medium') and color styles ('Neutral/neutral90', 'Neutral/neutral50') are applied directly as specified in the input JSON.  These styles are presumed to be defined and available in the design system.",
+    "designSystemMapping": "The input JSON directly maps to the design system components. List items are used for settings, buttons for actions. No transformation or adaptation is needed.",
+    "variantDecisions": "AppBar variants ('Mode': 'Light', 'Type': 'Default', 'Elevation': 'flat') and button variants (Platform, Size, Type, State, Color) are directly used as provided in the input, assuming they represent correct configurations within the design system."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Account Settings",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Personal Details",
+          "Supporting text": "Edit your personal information",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Business Details",
+          "Supporting text": "Manage your business profile",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Change Phone Number",
+          "Supporting text": "+1 555-123-4567",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Change Email",
+          "Supporting text": "your.email@example.com",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Change Language",
+          "Supporting text": "English",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Disable Chats",
+          "Supporting text": "Toggle chats on/off",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Disable Feedback",
+          "Supporting text": "Turn feedback features on/off",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Manage Notifications",
+          "Supporting text": "Customize notification settings",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Change Password",
+          "Supporting text": "Update your account password",
+          "colorStyleName": "Neutral/neutral90",
+          "textStyle": "Title/Medium"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Delete My Account Permanently",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Error/error50"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Log Out",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          }
+        }
+      }
+    ]
+  }
+}
+```

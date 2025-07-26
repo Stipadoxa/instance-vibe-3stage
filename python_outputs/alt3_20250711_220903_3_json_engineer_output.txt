@@ -1,0 +1,98 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided JSON uses native Figma components (native-text, native-image, button) as the input did not specify custom component IDs.  These components are chosen for their simplicity and broad compatibility within Figma plugins.",
+    "styleApplication": "Text styles and color styles are directly applied from the input JSON, maintaining consistency with the designer's specifications.  The `textStyle` and `colorStyleName` properties are assumed to refer to a pre-defined design system within Figma.",
+    "designSystemMapping": "The design system mapping is implicit, relying on the assumption that the `textStyle` and `colorStyleName` properties refer to specific styles defined within the Figma design system.  Component variant selection is also based directly on the input.",
+    "variantDecisions": "Component variants are selected based on the `variants` property provided in the input JSON.  For instance, the button variant is determined by the 'Size', 'Type', and 'Color' properties within the 'variants' object."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Card",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 335,
+    "layoutAlign": "STRETCH",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Image Container",
+        "layoutMode": "VERTICAL",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "image",
+            "componentNodeId": "10:7816",
+            "properties": {
+              "variants": {
+                "Type": "1 image"
+              },
+              "imageSrc": "placeholder_image.jpg"
+            },
+            "width": 303,
+            "height": 202
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Text Container",
+        "layoutMode": "VERTICAL",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "text": "Product Title",
+            "properties": {
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "$29.99",
+            "properties": {
+              "textStyle": "Label/Large",
+              "colorStyleName": "Primary/primary50",
+              "fontWeight": "500",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "variants": {
+            "Size": "Medium",
+            "Type": "Filled",
+            "Color": "Green"
+          },
+          "text": "Buy Now",
+          "colorStyleName": "Primary/primary50"
+        }
+      }
+    ]
+  }
+}
+```

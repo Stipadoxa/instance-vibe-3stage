@@ -1318,11 +1318,6 @@ var AIDesignerUI = (() => {
         });
       }
       this.setupFilterButtons();
-      const promptBtn = document.querySelector('[onclick="generateLLMPrompt()"]');
-      if (promptBtn) {
-        promptBtn.removeAttribute("onclick");
-        promptBtn.addEventListener("click", () => this.generateLLMPrompt());
-      }
     }
     /**
      * Setup filter button event listeners
@@ -1364,9 +1359,6 @@ var AIDesignerUI = (() => {
         });
         window.messageHandler.register("component-type-updated", (msg) => {
           this.handleComponentTypeUpdated(msg.componentId, msg.newType, msg.componentName);
-        });
-        window.messageHandler.register("llm-prompt-generated", (msg) => {
-          this.handleLLMPromptGenerated(msg.prompt);
         });
       }
     }
@@ -1630,23 +1622,6 @@ var AIDesignerUI = (() => {
       console.log(`\u2705 Component type updated: ${componentName} \u2192 ${newType}`);
     }
     /**
-     * Generate LLM prompt for the design system
-     */
-    generateLLMPrompt() {
-      import_message_handler.MessageHandler.sendMessage({ type: "generate-llm-prompt" });
-      console.log("\u{1F4CB} Generating LLM prompt for design system");
-    }
-    /**
-     * Handle generated LLM prompt
-     */
-    handleLLMPromptGenerated(prompt) {
-      import_ui_framework.UIFramework.copyToClipboard(prompt).then(() => {
-        if (this.elements.scanStatusText) {
-          this.showScanStatus("\u{1F4CB} Prompt copied to clipboard!", "success");
-        }
-      });
-    }
-    /**
      * Enable the generator tab after successful scan
      */
     enableGeneratorTab() {
@@ -1819,10 +1794,6 @@ var AIDesignerUI = (() => {
   window.rescanDesignSystem = function() {
     var _a;
     (_a = window.designSystemUI) == null ? void 0 : _a.rescanDesignSystem();
-  };
-  window.generateLLMPrompt = function() {
-    var _a;
-    (_a = window.designSystemUI) == null ? void 0 : _a.generateLLMPrompt();
   };
   window.enableGeneratorTab = function() {
     var _a;

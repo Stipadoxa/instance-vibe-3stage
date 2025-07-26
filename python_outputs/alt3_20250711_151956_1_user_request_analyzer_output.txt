@@ -1,0 +1,29 @@
+Domain & Context
+Domain: E-commerce domain focused on product display and purchase
+User Type: Mobile shoppers browsing product listings
+Platform Impact: Mobile users need concise product information with large, clear touch targets; screen real estate is limited, requiring efficient layout.
+
+User Requirements
+Primary Goals: Quickly view product details (image, title, price), initiate purchase.
+Secondary Goals:  Compare similar products (implicitly), easily add to cart/wishlist (depending on design choices for the "buy button").
+User Constraints: Limited screen real estate, touch-only interaction, potential for slow network connections impacting image loading.
+Ready for handoff if: Image loads reliably, title, price, and "buy" button are clearly visible and have appropriately sized touch targets; text is legible at typical mobile viewing distances.
+
+
+Content Requirements
+Critical: Product image, product title, product price, "Buy" button.
+Supporting:  Could include a rating (stars), brief description, availability indicator (in stock/out of stock).
+Contextual: Loading indicator for image, "added to cart" confirmation, error messages (if applicable).
+
+
+Structural & Component Directives
+* Layout: Single-column layout optimized for mobile.  Consider a vertical layout to maximize space efficiency.
+* Components:  Image (primary visual element, possibly larger than other elements), Title (prominent text, below the image), Price (clearly displayed, ideally in a contrasting color), Buy button (prominently placed, clear call to action).
+* Styling: Use high-contrast colors for price and button to ensure legibility.  Button should follow platform-specific design guidelines (e.g., iOS or Android) for a consistent user experience.
+
+
+Screen Requirements
+Primary Actions:  View product details, initiate purchase ("Buy" button).
+Secondary Actions:  (Potentially) Add to wishlist (a secondary action, if that function is included in the scope of the "buy button").
+Screen States: Default state (product details displayed), loading state (while image is loading), potential error state (if image fails to load or if there is a problem with price data).
+Feedback Needs:  Loading indicator for image, visual confirmation upon successful interaction with the "Buy" button.

@@ -1,0 +1,184 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Component Node IDs (e.g., 10:8492 for input, 10:8459 for divider, 10:9912 for switch, 10:3907 for button) were selected directly from the provided `layoutData` to ensure accurate component instantiation in the Figma plugin.  These IDs represent specific instances of pre-built components within the design system, ensuring consistency.",
+    "styleApplication": "Text styles ('Title/Medium', 'Caption/Small') and color styles (e.g., 'Neutral/neutral90', 'Neutral/neutral50', 'Primary/primary50', 'Secondary/secondary90') are applied directly as specified in the `layoutData`.  The colorStyleName property ensures consistency with the design system.  Where RGB colors were provided, the format was preserved.",
+    "designSystemMapping": "The design specifications are mapped directly to the corresponding components and styles from the design system.  No interpretations or modifications were made. Component properties and variants are directly translated from the `layoutData` input.  The color values were either picked up as a style name or an RGB value.",
+    "variantDecisions": "Component variants are selected based on the values provided in the `layoutData` input.  For example, input components have their `Type` and `State` variants specified, the switch component has its `Selected`, `State`, and `Icon` variants defined, and the button has its `Platform`, `Size`, `Type`, `State`, and `Color` variants set based on the input values. No variants were added or altered."
+  },
+  "renderingData": {
+    "layoutContainer": {
+      "name": "Settings Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "width": 375,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH"
+    },
+    "items": [
+      {
+        "type": "native-text",
+        "text": "Profile",
+        "properties": {
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Name",
+          "placeholder-text": "Enter your name",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral50"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Email",
+          "placeholder-text": "Enter your email",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral50"
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "componentNodeId": "10:8459",
+        "width": 375,
+        "height": 1,
+        "fill": {
+          "colorStyleName": "Neutral/neutral10"
+        },
+        "cornerRadius": 0,
+        "properties": {
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "Notifications",
+        "properties": {
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "switch",
+        "componentNodeId": "10:9912",
+        "properties": {
+          "variants": {
+            "Selected": "false",
+            "State": "enabled",
+            "Icon": "false"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "componentNodeId": "10:8459",
+        "width": 375,
+        "height": 1,
+        "fill": {
+          "colorStyleName": "Neutral/neutral10"
+        },
+        "cornerRadius": 0,
+        "properties": {
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "Logout",
+        "properties": {
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Secondary/secondary90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Logout",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "styleInfo": {
+            "fills": [
+              {
+                "type": "SOLID",
+                "color": "#fc2533",
+                "opacity": 1
+              }
+            ],
+            "primaryColor": {
+              "type": "SOLID",
+              "color": "#fc2533",
+              "opacity": 1
+            },
+            "textColor": {
+              "type": "SOLID",
+              "color": "#fcfdfd",
+              "opacity": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "App Version: 1.0.0",
+        "properties": {
+          "textStyle": "Caption/Small",
+          "colorStyleName": "Neutral/neutral50",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "Need help?",
+        "properties": {
+          "textStyle": "Caption/Small",
+          "colorStyleName": "Neutral/neutral50",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      }
+    ]
+  }
+}
+```

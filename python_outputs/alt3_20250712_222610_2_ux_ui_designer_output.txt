@@ -1,0 +1,174 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical list to present settings options, leveraging the screen's vertical space effectively for mobile users.  Items are spaced 24px apart for visual breathing room and improved tap target sizes. Top and bottom padding is increased to 48px to create a less cluttered feel and enhance visual separation from the app bar components.",
+    "userFlowReasoning": "Users navigate the settings through a linear, top-to-bottom flow. Each setting (except Log Out and Delete Account) links to a detail screen, offering a clear and intuitive modification method. The Log Out and Delete Account actions are presented directly to minimize clicks, aligning with secondary action placement recommendations.",
+    "componentChoices": "The 'List item' component from the Design System is selected for each setting option, providing a standardized layout and visual consistency.  Edit fields for inputs use 'text input' and 'select' components, using default states for usability and providing adequate touch target sizes. The 'Button' component is used for actions like 'Log Out' and 'Delete Account'.",
+    "visualHierarchy": "Visual hierarchy is achieved by utilizing consistent spacing, clear labels, and grouping settings logically. The app bar provides clear indication of screen context. The text styles (Body/Medium for labels, Caption/Small for supporting text) aid in creating clear visual distinctions and reducing visual noise."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Personal Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "Edit your personal information",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Business Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "Manage your business profile",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Phone Number",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "+1 555-123-4567",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Email",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "your.email@example.com",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Language",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "English",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "Toggle chats on/off",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "Turn feedback features on/off",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage Notifications",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "Customize notification settings",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "Supporting text": "Update your account password",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Delete My Account Permanently",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "colorStyleName": "Error/error50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    }
+  ]
+}
+```

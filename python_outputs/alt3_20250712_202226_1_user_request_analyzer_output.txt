@@ -1,0 +1,27 @@
+Domain & Context
+Domain: E-commerce domain with product discovery
+User Type: Mobile users searching for products within an app
+Platform Impact: Mobile users expect a concise, visually appealing search results screen with easy navigation and large touch targets.  Screen real estate is limited.
+
+User Requirements
+Primary Goals: View search results, filter results, select a product
+Secondary Goals: Refine search, easily navigate through results
+User Constraints: Limited screen real estate, touch-only interaction, potential for slow network connections impacting loading time.
+Ready for handoff if: Search bar functions correctly, filters are applied smoothly, product cards are tappable and display necessary information, loading states are handled gracefully.
+
+Content Requirements
+Critical: Search results (product titles, images, prices), filter chips (at least 3 options), product cards (image, title, price, potentially rating).
+Supporting: Number of results found, pagination/scrolling indicators if more than 3 results.
+Contextual: Loading indicator while fetching results, "No results found" message, error messages for network issues.
+
+Structural & Component Directives
+*   **Layout:** Top app bar containing a search bar, followed by a row of 3 filter chips, then a vertically stacked list of 3 product cards.  Vertical scrolling for additional results if present.
+*   **Components:** Search bar (with clear button), Filter chips (e.g., Price, Brand, Category), Product cards (image, title, price).
+*   **Styling:**  Adherence to existing app styling guidelines.
+
+
+Screen Requirements
+Primary Actions: Selecting a product card to view details.
+Secondary Actions: Applying filters, performing a new search.
+Screen States: Loading state (while fetching results), results state (showing products), no-results state, error state.
+Feedback Needs: Clear visual indication of applied filters, smooth scrolling and loading animations, informative error messages.

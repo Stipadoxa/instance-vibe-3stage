@@ -1,0 +1,95 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs from the design system (10:8492 for input, 10:3907 for button) were directly used as provided in the layoutData.  The 'text' component is implemented as a `native-text` element since no specific component ID was provided for it.",
+    "styleApplication": "Text styles and color styles are applied directly using the `textStyle` and `colorStyleName` properties as specified in the input.  These properties are assumed to map directly to the Figma design system.",
+    "designSystemMapping": "The input's component types ('text', 'input', 'button') are mapped to corresponding Figma components.  Properties like `label-text`, `placeholder-text`, `Action`, `variants`, and `colorStyleName` are directly translated to their Figma component equivalents.",
+    "variantDecisions": "Component variants ('Type', 'State', 'Platform', 'Size', 'Color') for input and button components are directly applied based on the input's specifications.  No variant modifications were made."
+  },
+  "renderingData": {
+    "layoutContainer": {
+      "name": "Login Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 48,
+      "paddingBottom": 48,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "width": 375,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH"
+    },
+    "items": [
+      {
+        "type": "native-text",
+        "text": "Welcome",
+        "properties": {
+          "textStyle": "Headline/Medium",
+          "colorStyleName": "Neutral/neutral90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "center"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Email",
+          "placeholder-text": "Enter your email",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Password",
+          "placeholder-text": "Enter your password",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Sign in",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Sign up",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Text",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      }
+    ]
+  }
+}
+```

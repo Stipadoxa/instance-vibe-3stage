@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a streamlined settings page with clear, concise options and large, easily tappable targets.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Easily locate specific settings, understand the implications of each setting change, securely manage account access.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, varying network conditions.
+Ready for handoff if: All critical settings are present and clearly labeled; navigation is intuitive and consistent with the app's design system; touch targets meet minimum size requirements.
+
+Content Requirements
+Critical: Personal details (Name, potentially address, phone number, email), Business details (if applicable), Manage notifications, Change password, Log out.
+Supporting:  Change language, Disable chats, Disable Feedback, "Verified ID" badge information.
+Contextual:  Success/error messages after saving changes, loading indicators during processing of requests.
+
+
+Structural & Component Directives
+* Layout: Vertical list of settings, each setting presented as a row with labels and, where applicable, secondary information or toggles.  Top and bottom app navigation bars present.
+* Components:  Use existing app components for lists, toggles, and buttons.  Follow established design system guidelines for typography, spacing, and color.  Right-aligned status indicators or action icons (e.g., "Active", "What is it?").
+* Styling:  Refer to the provided reference image for color palette and visual hierarchy.  Adhere to the company’s design system.
+
+
+Screen Requirements
+Primary Actions:  Tap on a setting to modify it, log out.
+Secondary Actions:  Access help or information related to a specific setting (e.g., "What is it?").
+Screen States:  Default state, loading state (while saving changes), error state (if setting modification fails).
+Feedback Needs:  Clear visual confirmation of changes saved, concise and informative error messages.

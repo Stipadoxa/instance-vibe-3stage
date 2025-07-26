@@ -1,0 +1,154 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical list for settings items, providing a clear and concise structure.  This approach is ideal for mobile users due to its intuitive, single-column navigation. Top and bottom app bars are included for standard mobile navigation patterns, consistent with platform conventions.  Item spacing of 24px ensures readability and clear touch targets.",
+    "userFlowReasoning": "The user flow is designed for simplicity and efficiency, allowing users to access and modify settings with minimal taps. Settings are organized logically, making it easy to find specific options.  The use of switches and clear action indicators streamline the interaction.",
+    "componentChoices": "The design leverages standard mobile components to ensure familiarity and usability. The app bar provides back navigation and screen title. List items clearly display settings with action indicators and switches for toggles. A save button on the bottom bar is incorporated to allow for changes to be stored.",
+    "visualHierarchy": "Visual hierarchy is established through the use of consistent spacing, typography, and color. The top app bar is visually prominent, followed by the setting list. Clear labels, and the consistent use of neutral colors enhance legibility."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Personal Details",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Title/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Business Details",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Title/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Phone Number",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Email",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Language",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium",
+        "Trailing": "Selector"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium",
+        "Trailing": "switch"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium",
+        "Trailing": "switch"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage Notifications",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Delete my account permanently",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Log Out",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Save Changes",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "colorStyleName": "Primary/primary50"
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,122 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Components selected based on UX/UI designer's specifications.  Input components for email/password, button for primary action, buttonGroup for social logins, link for password reset, and native-text for terms.",
+    "textPropertyMapping": "User text mapped directly to schema properties where possible.  For example, 'placeholder' in the input component was mapped to 'placeholder' property. Button text was mapped to the 'text' property in the schema.",
+    "nestedComponentHandling": "Nested components (buttonGroup) are handled by including only properties and variants defined by the schema.  Text properties of nested buttons are mapped individually.",
+    "variantDecisions": "Variants were selected based on designer's input to maintain consistency and visual hierarchy. Primary button uses 'Large' size and 'Filled' style. Social login buttons use 'Medium' size and 'Outline' style."
+  },
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24
+  },
+  "items": [
+    {
+      "type": "input",
+      "componentNodeId": "64:1101",
+      "properties": {
+        "placeholder": "Email",
+        "variants": {
+          "State": "Default",
+          "Size": "Medium",
+          "Style": "Filled"
+        }
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "64:1101",
+      "properties": {
+        "placeholder": "Password",
+        "variants": {
+          "State": "Default",
+          "Size": "Medium",
+          "Style": "Filled"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "34:1219",
+      "properties": {
+        "Default": "Sign In",
+        "variants": {
+          "Size": "Large",
+          "State": "Default",
+          "Content": "Only Icons",
+          "Style": "Filled"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "button",
+          "componentNodeId": "34:1219",
+          "properties": {
+            "Default": "Google",
+            "variants": {
+              "Size": "Medium",
+              "State": "Default",
+              "Content": "Icons + Text",
+              "Style": "Outline"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "34:1219",
+          "properties": {
+            "Default": "Facebook",
+            "variants": {
+              "Size": "Medium",
+              "State": "Default",
+              "Content": "Icons + Text",
+              "Style": "Outline"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "34:1219",
+          "properties": {
+            "Default": "Apple",
+            "variants": {
+              "Size": "Medium",
+              "State": "Default",
+              "Content": "Icons + Text",
+              "Style": "Outline"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "link",
+      "componentNodeId": "130:5269",
+      "properties": {
+        "text": "Forgot Password?",
+        "textStyle": "Caption/Small"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "text": "Terms & Conditions",
+        "textStyle": "Caption/Small",
+        "colorStyleName": "Neutral/neutral80",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    }
+  ]
+}

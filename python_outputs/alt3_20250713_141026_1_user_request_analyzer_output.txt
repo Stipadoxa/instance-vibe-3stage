@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with clear and easily accessible options, optimized for touch interaction. Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, and log out securely.
+Secondary Goals:  Understand account status (e.g., "Verified ID"), access help or information related to specific settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings from the provided reference image are included, using the provided design system components.  Navigation is intuitive and clear, and touch targets are appropriately sized.
+
+Content Requirements
+Critical:  Personal details (potentially nested screen), business details (potentially nested screen), access to Cars45 auction toggle (with status indication), "Verified ID" badge status and explanation, Change phone number, Change email, Change language, Disable chats toggle, Disable feedback toggle, Manage notifications (potentially nested screen), Change password, Delete my account permanently, Log out.
+Supporting:  Clear visual indicators (icons where appropriate) for each setting, helpful labels and descriptions.
+Contextual:  Confirmation dialogs before actions like deleting the account, loading indicators for network operations.
+
+
+Structural & Component Directives
+* Layout:  List-based layout with clear visual separation between settings, similar to the reference image.  Consider using expandable sections for nested settings (Personal Details, Business Details, Manage Notifications).
+* Components: Utilize pre-existing components from the provided design system.  Settings should be presented using consistently styled list items (e.g., list rows with titles and potentially secondary information or toggles).  Navigation should use the standard back button component for mobile.
+* Styling: Adhere to the existing design system's color palette and typography.  Use visual cues (e.g., icons, checkmarks, toggles) to reinforce the purpose of each setting.  Consider using the color green as seen in the reference image to highlight important sections.
+
+Screen Requirements
+Primary Actions:  Tap on a setting to modify it, Tap "Log Out", tap to confirm account deletion.
+Secondary Actions: Access "What is it?" explanations (for items like "Verified ID"), Navigate to detailed nested pages.
+Screen States:  Default state (settings list displayed), loading state (when making network calls), success state (after successful setting change). Error states should be included for failed actions (e.g., network failures, incorrect input).
+Feedback Needs:  Clear visual feedback on successful setting changes (e.g., toggles changing state, confirmations), appropriate loading indicators and error messages.
+
+

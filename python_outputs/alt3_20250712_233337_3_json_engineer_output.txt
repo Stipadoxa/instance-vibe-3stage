@@ -1,0 +1,262 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The `list-item` component (componentNodeId: 10:10214) is used for all settings entries to maintain consistency and ensure adherence to touch target size guidelines.  The `switch` component (componentNodeId: 10:9912) is used for the boolean 'Access to Cars45 auction' setting, and the `button` component (componentNodeId: 10:3907) is used for the 'Delete Account' and 'Log Out' actions to provide clear visual distinction and prevent accidental actions.  Text components are used for headings and any other necessary text elements.",
+    "styleApplication": "Text styles and color styles are applied directly as specified in the input JSON.  This directly maps the designer's styling choices to the Figma component properties.  Text styles such as 'Title/Large', 'Body/Medium', and 'Caption/Small' are used according to the visual hierarchy and context.",
+    "designSystemMapping": "The JSON directly reflects the design system's components and styles. The componentNodeIds are directly taken from the design specification, and colorStyleNames are used to ensure consistency with the designer's specified color palette.  The existing component structure is leveraged to create a consistent visual appearance across all settings screens.",
+    "variantDecisions": "Component variants are used where applicable, particularly in the list items where 'Trailing' variants such as 'arrow' are used, and the 'button' component uses the 'Size' variant for medium-sized buttons.  For the Cars45 auction switch, the 'Selected' variant is set to true according to the initial state provided by the designer. The 'Delete Account' button has an 'Error/error50' color variant for visual emphasis."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "text": "Settings",
+      "properties": {
+        "textStyle": "Title/Large",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Personal details",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Primary/primary50",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Business details",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Access to Cars45 auction",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": {
+          "type": "switch",
+          "componentNodeId": "10:9912",
+          "properties": {
+            "variants": {
+              "Selected": true
+            }
+          }
+        },
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "\"Verified ID\" badge",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-text": "What is it?",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Text"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change phone number",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change email",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change language",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable chats",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage notifications",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change password",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": "arrow",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Delete my account permanently",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Delete Account",
+            "variants": {
+              "Color": "Error/error50",
+              "Size": "Medium"
+            }
+          }
+        },
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Log out",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "trailing-icon": {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Log Out",
+            "variants": {
+              "Size": "Medium"
+            }
+          }
+        },
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    }
+  ]
+}
+```

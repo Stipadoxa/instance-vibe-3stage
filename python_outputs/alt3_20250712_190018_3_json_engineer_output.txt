@@ -1,0 +1,93 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The appbar and bottom navigation components are selected directly based on their node IDs provided in the input.  The text components are used as a fallback for rendering plain text content where no specific design system component is explicitly defined for the notification itself.",
+    "styleApplication": "Text styles and color styles are applied directly as specified in the input JSON.  Color style names are preserved exactly as given by the designer, without any conversion to RGB values. The assumption is that these styles are correctly defined within the design system.",
+    "designSystemMapping": "The provided layout leverages existing components from the design system (appbar, bottom navigation).  The notification content is mapped to generic text components. If a custom notification component exists in the design system and its node ID is provided, it should replace the current text components.",
+    "variantDecisions": "Appbar and bottom navigation variants are applied as specified in the input.  No additional variant decisions are made as the input specifies the required configurations."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notification Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notification",
+        "subheadline": "",
+        "Settings": "",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Notification Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "You have a new message from John Doe",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Check out this amazing deal!",
+          "properties": {
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral50",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Bottom navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": [
+          "Home",
+          "Saved",
+          "Sell",
+          "Sell",
+          "Profile"
+        ]
+      }
+    }
+  ]
+}
+```

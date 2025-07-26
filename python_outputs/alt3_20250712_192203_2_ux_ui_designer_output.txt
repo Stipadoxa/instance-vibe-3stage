@@ -1,0 +1,79 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical list to showcase notifications, prioritizing recency.  A top app bar provides navigation and context, while a bottom navigation bar ensures easy access to other app sections.  Consistent spacing (24px) between elements maintains visual clarity and scannability.",
+    "userFlowReasoning": "The user flow is straightforward: users view notifications in a list, tap an item for details, and can potentially mark as read via a swipe action (not explicitly implemented here, but designed for future integration). This keeps the primary task (viewing notifications) simple and uncluttered.",
+    "componentChoices": "The 'appbar' component provides a clear header, 'list-item' components display each notification concisely, and 'Bottom navigation' ensures smooth navigation between other app sections.  The design prioritizes efficiency and avoids unnecessary complexity. The components are chosen based on their suitability for concise display and intuitive touch interactions on a mobile device, aligning with the user constraints.",
+    "visualHierarchy": "Visual hierarchy is established using clear spacing, a consistent font size and style for notifications, and a distinct top app bar.  Unread notifications could be emphasized through bolding or a visual cue (not implemented in this basic layout but considered for a future enhancement)."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notifications",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Title/Large"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Payment Received",
+        "Supporting text": "Your payment of $25.00 has been received.",
+        "Trailing supporting text": "10:00 AM",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      },
+      "imageNodes": [
+        {
+          "nodeName": "min-height-fix",
+          "nodeId": "10:10399",
+          "visible": true,
+          "hasImageFill": false
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "New Message from John",
+        "Supporting text": "Check out the latest updates.",
+        "Trailing supporting text": "9:30 AM",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Body/Medium"
+      },
+      "imageNodes": [
+        {
+          "nodeName": "min-height-fix",
+          "nodeId": "10:10399",
+          "visible": true,
+          "hasImageFill": false
+        }
+      ]
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": ["Home", "Saved", "Sell", "Sell", "Profile"]
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,311 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical list to maximize screen real estate on mobile.  Sections are implicitly created through visual dividers and spacing between logically related settings. This top-to-bottom flow is intuitive and easy to scan.  Sufficient padding is used around elements to ensure comfortable tap targets for one-handed use.",
+    "userFlowReasoning": "The user journey is straightforward: the user sees all settings, taps on a setting to modify it, and is given appropriate feedback (success/error messages). Irreversible actions (account deletion) have confirmation dialogs. Navigation is handled through top and bottom app bars, adhering to common mobile patterns.",
+    "componentChoices": "The `appbar` component is used for top and bottom navigation, providing a consistent look and feel.  `list-item` components display individual settings with clear labels.  Input fields (`text input`, `text area`) are used where modification is needed. Switches (`switch`) are used for toggle settings. Buttons (`Button`) are used for actions like log out and account deletion.  A `dialog` (confirmation) is used before irreversible actions.",
+    "visualHierarchy": "Visual hierarchy is established through spacing, padding, and consistent typography.  Section dividers enhance readability.  The use of clear labels and consistent design system components maintains a uniform visual style.  Important settings are not visually overemphasized to avoid cognitive overload."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Personal Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Edit Name",
+        "Supporting text": "Your full name",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "text input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Full Name",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Edit Phone Number",
+        "Supporting text": "Your phone number",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "text input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Phone Number",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Edit Email",
+        "Supporting text": "Your email address",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "text input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Email Address",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Language",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "select",
+          "componentNodeId": "10:10010",
+          "properties": {
+            "Overline": "Language",
+            "variants": {
+              "Platform": "Android+Web",
+              "State": "Filled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Account Settings",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Delete My Account",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Notifications",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "switch",
+          "componentNodeId": "10:9912",
+          "properties": {
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "switch",
+          "componentNodeId": "10:9912",
+          "properties": {
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage Notifications",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "dialog",
+      "componentNodeId": "10:12230",
+      "properties": {
+        "header": "Confirm Account Deletion",
+        "body": "Are you sure you want to delete your account? This action is irreversible.",
+        "variants": {
+          "Platform": "Android"
+        }
+      },
+      "componentInstances": [
+        {
+          "type": "Button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Cancel",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Text",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "Button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Delete Account",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

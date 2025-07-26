@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain, specifically user account management within a mobile application (Cars45 auction).
+User Type: Users of the Cars45 mobile application needing to manage their account settings and preferences.  This includes both individual users and potentially business users.
+Platform Impact: Mobile platform constraints necessitate a concise, touch-friendly interface with clear visual hierarchy and large tap targets.  Screen real estate is limited.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences, securely log out.
+Secondary Goals: Understand account status (e.g., "Verified ID" badge), access help/information about settings options.
+User Constraints: Limited screen size, reliance on touch input, potential for interruptions during use.
+Ready for handoff if: All settings options from the reference image are included using the provided design system components,  tap targets meet minimum size requirements, and navigation is intuitive and clear.
+
+Content Requirements
+Critical: Personal details (editable), business details (editable, if applicable), access to Cars45 auction (toggle/status), "Verified ID" badge (status and explanation), change phone number, change email, change language, disable chats, disable feedback, manage notifications, change password, delete account, log out.
+Supporting:  "What is it?" explanation for "Verified ID" badge.
+Contextual:  Error messages for invalid input or failed actions, success messages after actions are completed, loading indicators where applicable.
+
+Structural & Component Directives
+* Layout:  List-based layout similar to the reference image, using the provided design system's list component.
+* Components:  Use existing components from the provided design system for list items, toggles, buttons, etc.  Follow established design patterns for input fields and confirmation dialogs.
+* Styling: Adhere to the existing style guide's color palette, typography, and spacing guidelines.  Maintain visual consistency with the rest of the application.
+
+Screen Requirements
+Primary Actions: Edit personal details, edit business details (if applicable), toggle settings, change password, delete account, log out.
+Secondary Actions: Access help information ("What is it?" links), navigate back.
+Screen States: Default view, loading state (when making changes), success/error states (after completing actions).
+Feedback Needs: Clear visual indication of changes being saved (e.g., loading indicators, success messages). Error messages should be informative and actionable.  Confirmation dialog before deleting account.

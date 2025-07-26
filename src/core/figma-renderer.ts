@@ -626,6 +626,13 @@ export class FigmaRenderer {
           if (textNode) {
             matchMethod = 'exact-name';
             console.log(`✅ Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
+          } else {
+            // Enhanced fallback: match by name when ID fails (for nested components)
+            textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
+            if (textNode) {
+              matchMethod = 'name-fallback';
+              console.log(`✅ Found text node by name fallback: "${textNode.name}" (ID mismatch resolved)`);
+            }
           }
         }
       }
@@ -645,6 +652,14 @@ export class FigmaRenderer {
               matchMethod = 'semantic-classification';
               console.log(`✅ Found text node by semantic classification: "${textNode.name}" (${classification})`);
               break;
+            } else {
+              // Enhanced fallback: match by name when ID fails (for nested components)
+              textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
+              if (textNode) {
+                matchMethod = 'semantic-name-fallback';
+                console.log(`✅ Found text node by semantic name fallback: "${textNode.name}" (ID mismatch resolved)`);
+                break;
+              }
             }
           }
         }
@@ -662,6 +677,13 @@ export class FigmaRenderer {
           if (textNode) {
             matchMethod = 'partial-name';
             console.log(`✅ Found text node by partial name match: "${textNode.name}"`);
+          } else {
+            // Enhanced fallback: match by name when ID fails (for nested components)
+            textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
+            if (textNode) {
+              matchMethod = 'partial-name-fallback';
+              console.log(`✅ Found text node by partial name fallback: "${textNode.name}" (ID mismatch resolved)`);
+            }
           }
         }
       }

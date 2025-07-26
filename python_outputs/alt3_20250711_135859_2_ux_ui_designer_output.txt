@@ -1,0 +1,84 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single column, vertically stacked, to optimize for mobile screen real estate and readability.  Sufficient spacing is used between elements to ensure clear visual separation and avoid cramped layouts.  The \"Sign in\" button is placed prominently at the bottom to guide user action.",
+    "userFlowReasoning": "The user flow is straightforward: users first see the welcome message, then fill in their email and password, and finally tap the \"Sign in\" button.  The \"Sign up\" option is secondary and is presented below the main sign-in form, guiding the user to the primary action.",
+    "componentChoices": "Standard UI components from the design system are used for each element to provide a familiar and user-friendly experience.  Text input fields are used for email and password with appropriate placeholder text.  Primary and secondary buttons are used to guide user actions.",
+    "visualHierarchy": "Visual hierarchy is established through component size, placement, and color.  The \"Welcome\" title is the largest text element.  The input fields are clearly defined and separated.  The \"Sign in\" button is styled as a primary button with increased prominence through its size and color, while the \"Sign up\" button is styled as secondary."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Login Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 48,
+      "paddingBottom": 48,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "width": 375
+    },
+    "items": [
+      {
+        "type": "text",
+        "properties": {
+          "text": "Welcome",
+          "textStyle": "Headline/Medium",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "placeholder-text": "Email",
+          "label-text": "Email",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "placeholder-text": "Password",
+          "label-text": "Password",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Sign in",
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          }
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Sign up",
+          "variants": {
+            "Size": "Medium",
+            "Type": "Text",
+            "State": "Default",
+            "Color": "Green"
+          }
+        }
+      }
+    ]
+  }
+}
+```

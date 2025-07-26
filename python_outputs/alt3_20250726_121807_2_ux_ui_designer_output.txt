@@ -1,0 +1,392 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical scrolling list, grouped into logical sections for better organization and improved user navigation on a mobile screen.  Spacing between sections is achieved using dividers.  The visual hierarchy is established through clear labeling and appropriate component choices (e.g., using switches for boolean settings).",
+    "userFlowReasoning": "The user flow is linear, allowing users to sequentially navigate through the settings.  The primary actions are consistently positioned at the bottom for easy access, ensuring a smooth and intuitive user experience.  Critical settings are placed higher up for easy access, while secondary features are placed further down for the user to discover.  The delete account option should present a confirmation modal which is easily canceled if not desired.",
+    "componentChoices": "I chose `10:10214` (List item) over `10:7852` (Tabs) and `147:3743` (product card) because it provides a flexible and efficient way to display settings options with labels and input controls suitable for a mobile settings screen. Tabs would be too bulky for the large number of options presented, and the product card is for displaying e-commerce product information, not suited for settings.  The List item allows for concise display of setting options on mobile.",
+    "visualHierarchy": "Visual hierarchy is created using clear labels in a consistent font style for each setting.  The prominence of items is determined through placement and the use of input controls.  Dividers separate the setting groups for enhanced visual clarity.",
+    "variantSelectionRationale": "I chose `Condition='1-line'` for the list item over '2-line' and '3-line+' because most settings require only a single line of text for the label and input field.  Using a single line ensures conciseness and maximizes available screen real estate on mobile. `Leading='None'` and `Trailing='None'` were chosen over other leading/trailing options for most settings, as most settings only require a label and input; icons would add visual complexity without providing additional functionality.  For the switches, `Icon='false'` was chosen over `Icon='true'` to maintain a clean and minimal design.  `Show overline='False'` and `Show supporting text='False'` were chosen to streamline the information display and prevent screen clutter. This may change with future iterations once all content is known."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Settings",
+          "subheadline": ""
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Personal Details"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Edit Name",
+          "Supporting text": ""
+        },
+        "componentInstances": [{
+          "componentId": "635:4307",
+          "type": "icon"
+        }]
+      },
+      {
+        "id": "10:8492",
+        "type": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Your Name",
+          "label-text": "",
+          "supporting-text": "",
+          "counter": ""
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Edit Email",
+          "Supporting text": ""
+        },
+        "componentInstances": [{
+          "componentId": "635:4397",
+          "type": "icon"
+        }]
+      },
+      {
+        "id": "10:8492",
+        "type": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Your Email",
+          "label-text": "",
+          "supporting-text": "",
+          "counter": ""
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Edit Phone Number",
+          "Supporting text": ""
+        },
+        "componentInstances": [{
+          "componentId": "635:4387",
+          "type": "icon"
+        }]
+      },
+      {
+        "id": "10:8492",
+        "type": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Your Phone Number",
+          "label-text": "",
+          "supporting-text": "",
+          "counter": ""
+        }
+      },
+      {
+        "id": "10:8459",
+        "type": "divider",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Account Settings"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Change Password",
+          "Supporting text": ""
+        },
+        "componentInstances": [{
+          "componentId": "635:4140",
+          "type": "icon"
+        }]
+      },
+      {
+        "id": "10:8459",
+        "type": "divider",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Notifications"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Enable Notifications"
+        },
+        "componentInstances": [{
+            "componentId": "10:9912",
+            "type": "switch",
+            "variants": {
+              "Selected": "true",
+              "State": "enabled",
+              "Icon": "false"
+            }
+        }]
+      },
+      {
+        "id": "10:8459",
+        "type": "divider",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Other Settings"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Change Language",
+          "Supporting text": ""
+        },
+        "componentInstances": [{
+          "componentId": "635:4633",
+          "type": "icon"
+        }]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Disable Chats"
+        },
+        "componentInstances": [{
+            "componentId": "10:9912",
+            "type": "switch",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+        }]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Disable Feedback"
+        },
+        "componentInstances": [{
+            "componentId": "10:9912",
+            "type": "switch",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+        }]
+      },
+      {
+        "id": "10:8459",
+        "type": "divider",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Account Actions"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Delete Account"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Logout"
+        }
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Sell",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

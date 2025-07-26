@@ -1,0 +1,67 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertically stacked to maximize screen real estate on mobile.  The image is placed at the top to draw the user's attention, followed by title, price, and finally, the prominent 'Buy' button at the bottom. Sufficient padding is added between elements for comfortable touch targets.",
+    "userFlowReasoning": "The user flow is designed for quick product browsing and purchase initiation.  Tapping the card will lead to a separate product details page (not implemented in this JSON), allowing users to explore further if needed. The prominent 'Buy' button ensures a clear path to purchase.",
+    "componentChoices": "The 'card-listing' component is used as a container for the product information.  This component is chosen for its inherent visual appeal and structure for showcasing product details within a bounded space. Text components (title, price) and a 'Button' component ('Buy') are used for clarity and consistency.",
+    "visualHierarchy": "Visual hierarchy is established through size and placement. The product image is the largest element, followed by the title in a larger font size than the price.  The 'Buy' button, in terms of both size and color, is the most visually prominent element, guiding the user towards the primary action."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Card",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 335
+  },
+  "items": [
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "properties": {
+        "variants": {
+          "Type": "1 image"
+        },
+        "imageSrc": "placeholder_image.jpg" 
+      },
+      "width": 303,
+      "height": 202
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Product Title",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "$29.99",
+        "textStyle": "Label/Large",
+        "colorStyleName": "Primary/primary50",
+        "fontWeight": "500"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "variants": {
+          "Size": "Medium",
+          "Type": "Filled",
+          "Color": "Green"
+        },
+        "text": "Buy Now",
+        "colorStyleName": "Primary/primary50"
+      }
+    }
+  ]
+}
+```

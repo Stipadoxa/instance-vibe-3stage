@@ -1,0 +1,114 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs were selected based on the design system's component library.  Input fields use '64:1101', the primary login button uses '34:1219', secondary buttons use '91:1222', and the link uses '130:5269'.  Text component uses '130:3881'.",
+    "styleApplication": "Styles are applied through component variants.  Input fields use 'Size: Medium' and 'Style: Filled'. The primary button uses 'Size: Large' and 'Style: Filled'. Secondary buttons use 'Style: Secondary'.",
+    "designSystemMapping": "The design system's component library provided pre-built components for input fields, buttons, and links. These components were mapped directly to the design requirements.",
+    "variantDecisions": "Variants were chosen to maintain consistency with the design system and to provide visual hierarchy.  The primary button's larger size and filled style emphasize its importance.",
+    "nestedComponentHandling": "No nested components were detected.  The structure is straightforward with a vertical layout containing individual components.",
+    "textPropertyMapping": "User-provided text ('Email', 'Password', 'Log In', etc.) was directly mapped to the 'text' property of the respective components.  No schema-specific property names were needed as the design system components appropriately handle text input."
+  }
+}
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Authentication Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder-text": "Email",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder-text": "Password",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "34:1219",
+            "properties": {
+              "Default": "Log In",
+              "variants": {
+                "Size": "Large",
+                "State": "Default",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "91:1222",
+            "properties": {
+              "Default": "Continue with Google",
+              "variants": {
+                "Style": "Secondary"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "91:1222",
+            "properties": {
+              "Default": "Continue with Facebook",
+              "variants": {
+                "Style": "Secondary"
+              }
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "130:5269",
+            "properties": {
+              "text": "Forgot Password?"
+            }
+          },
+          {
+            "type": "native-text",
+            "componentNodeId": "130:3881",
+            "textStyleId": "Body/Regular",
+            "properties": {
+              "text": "By signing in, you agree to our Terms & Conditions",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management and settings configuration.  Specific context is a mobile application for Cars45 auction.
+User Type: Registered users of the Cars45 mobile app needing to manage their account settings and preferences.
+Platform Impact: Mobile users need a streamlined settings interface with clear visual hierarchy, large touch targets, and intuitive navigation.  Limited screen real estate requires efficient grouping and organization of settings.
+
+User Requirements
+Primary Goals: Access and modify personal and business details; manage notification preferences; update account security settings;  manage auction access.
+Secondary Goals:  Easily understand the meaning of "Verified ID" badge; securely log out of the application.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, varying network conditions.
+Ready for handoff if: All settings from the reference image are present and grouped logically,  navigation is consistent with the app's design system, touch targets meet accessibility guidelines.
+
+Content Requirements
+Critical: Personal details (name, etc.), Business details (if applicable), Access to Cars45 auction (toggle), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear visual indication of currently active settings (e.g., toggle state),  "What is it?" explanation for "Verified ID" badge.
+Contextual:  Error messages for invalid input, loading indicators, confirmation dialogs for destructive actions (account deletion).
+
+Structural & Component Directives
+* Layout: Single-column list of settings grouped by category (as per reference image). Top and bottom app navigation bars included.
+* Components: Use existing app components for list items, toggles, text fields, etc.  Consider expandable sections for grouped settings if necessary.
+* Styling: Adhere to the existing app's color scheme and style guide.  Maintain visual consistency with reference image where possible.
+
+
+Screen Requirements
+Primary Actions: Access and modify individual settings.
+Secondary Actions: Access help/support information (if relevant).
+Screen States: Default state, loading state (while saving changes), success state (after saving changes), error state (for invalid input).
+Feedback Needs: Clear visual indication of changes saved, error messages for invalid input, loading indicators during save operations, confirmation before destructive actions.

@@ -1,0 +1,188 @@
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "TopBar/Android",
+        "componentNodeId": "1424:10009",
+        "properties": {
+          "Title": "Login",
+          "variants": {
+            "Right action": "No action"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Login Content",
+        "layoutMode": "VERTICAL",
+        "layoutAlign": "STRETCH",
+        "itemSpacing": 16,
+        "paddingTop": 24,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "InputSingleline",
+            "componentNodeId": "1902:3230",
+            "properties": {
+              "Placeholder text": "Enter your mobile number",
+              "variants": {
+                "State": "placeholder"
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "Select",
+                "componentNodeId": "2220:5291",
+                "properties": {
+                  "Title": "+1",
+                  "variants": {
+                    "State": "Default"
+                  }
+                }
+              },
+              {
+                "type": "InputSingleline",
+                "componentNodeId": "1902:3230",
+                "properties": {
+                  "Placeholder text": "(201) 555-0123",
+                  "variants": {
+                    "State": "placeholder"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "Default": "Continue",
+              "variants": {
+                "Type": "Elevated",
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "or",
+            "properties": {
+              "textStyle": "Caption/Small",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "Google Pay Button",
+            "componentNodeId": "1841:3399",
+            "properties": {
+              "variants": {
+                "Type": "With Text",
+                "Style": "White"
+              }
+            }
+          },
+          {
+            "type": "Apple Pay Button",
+            "componentNodeId": "1841:3486",
+            "properties": {
+              "variants": {
+                "Type": "With Text",
+                "Style": "Black"
+              }
+            }
+          },
+          {
+            "type": "Facebook Button",
+            "componentNodeId": "404:4259",
+            "properties": {
+              "variants": {
+                "Style": "Black"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "By proceeding, you consent to get calls, WhatsApp or SMS messages, including by automated dialer, from Uber and its affiliates to the number provided. Text \"STOP\" to 89203 to opt out.",
+            "properties": {
+              "textStyle": "Caption/Small",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "This site is protected by reCAPTCHA and the Google ",
+            "properties": {
+              "textStyle": "Caption/Small",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "Link",
+            "componentNodeId": "1271:11783",
+            "properties": {
+              "Default": "Privacy Policy",
+              "variants": {
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "and ",
+            "properties": {
+              "textStyle": "Caption/Small",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          },
+          {
+            "type": "Link",
+            "componentNodeId": "1271:11783",
+            "properties": {
+              "Default": "Terms of Service",
+              "variants": {
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "text": " apply.",
+            "properties": {
+              "textStyle": "Caption/Small",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

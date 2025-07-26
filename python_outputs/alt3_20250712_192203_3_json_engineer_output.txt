@@ -1,0 +1,88 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The appbar component (10:5620) is used for the header, list-item components (10:10214) are used for the notification list, and navigation component (10:4724) for bottom navigation. These choices align with the design specifications and leverage existing Figma components for consistency and efficiency.",
+    "styleApplication": "Color styles and text styles are applied directly to the components.  The 'Neutral/neutral90' color style and 'Title/Large' text style are applied to the appbar headline, while 'Neutral/neutral90' color style and 'Body/Medium' text style are used for list item content. These styles are assumed to be defined in the design system.",
+    "designSystemMapping": "The design system's components and styles are directly mapped to the JSON structure. The component IDs, color styles, and text styles are taken from the design system scan data, ensuring consistency with the overall design language.",
+    "variantDecisions": "No specific component variants are used in this layout.  All list-item components use default settings based on provided properties. The design does not necessitate special variant configurations."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notifications",
+        "colorStyleName": "Neutral/neutral90",
+        "textStyle": "Title/Large"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "NotificationList",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items":[
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Payment Received",
+            "Supporting text": "Your payment of $25.00 has been received.",
+            "trailing-text": "10:00 AM",
+            "colorStyleName": "Neutral/neutral90",
+            "textStyle": "Body/Medium",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "New Message from John",
+            "Supporting text": "Check out the latest updates.",
+            "trailing-text": "9:30 AM",
+            "colorStyleName": "Neutral/neutral90",
+            "textStyle": "Body/Medium",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": ["Home", "Saved", "Sell", "Messages", "Profile"]
+      }
+    }
+  ]
+}
+```

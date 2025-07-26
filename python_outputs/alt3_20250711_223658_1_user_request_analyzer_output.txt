@@ -1,0 +1,27 @@
+Domain & Context
+Domain: E-commerce domain focused on product display and purchase initiation.
+User Type: Mobile shoppers browsing product listings.
+Platform Impact: Mobile users require concise product information, large tap targets, and a streamlined purchase flow due to screen size limitations and touch-based interaction.  Users may be interrupted easily.
+
+User Requirements
+Primary Goals: Quickly view product details (image, title, price), initiate purchase.
+Secondary Goals:  Potentially view product ratings or reviews (if space allows).
+User Constraints: Limited screen real estate necessitates concise information display; touch-based interaction requires larger tap targets to avoid accidental presses; users may be distracted and need clear, simple actions.
+Ready for handoff if: Image loads quickly, title, price, and buy button are clearly visible and have appropriately sized tap targets, and text is legible at a typical mobile viewing distance.
+
+Content Requirements
+Critical: Product image, product title, product price, "Buy" button.
+Supporting:  Could include a short product description (if space allows), potentially a star rating or number of reviews (if space allows).
+Contextual:  "Out of Stock" message if applicable, loading indicator while image loads.
+
+Structural & Component Directives
+* Layout:  Single vertical stack for the elements (Image at the top, then title, price, buy button).  Consider a horizontal layout if there are multiple product cards and they must fit across the screen
+* Components: Image component (responsive to screen size), Text component for title and price, Button component for "Buy."
+* Styling:  Consistent with overall app styling; clear visual hierarchy (e.g., title larger than price); use of color to distinguish price, buy button.
+
+
+Screen Requirements
+Primary Actions:  Tap "Buy" button.
+Secondary Actions:  None (within the card itself; navigation to product detail page would be a separate screen).
+Screen States: Default (showing all content), loading state (image loading), "Out of Stock" state.
+Feedback Needs:  Visual feedback on "Buy" button tap (e.g., change in color or animation).  Clear visual indicator (e.g., text) if out of stock.

@@ -1,0 +1,78 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertical, placing form fields above the primary action button to follow a conventional top-to-bottom form flow.  Social login buttons are positioned below the primary button, followed by the password recovery link and terms and conditions footnote, creating a clear visual hierarchy and efficient use of screen space.",
+    "userFlowReasoning": "The user flow is straightforward: enter credentials, tap 'Login', or choose a social login option. Password recovery is provided as a secondary option for users who have forgotten their credentials. The vertical arrangement keeps the primary actions at the top for quick access.",
+    "componentChoices": "I chose the 'text input' (id: 10:8492) component for username and password fields, the 'button' (id: 10:3907) component for the primary login button, and the 'text' (id: 24:10333) component for the terms and conditions footnote.  I chose these over other options like 'text area' (id: 10:8619) for the input fields because they are better suited for single-line input. I avoided using a 'searchbar' (id: 10:12086) since this is not a search form. The 'text' component is the simplest for the footnote.",
+    "visualHierarchy": "Visual hierarchy is established through vertical arrangement (fields above the primary button, etc.), button prominence (Large size), and visual spacing between sections. The primary login button uses a prominent color and size to emphasize it as the main call to action.",
+    "variantSelectionRationale": "For the login button (10:3907), I selected Size='Large', Type='Filled', Color='Green', and State='Default' instead of other options like 'Small' size or 'Outlined' type because a large, filled button is more prominent and easily tappable on a mobile device. The green color denotes a positive action.  The default state is appropriate for the initial screen state."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email",
+          "label-text": null,
+          "supporting-text": null,
+          "counter": null
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password",
+          "label-text": null,
+          "supporting-text": null,
+          "counter": null
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "24:10333",
+        "suggestedType": "text",
+        "textLayers": {
+          "POPULAR": "By tapping \"Login\", you agree to our Terms and Conditions"
+        }
+      }
+    ]
+  }
+}
+```

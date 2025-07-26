@@ -1,0 +1,244 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer clearly identifies the domain as 'Authentication', specifically focusing on mobile app login. This dictates a form-based layout prioritizing security and ease of use within a limited screen space.",
+    "layoutDecisions": "The layout uses a single-column vertical arrangement for input fields and buttons, which optimizes for mobile screen real estate and improves readability.  Social login buttons are grouped for visual clarity and efficient access. Spacing between elements is adjusted to ensure visual breathing room and prevent cramped layouts. ",
+    "userFlowReasoning": "The user flow begins with the input fields, proceeds to the primary action (login button), offers secondary actions (social logins), and finally includes a link for password recovery.  Error handling and loading indicators are embedded to provide immediate feedback and prevent user confusion.",
+    "componentChoices": "The selected components – 'Input', 'Button', and 'Link' – are fundamental for authentication and perfectly suit the form-based layout.  These components are standard, easily accessible, and promote intuitive user interaction.",
+    "visualHierarchy": "Prominence is established through the size and placement of the primary 'Log In' button.  Input fields are positioned above the button, naturally leading the user's eye down the form.  Social logins and the password recovery link are presented clearly as secondary actions.",
+    "variantSelectionRationale": "The 'Button' component uses the 'Large' and 'Primary' variants for the main login action to draw attention to it. For the social logins, 'Medium' and 'Secondary' variants were selected for clarity. These variant choices improve visual distinction and enhance user experience."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Authentication Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Authentication Content",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 48,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "input",
+              "componentNodeId": "64:1101",
+              "properties": {
+                "placeholder": "Email or Username",
+                "variants": {
+                  "State": "Default",
+                  "Size": "Medium",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "input",
+              "componentNodeId": "64:1101",
+              "properties": {
+                "placeholder": "Password",
+                "variants": {
+                  "State": "Default",
+                  "Size": "Medium",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "34:1219",
+              "properties": {
+                "text": "Log In",
+                "variants": {
+                  "Size": "Large",
+                  "State": "Default",
+                  "Content": "Only Icons",
+                  "Style": "Filled"
+                },
+                "styleInfo":{
+                  "primaryColor": {
+                    "type": "SOLID",
+                    "color": "#4e61f6",
+                    "opacity": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "button",
+                  "componentNodeId": "34:1219",
+                  "properties": {
+                    "text": "Continue with Google",
+                    "variants": {
+                      "Size": "Medium",
+                      "State": "Default",
+                      "Style": "Outline"
+                    }
+                  }
+                },
+                {
+                  "type": "button",
+                  "componentNodeId": "34:1219",
+                  "properties": {
+                    "text": "Continue with Facebook",
+                    "variants": {
+                      "Size": "Medium",
+                      "State": "Default",
+                      "Style": "Outline"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "link",
+              "componentNodeId": "130:5269",
+              "properties": {
+                "text": "Forgot Password?",
+                "variants": {
+                  "Style": "Secondary"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Authentication Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 48,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder": "Email or Username",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "34:1219",
+            "properties": {
+              "text": "Log In",
+              "variants": {
+                "Size": "Large",
+                "State": "Default",
+                "Content": "Only Icons",
+                "Style": "Filled"
+              },
+              "styleInfo":{
+                "primaryColor": {
+                  "type": "SOLID",
+                  "color": "#4e61f6",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "button",
+                "componentNodeId": "34:1219",
+                "properties": {
+                  "text": "Continue with Google",
+                  "variants": {
+                    "Size": "Medium",
+                    "State": "Default",
+                    "Style": "Outline"
+                  }
+                }
+              },
+              {
+                "type": "button",
+                "componentNodeId": "34:1219",
+                "properties": {
+                  "text": "Continue with Facebook",
+                  "variants": {
+                    "Size": "Medium",
+                    "State": "Default",
+                    "Style": "Outline"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "link",
+            "componentNodeId": "130:5269",
+            "properties": {
+              "text": "Forgot Password?",
+              "variants": {
+                "Style": "Secondary"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

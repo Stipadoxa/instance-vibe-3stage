@@ -1,0 +1,73 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The component IDs (10:7816, 10:3907) were directly used from the provided input, representing the Image and Button components from the Figma design system respectively.  No other components were specified, so these were the only ones selected.",
+    "styleApplication": "Text styles ('Title/Medium', 'Headline/Small') and color styles ('Neutral/neutral90', 'Primary/primary90', 'Primary/primary50') were directly applied from the input JSON to maintain visual consistency with the design specifications.  Color style names are assumed to be valid in the Figma design system.",
+    "designSystemMapping": "The input JSON already provides a direct mapping to the design system.  The Image component (10:7816) is assumed to be a valid image component, and the Button component (10:3907) uses the provided variant properties to select the appropriate style from the design system.",
+    "variantDecisions": "Button variants ('Size': 'Large', 'Type': 'Filled', 'Color': 'Green') were directly taken from the input JSON.  The Image variant ('Type': '1 image') implies a single image is to be used. These were selected to match the designer's specifications."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH",
+    "items": [
+      {
+        "type": "image",
+        "componentNodeId": "10:7816",
+        "properties": {
+          "variants": {
+            "Type": "1 image"
+          }
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "Product Title",
+        "properties": {
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "$19.99",
+        "properties": {
+          "textStyle": "Headline/Small",
+          "colorStyleName": "Primary/primary90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "text": "Buy",
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "Color": "Green"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      }
+    ]
+  }
+}
+```

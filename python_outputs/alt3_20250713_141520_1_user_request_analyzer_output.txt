@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management and settings configuration.  Specific context is a mobile application.
+User Type: Mobile app users needing to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear and concise options, optimized for touch interaction and smaller screen real estate.  They may be in distracting environments, so clarity and ease of use are paramount.
+
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Understand account status (e.g., "Verified ID" badge), access help resources (e.g., "What is it?"), securely log out of the application.
+User Constraints: Limited screen space, touch-only interaction, potential interruptions during use.
+Ready for handoff if: All settings options from the reference image are included using the provided design system components.  Navigation is intuitive and clear, and all actions have appropriate visual feedback.  Touch targets meet minimum size requirements.
+
+
+Content Requirements
+Critical:  Personal details (section with modifiable fields), Business details (section with modifiable fields), Access to Cars45 auction (toggle switch), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats (toggle switch), Disable Feedback (toggle switch), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear section headers and visual separators.
+Contextual:  Status indicators (e.g., "Active" for auction access), help text or links for clarification (e.g., "What is it?").
+
+
+Structural & Component Directives
+* Layout:  A single column list of settings options, similar to the reference image, utilizing the provided design system components for list items, headers, and toggles.
+* Components:  List items for each setting option; toggles for on/off settings; potentially a "What is it?" component (tooltip or modal) for context-sensitive information.
+* Styling:  Adhere to the color scheme and visual style of the provided design system and reference image.  Use system-provided typography.
+
+Screen Requirements
+Primary Actions: Navigate to different settings sections, toggle settings on/off, initiate password change, delete account, log out.
+Secondary Actions: Access help/information for specific settings (e.g., "What is it?").
+Screen States: Default state, loading state (if applicable for certain actions), potential success/failure states for account actions (password change, account deletion).
+Feedback Needs:  Visual feedback (e.g., checkmarks, changes to toggle status) to confirm settings changes, clear error messages if necessary.

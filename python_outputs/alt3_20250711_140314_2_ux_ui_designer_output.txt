@@ -1,0 +1,104 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is designed as a single-column vertical scroll to optimize for mobile screen real estate.  Sections are separated by dividers for clear visual hierarchy and improved readability.  Sufficient padding is added between elements to ensure comfortable tap targets.",
+    "userFlowReasoning": "The user flow is linear and straightforward.  The user can easily access and update their profile information, manage notification preferences, and securely log out.  All primary actions are clearly visible and directly accessible.",
+    "componentChoices": "The `appbar` component is used for the header to provide a consistent design pattern across the application. A `list-item` component is used to display each setting option, with clear labels and appropriate controls.  The `switch` component is used for the notification toggle, providing a clear on/off visual indicator. The `Button` component is used for logout.",
+    "visualHierarchy": "Visual hierarchy is established through the use of spacing, component size, and text styles.  The appbar provides a clear indication of the screen context.  Larger font sizes are used for primary actions and headings, while smaller font sizes are used for supporting elements and labels."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Settings Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "width": 375
+    },
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "User Profile",
+          "Trailing supporting text": "Edit",
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90",
+          "variants": {
+            "Condition": "1-line",
+            "Leading": "None",
+            "Trailing": "Icon",
+            "Show overline": "False",
+            "Show supporting text": "False"
+          }
+        }
+      },
+      {
+        "type": "divider",
+        "componentNodeId": "10:8459",
+        "properties": {
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          }
+        }
+      },
+      {
+        "type": "list-item",
+        "componentNodeId": "10:10214",
+        "properties": {
+          "Headline": "Notifications",
+          "variants": {
+            "Condition": "1-line",
+            "Leading": "Switch",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "False"
+          },
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "divider",
+        "componentNodeId": "10:8459",
+        "properties": {
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          }
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Logout",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Semantic/error50"
+        }
+      }
+    ]
+  }
+}
+```

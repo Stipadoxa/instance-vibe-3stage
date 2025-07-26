@@ -1,0 +1,172 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Used existing Figma component IDs for buttons (10:3907), inputs (10:8492), and appbar (10:5620) for consistency and maintainability.  These components are assumed to be styled correctly within the Figma design system.",
+    "styleApplication": "Text styles ('Caption/Small') and color styles ('Neutral/neutral50') are applied directly to native text components for consistent styling. Button colors and text colors are applied using colorStyleNames where possible; RGB values are used when exact style names are unavailable in the input JSON.  Input components inherit styling from the Figma component library.",
+    "designSystemMapping": "The design closely follows the existing Figma design system.  Components like buttons and inputs use pre-defined variants and styles.",
+    "variantDecisions": "Button variants ('Filled', 'Large', etc.) and input variants ('Filled', 'enabled') are selected to match the provided design specifications.  Appbar variants are selected for consistency with light theme.  Text styles are chosen to match visual hierarchy (e.g., 'Caption/Small' for disclaimers)."
+  }
+}
+---RATIONALE_SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "User Registration",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Create Account",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Registration Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "items": [
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Continue with Google",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Continue with Facebook",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Email address",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Password",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Avoid disclosing your password to anyone",
+          "properties": {
+            "textStyle": "Caption/Small",
+            "colorStyleName": "Neutral/neutral50",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "First name",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Last name",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Phone number",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Create an account",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "By continuing you agree to the Terms and Conditions and Privacy Policy",
+          "properties": {
+            "textStyle": "Caption/Small",
+            "colorStyleName": "Neutral/neutral50",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        }
+      ]
+    }
+  ]
+}

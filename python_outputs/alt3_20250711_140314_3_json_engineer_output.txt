@@ -1,0 +1,127 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The component Node IDs (e.g., `10:5620`, `10:10214`, `10:8459`, `10:3907`) are directly used from the provided `layoutData` as they represent specific instances of the appbar, list-item, divider, and button components from the Figma design system.",
+    "styleApplication": "Text styles (`textStyle: \"Title/Medium\"`) and color styles (`colorStyleName: \"Neutral/neutral90\"`) are applied as specified in the `layoutData` to maintain consistency with the design system.",
+    "designSystemMapping": "The `layoutData` directly reflects the design system's components.  The appbar, list-items, dividers, and button are all mapped to their corresponding Figma component IDs.",
+    "variantDecisions": "Component variants (e.g., `variants: { \"Condition\": \"1-line\", ... }`) are used as provided in the input `layoutData` to ensure accurate rendering of the components.  For example, the `list-item` component uses 1-line variants based on the design.  The button component uses the specified platform, size, type, state, and color variants."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "layoutAlign": "STRETCH",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "List Items Container",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 0,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "User Profile",
+              "trailing-text": "Edit",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Text",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "width": 375,
+            "height": 1,
+            "fill": {
+              "r": 0.9,
+              "g": 0.9,
+              "b": 0.9
+            },
+            "cornerRadius": 0,
+            "properties": {
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Notifications",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "Switch",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              },
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "width": 375,
+            "height": 1,
+            "fill": {
+              "r": 0.9,
+              "g": 0.9,
+              "b": 0.9
+            },
+            "cornerRadius": 0,
+            "properties": {
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Logout",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Semantic/error50"
+        }
+      }
+    ]
+  }
+}
+```

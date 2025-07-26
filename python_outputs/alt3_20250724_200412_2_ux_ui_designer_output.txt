@@ -1,0 +1,250 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer output clearly specifies a Settings domain. The user request centers around managing account settings and preferences within the Cars45 mobile application.",
+    "layoutDecisions": "A vertical list layout is chosen to mirror the reference image and to optimize for the mobile screen's limited vertical space.  Items are arranged vertically for easy scanning and navigation. Top and bottom navigation bars are included for a consistent user experience and easy access to other app features.",
+    "userFlowReasoning": "The user flow is straightforward: users scroll through the vertical list of settings, tap on an item to modify it, use toggles for boolean settings, and tap navigation items to proceed to sub-screens (e.g., personal details, business details).  Logging out is handled by a bottom navigation button.",
+    "componentChoices": "The `list-item` component is selected for each setting option. It's the ideal component for vertical list layouts, which is common for settings screen design patterns. The `appbar` component is used for both top and bottom navigation bars. The `switch` component is used for boolean settings.",
+    "visualHierarchy": "Visual hierarchy is established by the vertical list itself.  The top appbar provides clear context, while critical settings are grouped at the top of the list.  Less critical settings appear further down.  The logout button on the bottom appbar ensures a prominent and accessible way to end the session.",
+    "variantSelectionRationale": "The `Trailing` variant is set to `Switch` for boolean settings. The `Trailing` variant is set to `Icon` for settings that navigate to a sub-screen (e.g., personal details). The `Leading` variant is consistently set to `None` as there are no leading icons present in the reference image, aligning with the minimal design style. Overlines and supporting texts are avoided as per the visual reference image showing single-line items. The color scheme is aligned with the design system's color palettes that best suit the visual hierarchy observed in the reference image.",
+    "evidenceDocumentation": "The visual reference shows a vertical list layout with minimal visual elements.  Boolean settings are represented using toggles (switches). Items with navigation functionality employ a trailing arrow (Icon). The design system's `list-item` component mirrors this, making it the appropriate choice."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Cars45 Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "118:1617",
+        "properties": {
+          "Title": "Settings",
+          "variants": {
+            "Leading": "Icon",
+            "LeadingText": "None",
+            "Trailing": "None"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Personal details",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Business details",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Access to Cars45 auction",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "\"Verified ID\" badge",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "link",
+                "Show overline": false,
+                "Show supporting text": false
+              },
+              "Details": "What is it?"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change phone number",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change email",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change language",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Disable chats",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Disable Feedback",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Manage notifications",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change password",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Delete my account permanently",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Log out",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "appbar",
+        "componentNodeId": "116:1662",
+        "properties": {
+          "variants": {
+            "Amount": "2",
+            "Style": "Text + Icon"
+          }
+        }
+      }
+    ]
+  }
+}
+```

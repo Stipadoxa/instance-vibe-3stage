@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise settings page with clear, tappable options. Limited screen real estate necessitates efficient information architecture.  Touch interaction is primary.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Understand account status (e.g., "Verified ID"), easily access help resources ("What is it?"), securely log out.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included, using existing app components; top and bottom navigation bars are implemented; all interactive elements have sufficient tap targets; clear visual hierarchy is established.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Access to Cars45 auction (toggle), "Verified ID" badge (status indicator with explanation), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" help links for relevant settings (e.g., "Verified ID").
+Contextual:  Success/failure messages after saving changes, loading indicators during data updates.
+
+Structural & Component Directives
+* Layout:  List-based layout similar to the reference image, using the app's existing list item components. Top and bottom app navigation bars are required.
+* Components:  Use existing app components for list items, toggles, buttons, and text fields. The "What is it?" information should appear as a tooltip or modal.
+* Styling: Adhere to the existing app's style guide and color palette.
+
+
+Screen Requirements
+Primary Actions:  Tap on a setting to modify it (e.g., change phone number, toggle chats).
+Secondary Actions: Access help content ("What is it?"), navigate to other app sections using top/bottom navigation.
+Screen States: Default state (showing all settings), loading state (during data updates), success state (after successful changes), error state (if any errors occur).
+Feedback Needs: Clear visual indicators of changes saved (e.g., checkmarks, confirmation messages), loading indicators during data updates, error messages for invalid inputs.

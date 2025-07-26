@@ -1,0 +1,176 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., `10:5620` for appbar, `10:10214` for list-item, `10:8459` for divider) are directly used as provided in the input layout specification.  These IDs are assumed to correspond to pre-defined components in the design system.",
+    "styleApplication": "Text styles (`Body/Medium`) and color styles (e.g., `Neutral/neutral90`, `Primary/primary50`) are applied as specified in the input.  The plugin is expected to resolve these style names to their corresponding Figma style objects.  If the design system uses the same names but different style definitions than are mapped by the plugin, the rendered output will not match the design.",
+    "designSystemMapping": "The input layout directly maps to the design system components.  The `appbar`, `list-item`, and `divider` components are assumed to be present in the design system and configured to handle their own internal spacing and styling.  The plugin's role is simply to instantiate these components with the provided properties and populate their content based on the input data.",
+    "variantDecisions": "No specific component variants are explicitly defined in the input. The `list-item` components are assumed to be configured to adapt to the provided content (Headline, Supporting text). If list-items require specific variants for those properties then the output would not match the design."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "Supporting text": "Active",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "Supporting text": "What is it?",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "divider",
+            "componentNodeId": "10:8459"
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "divider",
+            "componentNodeId": "10:8459"
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "divider",
+            "componentNodeId": "10:8459"
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

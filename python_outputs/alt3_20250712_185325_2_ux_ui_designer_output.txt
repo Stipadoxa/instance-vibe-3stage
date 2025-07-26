@@ -1,0 +1,57 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The screen uses a vertical layout to display the notification list.  This is optimal for mobile screens with limited vertical space.  The top app bar is placed at the top, followed by the notification list, and finally, the bottom navigation bar at the bottom. Consistent spacing of 24 pixels is used between elements to ensure visual clarity and breathability.",
+    "userFlowReasoning": "The user flow is straightforward.  Users can view a list of notifications, tap on a notification to view details, and manage notifications.  Bottom navigation provides access to settings.  The interaction is simple, focusing on touch interactions appropriate for a mobile device.",
+    "componentChoices": "The app bar component provides a standard location for the title and potentially a back button if needed.  List items from the design system were selected for each notification, enabling image, title, subtitle, and timestamp display. The bottom navigation bar facilitates easy access to notification settings.",
+    "visualHierarchy": "Unread notifications will be visually distinguished through color and potentially other stylistic elements such as bolding of text or icon changes (Not implemented in this JSON as design details were not fully specified).  The visual hierarchy emphasizes the notification list as the main content area, making it the primary focus for the user."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notifications",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": [
+          "New message from John Doe",
+          "Meeting reminder",
+          "Order confirmation"
+        ],
+        "Supporting text": [
+          "Check out the latest updates",
+          "Meeting at 3 PM today",
+          "Your order #1234 has been shipped"
+        ],
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "bottom navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": ["Home", "Settings", "Profile"]
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,75 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs (10:7816, 10:3907) were directly taken from the input JSON as they represent specific image and button components from the design system.  No changes were made.",
+    "styleApplication": "Text styles ('Title/Medium', 'Body/Large') and color styles ('Neutral/neutral90', 'Primary/primary50') are directly applied as specified in the input JSON.  This maintains consistency with the design system.",
+    "designSystemMapping": "The input JSON already maps design elements to components and styles from the design system. No further mapping was needed. The image uses a single image variant.",
+    "variantDecisions": "Button variants ('Size': 'Large', 'Type': 'Filled', 'Color': 'Green', 'State': 'Default') were selected as provided in the input JSON. Image variant 'Type': '1 image' was used as provided. No modifications were performed."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Card",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 10,
+    "paddingTop": 10,
+    "paddingBottom": 10,
+    "paddingLeft": 10,
+    "paddingRight": 10,
+    "width": 300,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "properties": {
+        "variants": {
+          "Type": "1 image"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Product Title",
+      "properties": {
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "$19.99",
+      "properties": {
+        "textStyle": "Body/Large",
+        "colorStyleName": "Primary/primary50",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Buy",
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "Color": "Green",
+          "State": "Default"
+        },
+        "colorStyleName": "Primary/primary50"
+      }
+    }
+  ]
+}
+```

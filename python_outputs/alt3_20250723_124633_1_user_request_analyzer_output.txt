@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management.  Specific context is a mobile application settings page for managing user profile and account-related preferences.
+User Type: Mobile application users who need to access and modify their account settings, personal details, and preferences.
+Platform Impact: Mobile platform necessitates concise layout, clear touch targets, and efficient navigation due to limited screen real estate.  Users may be multitasking or interrupted, impacting attention span.
+
+User Requirements
+Primary Goals: Modify personal and account-related settings, manage notification preferences, and securely log out of the application.
+Secondary Goals: Access help/support resources related to settings, understand the meaning of account status indicators.
+User Constraints: Limited screen space restricts the amount of content visible at a time. Touchscreen interaction requires larger tap targets and clear visual hierarchy.  Users might be distracted or have limited attention spans.
+Ready for handoff if: All settings options from the reference image are present and accessible, top and bottom navigation bars are implemented according to the design system, and touch targets meet accessibility guidelines.
+
+Content Requirements
+Critical: Personal details (editable), business details (editable if applicable), access to Cars45 auction (status indicator), "Verified ID" badge (status and explanation), change phone number, change email, change language, disable chats, disable feedback, manage notifications, change password, delete account permanently, log out.
+Supporting:  "What is it?" explanation for "Verified ID" badge.
+Contextual:  Error messages for invalid input, confirmation dialogs for destructive actions (delete account).
+
+Structural & Component Directives
+* Layout:  Single column list of settings options, similar to the reference image. Top and bottom app navigation bars to be implemented using existing app components.
+* Components:  List items for settings, each with clear labels and appropriate interactive elements (switches, text fields, etc.).  Use existing app components.
+* Styling:  Adhere to the existing app's style guide and color palette.
+
+
+Screen Requirements
+Primary Actions:  Selecting and modifying setting options (e.g., changing email, toggling notifications).
+Secondary Actions: Accessing "What is it?" explanation for unclear items.
+Screen States: Default state displaying all settings, loading state while saving changes, error state for invalid inputs, success state after changes are saved.
+Feedback Needs: Clear visual feedback upon selection of settings options and successful completion of actions.  Error messages should be clearly visible and informative.

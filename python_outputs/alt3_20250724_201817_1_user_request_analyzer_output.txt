@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with large, easily tappable elements due to limitations in screen real estate and touch interaction.  They may be using the app in various contexts and may be interrupted easily.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage app preferences.
+Secondary Goals:  Easily understand each setting's purpose and effect. Access help or information where needed.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, varying network conditions.
+Ready for handoff if: All settings from the reference image are included, using existing app components, navigation is clear and consistent with app standards, and touch targets meet minimum size requirements.
+
+Content Requirements
+Critical:  Personal details (section with ability to edit), Business details (section with ability to edit), Access to Cars45 auction (toggle switch), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats (toggle switch), Disable Feedback (toggle switch), Manage notifications (link to another screen), Change password, Delete my account permanently, Log out.
+Supporting:  Clear labels and descriptions for each setting.
+Contextual:  Error messages for invalid input, loading indicators where applicable, confirmation dialogs for destructive actions (e.g., delete account).
+
+Structural & Component Directives
+* Layout:  Single column list of settings, similar to reference image, with top and bottom app navigation bars.
+* Components:  Use existing app components for list items, toggle switches, and buttons.  Each setting should be presented as a distinct list item.
+* Styling: Maintain existing app's color scheme and typography.  Use the visual hierarchy from the reference image as a guide.
+
+Screen Requirements
+Primary Actions:  Tap on a setting to view/modify it.  (Tap on "Manage Notifications" to navigate to a new screen) Tap on "Log out" to log out. Tap on "Delete my account permanently" to initiate the account deletion process.
+Secondary Actions: Tap on "What is it?" for further explanation of the "Verified ID" badge.
+Screen States: Default state, loading state (if applicable during setting changes), error states (if applicable).
+Feedback Needs: Confirmation of changes made to settings, visual feedback for toggle switches, loading indicators where necessary, error messages if applicable.

@@ -1,0 +1,179 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a vertically oriented list, mirroring the reference image for intuitive navigation.  Items are spaced 24px apart for visual clarity and comfortable tap targets. Padding is added to the top and bottom for visual breathing room.",
+    "userFlowReasoning": "Users navigate linearly through the list, tapping on settings to modify them.  Nested settings (Personal Details, Business Details, Notifications) use a chevron icon to signal expandable sections.  Critical actions like 'Delete Account' are clearly labeled and may involve confirmation dialogs to prevent accidental actions.",
+    "componentChoices": "The 'list-item' component is used consistently for each setting to maintain visual uniformity.  Toggles are used for on/off settings (auction toggle, chats, feedback).  A standard back button is implied in the app bar, while the 'Button' component is reserved for actions like 'Log Out' and confirmation dialogs.",
+    "visualHierarchy": "Visual hierarchy is achieved through consistent styling, spacing, and color.  Section headers are styled differently than the settings list items. The 'Verified ID' badge gains visual prominence through its styling and 'What is it?' helper text."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Personal details",
+        "colorStyleName": "Primary/primary50",
+        "textStyle": "Title/Medium",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Business details",
+        "textStyle": "Title/Medium",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Access to Cars45 auction",
+        "Supporting text": "Active",
+        "textStyle": "Body/Medium",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Switch"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "\"Verified ID\" badge",
+        "Supporting text": "What is it?",
+        "textStyle": "Body/Medium",
+        "variants": {
+          "Leading": "Badge",
+          "Trailing": "None"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change phone number",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change email",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change language",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable chats",
+        "textStyle": "Body/Medium",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Switch"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "textStyle": "Body/Medium",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Switch"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage notifications",
+        "textStyle": "Body/Medium",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change password",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Delete my account permanently",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    }
+  ]
+}
+```

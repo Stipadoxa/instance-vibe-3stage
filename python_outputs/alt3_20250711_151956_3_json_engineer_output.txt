@@ -1,0 +1,90 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The component IDs (10:7816 and 10:3907) are directly used from the input for the image and button components, respectively.  The 'text' component is a generic Figma text element, assumed to be sufficient for the title and price.",
+    "styleApplication": "Text styles ('Title/Medium', 'Title/Large') and color styles ('Neutral/neutral90', 'Primary/primary90') are directly applied as provided in the input, maintaining consistency with the design system.",
+    "designSystemMapping": "The input directly specifies the components and styles from the design system.  No mapping or translation was necessary; the design system elements are used as-is.",
+    "variantDecisions": "Button variants ('Size: Large', 'Type: Filled', 'State: Default', 'Color: Green') are directly used from the input to configure the button component."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "properties": {
+        "variants": {
+          "Type": "1 image"
+        },
+        "src": "placeholder.jpg"
+      },
+      "width": 327,
+      "height": 245,
+      "layoutAlign": "CENTER"
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Title and Price",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Product Title",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "₦10,000",
+          "properties": {
+            "textStyle": "Title/Large",
+            "colorStyleName": "Primary/primary90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "Action": "Buy Now",
+        "layoutAlign": "STRETCH"
+      }
+    }
+  ]
+}
+```

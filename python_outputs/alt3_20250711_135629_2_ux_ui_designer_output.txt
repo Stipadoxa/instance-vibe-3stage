@@ -1,0 +1,88 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single column, vertically stacked, to optimize for mobile screen real estate and touch interaction.  Sufficient padding is included between elements to prevent accidental taps.  The visual hierarchy is established through the size and placement of elements, with the title at the top, input fields in the middle, and buttons at the bottom.",
+    "userFlowReasoning": "The user flow is straightforward:  The user sees the welcome message, enters their credentials, and taps the \"Sign in\" button. Secondary actions for creating an account and recovering credentials are provided.",
+    "componentChoices": "The 'text input' component is used for email and password fields. The 'Button' component is used for both primary (\"Sign in\") and secondary (\"Sign up\") actions.  This ensures consistency and adherence to the design system. The text style selection strategy adheres to the semantic meaning of the text in accordance to its importance and context.",
+    "visualHierarchy": "Visual hierarchy is established through vertical positioning and text styles.  The \"Welcome\" title uses a larger text style for prominence.  Input fields and labels are clear, and buttons are styled to highlight primary and secondary actions. Color styles are used to maintain consistency, with primary and neutral styles to differentiate actions and text."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Login Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 48,
+      "paddingBottom": 48,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "width": 375
+    },
+    "items": [
+      {
+        "type": "text",
+        "properties": {
+          "text": "Welcome",
+          "textStyle": "Headline/Medium",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Email",
+          "placeholder-text": "Enter your email",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Password",
+          "placeholder-text": "Enter your password",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Sign in",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Sign up",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Text",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      }
+    ]
+  }
+}
+```

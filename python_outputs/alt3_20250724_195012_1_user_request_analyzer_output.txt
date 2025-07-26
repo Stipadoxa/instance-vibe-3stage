@@ -1,0 +1,30 @@
+Domain & Context
+Domain: Settings management within a mobile application (Cars45 auction related)
+User Type: Mobile users of the Cars45 auction app needing to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise and easily navigable settings page with clear touch targets and minimal scrolling.  Limited screen real estate necessitates prioritizing essential settings.
+
+User Requirements
+Primary Goals: Access and modify personal account settings, manage notification preferences, securely log out.
+Secondary Goals: Access help/information regarding settings options ("What is it?"), easily change account information.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, reliance on clear visual cues.
+Ready for handoff if: All settings options from the reference image are present and accessible, using the provided design system components. Top and bottom navigation bars are implemented, and touch targets meet minimum size requirements.
+
+
+Content Requirements
+Critical: Personal details (editing), Business details (editing), Access to Cars45 auction (toggle), "Verified ID" badge (info link), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" links for relevant settings.
+Contextual:  Active/Inactive status indicators for toggles.
+
+
+Structural & Component Directives
+* Layout:  List-based layout similar to the reference image, utilizing the provided design system components for list items.  Top and bottom app navigation bars included.
+* Components:  Use existing app components for list items, navigation bars, toggles, and buttons.  "What is it?" links should use a consistent design pattern.
+* Styling: Adhere to existing app styling guidelines.
+
+
+Screen Requirements
+Primary Actions:  Navigate to settings detail screens (for editing), toggle settings (on/off), initiating account deletion, logging out.
+Secondary Actions: Access help/information links ("What is it?").
+Screen States: Default state, loading state (if applicable, e.g., during account deletion), potential error states (e.g., if changes fail).
+Feedback Needs: Clear visual feedback for toggles (on/off state), confirmation messages for successful actions, clear error messages for failed actions.
+

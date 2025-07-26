@@ -1,0 +1,214 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer clearly specifies an Authentication domain.  The user needs to log in to a mobile app, triggering the design of an authentication screen.",
+    "layoutDecisions": "A vertical layout is chosen to optimize for mobile screens and tap targets.  Fields are stacked vertically above the primary action button to create a clear visual hierarchy. Social login and password recovery options are positioned below the primary action for secondary actions.",
+    "userFlowReasoning": "The user flow prioritizes ease of login with credentials or social media.  If login fails, feedback is provided. A link for password recovery handles forgotten credentials.",
+    "componentChoices": "The components selected match the Authentication domain: `input` for username/email and password, `button` for the primary login action, `button` for secondary social logins, and `link` for password recovery.  `text` will be used for T&C.",
+    "visualHierarchy": "Visual hierarchy is achieved through vertical stacking, with the primary login button having greater prominence through size and styling (using design system variants). Secondary actions have less visual weight.",
+    "variantSelectionRationale": "Variants are selected to enhance the user experience within the authentication context. For instance, the primary login button uses 'Style: Filled', 'Size: Large' for prominence and immediate feedback, while the input fields use 'Size: Medium' and 'Style: Filled' for visual clarity and intuitive input."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Authentication Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Authentication Content",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "input",
+              "componentNodeId": "64:1101",
+              "properties": {
+                "placeholder": "Email",
+                "variants": {
+                  "State": "Default",
+                  "Size": "Medium",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "input",
+              "componentNodeId": "64:1101",
+              "properties": {
+                "placeholder": "Password",
+                "variants": {
+                  "State": "Default",
+                  "Size": "Medium",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "34:1219",
+              "properties": {
+                "text": "Log In",
+                "variants": {
+                  "Size": "Large",
+                  "State": "Default",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "91:1222",
+              "properties": {
+                "text": "Continue with Google",
+                "variants": {
+                  "Style": "Secondary"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "91:1222",
+              "properties": {
+                "text": "Continue with Facebook",
+                "variants": {
+                  "Style": "Secondary"
+                }
+              }
+            },
+            {
+              "type": "link",
+              "componentNodeId": "130:5269",
+              "properties": {
+                "text": "Forgot Password?"
+              }
+            },
+            {
+              "type": "text",
+              "componentNodeId": "130:3881",
+              "properties": {
+                "text": "By signing in, you agree to our Terms & Conditions"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Authentication Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder": "Email",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "34:1219",
+            "properties": {
+              "text": "Log In",
+              "variants": {
+                "Size": "Large",
+                "State": "Default",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "91:1222",
+            "properties": {
+              "text": "Continue with Google",
+              "variants": {
+                "Style": "Secondary"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "91:1222",
+            "properties": {
+              "text": "Continue with Facebook",
+              "variants": {
+                "Style": "Secondary"
+              }
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "130:5269",
+            "properties": {
+              "text": "Forgot Password?"
+            }
+          },
+          {
+            "type": "text",
+            "componentNodeId": "130:3881",
+            "properties": {
+              "text": "By signing in, you agree to our Terms & Conditions"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

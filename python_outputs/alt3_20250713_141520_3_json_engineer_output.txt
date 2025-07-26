@@ -1,0 +1,258 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided design uses a `list-item` component for each setting.  The `divider` component is used to separate the title from the settings list.  A `tooltip` component is added to the \"Verified ID\" list item as specified in the input.  There is no explicit component ID for the text, it is rendered as native-text.",
+    "styleApplication": "Text styles (`Title/Large`, `Title/Medium`, `Body/Medium`) and color styles (e.g., `Neutral/neutral90`, `Primary/primary50`) are applied directly to the components as specified in the input. Color styles are preserved as string references.",
+    "designSystemMapping": "The design uses a consistent set of components from the design system. The mapping is straightforward: `list-item` for settings, `text` for titles, and `divider` for visual separation. The `tooltip` is used for the 'What is it?' clarification.  There is no component ID for text elements; they are treated as native text.",
+    "variantDecisions": "The `divider` component uses the `Position: horizontal` and `Type: full-width` variants.  The `list-item` component variants are determined by whether the item has a leading switch, trailing text or icon or neither. No other variants are explicitly defined in the input."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "text": "Settings",
+      "properties": {
+        "textStyle": "Title/Large",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "SettingsList",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Primary/primary50",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "trailing-text": "Active",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "trailing-text": "What is it?",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          },
+          "componentInstances": [
+            {
+              "type": "tooltip",
+              "componentNodeId": "24:10330",
+              "properties": {
+                "text": "Explanation of Verified ID"
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "leading-icon": "switch",
+            "componentNodeId": "10:9912",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Icon",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "leading-icon": "switch",
+            "componentNodeId": "10:9912",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Icon",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

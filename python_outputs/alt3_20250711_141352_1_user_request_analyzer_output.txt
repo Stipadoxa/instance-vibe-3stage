@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Authentication domain with user profile management and notification settings.
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise settings page with clear, tappable controls due to limited screen real estate and touch-only interaction.  They may be interrupted easily, so the design should be simple and intuitive.
+
+User Requirements
+Primary Goals: Access and modify user profile information, manage notification preferences, log out of the application.
+Secondary Goals:  Easily locate settings options, understand notification settings' impact.
+User Constraints: Limited screen space on mobile, touch-only interaction, potential for interruptions.
+Ready for handoff if:  All primary actions (profile editing, notification toggling, logout) are clearly visible and easily accessible with appropriate tap targets; clear visual hierarchy and grouping of settings is present.
+
+Content Requirements
+Critical: User profile section (name, potentially profile picture, email address), notifications toggle (with clear on/off indication), logout button.
+Supporting:  Links to help/support, version information (optional).
+Contextual:  Success/failure messages after profile updates or logout.
+
+Structural & Component Directives
+
+* Layout:  Vertical scrolling list of settings.  Consider grouping related settings together visually.
+* Components:  Profile section (potentially using a card component), toggle switch for notifications, button for logout.
+* Styling:  Maintain consistent styling with the rest of the application's mobile interface.
+
+
+Screen Requirements
+Primary Actions: Edit user profile, toggle notifications, log out.
+Secondary Actions: Access help/support (if included).
+Screen States: Default state, loading state (if profile updates are asynchronous), success/failure states after actions.
+Feedback Needs:  Clear visual feedback on notification toggle state (on/off); success/failure messages after profile updates or logout; loading indicators if actions are asynchronous.

@@ -187,6 +187,33 @@
             border: 1px solid #bee5eb;
         }
 
+        /* Design Feedback Styles */
+        .feedback-header {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .feedback-section {
+            margin-bottom: 10px;
+        }
+
+        .feedback-section h4 {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .feedback-section ul {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .feedback-section li {
+            margin-bottom: 3px;
+        }
+
         /* Enhanced Component List */
         .stats-bar {
             display: flex;
@@ -734,9 +761,22 @@
                 <textarea id="jsonInput" placeholder="Paste JSON from python3 instance.py alt3 output..." style="height: 100px; font-family: monospace; font-size: 10px;"></textarea>
             </div>
             <button class="btn" onclick="renderFromJSON()" id="jsonRenderBtn">🎨 Render JSON</button>
+            
+            <!-- Design Feedback Option -->
+            <div style="margin-top: 10px;">
+                <label style="display: flex; align-items: center; font-size: 12px;">
+                    <input type="checkbox" id="enableFeedback" style="margin-right: 5px;">
+                    Get design feedback
+                </label>
+            </div>
         </div>
 
         <div id="generationStatus"></div>
+        
+        <!-- Simple feedback panel -->
+        <div id="feedback-panel" style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 6px; display: none;">
+            <!-- Feedback content populated by JS -->
+        </div>
 
         <!-- JSON Debug Section -->
         <div class="section" id="jsonDebugSection" style="display: none;">

@@ -1,0 +1,221 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided design uses `appbar` and `list-item` components.  These are standard Figma components, suitable for this settings screen.  `layoutContainer` is used for overall structure and section organization.",
+    "styleApplication": "Text styles ('Title/Medium', 'Body/Medium') and color styles ('Primary/primary50', 'Neutral/neutral80', 'Neutral/neutral90') are applied directly as specified in the input design.  These are assumed to be defined within the design system.",
+    "designSystemMapping": "The design directly maps to Figma components and styles.  There's no need for custom component creation or style adjustments. The component IDs are assumed to be valid IDs from the Figma design system.",
+    "variantDecisions": "No specific component variants were defined in the input design.  `list-item` components are used in their default configuration.  The trailing icons are handled through the `trailingIcon` property within the `list-item` properties."
+  }
+}
+---RATIONALE-SEPARATOR---
+```
+```json
+{
+  "type": "layoutContainer",
+  "name": "Settings Screen",
+  "layoutMode": "VERTICAL",
+  "itemSpacing": 0,
+  "primaryAxisSizingMode": "AUTO",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "leading-icon": "back",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Primary/primary50",
+            "trailing-icon": "navigate_next",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details",
+            "textStyle": "Title/Medium",
+            "trailing-icon": "navigate_next",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "textStyle": "Title/Medium",
+            "trailing-text": "Active",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral80",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "textStyle": "Title/Medium",
+            "trailing-text": "What is it?",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral80",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out",
+            "textStyle": "Title/Medium",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

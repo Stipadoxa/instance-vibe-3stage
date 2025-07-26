@@ -311,6 +311,10 @@ export class AIGeneratorUI {
             window.messageHandler.register('session-cleared', () => {
                 this.startFresh();
             });
+
+            window.messageHandler.register('design-feedback-result', (msg) => {
+                this.handleDesignFeedbackResult(msg.feedback);
+            });
         }
     }
 
@@ -1085,12 +1089,91 @@ export class AIGeneratorUI {
     /**
      * Handle successful UI generation
      */
-    handleUIGeneratedSuccess(generatedJSON, frameId) {
+    async handleUIGeneratedSuccess(generatedJSON, frameId) {
         this.clearStatus();
         this.enterIterationMode(generatedJSON, frameId);
         if (this.elements.userPrompt) {
             this.elements.userPrompt.value = '';
         }
+        
+        // Check if design feedback is enabled
+        const enableFeedback = document.getElementById('enableFeedback')?.checked;
+        if (enableFeedback) {
+            await this.runDesignFeedback(frameId);
+        }
+    }
+    
+    /**
+     * Run design feedback analysis
+     */
+    async runDesignFeedback(frameId) {
+        try {
+            this.showStatus('🔍 Analyzing design...', 'info');
+            
+            // Request screenshot and feedback from backend
+            MessageHandler.sendMessage({
+                type: 'analyze-design-feedback',
+                payload: { 
+                    frameId: frameId,
+                    userRequest: this.elements.userPrompt?.value || 'Generated UI'
+                }
+            });
+            
+        } catch (error) {
+            console.error('Design feedback error:', error);
+            this.showStatus('Analysis failed', 'error');
+        }
+    }
+    
+    /**
+     * Display simple design feedback
+     */
+    displaySimpleFeedback(feedback) {
+        const panel = document.getElementById('feedback-panel');
+        if (!panel) return;
+        
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <div class="feedback-header">
+                <strong>Design Score: ${feedback.score}/10</strong>
+            </div>
+            
+            ${feedback.keyIssues && feedback.keyIssues.length > 0 ? `
+                <div class="feedback-section">
+                    <h4>Key Issues:</h4>
+                    <ul>
+                        ${feedback.keyIssues.map(issue => `<li>${issue}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+            
+            ${feedback.suggestions && feedback.suggestions.length > 0 ? `
+                <div class="feedback-section">
+                    <h4>Suggestions:</h4>
+                    <ul>
+                        ${feedback.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+            
+            ${feedback.strengths && feedback.strengths.length > 0 ? `
+                <div class="feedback-section">
+                    <h4>Strengths:</h4>
+                    <ul>
+                        ${feedback.strengths.map(strength => `<li>✓ ${strength}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    /**
+     * Handle design feedback result from backend
+     */
+    handleDesignFeedbackResult(feedback) {
+        this.clearStatus();
+        this.displaySimpleFeedback(feedback);
+        this.showStatus(`Design Score: ${feedback.score}/10`, 'success');
     }
 
     /**

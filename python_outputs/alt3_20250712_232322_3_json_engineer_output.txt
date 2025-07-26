@@ -1,0 +1,112 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided layout uses native Figma components (image, text, button) as no specific component IDs were given in the input.  These components are chosen for their simplicity and broad compatibility.",
+    "styleApplication": "Text styles ('Headline/Large', 'Title/Medium', 'Body/Medium', 'Body/Small', 'Button/Large') and color styles ('Primary/primary90') are applied directly as specified in the input JSON.  It is assumed these styles are defined within the design system.",
+    "designSystemMapping": "The input directly specifies the text styles and color styles.  No additional mapping was necessary.  Native Figma components map directly to their Figma equivalents.",
+    "variantDecisions": "No component variants are used in this simple layout.  All components are used in their default configuration."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Product Image Container",
+      "layoutMode": "VERTICAL",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "image",
+          "properties": {
+            "source": "product_image.jpg",
+            "width": 327,
+            "height": 200,
+            "horizontalSizing": "FIXED",
+            "verticalSizing": "FIXED"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Details Container",
+      "layoutMode": "VERTICAL",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "$3,825",
+          "properties": {
+            "textStyle": "Headline/Large",
+            "colorStyleName": "Primary/primary90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Spacious 1-Bedroom in New York",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Beautifully renovated 1-bedroom apartment in the heart of New York City.  Features modern kitchen, updated bathroom, and ample closet space.",
+          "properties": {
+            "textStyle": "Body/Medium",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "New York, NY",
+          "properties": {
+            "textStyle": "Body/Small",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "properties": {
+        "text": "Contact Seller",
+        "textStyle": "Button/Large",
+        "colorStyleName": "Primary/primary90",
+        "horizontalSizing": "FILL"
+      }
+    }
+  ]
+}
+```

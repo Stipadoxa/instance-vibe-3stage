@@ -1,0 +1,147 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer clearly specifies an \"Authentication domain\" for mobile app login. This dictates a form-based layout prioritizing concise input fields and prominent action buttons.",
+    "layoutDecisions": "A vertical layout is chosen to maximize screen real estate on mobile.  Input fields are stacked above the primary action button for a natural flow. Social logins follow, then the less-critical 'Forgot Password' link and T&C footnote.",
+    "userFlowReasoning": "The user flow follows a typical login pattern: enter credentials, tap 'Log In', or choose a social login.  Error handling provides feedback for invalid credentials, and links facilitate password recovery.",
+    "componentChoices": "The selected components precisely match the Authentication domain: 'text-input' for username/email and password; 'button' for login and social actions; 'link' for password recovery; and 'text' for T&C footnote.  'appbar' is used for a clear screen title and back button.",
+    "visualHierarchy": "Visual hierarchy is achieved through size, position, and color.  The primary login button is most prominent.  Input fields, social login buttons, and the 'Forgot Password' link have decreasing prominence based on their importance.",
+    "variantSelectionRationale": "Variants are chosen based on domain context.  'text-input' uses variants for email and password types, the primary login button uses \"Primary\" for its importance,  and the 'Forgot Password' link is styled as a 'link' to differentiate its function.  The 'appbar' is set to a light mode variant for better contrast and readability."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Sign In",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Login Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "text-input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder": "Email",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "text-input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "text": "Sign In",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "divider",
+            "componentNodeId": "10:8459",
+            "properties": {
+              "variants": {
+                "Position": "horizontal",
+                "Type": "full-width"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "text": "Continue with Google",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "text": "Continue with Facebook",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "635:4578",
+            "properties": {
+              "text": "Forgot Password?",
+              "variants": {
+                "Style": "Outlined"
+              }
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "By signing in, you agree to our Terms & Conditions.",
+              "textStyle": "Caption/Small",
+              "colorStyleName": "Neutral/neutral50"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -117,12 +117,6 @@ export class DesignSystemUI {
         // Filter buttons
         this.setupFilterButtons();
 
-        // Generate LLM prompt button
-        const promptBtn = document.querySelector('[onclick="generateLLMPrompt()"]');
-        if (promptBtn) {
-            promptBtn.removeAttribute('onclick');
-            promptBtn.addEventListener('click', () => this.generateLLMPrompt());
-        }
     }
 
     /**
@@ -178,9 +172,6 @@ export class DesignSystemUI {
                 this.handleComponentTypeUpdated(msg.componentId, msg.newType, msg.componentName);
             });
 
-            window.messageHandler.register('llm-prompt-generated', (msg) => {
-                this.handleLLMPromptGenerated(msg.prompt);
-            });
         }
     }
 
@@ -502,25 +493,7 @@ export class DesignSystemUI {
         // The component was already updated in handleTypeChange, so no need to do anything else
     }
 
-    /**
-     * Generate LLM prompt for the design system
-     */
-    generateLLMPrompt() {
-        MessageHandler.sendMessage({ type: 'generate-llm-prompt' });
-        console.log('📋 Generating LLM prompt for design system');
-    }
 
-    /**
-     * Handle generated LLM prompt
-     */
-    handleLLMPromptGenerated(prompt) {
-        UIFramework.copyToClipboard(prompt)
-            .then(() => {
-                if (this.elements.scanStatusText) {
-                    this.showScanStatus('📋 Prompt copied to clipboard!', 'success');
-                }
-            });
-    }
 
     /**
      * Enable the generator tab after successful scan
@@ -744,9 +717,6 @@ window.rescanDesignSystem = function() {
     window.designSystemUI?.rescanDesignSystem();
 };
 
-window.generateLLMPrompt = function() {
-    window.designSystemUI?.generateLLMPrompt();
-};
 
 // Helper function to enable generator tab (used by other modules)
 window.enableGeneratorTab = function() {

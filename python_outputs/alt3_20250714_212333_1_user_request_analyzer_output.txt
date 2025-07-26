@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Account Management within a mobile application context (Cars45 auction likely involved).
+User Type: Mobile users of the Cars45 app needing to manage their account settings and preferences.  This includes both individual users and potentially business users.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear, touch-friendly controls.  Screen real estate is limited, and interruptions are likely.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences (notifications, communication settings), manage business-related settings (if applicable), securely log out.
+Secondary Goals:  Understand the meaning of "Verified ID" badge, access help or support related to settings, easily find specific settings.
+User Constraints: Limited screen space on mobile devices, reliance on touch input, potential for interruptions during use.
+Ready for handoff if: All settings options from the reference image are included and clearly labeled, using the existing app's components. Navigation is intuitive and utilizes top and bottom app navigation.  Touch targets are appropriately sized.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable if applicable), Access to Cars45 auction (toggle),  "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear visual indicators for active/inactive settings (like the "Active" label in the reference image).
+Contextual:  Error messages for invalid inputs (e.g., during password change), confirmation dialogs for actions like account deletion.
+
+
+Structural & Component Directives
+* Layout:  Single list view of settings, similar to the reference image, utilizing existing app components for list items.  Top and bottom app navigation bars are included.
+* Components: Existing app list item component for each setting, using app-standard toggles, text input fields, etc.  The "What is it?" link should be implemented using a standard app link component.
+* Styling:  Adhere to the existing app's color scheme and styling guidelines (as shown in reference image, particularly the green accent and light background).
+
+Screen Requirements
+Primary Actions:  Tap on a setting to modify it, tap Log out.
+Secondary Actions:  Tap "What is it?" for explanation.
+Screen States: Default state (showing all settings), Loading state (while saving changes), Error state (if saving fails), confirmation dialog for irreversible actions.
+Feedback Needs: Visual feedback for successful changes, clear error messages, loading indicators where applicable.

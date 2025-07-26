@@ -1,0 +1,131 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement for the notification list, placing the app bar at the top and the bottom navigation bar at the bottom. This is a standard and intuitive mobile app layout that maximizes screen real estate.  Item spacing is set to 0 for a clean look, and padding is 0 to avoid unnecessary whitespace.",
+    "userFlowReasoning": "Users can view notifications in a scrollable list. Tapping a notification opens the details.  Swipe actions might be considered for marking notifications as read, but this is beyond the scope of this initial design.",
+    "componentChoices": "I chose the 'appbar' (id: 10:5620) component for the top bar, the 'list-item' (id: 10:10214) component for each notification item and the 'Bottom navigation' (id: 10:4724) for the bottom navigation bar. I considered using a simple 'header' component for the top bar and a 'text' component for notifications, but 'appbar' provides a more standard and feature-rich top bar, while 'list-item' is more suitable for displaying structured notification data with icons and text. ",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear typography and spacing.  The title of the app is prominent in the app bar, notification titles are larger than subtitles, and timestamps are smaller.  Color-coding may be added later to indicate notification urgency, but is not included in this initial design.",
+    "variantSelectionRationale": "For the app bar, I selected 'Mode=Light', 'Type=Default', and 'Elevation=flat' since a simple, light-colored, flat app bar is appropriate for the healthcare context.  For the list items, 'Condition=2-line', 'Leading=Image', 'Trailing=None', 'Show overline=False', and 'Show supporting text=True' were chosen to represent the image, title, subtitle, and timestamp of each notification.  This combination suits the notification display requirements outlined in the User Requirements section.  Alternatives, such as using a '3-line+' variant of the list item are rejected as they would create additional vertical space that would not improve readability.  Including 'Trailing' icons would unnecessarily clutter the UI."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Healthcare Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Headline": "Notification Title 1",
+          "Supporting text": "Notification Subtitle 1\n10:00 AM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Headline": "Notification Title 2",
+          "Supporting text": "Notification Subtitle 2\n11:30 AM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Headline": "Notification Title 3",
+          "Supporting text": "Notification Subtitle 3\n1:45 PM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Headline": "Notification Title 4",
+          "Supporting text": "Notification Subtitle 4\n3:20 PM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Headline": "Notification Title 5",
+          "Supporting text": "Notification Subtitle 5\n5:00 PM"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Messages",
+            "Alerts",
+            "Settings",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

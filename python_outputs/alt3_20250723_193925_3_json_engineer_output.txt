@@ -1,0 +1,95 @@
+```javascript
+// DESIGN_SYSTEM_DATA is assumed to be globally available and contains the design system component definitions.  Example structure shown below.  Replace with your actual data.
+
+const DESIGN_SYSTEM_DATA = [
+  { id: "comp1", textLayers: ["Default"], suggestedType: "Button"},
+  { id: "comp2", textHierarchy: [{ nodeName: "placeholder-text" }, { nodeName: "label-text" }], type: "TextInput"},
+  { id: "comp3", properties: { text: { primaryLabel: {}, secondaryText: {} } }, type: "Card"},
+  { id: "comp4", slots: { buttonText: { type: "text" }, iconLabel: { type: "text" } }, type: "IconButton"},
+  { id: "comp5", textNodes: [{ name: "headline" }, { name: "body" }], type: "Article"},
+  {id: "comp6", properties: { title: {}, description: {}}, type: "Section"} //Example of a component without explicit "text" in properties.
+];
+
+
+function extractTextProperties(schema) {
+  // ... (Identical to the provided extractTextProperties function) ...
+}
+
+function mapUserIntentToSchemaProperties(userTextData, availableSchemaProperties) {
+  // ... (Identical to the provided mapUserIntentToSchemaProperties function) ...
+}
+
+function findBestPropertyMatch(userKey, schemaProperties, semanticCategories) {
+  // ... (Identical to the provided findBestPropertyMatch function) ...
+}
+
+
+function processComponentTextProperties(componentNodeId, userTextIntent) {
+  // Step 1: Get component schema
+  const componentSchema = DESIGN_SYSTEM_DATA.find(comp => comp.id === componentNodeId);
+
+  if (!componentSchema) {
+    console.error(`Component ${componentNodeId} not found`);
+    return {};
+  }
+
+  // Step 2: Extract available text properties from schema
+  const availableTextProperties = extractTextProperties(componentSchema);
+
+  if (availableTextProperties.length === 0) {
+    console.warn(`No text properties found for component ${componentNodeId}`);
+    return {
+      "type": componentSchema.suggestedType || componentSchema.type,
+      "componentNodeId": componentNodeId,
+      "properties": {} //Return empty properties if no text properties are found.
+    };
+  }
+
+  // Step 3: Map user intent to exact schema property names
+  const mappedProperties = mapUserIntentToSchemaProperties(userTextIntent, availableTextProperties);
+
+  // Step 4: Return properly formatted properties object
+  return {
+    "type": componentSchema.suggestedType || componentSchema.type,
+    "componentNodeId": componentNodeId,
+    "properties": mappedProperties
+  };
+}
+
+
+// Example Usage:
+
+const userIntent1 = { "text": "Sign In" };
+const result1 = processComponentTextProperties("comp1", userIntent1);
+console.log("Result 1:", result1); // Expected: {"type": "Button", "componentNodeId": "comp1", "properties": {"Default": "Sign In"}}
+
+const userIntent2 = { "placeholder": "Enter email", "label": "Email" };
+const result2 = processComponentTextProperties("comp2", userIntent2);
+console.log("Result 2:", result2); // Expected: {"type": "TextInput", "componentNodeId": "comp2", "properties": {"placeholder-text": "Enter email", "label-text": "Email"}}
+
+const userIntent3 = { "title": "Settings", "subtitle": "Manage your account" };
+const result3 = processComponentTextProperties("comp3", userIntent3);
+console.log("Result 3:", result3); // Expected: {"type": "Card", "componentNodeId": "comp3", "properties": {"primaryLabel": "Settings", "secondaryText": "Manage your account"}}
+
+const userIntent4 = { "action": "Save" };
+const result4 = processComponentTextProperties("comp4", userIntent4);
+console.log("Result 4:", result4); // Expected: {"type": "IconButton", "componentNodeId": "comp4", "properties": {"buttonText": "Save"}}
+
+const userIntent5 = { "headline": "My Article", "body": "This is the content."};
+const result5 = processComponentTextProperties("comp5", userIntent5);
+console.log("Result 5:", result5); //Expected: {"type": "Article", "componentNodeId": "comp5", "properties": {"headline": "My Article", "body": "This is the content."}}
+
+const userIntent6 = {"title": "My Section", "description": "A description"};
+const result6 = processComponentTextProperties("comp6", userIntent6);
+console.log("Result 6:", result6); //Expected: {"type": "Section", "componentNodeId": "comp6", "properties": {"title": "My Section", "description": "A description"}}
+
+const userIntent7 = {"wrongkey": "Some Text"};
+const result7 = processComponentTextProperties("comp6", userIntent7);
+console.log("Result 7:", result7); //Expected: {"type": "Section", "componentNodeId": "comp6", "properties": {"title": "Some Text"}}
+
+
+const nonExistentComponent = processComponentTextProperties("nonExistent", userIntent7);
+console.log("Result NonExistent:", nonExistentComponent); //Expected: {} and a console error
+
+
+```

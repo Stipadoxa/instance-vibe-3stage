@@ -1,0 +1,66 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a single vertical column to maximize screen real estate on mobile devices.  Elements are stacked vertically, prioritizing the most important information (image, title, price, button) at the top. Spacing between elements is consistent (24px) to maintain visual clarity and breathability.",
+    "userFlowReasoning": "The user flow is designed to be as streamlined as possible for mobile shoppers.  The prominent product image immediately attracts attention.  The title and price provide essential information at a glance. The large \"Buy\" button ensures a clear and easy path to purchase.  Additional information can be accessed via a potential \"View Details\" link.",
+    "componentChoices": "The `IMAGES` component is used for the product image, allowing for responsive sizing.  The `text` component is used for the title and price, styled with appropriate text styles to ensure readability and hierarchy. A `Button` component (Large size, Green color variant) is used for the primary \"Buy\" action. This ensures a clear call-to-action.",
+    "visualHierarchy": "Visual hierarchy is achieved through size and placement. The product image is the largest element, immediately capturing the user's attention. The title is larger than the price, and both are styled with appropriate text styles and color styles to create prominence.  The \"Buy\" button uses a distinct color (Green Primary) to stand out. Spacing between elements further emphasizes the hierarchy."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "properties": {
+        "variants": {
+          "Type": "1 image"
+        },
+          "image": "product-image-url"
+      },
+      "width": 327,
+      "height": 245
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Product Title",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "$19.99",
+        "textStyle": "Title/Small",
+        "colorStyleName": "Primary/primary50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "Color": "Green",
+          "State": "Default"
+        },
+        "Action": "Buy Now"
+      }
+    }
+  ]
+}
+```

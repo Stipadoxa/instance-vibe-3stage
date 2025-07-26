@@ -1,0 +1,229 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized into a vertically scrolling list, grouped by logical categories (Personal details, Business details, Account settings, etc.). This approach is suitable for mobile screens and aligns with the user's need for concise and intuitive navigation.  Item spacing is consistent at 16px to provide visual breathing room but not to disrupt the vertical flow.  Sections are separated by dividers for better readability.",
+    "userFlowReasoning": "The user journey is straightforward: users scroll down the list to find their desired setting, select it (usually by tapping), and change the value. The inclusion of a 'What is it?' explanation for less clear settings addresses user needs for understanding and removes potential friction. The top navigation provides a clear indication of the page location (Settings), and the back button allows for easy escape.",
+    "componentChoices": "The `list-item` component is used consistently throughout the settings list for uniform presentation and clear identification. The `switch` component is used for toggles, while the other settings primarily use a `list-item` with a `Trailing` variant that directs users to another screen for input. This approach optimizes the screen real estate on mobile.  The `appbar` component serves as a consistent top navigation bar across screens. The bottom navigation component is omitted in this specific screen because settings is a subpage from a main screen.",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear category headers (larger font size, bold style) and consistent spacing.  The 'What is it?' button acts as a secondary visual cue, indicating the availability of more information.  Overall, the visual design maintains simplicity and clarity by avoiding unnecessary elements or excessive visual noise.",
+    "variantSelectionRationale": "Variants are selected based on the content and importance of each setting.  For example, the 'Access to Cars45 auction' setting uses the `switch` component to directly reflect the toggle. Settings such as 'Change phone number' use the `list-item` with a 'Trailing' variant that includes an 'arrow' icon, guiding the user to the appropriate action screen.  The use of the `list-item` with '2-line' variant accounts for both the setting title and supportive descriptions. The 'what is it' option is a tertiary action presented as a smaller text component, to balance its importance without overwhelming the main list."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "items": [
+          {
+            "type": "text",
+            "properties": {
+              "text": "Personal details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "Trailing supporting text": "Active",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "Trailing supporting text": "What is it?",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Text",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              }
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Account settings",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Arrow",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Arrow",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Arrow",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Arrow",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Arrow",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

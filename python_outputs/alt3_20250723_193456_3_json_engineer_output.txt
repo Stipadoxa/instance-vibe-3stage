@@ -1,0 +1,70 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs were selected based on their visual similarity to the provided design specifications, prioritizing reusable components from the Figma design system.",
+    "styleApplication": "Text styles were applied consistently based on the design system's naming conventions to maintain visual consistency across the application.",
+    "designSystemMapping": "The design system mapping is based on a semantic understanding of components and properties, aiming for a flexible approach that adapts to various design system structures.",
+    "variantDecisions": "Variants were chosen based on the specific requirements of each component, considering aspects like size, style, and interactive behavior.  Defaults were utilized where appropriate.",
+    "nestedComponentHandling": "Nested components were identified by analyzing the semicolon-separated node IDs.  For nested components, individual properties were used to avoid array-based text layers that might conflict with internal structure.  Default values were provided for properties lacking corresponding data."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Profile Settings",
+            "Supporting text": "Manage your account",
+            "trailing-icon": "chevron-right",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "Icon"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutAlign": "STRETCH",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Save Changes",
+                "variants": {
+                  "Type": "Filled",
+                  "Size": "Large"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

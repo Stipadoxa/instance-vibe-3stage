@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive interface with clear visual hierarchy and easy navigation due to limited screen real estate.  Touch interaction is primary.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Review account status (e.g., "Verified ID"), easily access account deletion or logout.
+User Constraints: Limited screen space, reliance on touch input, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included, navigation is clear and intuitive (top and bottom navigation present and functional), and all interactive elements meet mobile touch target size guidelines.
+
+Content Requirements
+Critical: Personal details (editable), business details (editable), access to Cars45 auction (toggle), "Verified ID" badge (status and explanation), change phone number (form), change email (form), change language (selection), disable chats (toggle), disable feedback (toggle), manage notifications (link to separate screen), change password (form), delete my account permanently (confirmation required), log out.
+Supporting:  Clear visual indicators for active/inactive settings.  "What is it?" help text for ambiguous settings.
+Contextual:  Error messages for invalid input in forms, loading indicators during processing changes.
+
+
+Structural & Component Directives
+* Layout: Single column list of settings options, utilizing the app's existing components. Top and bottom app navigation bars included.
+* Components:  Use existing app components for list items, forms, toggles, and buttons.  Each setting should be represented as a list item (similar to reference image).  Forms should be designed to prevent data entry errors.
+* Styling: Adhere to existing app style guide.
+
+
+Screen Requirements
+Primary Actions:  Modify settings values (via forms, toggles, selections), log out, delete account.
+Secondary Actions: Access detailed information related to specific settings (e.g., explanation of "Verified ID").
+Screen States: Default state (displays all settings), loading state (while saving changes), success state (confirmation after saving changes), error state (for invalid input).
+Feedback Needs: Clear visual confirmation of changes made, error messages for invalid data, loading indicators for long-running operations.
