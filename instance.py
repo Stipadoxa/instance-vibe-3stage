@@ -324,6 +324,12 @@ class Alternative3StagePipeline:
         self.output_dir = Path("./python_outputs")
         self.output_dir.mkdir(exist_ok=True)
         
+        # Create directories for screenshot coordination
+        self.screenshot_requests_dir = Path("./screenshot-requests")
+        self.screenshots_dir = Path("./screenshots")
+        self.screenshot_requests_dir.mkdir(exist_ok=True)
+        self.screenshots_dir.mkdir(exist_ok=True)
+        
         # Initialize Gemini if API key provided
         if api_key:
             genai.configure(api_key=api_key)
@@ -337,7 +343,9 @@ class Alternative3StagePipeline:
         alt_prompt_files = {
             1: "src/prompts/roles/alt1-user-request-analyzer.txt",
             2: "src/prompts/roles/alt2-ux-ui-designer.txt",
-            3: "src/prompts/roles/5 json-engineer.txt"  # Reuse existing JSON Engineer
+            3: "src/prompts/roles/5 json-engineer.txt",  # Reuse existing JSON Engineer
+            4: "src/prompts/roles/visual-improvement-analyzer.txt",  # Visual UX Designer
+            5: "src/prompts/roles/5 json-engineer.txt"   # JSON Engineer (second pass)
         }
         
         prompt_file = alt_prompt_files.get(stage_num)
@@ -508,6 +516,24 @@ class Alternative3StagePipeline:
         
         return formatted_prompt
     
+    def format_visual_analyzer_prompt(self, prompt_template: str, input_data: str, design_system_data: str, screenshot_path: str) -> str:
+        """Format Visual UX Designer prompt with all required context"""
+        # Parse input_data to extract different components
+        parts = input_data.split('\n\n---\n\n')
+        user_request_output = parts[0] if len(parts) > 0 else input_data
+        current_layout_spec = parts[1] if len(parts) > 1 else ""
+        
+        # Replace placeholders in the Visual UX Designer prompt
+        formatted_prompt = prompt_template.replace('{{USER_REQUEST_ANALYZER_OUTPUT}}', user_request_output)
+        formatted_prompt = formatted_prompt.replace('{{DESIGN_SYSTEM_DATA}}', design_system_data)
+        formatted_prompt = formatted_prompt.replace('{{CURRENT_LAYOUT_SPECIFICATION}}', current_layout_spec)
+        
+        # Add screenshot reference
+        if screenshot_path:
+            formatted_prompt += f"\n\nSCREENSHOT: Analyze the provided screenshot image for this assessment."
+        
+        return formatted_prompt
+    
     def format_visual_context(self, num_refs: int) -> str:
         """Format visual reference context for AI prompt"""
         return f"""
@@ -516,6 +542,50 @@ You have {num_refs} reference images showing desired visual style.
 Use these to inform your design decisions while staying within the design system constraints.
 Focus on: layout patterns, color schemes, visual hierarchy, component arrangements.
 """
+    
+    def create_screenshot_request(self, run_id: str, json_content: str) -> str:
+        """Create screenshot request file for plugin to process"""
+        request_data = {
+            "run_id": run_id,
+            "timestamp": datetime.now().isoformat(),
+            "json_content": json_content,
+            "status": "pending"
+        }
+        
+        request_file = self.screenshot_requests_dir / f"screenshot_request_{run_id}.json"
+        with open(request_file, 'w', encoding='utf-8') as f:
+            json.dump(request_data, f, indent=2)
+        
+        print(f"📸 Created screenshot request: {request_file}")
+        return str(request_file)
+    
+    def wait_for_screenshot(self, run_id: str, timeout: int = 300) -> Optional[str]:
+        """Wait for screenshot to be created by plugin"""
+        screenshot_file = self.screenshots_dir / f"screenshot_{run_id}.png"
+        start_time = time.time()
+        
+        print(f"⏳ Waiting for screenshot: {screenshot_file}")
+        print(f"   Please render the JSON in the Figma plugin to continue...")
+        
+        while time.time() - start_time < timeout:
+            if screenshot_file.exists():
+                print(f"✅ Screenshot ready: {screenshot_file}")
+                return str(screenshot_file)
+            time.sleep(2)  # Check every 2 seconds
+        
+        print(f"⏰ Timeout waiting for screenshot after {timeout} seconds")
+        return None
+    
+    def load_screenshot_as_base64(self, screenshot_path: str) -> str:
+        """Load screenshot and convert to base64 for AI analysis"""
+        try:
+            with open(screenshot_path, 'rb') as f:
+                image_bytes = f.read()
+            import base64
+            return base64.b64encode(image_bytes).decode('utf-8')
+        except Exception as e:
+            print(f"❌ Failed to load screenshot: {e}")
+            return ""
     
     async def call_ai(self, prompt: str, visual_refs: List[str] = None) -> tuple[str, Dict[str, Any]]:
         """Call Gemini AI with prompt and optional visual references"""
@@ -580,16 +650,19 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
         
         print(f"📄 Alt AI output saved to: {filepath}")
     
-    async def run_alt_stage(self, stage_num: int, input_data: str, run_id: str, visual_refs: List[str] = None) -> StageResult:
+    async def run_alt_stage(self, stage_num: int, input_data: str, run_id: str, visual_refs: List[str] = None, screenshot_path: str = None) -> StageResult:
         """Run a single alternative pipeline stage"""
         alt_stage_names = {
             1: "User Request Analyzer",
             2: "UX UI Designer", 
-            3: "JSON Engineer"
+            3: "JSON Engineer",
+            4: "Visual UX Designer",
+            5: "JSON Engineer (Improved)"
         }
         
+        total_stages = 5 if screenshot_path or stage_num > 3 else 3
         stage_name = alt_stage_names[stage_num]
-        print(f"\n🚀 Alt Stage {stage_num}/3: {stage_name}")
+        print(f"\n🚀 Alt Stage {stage_num}/{total_stages}: {stage_name}")
         print(f"📤 Input length: {len(input_data)} characters")
         
         start_time = time.time()
@@ -606,12 +679,29 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             design_system_data = self.load_design_system_data()
             prompt = self.format_ux_ui_prompt(prompt_template, input_data, design_system_data)
             print(f"📊 Loaded design system data: {len(design_system_data)} characters")
+        elif stage_num == 4:  # Visual UX Designer stage needs screenshot + design system data
+            design_system_data = self.load_design_system_data()
+            prompt = self.format_visual_analyzer_prompt(prompt_template, input_data, design_system_data, screenshot_path)
+            print(f"📊 Loaded design system data: {len(design_system_data)} characters")
+            if screenshot_path:
+                print(f"📸 Using screenshot: {screenshot_path}")
+        elif stage_num == 5:  # JSON Engineer (second pass) needs design system data
+            design_system_data = self.load_design_system_data()
+            prompt = self.format_ux_ui_prompt(prompt_template, input_data, design_system_data)
+            print(f"📊 Loaded design system data for improved JSON: {len(design_system_data)} characters")
         else:
             prompt = self.format_prompt(prompt_template, input_data)
         
-        # Execute AI call (pass visual refs only for stages 1 and 2)
-        visual_refs_for_stage = visual_refs if stage_num in [1, 2] else None
-        ai_response, token_usage = await self.call_ai(prompt, visual_refs_for_stage)
+        # Execute AI call (pass visual refs for stages 1,2 or screenshot for stage 4)
+        if stage_num == 4 and screenshot_path:
+            # For Visual UX Designer, pass screenshot as visual reference
+            ai_response, token_usage = await self.call_ai(prompt, [screenshot_path])
+        elif stage_num in [1, 2]:
+            # For early stages, pass visual references if available
+            ai_response, token_usage = await self.call_ai(prompt, visual_refs)
+        else:
+            # For other stages, no visual references needed
+            ai_response, token_usage = await self.call_ai(prompt, None)
         
         execution_time = time.time() - start_time
         
@@ -711,6 +801,127 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             "summary": summary
         }
     
+    async def run_all_alt_stages_with_visual(self, initial_input: str, visual_refs: List[str] = None) -> Dict[str, Any]:
+        """Run all alternative pipeline stages with visual feedback (5 stages)"""
+        run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        print(f"🎯 Starting Alternative 5-Stage Visual Pipeline run: {run_id}")
+        print(f"📝 Initial input: {initial_input[:100]}...")
+        if visual_refs:
+            print(f"📸 Using {len(visual_refs)} visual references")
+        
+        results = {}
+        current_input = initial_input
+        
+        # Stage 1-3: Standard pipeline
+        for stage_num in range(1, 4):
+            result = await self.run_alt_stage(stage_num, current_input, run_id, visual_refs)
+            results[f"stage_{stage_num}"] = result
+            current_input = result.content
+        
+        # Extract and save initial JSON
+        initial_json_str = results["stage_3"].content
+        initial_json_str = self.extract_json_from_response(initial_json_str)
+        
+        try:
+            initial_json = json.loads(initial_json_str)
+            
+            # Save original JSON
+            figma_ready_dir = Path("figma-ready")
+            figma_ready_dir.mkdir(exist_ok=True)
+            original_json_file = figma_ready_dir / f"figma_ready_original_{run_id}.json"
+            with open(original_json_file, 'w') as f:
+                json.dump(initial_json, f, indent=2)
+            print(f"💾 Original JSON saved: {original_json_file}")
+            
+            # Create screenshot request
+            screenshot_request_file = self.create_screenshot_request(run_id, json.dumps(initial_json, indent=2))
+            
+            # Wait for screenshot
+            screenshot_path = self.wait_for_screenshot(run_id)
+            
+            if screenshot_path:
+                # Stage 4: Visual UX Designer
+                # Prepare input data for Visual UX Designer with proper formatting
+                visual_input = f"{results['stage_1'].content}\n\n---\n\n{results['stage_2'].content}"
+                
+                result_4 = await self.run_alt_stage(4, visual_input, run_id, visual_refs, screenshot_path)
+                results["stage_4"] = result_4
+                
+                # Stage 5: JSON Engineer (improved)
+                result_5 = await self.run_alt_stage(5, result_4.content, run_id, visual_refs)
+                results["stage_5"] = result_5
+                
+                # Extract and save improved JSON
+                improved_json_str = result_5.content
+                improved_json_str = self.extract_json_from_response(improved_json_str)
+                
+                try:
+                    improved_json = json.loads(improved_json_str)
+                    
+                    # Save improved JSON (this replaces the original)
+                    final_json_file = figma_ready_dir / f"figma_ready_{run_id}.json"
+                    with open(final_json_file, 'w') as f:
+                        json.dump(improved_json, f, indent=2)
+                    print(f"💾 Improved JSON saved: {final_json_file}")
+                    
+                    results["stage_5"].content = json.dumps(improved_json, indent=2)
+                    
+                except json.JSONDecodeError as e:
+                    print(f"❌ Could not parse improved JSON, keeping original: {e}")
+                    # Fall back to original JSON
+                    final_json_file = figma_ready_dir / f"figma_ready_{run_id}.json"
+                    with open(final_json_file, 'w') as f:
+                        json.dump(initial_json, f, indent=2)
+                    print(f"💾 Fallback to original JSON: {final_json_file}")
+            
+            else:
+                print("⚠️ No screenshot received, skipping visual improvement stages")
+                # Save original JSON as final
+                final_json_file = figma_ready_dir / f"figma_ready_{run_id}.json"
+                with open(final_json_file, 'w') as f:
+                    json.dump(initial_json, f, indent=2)
+                print(f"💾 Original JSON saved as final: {final_json_file}")
+                
+        except json.JSONDecodeError as e:
+            print(f"❌ Could not parse initial JSON: {e}")
+
+        # Generate summary
+        total_stages = len(results)
+        summary = {
+            "pipeline": "alternative_5_stage_visual", 
+            "run_id": run_id,
+            "initial_input": initial_input,
+            "total_stages": total_stages,
+            "ai_enabled": bool(self.gemini_client),
+            "visual_feedback_enabled": total_stages > 3,
+            "results": {k: asdict(v) for k, v in results.items()}
+        }
+        
+        return {
+            "success": True,
+            "run_id": run_id,
+            "stages": results,
+            "summary": summary
+        }
+    
+    def extract_json_from_response(self, response_str: str) -> str:
+        """Extract JSON from AI response, handling various formats"""
+        # Handle rationale separator format
+        if "---RATIONALE-SEPARATOR---" in response_str:
+            parts = response_str.split("---RATIONALE-SEPARATOR---")
+            if len(parts) >= 2:
+                response_str = parts[1].strip()
+        elif "---RATIONALE_SEPARATOR---" in response_str:
+            parts = response_str.split("---RATIONALE_SEPARATOR---")
+            if len(parts) >= 2:
+                response_str = parts[1].strip()
+        
+        # Extract JSON from markdown code blocks
+        match = re.search(r'```json\n(.*)\n```', response_str, re.DOTALL)
+        if match:
+            response_str = match.group(1)
+            
+        return response_str.strip()
 
 
 class HTTPServer:
@@ -760,6 +971,62 @@ class HTTPServer:
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
         
+        @self.app.route('/api/screenshot-request', methods=['GET'])
+        def get_screenshot_request():
+            """Check for pending screenshot requests"""
+            try:
+                # Look for screenshot request files
+                request_files = list(self.pipeline.screenshot_requests_dir.glob("screenshot_request_*.json"))
+                if request_files:
+                    # Return the most recent request
+                    latest_request = max(request_files, key=lambda f: f.stat().st_mtime)
+                    with open(latest_request, 'r') as f:
+                        request_data = json.load(f)
+                    
+                    if request_data.get('status') == 'pending':
+                        return jsonify({
+                            "has_request": True,
+                            "request_data": request_data
+                        })
+                
+                return jsonify({"has_request": False})
+                
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        
+        @self.app.route('/api/screenshot-ready', methods=['POST'])
+        def screenshot_ready():
+            """Receive screenshot from plugin"""
+            try:
+                data = request.json
+                run_id = data.get('run_id')
+                screenshot_data = data.get('screenshot')  # Array of bytes
+                
+                if not run_id or not screenshot_data:
+                    return jsonify({"error": "Missing run_id or screenshot data"}), 400
+                
+                # Convert array back to bytes and save screenshot
+                screenshot_bytes = bytes(screenshot_data)
+                screenshot_file = self.pipeline.screenshots_dir / f"screenshot_{run_id}.png"
+                
+                with open(screenshot_file, 'wb') as f:
+                    f.write(screenshot_bytes)
+                
+                # Mark request as completed
+                request_file = self.pipeline.screenshot_requests_dir / f"screenshot_request_{run_id}.json"
+                if request_file.exists():
+                    with open(request_file, 'r+') as f:
+                        request_data = json.load(f)
+                        request_data['status'] = 'completed'
+                        f.seek(0)
+                        json.dump(request_data, f, indent=2)
+                        f.truncate()
+                
+                print(f"✅ Screenshot saved: {screenshot_file}")
+                return jsonify({"success": True, "message": "Screenshot saved"})
+                
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
     
     def run(self):
         """Start the HTTP server"""
@@ -773,7 +1040,7 @@ class HTTPServer:
 
 def main():
     parser = argparse.ArgumentParser(description="Instance Vibe Pipeline Runner")
-    parser.add_argument("stage", help="Stage to run (1-5, 'all', 'alt3', 'server', or 'alt3-1', 'alt3-2', 'alt3-3')")
+    parser.add_argument("stage", help="Stage to run (1-5, 'all', 'alt3', 'alt3-visual', 'server', or 'alt3-1', 'alt3-2', 'alt3-3')")
     parser.add_argument("--input", help="Custom input for stage 1 or full pipeline")
     parser.add_argument("--api-key", help="Gemini API key (or use GEMINI_API_KEY env var)")
     parser.add_argument("--run-id", help="Run ID to continue from previous execution")
@@ -816,6 +1083,25 @@ def main():
             
         asyncio.run(alt_runner.run_all_alt_stages(initial_input, visual_refs))
     
+    elif args.stage == "alt3-visual":
+        # Alternative 5-stage pipeline with visual feedback
+        alt_runner = Alternative3StagePipeline(api_key)
+        default_input = "create a login page for a SaaS app"
+        
+        # 🔥 TESTING: Read from user-request.txt if it exists
+        if os.path.exists("user-request.txt"):
+            with open("user-request.txt", "r", encoding="utf-8") as f:
+                initial_input = f.read().strip()
+            print(f"📁 Reading input from user-request.txt: {initial_input}")
+        else:
+            initial_input = args.input or default_input
+        
+        # 📸 Load visual references
+        visual_refs = load_visual_references()
+        if visual_refs:
+            print(f"📸 Found {len(visual_refs)} visual references: {[os.path.basename(ref) for ref in visual_refs]}")
+            
+        asyncio.run(alt_runner.run_all_alt_stages_with_visual(initial_input, visual_refs))
     
     elif args.stage.startswith("alt3-"):
         # Single stage from alternative 3-stage pipeline

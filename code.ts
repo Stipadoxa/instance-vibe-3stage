@@ -425,11 +425,99 @@ async function analyzeDesignFeedback(frameId: string, userRequest: string) {
   }
 }
 
+// Screenshot monitoring for visual feedback pipeline
+function startScreenshotMonitoring() {
+  console.log("📸 Starting screenshot monitoring for visual feedback pipeline");
+  
+  // Check for screenshot requests every 5 seconds
+  setInterval(async () => {
+    try {
+      // Poll the Python server for screenshot requests
+      const response = await fetch('http://localhost:8002/api/screenshot-request');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.has_request) {
+          console.log("📸 Found screenshot request:", data.request_data.run_id);
+          await processScreenshotRequest(data.request_data);
+        }
+      }
+    } catch (error) {
+      // Silently ignore connection errors when server is not running
+      // Only log if we're in debug mode
+      if (console.debug) {
+        console.debug("Screenshot monitoring: server not available");
+      }
+    }
+  }, 5000);
+}
+
+async function processScreenshotRequest(requestData: any) {
+  try {
+    console.log("📸 Processing screenshot request:", requestData.run_id);
+    
+    // Parse the JSON content
+    const layoutData = JSON.parse(requestData.json_content);
+    
+    // Render the JSON
+    const generatedFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
+    
+    if (generatedFrame) {
+      // Take screenshot
+      const screenshot = await generatedFrame.exportAsync({
+        format: 'PNG',
+        constraint: { type: 'SCALE', value: 1 }
+      });
+      
+      // Send screenshot back to Python server
+      const response = await fetch('http://localhost:8002/api/screenshot-ready', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          run_id: requestData.run_id,
+          screenshot: Array.from(screenshot) // Convert Uint8Array to regular array
+        })
+      });
+
+      if (response.ok) {
+        console.log("✅ Screenshot sent to server for run_id:", requestData.run_id);
+        
+        // Also notify UI for feedback
+        figma.ui.postMessage({
+          type: 'screenshot-ready',
+          run_id: requestData.run_id,
+          frameId: generatedFrame.id
+        });
+      } else {
+        throw new Error('Failed to send screenshot to server');
+      }
+    } else {
+      console.error("❌ Failed to render JSON for screenshot");
+      figma.ui.postMessage({
+        type: 'screenshot-error', 
+        run_id: requestData.run_id,
+        error: 'Failed to render JSON'
+      });
+    }
+  } catch (error) {
+    console.error("❌ Screenshot processing error:", error);
+    figma.ui.postMessage({
+      type: 'screenshot-error',
+      run_id: requestData.run_id,
+      error: error.message
+    });
+  }
+}
+
 async function main() {
   console.log("🚀 AIDesigner plugin started");
   figma.showUI(__html__, { width: 400, height: 720 });
   
   await initializeSession();
+  
+  // Start monitoring for screenshot requests
+  startScreenshotMonitoring();
   
   figma.on('run', async (event) => {
   const { command, parameters } = event;
@@ -512,6 +600,20 @@ figma.ui.onmessage = async (msg: any) => {
                 figma.ui.postMessage({ 
                     type: 'design-feedback-error', 
                     error: errorMessage 
+                });
+            }
+            break;
+
+        case 'process-screenshot-request':
+            try {
+                await processScreenshotRequest(msg.payload);
+            } catch (e: any) {
+                const errorMessage = e instanceof Error ? e.message : String(e);
+                console.error('Screenshot request error:', errorMessage);
+                figma.ui.postMessage({
+                    type: 'screenshot-error',
+                    run_id: msg.payload?.run_id,
+                    error: errorMessage
                 });
             }
             break;
