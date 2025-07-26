@@ -1,0 +1,197 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications efficiently on mobile screens. The top bar and bottom navigation are placed at the top and bottom, respectively, providing a clear and familiar navigation pattern.  Item spacing is set to 0 to maximize screen real estate utilization.",
+    "userFlowReasoning": "The user flow is designed for quick scanning and tapping. Each notification item is presented in a concise manner, allowing for quick assessment. Tapping on a notification item leads to the respective details view. The user can easily navigate to other sections of the app via the bottom navigation.",
+    "componentChoices": "I chose '10:10214' (list-item) for displaying notifications because it provides a flexible structure for the required content elements (user avatar, title, description, timestamp). It's superior to '147:3743' (product card) which is visually unsuitable for notifications and lacks the necessary text layers for this context, and '10:3856' (snackbar) which is designed for short, transient messages rather than a persistent list of notifications.",
+    "visualHierarchy": "The visual hierarchy is established by using clear visual distinctions between notification items. The emphasis is on readability and scannability, with a concise presentation of essential notification details. The use of list item components naturally allows for good hierarchy based on position.",
+    "variantSelectionRationale": "For the list-item component, I selected 'Condition=2-line', 'Leading=Image', 'Trailing=None', 'Show overline=False', 'Show supporting text=True' variants.  'Condition=2-line' is chosen as notifications might require two lines for adequate description. 'Leading=Image' displays the user avatar. 'Trailing=None' avoids unnecessary visual clutter.  'Show overline=False' simplifies the look. 'Show supporting text=True' allows for inclusion of the timestamp. Other options were rejected because they are not visually appropriate or not relevant given the available content."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications",
+          "subheadline": null,
+          "Settings": null,
+          "Label": null
+        },
+        "componentInstances": {
+          "leading-icon": null,
+          "avatar": null,
+          "trailing-icon 3": null,
+          "trailing-icon 1": null,
+          "trailing-icon 2": null,
+          "trailing-icon 3": null
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": null,
+          "Headline": "Notification Title 1",
+          "Supporting text": "Notification Description 1",
+          "Trailing supporting text": "10:00 AM"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "type": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": null,
+          "Headline": "Notification Title 2",
+          "Supporting text": "Notification Description 2",
+          "Trailing supporting text": "9:30 AM"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "type": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": null,
+          "Headline": "Notification Title 3",
+          "Supporting text": "Notification Description 3",
+          "Trailing supporting text": "9:00 AM"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "type": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": null,
+          "Headline": "Notification Title 4",
+          "Supporting text": "Notification Description 4",
+          "Trailing supporting text": "8:30 AM"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "type": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": null,
+          "Headline": "Notification Title 5",
+          "Supporting text": "Notification Description 5",
+          "Trailing supporting text": "8:00 AM"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "type": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

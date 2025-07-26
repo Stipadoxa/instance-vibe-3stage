@@ -1,0 +1,232 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout follows a vertical structure, placing the app bar at the top, the notification list in the center, and the bottom navigation at the bottom.  This is standard mobile app UI convention, maximizing vertical space for notifications while keeping navigation consistently accessible.",
+    "userFlowReasoning": "The user flow is straightforward: users view the notification list. Tapping on a notification leads to a detail view.  There are currently no plans for swipe-to-dismiss or bulk actions, which could be added later based on user feedback.",
+    "componentChoices": "I chose the 'list-item' (id: 10:10214) component for the notification items because it provides the necessary flexibility to display an avatar, title, description, and timestamp in a single row, and it is ideal for a vertical list format.  I considered using a 'card' (id: 147:3743) for each notification, which is visually appealing but might use more space on a mobile device, potentially reducing the number of visible notifications. Additionally, a 'text' component alone would be insufficient for the complex data involved.",
+    "visualHierarchy": "Visual hierarchy is established through component choices and appropriate spacing. The app bar is prominent at the top, followed by the notification list with clear visual separation between items, leading to a bottom navigation bar. The notification list uses sufficient spacing between items, ensuring readability and usability on smaller screens.",
+    "variantSelectionRationale": "For the 'list-item' component, I selected the 'Condition' variant as '2-line' to accommodate the title and description, 'Leading' as 'Image' for the user avatar, and 'Trailing' as 'None' because no trailing elements (e.g., checkboxes, icons) are immediately required. 'Show overline' and 'Show supporting text' are set to 'False' as overlines and additional text aren't needed.  Alternatives like using a '3-line+' condition, or adding leading/trailing elements would unnecessarily clutter the layout, especially with limited screen space on mobile devices."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Communication/Information Delivery Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications",
+          "subheadline": "Your recent updates"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Headline": "Notification Title 1",
+              "Supporting text": "Notification Description 1"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Trailing supporting text": "10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Headline": "Notification Title 2",
+              "Supporting text": "Notification Description 2"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Trailing supporting text": "10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Headline": "Notification Title 3",
+              "Supporting text": "Notification Description 3"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Trailing supporting text": "10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Headline": "Notification Title 4",
+              "Supporting text": "Notification Description 4"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Trailing supporting text": "10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Headline": "Notification Title 5",
+              "Supporting text": "Notification Description 5"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "textLayers": {
+              "Trailing supporting text": "10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

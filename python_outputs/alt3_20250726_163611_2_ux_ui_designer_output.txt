@@ -1,0 +1,182 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical list to display notifications, ensuring a clear and efficient presentation of information.  Each notification item is given a single row to maximize screen real estate usage.",
+    "userFlowReasoning": "Tapping on a notification item will lead to a detailed view of the notification.  There's no explicit action to mark notifications as read; read status will be reflected visually. This approach simplifies the user flow by focusing on the primary goal of viewing notification details.",
+    "componentChoices": "I chose the '10:10214' list-item component over '147:3743' product card and '10:3856' snackbar. The list-item is perfectly suited for displaying notification information.  Product cards are for displaying product listings, and snackbars are for short messages, neither of which are relevant here. The list-item's flexibility in handling various content elements aligns with our requirements.",
+    "visualHierarchy": "A clear visual hierarchy is established through the vertical list arrangement.  The user avatar, title, and description are presented in a prominent way, with the timestamp providing supplementary information.",
+    "variantSelectionRationale": "For the '10:10214' list-item, I chose 'Condition=2-line', 'Leading=Image', 'Trailing=None', 'Show overline=False', 'Show supporting text=True'.  'Condition=2-line' allows for both title and description.  'Leading=Image' integrates the user avatar. 'Show supporting text=True' displays the timestamp. Alternatives like 'Condition=1-line' would not accommodate sufficient content, and adding a trailing element would clutter the design. The overline is unnecessary, given we have the title."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications",
+          "subheadline": "Recent Updates"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "itemSpacing": 12,
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "textLayers": {
+              "Headline": "Notification Title 1",
+              "Supporting text": "Notification Description 1\n12:00 PM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "itemSpacing": 12,
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "textLayers": {
+              "Headline": "Notification Title 2",
+              "Supporting text": "Notification Description 2\n11:30 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "itemSpacing": 12,
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "textLayers": {
+              "Headline": "Notification Title 3",
+              "Supporting text": "Notification Description 3\n11:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "itemSpacing": 12,
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "textLayers": {
+              "Headline": "Notification Title 4",
+              "Supporting text": "Notification Description 4\n10:30 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "itemSpacing": 12,
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "textLayers": {
+              "Headline": "Notification Title 5",
+              "Supporting text": "Notification Description 5\n10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

@@ -521,12 +521,12 @@ class Alternative3StagePipeline:
         # Parse input_data to extract different components
         parts = input_data.split('\n\n---\n\n')
         user_request_output = parts[0] if len(parts) > 0 else input_data
-        current_layout_spec = parts[1] if len(parts) > 1 else ""
+        ux_designer_output = parts[1] if len(parts) > 1 else ""
         
         # Replace placeholders in the Visual UX Designer prompt
         formatted_prompt = prompt_template.replace('{{USER_REQUEST_ANALYZER_OUTPUT}}', user_request_output)
         formatted_prompt = formatted_prompt.replace('{{DESIGN_SYSTEM_DATA}}', design_system_data)
-        formatted_prompt = formatted_prompt.replace('{{CURRENT_LAYOUT_SPECIFICATION}}', current_layout_spec)
+        formatted_prompt = formatted_prompt.replace('{{UX_UI_DESIGNER_OUTPUT}}', ux_designer_output)
         
         # Add screenshot reference
         if screenshot_path:

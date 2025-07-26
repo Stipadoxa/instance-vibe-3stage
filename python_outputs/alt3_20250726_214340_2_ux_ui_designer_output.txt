@@ -1,0 +1,228 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the top bar, notification list, and bottom navigation.  Item spacing is set to 0 for a clean, contiguous look. Padding is also set to 0 on all sides of the root container to maximize space utilization.",
+    "userFlowReasoning": "The primary user flow is to view a list of notifications. Tapping on a notification will lead to a detail view (not implemented here).  Secondary actions such as marking as read or dismissing notifications could be implemented with implicit or explicit interactions on the notification item itself.",
+    "componentChoices": "I chose '10:10214' (list-item) for the notification items, '10:4724' (Bottom navigation) for the bottom navigation bar, and '10:5620' (appbar) for the top bar.  I chose the list-item component over '147:3743' (product card) and '10:7852' (Tabs) because the list-item is specifically designed for displaying short texts and images in list format, more suitable for notifications than product cards, and not requiring the features of a tabbed interface. The bottom navigation component was selected over creating a custom navigation bar, as this provides a standard and easily understood interaction pattern.  The appbar provides for visual consistency between user-facing screens.",
+    "visualHierarchy": "Visual hierarchy is established through clear typography and spacing. The appbar and bottom navigation occupy prominent positions, while notification items are stacked in a clear vertical list.  Read/unread notifications could be distinguished with text styles (e.g., bold vs. regular text, or color variations) on the title.",
+    "variantSelectionRationale": "For the list-item, I chose 'Condition=2-line', 'Leading=Image', 'Trailing=None', 'Show overline=False', 'Show supporting text=True'.  I avoided '3-line+' condition to manage mobile screen real estate, and opted for an image for user avatars.  The 'Trailing' variant remains 'None' as no secondary actions are explicitly defined; marking as read would be an implicit action on tap. For the appbar, I chose 'Mode=Light', 'Type=Default', 'Elevation=flat' for a default style app bar. For the bottom navigation, I chose 'Device=Mobile' to optimize for mobile screens."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication/Notification Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Headline": "Notification Title 1",
+              "Supporting text": "Notification Description 1"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Trailing supporting text": "10:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Headline": "Notification Title 2",
+              "Supporting text": "Notification Description 2"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Trailing supporting text": "10:15 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Headline": "Notification Title 3",
+              "Supporting text": "Notification Description 3"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Trailing supporting text": "10:30 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Headline": "Notification Title 4",
+              "Supporting text": "Notification Description 4"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Trailing supporting text": "10:45 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Headline": "Notification Title 5",
+              "Supporting text": "Notification Description 5"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "text",
+            "variants": {},
+            "textLayers": {
+              "Trailing supporting text": "11:00 AM"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```
