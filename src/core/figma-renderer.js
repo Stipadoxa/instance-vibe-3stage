@@ -8,6 +8,8 @@ export class FigmaRenderer {
      * Main UI generation function - creates UI from structured JSON data
      */
     static async generateUIFromData(layoutData, parentNode) {
+        console.log('🔴 USING OLD GENERATION METHOD');
+        
         let currentFrame;
         const containerData = layoutData.layoutContainer || layoutData;
         if (parentNode.type === 'PAGE' && containerData) {
@@ -963,6 +965,12 @@ export class FigmaRenderer {
      * Enhanced systematic component creation with modern API
      */
     static async createComponentInstanceSystematic(item, container) {
+        console.log('🔍 ENTERED createComponentInstanceSystematic:', {
+            itemType: item.type,
+            componentNodeId: item.componentNodeId,
+            hasProperties: !!(item.properties)
+        });
+        
         if (!item.componentNodeId)
             return;
         const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
@@ -993,7 +1001,24 @@ export class FigmaRenderer {
         // Create and configure instance
         const instance = masterComponent.createInstance();
         container.appendChild(instance);
+
+        // ADD THIS DEBUG CODE:
+        console.log('🔍 Pre-variant debug:', {
+            instanceId: instance.id,
+            componentNodeType: componentNode.type,
+            hasPropertyDefinitions: !!(componentNode?.componentPropertyDefinitions),
+            requestedVariants: variants,
+            availableVariantProps: componentNode?.variantGroupProperties || 'none',
+            instanceName: instance.name
+        });
+
         // Apply properties in correct order
+        console.log('🚨 BEFORE VARIANT APPLICATION:', {
+            componentId: item.componentNodeId,
+            hasVariants: Object.keys(variants).length > 0,
+            variants: variants
+        });
+
         if (Object.keys(variants).length > 0) {
             await this.applyVariantsSystematic(instance, variants, componentNode);
         }
@@ -1009,6 +1034,12 @@ export class FigmaRenderer {
      * Apply variants with modern Component Properties API
      */
     static async applyVariantsSystematic(instance, variants, componentNode) {
+        console.log('🚨 applyVariantsSystematic CALLED:', {
+            instanceName: instance.name,
+            componentId: componentNode.id,
+            variantsReceived: variants
+        });
+        
         try {
             await PerformanceTracker.track('apply-variants', async () => {
                 if (componentNode && componentNode.type === 'COMPONENT_SET') {
@@ -1018,6 +1049,16 @@ export class FigmaRenderer {
                         console.warn('⚠️ No component property definitions found');
                         return;
                     }
+
+                    // ADD THIS DEBUG CODE RIGHT HERE:
+                    console.log('🔍 VARIANT DEBUG for Leading:', {
+                        requestedValue: variants.Leading,
+                        componentId: componentNode.id,
+                        availableVariants: propertyDefinitions?.Leading?.variantOptions || 'NONE FOUND',
+                        exactMatch: propertyDefinitions?.Leading?.variantOptions?.includes('Image'),
+                        allPropertyDefs: Object.keys(propertyDefinitions || {})
+                    });
+
                     const validVariants = {};
                     Object.entries(variants).forEach(([propName, propValue]) => {
                         var _a;
@@ -1036,9 +1077,21 @@ export class FigmaRenderer {
                             console.warn(`⚠️ Unknown variant property: "${propName}"`);
                         }
                     });
+                    
+                    console.log('🔍 ABOUT TO APPLY VARIANTS:', {
+                        instanceId: instance.id,
+                        requestedVariants: variants,
+                        validVariantsToApply: validVariants,
+                        validVariantCount: Object.keys(validVariants).length
+                    });
+
+                    // Apply the variants
                     if (Object.keys(validVariants).length > 0) {
+                        console.log('🔧 Calling instance.setProperties with:', validVariants);
                         instance.setProperties(validVariants);
-                        console.log('✅ Variants applied successfully');
+                        console.log('✅ setProperties completed');
+                    } else {
+                        console.log('⚠️ No valid variants to apply');
                     }
                 }
             });
@@ -1249,6 +1302,8 @@ export class FigmaRenderer {
      * Enhanced dynamic generation using systematic approach
      */
     static async generateUIFromDataSystematic(layoutData, parentNode) {
+        console.log('🟢 USING SYSTEMATIC GENERATION METHOD');
+        
         // Skip ComponentPropertyEngine if no schemas available
         const schemas = ComponentPropertyEngine.getAllSchemas();
         if (schemas.length === 0) {
@@ -1338,6 +1393,8 @@ export class FigmaRenderer {
         if (!items || !Array.isArray(items))
             return currentFrame;
         for (const item of items) {
+            console.log('🔍 Processing item:', item.type, item.componentNodeId);
+            
             if (item.type === 'layoutContainer') {
                 console.log('🔧 Creating nested layoutContainer:', item.name, 'layoutMode:', item.layoutMode);
                 const nestedFrame = figma.createFrame();
@@ -1361,6 +1418,7 @@ export class FigmaRenderer {
                 await this.createEllipseNode(item, currentFrame);
             }
             else {
+                console.log('🔍 About to call createComponentInstanceSystematic for:', item.type);
                 // Use systematic approach for components
                 await this.createComponentInstanceSystematic(item, currentFrame);
             }
