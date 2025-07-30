@@ -349,6 +349,14 @@ export class ComponentPropertyEngine {
   }
 
   static validateAndProcessProperties(componentId: string, rawProperties: any): PropertyValidationResult {
+    console.log('🔍 PROPERTY ENGINE - Schema lookup:', {
+      componentId,
+      rawProperties,
+      hasSchema: this.componentSchemas.has(componentId),
+      totalSchemas: this.componentSchemas.size,
+      allSchemaIds: Array.from(this.componentSchemas.keys())
+    });
+    
     const schema = this.componentSchemas.get(componentId);
     
     if (!schema) {

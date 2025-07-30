@@ -279,6 +279,8 @@ export class FigmaRenderer {
    * Dynamic UI generation with component ID resolution
    */
   static async generateUIFromDataDynamic(layoutData: any): Promise<FrameNode | null> {
+    console.log('🚀 START generateUIFromDataDynamic', { hasLayoutData: !!layoutData, hasItems: !!layoutData?.items });
+    
     if (!layoutData || (!layoutData.items && !layoutData.layoutContainer)) {
       figma.notify("Invalid JSON structure", { error: true });
       return null;
@@ -350,6 +352,7 @@ export class FigmaRenderer {
         }
 
       await resolveComponentIds(migratedData.items);
+      console.log('🟢 USING SYSTEMATIC GENERATION METHOD');
       return await this.generateUIFromDataSystematic(migratedData, figma.currentPage);
     } catch (e: any) {
       const errorMessage = e instanceof Error ? e.message : String(e);
@@ -1286,10 +1289,15 @@ export class FigmaRenderer {
 
     console.log(` Creating systematic instance: ${masterComponent.name}`);
 
-    // SYSTEMATIC VALIDATION
+    // SYSTEMATIC VALIDATION - Merge properties and variants
+    const allProperties = {
+      ...item.properties || {},
+      variants: item.variants || {}
+    };
+    
     const validationResult = ComponentPropertyEngine.validateAndProcessProperties(
       item.componentNodeId, 
-      item.properties || {}
+      allProperties
     );
 
     if (validationResult.warnings.length > 0) {
@@ -1308,13 +1316,22 @@ export class FigmaRenderer {
 
     const { variants, textProperties, mediaProperties, layoutProperties } = validationResult.processedProperties;
 
+    console.log('🔧 VALIDATION RESULTS:', {
+      originalVariants: item.variants,
+      processedVariants: variants,
+      variantCount: Object.keys(variants).length
+    });
+
     // Create and configure instance
     const instance = masterComponent.createInstance();
     container.appendChild(instance);
 
     // Apply properties in correct order
     if (Object.keys(variants).length > 0) {
+      console.log('✅ About to apply variants:', variants);
       await this.applyVariantsSystematic(instance, variants, componentNode);
+    } else {
+      console.log('⚠️ NO VARIANTS TO APPLY - variants object is empty');
     }
     
     this.applyChildLayoutProperties(instance, layoutProperties);
@@ -1332,6 +1349,12 @@ export class FigmaRenderer {
    * Apply variants with modern Component Properties API
    */
   static async applyVariantsSystematic(instance: InstanceNode, variants: any, componentNode: any): Promise<void> {
+    console.log('🎨 VARIANT APPLICATION START', { 
+      variants, 
+      componentType: componentNode?.type,
+      instanceName: instance.name 
+    });
+    
     try {
       await PerformanceTracker.track('apply-variants', async () => {
         if (componentNode && componentNode.type === 'COMPONENT_SET') {
