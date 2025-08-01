@@ -427,9 +427,13 @@ export class FigmaRenderer {
             console.error(`❌ Error applying color "${props.color}":`, error);
             // Continue without color if there's an error
           }
+        } else if (props.color && typeof props.color === 'object' && props.color.r !== undefined) {
+          // Handle RGB object with validation
+          const rgbColor = props.color as RGB;
+          textNode.fills = [{ type: 'SOLID', color: rgbColor, opacity: 1 } as SolidPaint];
+          console.log(`✅ Applied RGB color object to text: RGB(${rgbColor.r.toFixed(2)}, ${rgbColor.g.toFixed(2)}, ${rgbColor.b.toFixed(2)})`);
         } else {
-          // Handle RGB object (existing behavior)
-          textNode.fills = [{ type: 'SOLID', color: props.color }];
+          console.warn(`⚠️ Unrecognized color format for text:`, props.color);
         }
       }
     }
@@ -489,60 +493,129 @@ export class FigmaRenderer {
 
   /**
    * Create native rectangle element
+   * ENHANCED: Now uses Phase 1 color parsing and proper dimension handling
    */
   static async createRectangleNode(rectData: any, container: FrameNode): Promise<void> {
-    console.log('Creating native rectangle:', rectData);
+    console.log('🟦 Creating native rectangle:', rectData);
     
     const rect = figma.createRectangle();
+    const props = rectData.properties || rectData;
     
-    // Set dimensions
-    if (rectData.width && rectData.height) {
-      rect.resize(rectData.width, rectData.height);
-    } else {
-      rect.resize(100, 100); // Default size
+    // Set dimensions with enhanced logic
+    let width = 100; // Default width
+    let height = 100; // Default height
+    
+    // Handle width
+    if (props.width === 'FILL') {
+      width = container.width - (container.paddingLeft + container.paddingRight);
+    } else if (typeof props.width === 'number') {
+      width = props.width;
     }
     
-    // Set fill color
-    if (rectData.fill) {
-      rect.fills = [{ type: 'SOLID', color: rectData.fill }];
+    // Handle height
+    if (typeof props.height === 'number') {
+      height = props.height;
+    }
+    
+    rect.resize(width, height);
+    console.log(`📏 Rectangle dimensions: ${width}x${height}`);
+    
+    // Handle fills using Phase 1 color parsing
+    if (props.fill) {
+      let paint: Paint | null = null;
+      
+      // Try complex fill object first (from Phase 1)
+      paint = this.parseComplexFillObject(props.fill);
+      
+      // Fallback to direct color string
+      if (!paint && typeof props.fill === 'string') {
+        const color = this.resolveColorReference(props.fill);
+        if (color) {
+          paint = { type: 'SOLID', color: color, opacity: 1 } as SolidPaint;
+          console.log(`🎨 Resolved rectangle color: ${props.fill} -> RGB(${color.r.toFixed(2)}, ${color.g.toFixed(2)}, ${color.b.toFixed(2)})`);
+        }
+      }
+      
+      // Apply paint if successfully parsed
+      if (paint) {
+        rect.fills = [paint];
+        console.log('✅ Rectangle fill applied successfully');
+      } else {
+        console.warn(`⚠️ Could not resolve rectangle fill: ${props.fill}`);
+      }
     }
     
     // Set corner radius
-    if (rectData.cornerRadius) {
-      rect.cornerRadius = rectData.cornerRadius;
-    }
-    
-    // Handle sizing
-    if (rectData.horizontalSizing === 'FILL') {
-      rect.layoutAlign = 'STRETCH';
+    if (typeof props.cornerRadius === 'number') {
+      rect.cornerRadius = props.cornerRadius;
+      console.log(`📐 Corner radius: ${props.cornerRadius}`);
     }
     
     container.appendChild(rect);
-    console.log('Rectangle created successfully');
+    
+    // Handle layout properties AFTER adding to container
+    if (props.width === 'FILL' || props.horizontalSizing === 'FILL') {
+      rect.layoutSizingHorizontal = 'FILL';
+      console.log('📐 Set rectangle to FILL width');
+    }
+    
+    console.log('✅ Rectangle created successfully');
   }
 
   /**
    * Create native ellipse element
+   * ENHANCED: Now uses Phase 1 color parsing and proper dimension handling
    */
   static async createEllipseNode(ellipseData: any, container: FrameNode): Promise<void> {
-    console.log('Creating native ellipse:', ellipseData);
+    console.log('🟡 Creating native ellipse:', ellipseData);
     
     const ellipse = figma.createEllipse();
+    const props = ellipseData.properties || ellipseData;
     
-    // Set dimensions
-    if (ellipseData.width && ellipseData.height) {
-      ellipse.resize(ellipseData.width, ellipseData.height);
-    } else {
-      ellipse.resize(50, 50); // Default size
+    // Set dimensions with enhanced logic
+    let size = 80; // Default size
+    
+    // Handle size property (circles are typically square)
+    if (typeof props.size === 'number') {
+      size = props.size;
+    } else if (props.width && props.height) {
+      size = Math.min(props.width, props.height); // Use smaller dimension for circle
+    } else if (props.width) {
+      size = props.width;
+    } else if (props.height) {
+      size = props.height;
     }
     
-    // Set fill color
-    if (ellipseData.fill) {
-      ellipse.fills = [{ type: 'SOLID', color: ellipseData.fill }];
+    ellipse.resize(size, size);
+    console.log(`📏 Circle dimensions: ${size}x${size}`);
+    
+    // Handle fills using Phase 1 color parsing (same as rectangles)
+    if (props.fill) {
+      let paint: Paint | null = null;
+      
+      // Try complex fill object first (from Phase 1)
+      paint = this.parseComplexFillObject(props.fill);
+      
+      // Fallback to direct color string
+      if (!paint && typeof props.fill === 'string') {
+        const color = this.resolveColorReference(props.fill);
+        if (color) {
+          paint = { type: 'SOLID', color: color, opacity: 1 } as SolidPaint;
+          console.log(`🎨 Resolved circle color: ${props.fill} -> RGB(${color.r.toFixed(2)}, ${color.g.toFixed(2)}, ${color.b.toFixed(2)})`);
+        }
+      }
+      
+      // Apply paint if successfully parsed
+      if (paint) {
+        ellipse.fills = [paint];
+        console.log('✅ Circle fill applied successfully');
+      } else {
+        console.warn(`⚠️ Could not resolve circle fill: ${props.fill}`);
+      }
     }
     
     container.appendChild(ellipse);
-    console.log('Ellipse created successfully');
+    console.log('✅ Circle created successfully');
   }
 
   /**
@@ -2202,13 +2275,70 @@ export class FigmaRenderer {
   }
 
   /**
-   * ENHANCED: Resolve color references with 3-tier fallback system
+   * Parse hex color strings to RGB format (0-1 range for Figma)
+   * Supports both 3-character and 6-character hex formats
+   * Examples: "#fff", "#ffffff", "b8b3f6", "#b8b3f6"
+   */
+  static parseHexColor(hex: string): RGB | null {
+    // Remove # if present
+    const cleanHex = hex.replace('#', '');
+    
+    // Validate hex format (3 or 6 characters)
+    if (!/^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+      return null;
+    }
+    
+    // Convert 3-char to 6-char (e.g., 'f0a' -> 'ff00aa')
+    const fullHex = cleanHex.length === 3 
+      ? cleanHex.split('').map(c => c + c).join('')
+      : cleanHex;
+    
+    // Convert to RGB (0-1 range for Figma)
+    const r = parseInt(fullHex.substr(0, 2), 16) / 255;
+    const g = parseInt(fullHex.substr(2, 2), 16) / 255;
+    const b = parseInt(fullHex.substr(4, 2), 16) / 255;
+    
+    return { r, g, b };
+  }
+
+  /**
+   * Handle complex fill objects from JSON
+   * Supports: { "type": "SOLID", "color": "#b8b3f6", "opacity": 1 }
+   * Also supports gradient objects (for future gradient implementation)
+   */
+  static parseComplexFillObject(fillData: any): Paint | null {
+    if (!fillData || typeof fillData !== 'object') return null;
+    
+    // Handle standard fill object: { "type": "SOLID", "color": "#b8b3f6", "opacity": 1 }
+    if (fillData.type === 'SOLID' && fillData.color) {
+      const color = this.resolveColorReference(fillData.color);
+      if (color) {
+        return {
+          type: 'SOLID',
+          color: color,
+          opacity: fillData.opacity || 1
+        } as SolidPaint;
+      }
+    }
+    
+    // Handle gradient objects (placeholder for Phase 5)
+    if (fillData.type === 'GRADIENT_LINEAR' || fillData.type === 'LINEAR_GRADIENT') {
+      console.warn('Gradient support not yet implemented - Phase 5');
+      return null;
+    }
+    
+    return null;
+  }
+
+  /**
+   * ENHANCED: Resolve color references with 4-tier fallback system
    * 1. Design Tokens (preferred) 
    * 2. Color Styles (legacy)
-   * 3. Semantic color fallback
+   * 3. Hex string parsing (NEW)
+   * 4. Semantic color fallback
    */
   static resolveColorReference(colorName: string): RGB | null {
-    console.log(`🎨 Resolving color: "${colorName}" with 3-tier system`);
+    console.log(`🎨 Resolving color: "${colorName}" with 4-tier system`);
     
     // Tier 1: Try design tokens first (modern approach)
     const tokenColor = this.resolveDesignTokenReference(colorName);
@@ -2224,9 +2354,18 @@ export class FigmaRenderer {
       return styleColor;
     }
     
-    // Tier 3: Ultimate fallback
+    // Tier 3: NEW - Hex string parsing
+    if (colorName.startsWith('#') || /^[0-9A-Fa-f]{3,6}$/.test(colorName)) {
+      const hexColor = this.parseHexColor(colorName);
+      if (hexColor) {
+        console.log(`✅ Resolved via hex string parsing: ${colorName}`);
+        return hexColor;
+      }
+    }
+    
+    // Tier 4: Improved fallback (gray instead of black)
     console.warn(`⚠️ Could not resolve color "${colorName}" through any method`);
-    return { r: 0, g: 0, b: 0 }; // Black fallback
+    return { r: 0.5, g: 0.5, b: 0.5 }; // Gray fallback instead of black
   }
 
   /**

@@ -402,6 +402,36 @@
       return "\u25CF".repeat(apiKey.length - 4) + apiKey.slice(-4);
     }
     /**
+     * Analyze image with Gemini API for design feedback
+     */
+    static async analyzeImage(imageBytes, prompt) {
+      try {
+        const apiKey = await this.getApiKey();
+        if (!apiKey) {
+          throw new Error("No API key found. Please configure your API key first.");
+        }
+        const base64 = btoa(String.fromCharCode(...imageBytes));
+        const response = await this.callGeminiAPI(
+          apiKey,
+          prompt,
+          { base64, type: "image/png" },
+          {
+            temperature: 0.1,
+            maxOutputTokens: 1024,
+            responseMimeType: "application/json"
+          }
+        );
+        if (response.success) {
+          return response.data || "";
+        } else {
+          throw new Error(response.error || "Analysis failed");
+        }
+      } catch (error) {
+        console.error("Vision analysis failed:", error);
+        throw error;
+      }
+    }
+    /**
      * Format error message for user display
      */
     static formatErrorMessage(error) {
@@ -2160,6 +2190,13 @@
       return "icon";
     }
     static validateAndProcessProperties(componentId, rawProperties) {
+      console.log("\u{1F50D} PROPERTY ENGINE - Schema lookup:", {
+        componentId,
+        rawProperties,
+        hasSchema: this.componentSchemas.has(componentId),
+        totalSchemas: this.componentSchemas.size,
+        allSchemaIds: Array.from(this.componentSchemas.keys())
+      });
       const schema = this.componentSchemas.get(componentId);
       if (!schema) {
         return {
@@ -2646,6 +2683,7 @@
      * Dynamic UI generation with component ID resolution
      */
     static async generateUIFromDataDynamic(layoutData) {
+      console.log("\u{1F680} START generateUIFromDataDynamic", { hasLayoutData: !!layoutData, hasItems: !!(layoutData == null ? void 0 : layoutData.items) });
       if (!layoutData || !layoutData.items && !layoutData.layoutContainer) {
         figma.notify("Invalid JSON structure", { error: true });
         return null;
@@ -2696,6 +2734,7 @@
           }
         }
         await resolveComponentIds(migratedData.items);
+        console.log("\u{1F7E2} USING SYSTEMATIC GENERATION METHOD");
         return await this.generateUIFromDataSystematic(migratedData, figma.currentPage);
       } catch (e) {
         const errorMessage = e instanceof Error ? e.message : String(e);
@@ -2750,8 +2789,12 @@
             } catch (error) {
               console.error(`\u274C Error applying color "${props.color}":`, error);
             }
+          } else if (props.color && typeof props.color === "object" && props.color.r !== void 0) {
+            const rgbColor = props.color;
+            textNode.fills = [{ type: "SOLID", color: rgbColor, opacity: 1 }];
+            console.log(`\u2705 Applied RGB color object to text: RGB(${rgbColor.r.toFixed(2)}, ${rgbColor.g.toFixed(2)}, ${rgbColor.b.toFixed(2)})`);
           } else {
-            textNode.fills = [{ type: "SOLID", color: props.color }];
+            console.warn(`\u26A0\uFE0F Unrecognized color format for text:`, props.color);
           }
         }
       }
@@ -2795,43 +2838,91 @@
     }
     /**
      * Create native rectangle element
+     * ENHANCED: Now uses Phase 1 color parsing and proper dimension handling
      */
     static async createRectangleNode(rectData, container) {
-      console.log("Creating native rectangle:", rectData);
+      console.log("\u{1F7E6} Creating native rectangle:", rectData);
       const rect = figma.createRectangle();
-      if (rectData.width && rectData.height) {
-        rect.resize(rectData.width, rectData.height);
-      } else {
-        rect.resize(100, 100);
+      const props = rectData.properties || rectData;
+      let width = 100;
+      let height = 100;
+      if (props.width === "FILL") {
+        width = container.width - (container.paddingLeft + container.paddingRight);
+      } else if (typeof props.width === "number") {
+        width = props.width;
       }
-      if (rectData.fill) {
-        rect.fills = [{ type: "SOLID", color: rectData.fill }];
+      if (typeof props.height === "number") {
+        height = props.height;
       }
-      if (rectData.cornerRadius) {
-        rect.cornerRadius = rectData.cornerRadius;
+      rect.resize(width, height);
+      console.log(`\u{1F4CF} Rectangle dimensions: ${width}x${height}`);
+      if (props.fill) {
+        let paint = null;
+        paint = this.parseComplexFillObject(props.fill);
+        if (!paint && typeof props.fill === "string") {
+          const color = this.resolveColorReference(props.fill);
+          if (color) {
+            paint = { type: "SOLID", color, opacity: 1 };
+            console.log(`\u{1F3A8} Resolved rectangle color: ${props.fill} -> RGB(${color.r.toFixed(2)}, ${color.g.toFixed(2)}, ${color.b.toFixed(2)})`);
+          }
+        }
+        if (paint) {
+          rect.fills = [paint];
+          console.log("\u2705 Rectangle fill applied successfully");
+        } else {
+          console.warn(`\u26A0\uFE0F Could not resolve rectangle fill: ${props.fill}`);
+        }
       }
-      if (rectData.horizontalSizing === "FILL") {
-        rect.layoutAlign = "STRETCH";
+      if (typeof props.cornerRadius === "number") {
+        rect.cornerRadius = props.cornerRadius;
+        console.log(`\u{1F4D0} Corner radius: ${props.cornerRadius}`);
       }
       container.appendChild(rect);
-      console.log("Rectangle created successfully");
+      if (props.width === "FILL" || props.horizontalSizing === "FILL") {
+        rect.layoutSizingHorizontal = "FILL";
+        console.log("\u{1F4D0} Set rectangle to FILL width");
+      }
+      console.log("\u2705 Rectangle created successfully");
     }
     /**
      * Create native ellipse element
+     * ENHANCED: Now uses Phase 1 color parsing and proper dimension handling
      */
     static async createEllipseNode(ellipseData, container) {
-      console.log("Creating native ellipse:", ellipseData);
+      console.log("\u{1F7E1} Creating native ellipse:", ellipseData);
       const ellipse = figma.createEllipse();
-      if (ellipseData.width && ellipseData.height) {
-        ellipse.resize(ellipseData.width, ellipseData.height);
-      } else {
-        ellipse.resize(50, 50);
+      const props = ellipseData.properties || ellipseData;
+      let size = 80;
+      if (typeof props.size === "number") {
+        size = props.size;
+      } else if (props.width && props.height) {
+        size = Math.min(props.width, props.height);
+      } else if (props.width) {
+        size = props.width;
+      } else if (props.height) {
+        size = props.height;
       }
-      if (ellipseData.fill) {
-        ellipse.fills = [{ type: "SOLID", color: ellipseData.fill }];
+      ellipse.resize(size, size);
+      console.log(`\u{1F4CF} Circle dimensions: ${size}x${size}`);
+      if (props.fill) {
+        let paint = null;
+        paint = this.parseComplexFillObject(props.fill);
+        if (!paint && typeof props.fill === "string") {
+          const color = this.resolveColorReference(props.fill);
+          if (color) {
+            paint = { type: "SOLID", color, opacity: 1 };
+            console.log(`\u{1F3A8} Resolved circle color: ${props.fill} -> RGB(${color.r.toFixed(2)}, ${color.g.toFixed(2)}, ${color.b.toFixed(2)})`);
+          }
+        }
+        if (paint) {
+          ellipse.fills = [paint];
+          console.log("\u2705 Circle fill applied successfully");
+        } else {
+          console.warn(`\u26A0\uFE0F Could not resolve circle fill: ${props.fill}`);
+        }
       }
       container.appendChild(ellipse);
-      console.log("Ellipse created successfully");
+      console.log("\u2705 Circle created successfully");
     }
     /**
      * Apply text properties to component instances using enhanced scan data
@@ -2905,6 +2996,12 @@
             if (textNode) {
               matchMethod = "exact-name";
               console.log(`\u2705 Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
+            } else {
+              textNode = allTextNodes.find((n) => n.name === hierarchyEntry.nodeName) || null;
+              if (textNode) {
+                matchMethod = "name-fallback";
+                console.log(`\u2705 Found text node by name fallback: "${textNode.name}" (ID mismatch resolved)`);
+              }
             }
           }
         }
@@ -2920,6 +3017,13 @@
                 matchMethod = "semantic-classification";
                 console.log(`\u2705 Found text node by semantic classification: "${textNode.name}" (${classification})`);
                 break;
+              } else {
+                textNode = allTextNodes.find((n) => n.name === hierarchyEntry.nodeName) || null;
+                if (textNode) {
+                  matchMethod = "semantic-name-fallback";
+                  console.log(`\u2705 Found text node by semantic name fallback: "${textNode.name}" (ID mismatch resolved)`);
+                  break;
+                }
               }
             }
           }
@@ -2933,6 +3037,12 @@
             if (textNode) {
               matchMethod = "partial-name";
               console.log(`\u2705 Found text node by partial name match: "${textNode.name}"`);
+            } else {
+              textNode = allTextNodes.find((n) => n.name === hierarchyEntry.nodeName) || null;
+              if (textNode) {
+                matchMethod = "partial-name-fallback";
+                console.log(`\u2705 Found text node by partial name fallback: "${textNode.name}" (ID mismatch resolved)`);
+              }
             }
           }
         }
@@ -3362,9 +3472,12 @@
         return;
       }
       console.log(` Creating systematic instance: ${masterComponent.name}`);
+      const allProperties = __spreadProps(__spreadValues({}, item.properties || {}), {
+        variants: item.variants || {}
+      });
       const validationResult = ComponentPropertyEngine.validateAndProcessProperties(
         item.componentNodeId,
-        item.properties || {}
+        allProperties
       );
       if (validationResult.warnings.length > 0) {
         console.warn(`\u26A0\uFE0F Warnings:`, validationResult.warnings);
@@ -3378,10 +3491,18 @@
 ${llmErrors}`);
       }
       const { variants, textProperties, mediaProperties, layoutProperties } = validationResult.processedProperties;
+      console.log("\u{1F527} VALIDATION RESULTS:", {
+        originalVariants: item.variants,
+        processedVariants: variants,
+        variantCount: Object.keys(variants).length
+      });
       const instance = masterComponent.createInstance();
       container.appendChild(instance);
       if (Object.keys(variants).length > 0) {
+        console.log("\u2705 About to apply variants:", variants);
         await this.applyVariantsSystematic(instance, variants, componentNode);
+      } else {
+        console.log("\u26A0\uFE0F NO VARIANTS TO APPLY - variants object is empty");
       }
       this.applyChildLayoutProperties(instance, layoutProperties);
       if (Object.keys(textProperties).length > 0) {
@@ -3395,6 +3516,11 @@ ${llmErrors}`);
      * Apply variants with modern Component Properties API
      */
     static async applyVariantsSystematic(instance, variants, componentNode) {
+      console.log("\u{1F3A8} VARIANT APPLICATION START", {
+        variants,
+        componentType: componentNode == null ? void 0 : componentNode.type,
+        instanceName: instance.name
+      });
       try {
         await PerformanceTracker.track("apply-variants", async () => {
           if (componentNode && componentNode.type === "COMPONENT_SET") {
@@ -4063,13 +4189,53 @@ ${llmErrors}`);
       }
     }
     /**
-     * ENHANCED: Resolve color references with 3-tier fallback system
+     * Parse hex color strings to RGB format (0-1 range for Figma)
+     * Supports both 3-character and 6-character hex formats
+     * Examples: "#fff", "#ffffff", "b8b3f6", "#b8b3f6"
+     */
+    static parseHexColor(hex) {
+      const cleanHex = hex.replace("#", "");
+      if (!/^[0-9A-Fa-f]{3}$|^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+        return null;
+      }
+      const fullHex = cleanHex.length === 3 ? cleanHex.split("").map((c) => c + c).join("") : cleanHex;
+      const r = parseInt(fullHex.substr(0, 2), 16) / 255;
+      const g = parseInt(fullHex.substr(2, 2), 16) / 255;
+      const b = parseInt(fullHex.substr(4, 2), 16) / 255;
+      return { r, g, b };
+    }
+    /**
+     * Handle complex fill objects from JSON
+     * Supports: { "type": "SOLID", "color": "#b8b3f6", "opacity": 1 }
+     * Also supports gradient objects (for future gradient implementation)
+     */
+    static parseComplexFillObject(fillData) {
+      if (!fillData || typeof fillData !== "object") return null;
+      if (fillData.type === "SOLID" && fillData.color) {
+        const color = this.resolveColorReference(fillData.color);
+        if (color) {
+          return {
+            type: "SOLID",
+            color,
+            opacity: fillData.opacity || 1
+          };
+        }
+      }
+      if (fillData.type === "GRADIENT_LINEAR" || fillData.type === "LINEAR_GRADIENT") {
+        console.warn("Gradient support not yet implemented - Phase 5");
+        return null;
+      }
+      return null;
+    }
+    /**
+     * ENHANCED: Resolve color references with 4-tier fallback system
      * 1. Design Tokens (preferred) 
      * 2. Color Styles (legacy)
-     * 3. Semantic color fallback
+     * 3. Hex string parsing (NEW)
+     * 4. Semantic color fallback
      */
     static resolveColorReference(colorName) {
-      console.log(`\u{1F3A8} Resolving color: "${colorName}" with 3-tier system`);
+      console.log(`\u{1F3A8} Resolving color: "${colorName}" with 4-tier system`);
       const tokenColor = this.resolveDesignTokenReference(colorName);
       if (tokenColor) {
         console.log(`\u2705 Resolved via design token`);
@@ -4080,8 +4246,15 @@ ${llmErrors}`);
         console.log(`\u2705 Resolved via color style`);
         return styleColor;
       }
+      if (colorName.startsWith("#") || /^[0-9A-Fa-f]{3,6}$/.test(colorName)) {
+        const hexColor = this.parseHexColor(colorName);
+        if (hexColor) {
+          console.log(`\u2705 Resolved via hex string parsing: ${colorName}`);
+          return hexColor;
+        }
+      }
       console.warn(`\u26A0\uFE0F Could not resolve color "${colorName}" through any method`);
-      return { r: 0, g: 0, b: 0 };
+      return { r: 0.5, g: 0.5, b: 0.5 };
     }
     /**
      * Resolve color style names to actual RGB values from scanned Color Styles (fallback)
@@ -8633,6 +8806,50 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
     }
   };
 
+  // src/core/simple-design-reviewer.ts
+  var SimpleDesignReviewer = class {
+    static async assessDesign(screenshot, userRequest) {
+      const prompt = `Analyze this UI design as a senior designer would:
+
+User Request: "${userRequest}"
+
+Provide a comprehensive but concise assessment covering:
+1. Visual hierarchy and layout
+2. Content clarity and organization  
+3. Visual design and aesthetics
+4. User experience and usability
+5. Mobile/accessibility considerations
+
+Format your response as JSON:
+{
+  "score": 7,
+  "keyIssues": [
+    "Button lacks visual prominence",
+    "Text contrast too low for accessibility",
+    "Inconsistent spacing between elements"
+  ],
+  "suggestions": [
+    "Make primary button larger with stronger color",
+    "Increase text contrast to meet WCAG AA standards", 
+    "Apply consistent 16px spacing throughout"
+  ],
+  "strengths": [
+    "Clean, organized layout",
+    "Good use of white space"
+  ]
+}
+
+Focus on the 3-5 most impactful issues and improvements. Be specific and actionable.`;
+      try {
+        const result = await GeminiService.analyzeImage(screenshot, prompt);
+        return JSON.parse(result);
+      } catch (error) {
+        console.error("Design analysis failed:", error);
+        throw new Error("Could not analyze design");
+      }
+    }
+  };
+
   // code.ts
   var validationEngine;
   async function initializeAIPipeline() {
@@ -8872,10 +9089,95 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       console.warn("\u26A0\uFE0F Could not initialize property engine:", error);
     }
   }
+  async function analyzeDesignFeedback(frameId, userRequest) {
+    try {
+      const frame = figma.getNodeById(frameId);
+      if (!frame) {
+        throw new Error("Frame not found");
+      }
+      const screenshot = await frame.exportAsync({
+        format: "PNG",
+        constraint: { type: "SCALE", value: 2 }
+      });
+      const feedback = await SimpleDesignReviewer.assessDesign(screenshot, userRequest);
+      return feedback;
+    } catch (error) {
+      console.error("Error analyzing design feedback:", error);
+      throw error;
+    }
+  }
+  function startScreenshotMonitoring() {
+    console.log("\u{1F4F8} Starting screenshot monitoring for visual feedback pipeline");
+    setInterval(async () => {
+      try {
+        const response = await fetch("http://localhost:8002/api/screenshot-request");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.has_request) {
+            console.log("\u{1F4F8} Found screenshot request:", data.request_data.run_id);
+            await processScreenshotRequest(data.request_data);
+          }
+        }
+      } catch (error) {
+        if (console.debug) {
+          console.debug("Screenshot monitoring: server not available");
+        }
+      }
+    }, 5e3);
+  }
+  async function processScreenshotRequest(requestData) {
+    try {
+      console.log("\u{1F4F8} Processing screenshot request:", requestData.run_id);
+      const layoutData = JSON.parse(requestData.json_content);
+      const generatedFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
+      if (generatedFrame) {
+        const screenshot = await generatedFrame.exportAsync({
+          format: "PNG",
+          constraint: { type: "SCALE", value: 1 }
+        });
+        const response = await fetch("http://localhost:8002/api/screenshot-ready", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            run_id: requestData.run_id,
+            screenshot: Array.from(screenshot)
+            // Convert Uint8Array to regular array
+          })
+        });
+        if (response.ok) {
+          console.log("\u2705 Screenshot sent to server for run_id:", requestData.run_id);
+          figma.ui.postMessage({
+            type: "screenshot-ready",
+            run_id: requestData.run_id,
+            frameId: generatedFrame.id
+          });
+        } else {
+          throw new Error("Failed to send screenshot to server");
+        }
+      } else {
+        console.error("\u274C Failed to render JSON for screenshot");
+        figma.ui.postMessage({
+          type: "screenshot-error",
+          run_id: requestData.run_id,
+          error: "Failed to render JSON"
+        });
+      }
+    } catch (error) {
+      console.error("\u274C Screenshot processing error:", error);
+      figma.ui.postMessage({
+        type: "screenshot-error",
+        run_id: requestData.run_id,
+        error: error.message
+      });
+    }
+  }
   async function main() {
     console.log("\u{1F680} AIDesigner plugin started");
     figma.showUI(__html__, { width: 400, height: 720 });
     await initializeSession();
+    startScreenshotMonitoring();
     figma.on("run", async (event) => {
       const { command, parameters } = event;
       switch (command) {
@@ -8896,23 +9198,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       switch (msg.type) {
         case "test-migration":
           handleMigrationTest();
-          break;
-        case "generate-ui-from-json":
-          try {
-            const layoutData = JSON.parse(msg.payload);
-            const newFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
-            if (newFrame) {
-              figma.ui.postMessage({
-                type: "ui-generated-success",
-                frameId: newFrame.id,
-                generatedJSON: layoutData
-              });
-            }
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            figma.notify("JSON parsing error: " + errorMessage, { error: true });
-            figma.ui.postMessage({ type: "ui-generation-error", error: errorMessage });
-          }
           break;
         // ... (rest of the file)
         // ENHANCED: API-driven UI generation with validation
@@ -8951,6 +9236,36 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
             const errorMessage = e instanceof Error ? e.message : String(e);
             figma.notify("Modification error: " + errorMessage, { error: true });
             figma.ui.postMessage({ type: "ui-generation-error", error: errorMessage });
+          }
+          break;
+        case "analyze-design-feedback":
+          try {
+            const { frameId, userRequest } = msg.payload;
+            const feedback = await analyzeDesignFeedback(frameId, userRequest);
+            figma.ui.postMessage({
+              type: "design-feedback-result",
+              feedback
+            });
+          } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            console.error("Design feedback error:", errorMessage);
+            figma.ui.postMessage({
+              type: "design-feedback-error",
+              error: errorMessage
+            });
+          }
+          break;
+        case "process-screenshot-request":
+          try {
+            await processScreenshotRequest(msg.payload);
+          } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            console.error("Screenshot request error:", errorMessage);
+            figma.ui.postMessage({
+              type: "screenshot-error",
+              run_id: (_a = msg.payload) == null ? void 0 : _a.run_id,
+              error: errorMessage
+            });
           }
           break;
         // NEW: Standalone JSON validation
@@ -9116,27 +9431,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
               error: errorMessage
             });
             figma.notify("Scan failed. Check console for details.", { error: true });
-          }
-          break;
-        case "test-color-styles":
-          try {
-            console.log("\u{1F3A8} Testing color styles scanning...");
-            const colorStyles = await ComponentScanner.scanFigmaColorStyles();
-            const totalCount = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
-            figma.ui.postMessage({
-              type: "color-styles-result",
-              colorStyles,
-              count: totalCount
-            });
-            figma.notify(`\u2705 Found ${totalCount} color styles`, { timeout: 2e3 });
-          } catch (error) {
-            console.error("\u274C Color styles scan failed:", error);
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            figma.ui.postMessage({
-              type: "color-styles-error",
-              error: errorMessage
-            });
-            figma.notify("\u274C Color styles scan failed", { error: true });
           }
           break;
         case "update-component-type":
@@ -9416,38 +9710,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
               error: errorMessage
             });
             figma.notify(`\u274C JSON render failed: ${errorMessage}`, { error: true });
-          }
-          break;
-        case "get-debug-log":
-          try {
-            console.log("\u{1F4C4} Retrieving debug log from storage...");
-            const debugData = await figma.clientStorage.getAsync("pipeline-debug-log-latest");
-            if (debugData && debugData.content) {
-              console.log(`\u2705 Debug log found: ${debugData.lines} lines, ${debugData.chars} chars`);
-              figma.ui.postMessage({
-                type: "debug-log-result",
-                success: true,
-                content: debugData.content,
-                runId: debugData.runId,
-                lines: debugData.lines,
-                chars: debugData.chars,
-                timestamp: debugData.timestamp
-              });
-            } else {
-              console.log("\u26A0\uFE0F No debug log found in storage");
-              figma.ui.postMessage({
-                type: "debug-log-result",
-                success: false,
-                message: "No debug log found. Run the pipeline first."
-              });
-            }
-          } catch (error) {
-            console.error("\u274C Error retrieving debug log:", error);
-            figma.ui.postMessage({
-              type: "debug-log-result",
-              success: false,
-              message: `Failed to retrieve debug log: ${error.message}`
-            });
           }
           break;
         case "get-saved-scan":
