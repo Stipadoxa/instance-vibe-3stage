@@ -1,0 +1,166 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout follows a vertical structure, prioritizing the hero image section at the top, followed by product details and seller information. The 'Contact Seller' button is prominently placed for optimal conversion. Top and bottom navigation bars ensure easy screen transitions.",
+    "userFlowReasoning": "Users will first see the product images, then scroll to review product details and seller information. The prominent 'Contact Seller' button is placed at the end of the detailed information section, prompting users for engagement.",
+    "componentChoices": "I chose the 'image' component (10:7816) for displaying product photos because it effectively handles multiple images in a carousel-like structure.  I considered using 'list-item' (10:10214) for image organization but it's not suited for full-width image displays and would require extensive custom layout work. I also examined 'card' (147:3743) component but it lacks the full-width image capability for this hero section.",
+    "componentGaps": "User request requires an 'image carousel' component, but the design system lacks this component. I created a carousel-like experience using an auto-layout horizontal scroll with multiple 'image' components (10:7816). This provides a user-friendly method for navigating through product images, maintaining a fluid and aesthetically pleasing experience.",
+    "visualHierarchy": "Visual hierarchy is established by using larger font sizes for the product title and price, while the seller details are presented in smaller type size. Spacing and padding are used to visually separate the hero image section and the other elements.",
+    "variantSelectionRationale": "For the 'button' component (10:3907), I chose the 'Size: Large', 'Type: Filled', and 'Color: Green' variants because they provide the prominence required for a high-impact conversion-critical action. This contrasts with other components and better attracts the user's eye. Other options like 'outlined' variants would lack sufficient visual weight.",
+    "nativeElementJustification": "With moment significance of 0.7 and an emotional intent to 'impress, guide, and convert', this product detail screen warrants enhanced treatment. Native gradient backgrounds and decorative shapes help to showcase the product attractively, while component-based interactions (buttons, inputs, navigation) maintain a consistent and reliable user experience."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": {
+            "type": "GRADIENT_LINEAR",
+            "stops": [
+              {
+                "color": {
+                  "r": 0,
+                  "g": 0.7,
+                  "b": 0.3
+                },
+                "position": 0
+              },
+              {
+                "color": {
+                  "r": 0,
+                  "g": 0.5,
+                  "b": 0.1
+                },
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 12
+        }
+      },
+      {
+        "id": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "2+ images"
+        },
+        "properties": {
+          "imageUrls": [
+            "image_url_1",
+            "image_url_2",
+            "image_url_3"
+          ]
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "#304049",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦10,000",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "#00b53f",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Seller Name",
+          "fontSize": 14,
+          "fontWeight": "normal",
+          "alignment": "left",
+          "color": "#304049",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "24:10352",
+        "type": "avatar",
+        "variants": {},
+        "properties": {
+          "imageUrl": "seller_avatar_url"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Location",
+          "fontSize": 12,
+          "fontWeight": "normal",
+          "alignment": "left",
+          "color": "#6c8ea0",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "properties": {
+          "items": [
+            { "label": "Home", "icon": "home_icon" },
+            { "label": "Search", "icon": "search_icon" },
+            { "label": "Profile", "icon": "profile_icon" }
+          ]
+        }
+      },
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "headline": "Product Details",
+          "subheadline": ""
+        }
+      }
+    ]
+  }
+}
+```

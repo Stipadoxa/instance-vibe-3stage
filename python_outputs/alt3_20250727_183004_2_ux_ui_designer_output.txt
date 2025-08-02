@@ -1,0 +1,138 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications.  A top bar is placed at the top for user information, and a bottom navigation bar is positioned at the bottom for navigation. Item spacing is minimal to maximize screen real estate.",
+    "userFlowReasoning": "Users can view notification details by tapping a notification item.  Marking notifications as read could be implemented via a swipe gesture (future iteration) or a dedicated button (not implemented in this design due to space constraints and the primary goal of quick information scanning).",
+    "componentChoices": "I chose `10:10214` (List item) for the notification items because it provides a flexible structure for displaying the required content (avatar, title, description, timestamp) and can be easily adapted to handle multiple lines of text.  It offers a better user experience compared to using a simpler `text` component (24:10333), which would require more custom styling and potentially hinder readability, or a `card` component (147:3743), which would introduce visual complexity and unnecessary padding. ",
+    "visualHierarchy": "Visual hierarchy is established through clear distinctions in font size and color.  The notification title uses a larger, primary text style for prominence, while the description and timestamp use secondary and tertiary text styles respectively, decreasing in size and prominence.",
+    "variantSelectionRationale": "For the List item, I chose `Condition: 2-line`, `Leading: Image`, `Trailing: None`, `Show overline: False`, `Show supporting text: True` instead of other options like a single-line condition or including trailing icons. The 2-line condition allows for a concise title and description.  Leading images (avatars) are used to provide visual context and maintain consistency with notification interfaces. Trailing elements were omitted to avoid visual clutter in the mobile context, focusing on maintaining scannability."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 unread"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 1",
+          "Supporting text": "Notification Description 1",
+          "Trailing supporting text": "10:00 AM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 2",
+          "Supporting text": "Notification Description 2",
+          "Trailing supporting text": "9:30 AM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 3",
+          "Supporting text": "Notification Description 3",
+          "Trailing supporting text": "9:00 AM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 4",
+          "Supporting text": "Notification Description 4",
+          "Trailing supporting text": "8:30 AM"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 5",
+          "Supporting text": "Notification Description 5",
+          "Trailing supporting text": "8:00 AM"
+        }
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Sell",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

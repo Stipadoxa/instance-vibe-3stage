@@ -1,0 +1,128 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertically oriented to guide the user's eye down through the key information: hero image, product details, seller info, and finally the prominent CTA.",
+    "userFlowReasoning": "The user first sees the product image, then details, seller information and finally interacts with the 'Contact Seller' button. The order promotes engagement and conversion.",
+    "componentChoices": "I chose the `10:7816` (IMAGES) component for the hero image carousel because it allows for multiple high-quality images to be displayed compared to a simple `image` component. I also considered `147:3743` (product card), but it was too limited for the full-width image requirement. I chose the `10:3907` (Button) for the CTA because it's the standard, well-known button component.",
+    "visualHierarchy": "The hero image establishes prominence, followed by the product title (largest text), price, seller info, and then the CTA button.  Size and color contrast enhance the hierarchy.",
+    "variantSelectionRationale": "For the button, I selected the `Size: Large`, `Type: Filled`, and `Color: Green` variants to create prominence.  The large size emphasizes the CTA, the filled style is clear and unambiguous, and green is associated with action and positivity in the design system. Other size variants would be less visible, and outlined or text styles are less impactful for a conversion-oriented CTA.",
+    "nativeElementJustification": "With moment significance of 0.7 and emotional intent including \"impress\", this product detail screen warrants enhanced treatment.  A native rectangle with a subtle gradient background adds visual appeal while maintaining the functional components. This creates a balance between aesthetics and efficient interaction."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 320,
+          "height": 200,
+          "fill": {
+            "type": "GRADIENT_LINEAR",
+            "stops": [
+              {
+                "position": 0,
+                "color": "primary-10"
+              },
+              {
+                "position": 1,
+                "color": "primary-5"
+              }
+            ]
+          },
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "1 image"
+        },
+        "properties": {
+          "source": "[Image URL]"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "Neutral/neutral90",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "$19.99",
+          "fontSize": 16,
+          "fontWeight": "500",
+          "alignment": "left",
+          "color": "primary-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Seller Name",
+          "fontSize": 14,
+          "fontWeight": "normal",
+          "alignment": "left",
+          "color": "neutral-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "24:10352",
+        "type": "avatar",
+        "variants": {
+          "Photo": "Yes"
+        },
+        "properties": {
+          "source": "[Avatar URL]"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Location",
+          "fontSize": 12,
+          "fontWeight": "normal",
+          "alignment": "left",
+          "color": "neutral-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

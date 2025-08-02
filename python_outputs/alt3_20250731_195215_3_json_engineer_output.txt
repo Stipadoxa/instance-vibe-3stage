@@ -1,0 +1,108 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": "FILL",
+        "height": 400,
+        "fill": {
+          "type": "LINEAR_GRADIENT",
+          "stops": [
+            {"color": "#00b53f", "position": 0},
+            {"color": "#6ccc7b", "position": 1}
+          ]
+        },
+        "cornerRadius": 12
+      }
+    },
+    {
+      "type": "native-text",
+      "textStyle": {},
+      "properties": {
+        "content": "Your SaaS Product Name",
+        "fontSize": 48,
+        "fontWeight": "bold",
+        "alignment": "center",
+        "color": "#ffffff",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "textStyle": {},
+      "properties": {
+        "content": "Your Compelling Tagline",
+        "fontSize": 24,
+        "fontWeight": "normal",
+        "alignment": "center",
+        "color": "#ffffff",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-circle",
+      "properties": {
+        "width": 80,
+        "height": 80,
+        "fill": "#00831e"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutAlign": "STRETCH",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "image",
+              "properties": {
+                "source": "feature-image1.jpg"
+              }
+            },
+            {
+              "type": "native-text",
+              "textStyle": {},
+              "properties": {
+                "content": "Key Feature 1",
+                "horizontalSizing": "FILL",
+                "layoutAlign": "STRETCH"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Large",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Start Free Trial"
+      }
+    }
+  ]
+}
+```

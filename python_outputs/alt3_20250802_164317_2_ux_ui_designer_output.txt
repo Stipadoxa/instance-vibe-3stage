@@ -1,0 +1,136 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized vertically to prioritize information naturally.  The hero section (product images) is placed first for immediate visual impact, followed by key details and finally the call-to-action button.",
+    "userFlowReasoning": "The user first sees the product images to assess visual appeal.  Key information (title, price) is next, followed by seller details to build trust. The prominent 'Contact Seller' button facilitates direct engagement.",
+    "componentChoices": "I chose the `10:7816` (IMAGES) component for product photos over a potential custom solution because it provides flexibility for handling multiple images and is already designed for visual appeal within the system.  I selected the `10:3907` (Button) component for the 'Contact Seller' button because it ensures consistent interaction and styling across the app.",
+    "componentGaps": "User request requires Image Carousel, but design system lacks this component. I created carousel-like experience using auto-layout horizontal scroll with multiple `10:7816` (IMAGES) components. This allows multiple product photos while maintaining semantic meaning.",
+    "visualHierarchy": "Visual hierarchy is established through typography (larger font sizes for title and price, smaller for supporting text) and component placement.  The 'Contact Seller' button is visually prominent through color and size.",
+    "variantSelectionRationale": "I selected the 'Large' variant for the `10:3907` button because this size provides sufficient tap target area on mobile and clearly emphasizes its importance as the primary call to action.  I chose the 'Green' color variant to communicate trustworthiness and conversion-readiness.",
+    "nativeElementJustification": "With moment significance of 0.7 and an emotional intent of 'impress, guide, convert', this Product Detail View warrants enhanced treatment. A branded background, using `native-rectangle`, elevates the visual appeal, creating a memorable experience. The enhanced visual hierarchy and systematic use of design system components ensure user engagement and conversion potential."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail View",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Product Details",
+          "subheadline": ""
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": {
+            "r": 0.1,
+            "g": 0.7,
+            "b": 0.3
+          },
+          "cornerRadius": 12
+        },
+        "items": [
+          {
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "id": "10:7816",
+                "suggestedType": "image",
+                "variants": {
+                  "Type": "2+ images"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "native-text",
+        "properties": {
+          "content": "Awesome Product Name",
+          "textStyle": "Headline/Medium",
+          "color": "primary-500",
+          "alignment": "left"
+        }
+      },
+      {
+        "id": "native-text",
+        "properties": {
+          "content": "$199.99",
+          "textStyle": "Title/Large",
+          "color": "primary-500",
+          "alignment": "left"
+        }
+      },
+      {
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "id": "24:10352",
+            "suggestedType": "avatar"
+          },
+          {
+            "id": "native-text",
+            "properties": {
+              "content": "Seller Name",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "id": "native-text",
+        "properties": {
+          "content": "Location: New York",
+          "textStyle": "Body/Small",
+          "color": "neutral-50",
+          "alignment": "left"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

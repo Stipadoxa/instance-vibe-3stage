@@ -1334,6 +1334,9 @@ export class FigmaRenderer {
       console.log('⚠️ NO VARIANTS TO APPLY - variants object is empty');
     }
     
+    // Apply visibility overrides after variants
+    this.applyVisibilityOverrides(instance, item);
+    
     this.applyChildLayoutProperties(instance, layoutProperties);
     
     if (Object.keys(textProperties).length > 0) {
@@ -1399,6 +1402,44 @@ export class FigmaRenderer {
       });
     } catch (e) {
       console.error("❌ Error applying variants:", e);
+    }
+  }
+
+  /**
+   * Apply visibility overrides to component child elements
+   */
+  private static applyVisibilityOverrides(instance: InstanceNode, itemData: any): void {
+    if (!itemData.visibilityOverrides && !itemData.iconSwaps) return;
+    
+    try {
+      // Apply visibility overrides
+      if (itemData.visibilityOverrides) {
+        Object.entries(itemData.visibilityOverrides).forEach(([nodeId, visible]) => {
+          const child = instance.findChild(node => node.id === nodeId);
+          if (child) {
+            child.visible = visible as boolean;
+            console.log(`✅ Applied visibility override: ${nodeId} = ${visible}`);
+          } else {
+            console.warn(`⚠️ Child node ${nodeId} not found for visibility override`);
+          }
+        });
+      }
+
+      // Apply icon swaps (simplified - extend based on icon system)
+      if (itemData.iconSwaps) {
+        Object.entries(itemData.iconSwaps).forEach(([nodeId, iconName]) => {
+          const child = instance.findChild(node => node.id === nodeId);
+          if (child && 'componentProperties' in child) {
+            // Attempt to swap icon - implementation depends on icon component structure
+            console.log(`🔄 Icon swap requested: ${nodeId} → ${iconName}`);
+            // Note: Actual icon swapping implementation would depend on the specific design system
+          } else {
+            console.warn(`⚠️ Child node ${nodeId} not found or not suitable for icon swap`);
+          }
+        });
+      }
+    } catch (error) {
+      console.warn('⚠️ Visibility override application failed:', error);
     }
   }
 

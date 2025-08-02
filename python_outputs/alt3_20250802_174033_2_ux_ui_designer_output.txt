@@ -1,0 +1,140 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically, placing the app bar at the top, followed by a section for product images, a section for product details (title, price, seller info), and finally the 'Contact Seller' button at the bottom.  Spacing between sections is consistent with the design system's default spacing guidelines.",
+    "userFlowReasoning": "The user flow is designed to provide a quick and easy overview of the product details. Images are presented first to showcase the product visually. Key information (title, price) is placed prominently above seller information for immediate understanding. The 'Contact Seller' button is positioned at the end to guide the user towards the next action.",
+    "componentChoices": "I chose the 'appbar' (10:5620) component for the top navigation,  'IMAGES' (10:7816) for product images (to support multiple images via horizontal scroll), and 'Button' (10:3907) for the 'Contact Seller' button. I chose these components over alternatives like using a custom image gallery or a different button style because they are readily available within the design system, visually consistent, and meet functional requirements. The reference images showcase clean, effective implementations of these components in similar contexts.",
+    "componentGaps": "User request requires a structured layout combining image gallery, text, and button elements. While the system does not offer a single component for the complete user request, combining the 'appbar' (10:5620), 'IMAGES' (10:7816), and 'Button' (10:3907) components creates the desired functionality and visual structure, while maintaining the design system's visual language. This approach allows multiple product images to be displayed while providing easy navigation, all within the existing component framework. ",
+    "visualHierarchy": "Visual hierarchy is established through typography and component placement. The product title uses 'Headline/Large' text style (S:821e8d7c02100cce8bc3f532f51afdebeacbfe54), making it the most prominent element. Price, using 'Headline/Medium' (S:dfa85c402e472d3935d377f40e78c02e05e4b117), is secondary but still easily noticeable.  Seller information and other attributes use 'Body/Medium' (S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc) and 'Label/Medium' (S:dcab8b77791966d54e93e56c5bb7ae7fcf6d7262) text styles for clarity and visual distinction. The large 'Contact Seller' button provides clear and prominent interaction.",
+    "variantSelectionRationale": "For the 'Button' component, I selected the 'Size:Large', 'Type:Filled', 'Color:Green', and 'State:Default' variants. I opted against smaller button sizes or outlined/text-only buttons as the design goal is a prominent call to action.  The filled green button ensures that the 'Contact Seller' option is visually distinct and user-friendly for mobile users.",
+    "nativeElementJustification": "No native elements were required.  All functional requirements were met by existing components and component combination strategies."
+  }
+}
+```
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "componentId": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Product Title",
+          "subheadline": "Subtitle"
+        }
+      },
+      {
+        "componentId": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "2+ images"
+        }
+      },
+      {
+        "layoutContainer": {
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Product Title",
+                "textStyle": "Headline/Large",
+                "color": "Neutral/neutral90",
+                "alignment": "left",
+                "horizontalSizing": "STRETCH"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "₦10,000",
+                "textStyle": "Headline/Medium",
+                "color": "Primary/primary50",
+                "alignment": "left",
+                "horizontalSizing": "STRETCH"
+              }
+            },
+            {
+              "layoutContainer": {
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 8,
+                "paddingTop": 0,
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "items": [
+                  {
+                    "componentId": "10:7798",
+                    "type": "avatar",
+                    "variants": {
+                      "Type": "Photo"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Seller Name",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left",
+                      "horizontalSizing": "STRETCH"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Location",
+                "textStyle": "Label/Medium",
+                "color": "Neutral/neutral50",
+                "alignment": "left",
+                "horizontalSizing": "STRETCH"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "componentId": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

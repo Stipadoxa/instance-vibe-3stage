@@ -1,0 +1,105 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column vertical stack, suitable for mobile screens with limited real estate.  This ensures a clear and concise flow of information.",
+    "userFlowReasoning": "The user flow is straightforward: enter credentials, tap 'Log In', or use social media buttons. Password recovery is accessible through a clearly labeled link at the bottom.",
+    "componentChoices": "I chose '10:8492' (text input) for username/email and password fields, '10:3907' (button) for the primary login button, and '10:10214' (list-item) for social login buttons. I considered using a 'searchbar' for the input fields (for visual consistency), but rejected it because it's unsuitable for username/password entry.  A simple button is more appropriate for login than more complex components like 'snackbar' or 'dialog'.",
+    "visualHierarchy": "Visual hierarchy is established through component size and placement. The primary login button ('10:3907') is large and positioned prominently. Secondary actions (social logins) are smaller and grouped together.",
+    "variantSelectionRationale": "For the input fields ('10:8492'), I selected 'Type=Filled' and 'State=enabled' for a clean appearance and to provide immediate visual feedback to the user. I selected 'State=enabled' to display the input correctly. 'Type=Empty' was rejected as this was not deemed appropraite for a user login. For the login button ('10:3907'), I chose 'Size=Large', 'Type=Filled', 'Color=Green', and 'State=Default' to highlight its importance. The 'State=Default' is used as the primary action is not disabled, or in any other state.  The larger size and green color distinguish it from secondary actions.  For the social logins ('10:10214'), I chose variants to show only the icon and text of the social media sites. The list-items are used to present the social media logins in a manner that allows multiple social login options."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Log In"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Login with Facebook"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Login with Google"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Forgot Password?"
+        }
+      }
+    ]
+  }
+}
+```

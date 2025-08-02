@@ -173,6 +173,52 @@ All nested containers and text elements:
 }
 ```
 
+## COMPONENT VISIBILITY OVERRIDES
+
+### VISIBILITY CONTROL SCHEMA
+For components with child elements that may need contextual hiding:
+
+```json
+{
+  "type": "appbar",
+  "componentNodeId": "10:5620",
+  "properties": {
+    "headline": "Product Details"
+  },
+  "visibilityOverrides": {
+    "10:5622": false,  // leading-icon hidden
+    "10:5625": true    // avatar visible
+  },
+  "iconSwaps": {
+    "10:5622": "bookmark"  // swap icon if visible
+  }
+}
+```
+
+### OVERRIDE APPLICATION RULES
+- `visibilityOverrides`: Object with `nodeId: boolean` pairs
+- Only specify overrides for elements that change from default visibility
+- Use actual component child node IDs from design system data
+- `iconSwaps`: Object with `nodeId: iconName` pairs for icon replacements
+
+### SUPPORTED OVERRIDE PATTERNS
+**Appbar trailing icons**: Hide/show based on page context
+**Navigation tabs**: Hide unused sections, show relevant ones
+**Action buttons**: Remove non-contextual actions
+
+### FINDING NODE IDS
+Use the componentInstances array in design system data:
+```
+"componentInstances": [
+  {
+    "nodeName": "leading-icon",
+    "nodeId": "10:5622",  // Use this ID for overrides
+    "visible": true,
+    "componentId": "10:5354"
+  }
+]
+```
+
 ## VALIDATION CHECKLIST
 
 Before output, verify:

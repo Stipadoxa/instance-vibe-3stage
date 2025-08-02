@@ -1,0 +1,132 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical layout for the notifications list, placing the top bar at the top and the bottom navigation bar at the bottom for optimal mobile usability.  Item spacing is set to 0 for a clean, concise look.",
+    "userFlowReasoning": "The user flow prioritizes quick scanning and comprehension of notifications. Tapping on a notification item allows for detailed view.  Secondary actions such as marking as read or dismissing are considered, and they could be implemented through swipe gestures or dedicated buttons within each notification item.",
+    "componentChoices": "I chose the `10:10214` (list-item) component for displaying notifications.  I considered `10:3856` (snackbar) and `147:3743` (product card), but the list-item is best suited for presenting a vertical list of items with various content fields (avatar, title, description, timestamp).  The snackbar is too short to accommodate required information; while the product card presents a visual design unrelated to notifications.  The list-item's structure aligns with the User Requirements, providing ample space for avatars, titles, descriptions and timestamps. This structure is efficient in mobile contexts.",
+    "visualHierarchy": "The visual hierarchy prioritizes the Headline of each notification item to allow for quick scanning, with supporting text below for further details. The timestamp is placed as a trailing element for easy identification of notification recency.",
+    "variantSelectionRationale": "For the `10:10214` (list-item) component, I chose the `Leading: Avatar` variant to display user avatars. I also considered `Leading: Icon` and `Leading: Image`. However, `Leading: Avatar` is the most appropriate for this context as it best shows the user that originated the notification while visually separating each item. `Leading: Icon` would be less informative, while `Leading: Image` lacks the strong visual cue provided by an avatar. The selected `Condition: 2-line` variant allows for a concise title and a brief description, while still maintaining a mobile-friendly design without unnecessary height."
+  }
+}
+```
+```json
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 new"
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Sarah Chen shared a photo",
+          "Supporting text": "Check out this amazing sunset from yesterday's hike!",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Team Meeting Reminder",
+          "Supporting text": "Daily standup starting in 15 minutes",
+          "Trailing supporting text": "14m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "John Doe mentioned you",
+          "Supporting text": "Great point about user retention in today's meeting",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "New Message from Jane Smith",
+          "Supporting text": "Hey!  How's the project going?",
+          "Trailing supporting text": "3h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Payment Received",
+          "Supporting text": "You received $100 from Acme Corp",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": ["Home", "Saved", "Sell", "Sell", "Profile"]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

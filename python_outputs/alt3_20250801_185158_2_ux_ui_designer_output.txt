@@ -1,0 +1,110 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertically organized, prioritizing the image carousel for immediate visual impact, followed by product information, and concluding with a prominent CTA button.  This follows a typical e-commerce product detail pattern.",
+    "userFlowReasoning": "The user first sees the product images, then scans the key information (title, price, etc.), and finally is guided towards the 'Contact Seller' action.  This flow is designed for efficient decision-making.",
+    "componentChoices": "I chose the 'image' component (id: 10:7816) for the product images, a 'text' component (various IDs depending on the text type - Headline/Medium, Body/Medium, etc.) for the product information, and the 'button' component (id: 10:3907) for the 'Contact Seller' CTA.  I considered using a different layout component, but the vertical layout best fit this screen. I also considered using a 'card' component (id: 147:3743), but it was unnecessary given the layout.",
+    "visualHierarchy": "Visual hierarchy is established through the size and placement of elements. The image carousel is the largest element, followed by the product title and price in larger text sizes. The 'Contact Seller' button is visually distinct with its color and placement.",
+    "variantSelectionRationale": "For the button, I selected variants { \"Platform\": \"Android+Web\", \"Size\": \"Large\", \"Type\": \"Filled\", \"State\": \"Default\", \"Color\": \"Green\" } because a large, filled, green button provides clear visual prominence and aligns with typical CTA patterns.  Other button types were less visually impactful for this key action. The large size ensures sufficient tap target area.",
+    "nativeElementJustification": "With moment significance of 0.7 and 'impress, guide, and convert' emotional intent, this product detail page warrants enhanced treatment. A subtle background gradient adds visual appeal and depth, while carefully chosen typography guides the user through the key information and prompts interaction with the 'Contact Seller' button."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": {
+            "type": "LINEAR_GRADIENT",
+            "stops": [
+              {
+                "position": 0,
+                "color": "#e5f6e8"
+              },
+              {
+                "position": 1,
+                "color": "#ffffff"
+              }
+            ]
+          },
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "2+ images"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "#304049",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦ 10,000",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "#00b53f",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:8619",
+        "type": "text",
+        "variants": {
+          "Platform": "Android+Web",
+          "Type": "Filled",
+          "State": "Enabled"
+        },
+        "properties": {
+          "label-text": "Product Description"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,130 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to guide the user's eye down the page, starting with the impactful hero section and moving through key features, testimonials, and finally a call to action.  Each section is visually distinct to improve scannability and comprehension.",
+    "userFlowReasoning": "The user flow is designed to be linear, starting with a captivating hero section to grab attention, then showcasing key features, building trust with testimonials, and culminating in a prominent call-to-action to encourage sign-ups. The email capture form is strategically placed for ease of access after engagement with the content.",
+    "componentChoices": "I chose the 'product card' (147:3743) component for showcasing key features over 'List item' (10:10214) and 'Tabs' (10:7852) because it provides a visually appealing and versatile way to present features, including image and text, in a consistent manner.  The product card's modular design allows for easy modification and adjustment based on different products. List items would feel less engaging and tabs don't work well for feature displays. The reference shows a clear distinction between product card variants.",
+    "visualHierarchy": "Visual hierarchy is established through a combination of size, color, and spacing. The hero section is the most prominent, using large typography and high-quality imagery.  Key features are presented in a grid for easy comparison, and testimonials and CTAs are made clearly visible to ensure easy identification and subsequent interaction.",
+    "variantSelectionRationale": "I selected the 'grid' and 'normal' variants for the 'product card' (147:3743) component, choosing against the 'list' and 'no photo' variants, as well as the 'privileged' option.  'grid' view works best for the feature display, and 'normal' maintains the best visual balance with images and text without undue emphasis.  The 'list' view would be less visually engaging, 'no photo' would remove the advantage of showcasing visuals, and the 'privileged' styling is unnecessary for this context. The reference visually confirms optimal arrangement in grid view.",
+    "nativeElementJustification": "With moment significance of 0.85 and first_touch journey position, this landing page warrants expressive treatment. Native gradient backgrounds and decorative shapes create memorable first impressions while component-based interactions ensure reliability. The hero section's expressive design leverages the 'impress' emotional intent while maintaining conversion focus per 'conversion_critical' business impact."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Landing Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 400,
+          "fill": {
+            "type": "GRADIENT_LINEAR",
+            "stops": [
+              {
+                "position": 0,
+                "color": {
+                  "r": 0.0,
+                  "g": 0.7,
+                  "b": 0.3
+                }
+              },
+              {
+                "position": 1,
+                "color": {
+                  "r": 0.0,
+                  "g": 0.4,
+                  "b": 0.7
+                }
+              }
+            ]
+          },
+          "cornerRadius": 0,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Your SaaS Product Name",
+          "fontSize": 48,
+          "fontWeight": "bold",
+          "alignment": "center",
+          "color": "primary-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Your Compelling Tagline",
+          "fontSize": 24,
+          "fontWeight": "normal",
+          "alignment": "center",
+          "color": "neutral-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-circle",
+        "properties": {
+          "width": 100,
+          "height": 100,
+          "fill": {
+            "r": 0.2,
+            "g": 0.6,
+            "b": 0.9
+          }
+        }
+      },
+      {
+        "id": "147:3743",
+        "type": "card",
+        "variants": {
+          "view": "grid",
+          "type": "normal"
+        },
+        "items": []
+      },      
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Sign Up"
+        }
+      },
+      {
+        "id": "10:8492",
+        "type": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "properties": {
+          "placeholder-text": "Email Address",
+          "label-text": "Email",
+          "supporting-text": "",
+          "counter": ""
+        }
+      }
+    ]
+  }
+}
+```

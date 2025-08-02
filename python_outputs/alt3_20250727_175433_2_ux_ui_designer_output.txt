@@ -1,0 +1,205 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the notification list, with the user information at the top and bottom navigation at the bottom. This is a common and intuitive pattern for mobile applications.",
+    "userFlowReasoning": "Users will scan the notification list from top to bottom. Tapping on a notification item will navigate them to the notification details.  This is a clear and efficient user flow for a notification center.",
+    "componentChoices": "I chose the '10:10214' list-item component for the notification list,  over the '147:3743' product card (which is visually inappropriate for notifications) and a simple 'text' component (which lacks the necessary structural elements).  The list-item component provides a flexible and appropriate structure for displaying user avatars, titles, descriptions, and timestamps in each notification.",
+    "visualHierarchy": "Visual hierarchy is established through clear visual separation between notification items, using dividers. Titles are given prominence with a larger font size, and secondary details (description and timestamp) use smaller font sizes.",
+    "variantSelectionRationale": "For the list-item component, I chose 'Condition=2-line' to accommodate the notification title and description. 'Leading=Image' and 'Trailing=None' were selected to include the user avatar while omitting any unnecessary trailing elements.  I rejected the other 'Condition' options as they are not needed, and 'Leading' and 'Trailing' were simplified for mobile constraints."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "text": "Notification Title",
+            "textStyle": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b"
+          },
+          {
+            "text": "Notification Description",
+            "textStyle": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc"
+          },
+          {
+            "text": "Timestamp",
+            "textStyle": "S:f2f398b32e6f9cebd50c9021906f7c9f265b60a7"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "text": "Notification Title",
+            "textStyle": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b"
+          },
+          {
+            "text": "Notification Description",
+            "textStyle": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc"
+          },
+          {
+            "text": "Timestamp",
+            "textStyle": "S:f2f398b32e6f9cebd50c9021906f7c9f265b60a7"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "text": "Notification Title",
+            "textStyle": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b"
+          },
+          {
+            "text": "Notification Description",
+            "textStyle": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc"
+          },
+          {
+            "text": "Timestamp",
+            "textStyle": "S:f2f398b32e6f9cebd50c9021906f7c9f265b60a7"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "text": "Notification Title",
+            "textStyle": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b"
+          },
+          {
+            "text": "Notification Description",
+            "textStyle": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc"
+          },
+          {
+            "text": "Timestamp",
+            "textStyle": "S:f2f398b32e6f9cebd50c9021906f7c9f265b60a7"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "text": "Notification Title",
+            "textStyle": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b"
+          },
+          {
+            "text": "Notification Description",
+            "textStyle": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc"
+          },
+          {
+            "text": "Timestamp",
+            "textStyle": "S:f2f398b32e6f9cebd50c9021906f7c9f265b60a7"
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

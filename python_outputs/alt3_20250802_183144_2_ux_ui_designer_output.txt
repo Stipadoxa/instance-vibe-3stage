@@ -1,0 +1,163 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement with the appbar at the top and a list of settings below.  Spacing between list items is consistent with the design system's default list item spacing.",
+    "userFlowReasoning": "The user flow is straightforward: the user sees the settings list, taps on a setting category to open a details screen (not implemented here), makes changes, and (implicitly) saves the changes.  There is no explicit save button since the design system doesn't include a save action within the list items themselves and the app settings typically persists changes automatically.",
+    "componentChoices": "I chose the `10:10214` List item component for displaying the settings because it provides a clean, consistent presentation of information. I considered using a `147:3743` card component, but this was less appropriate for a settings list. I also considered a `10:7852` Tabs component, but it's not as efficient for simple settings.",
+    "componentGaps": "User request requires a settings page which is not a single component, and no suitable combination can match the requested layout. I created the settings page by using `10:5620` appbar at the top and a `10:10214` list-item for each setting. This provides a structured, intuitive interface.",
+    "visualHierarchy": "The visual hierarchy is established using the design system's text styles: Headlines for the app bar title, and Body/Medium text style for setting items.  This maintains consistency across the application. ",
+    "variantSelectionRationale": "For the `10:10214` list item, I selected the variants `Condition: 2-line`, `Leading: Icon`, `Trailing: None`, `Show overline: False`, `Show supporting text: True` to best represent the setting options.  The use of 2 lines allows us to include both labels and indicators, the Leading icon to add visual cue to the settings, and supporting text to provide further detail.",
+    "nativeElementJustification": "User needs to display app settings categories (Notifications, Privacy, Account) and specific setting options within each category, with visual indicators showing the current setting value.  There is no single component which can display this, thus `native-text` provides contextual text for labels and values within the list items, whilst maintaining the component-based interactions of the list itself."
+  }
+}
+```
+
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "appbar",
+        "type": "10:5620",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "headline": {
+            "content": "Settings",
+            "textStyle": "Headline/Medium"
+          },
+          "subheadline": {
+            "content": "Manage your app preferences",
+            "textStyle": "Body/Small",
+            "color": "neutral-50"
+          },
+          "leadingIcon1": {
+            "visible": false
+          },
+          "trailingIcon1": {
+            "visible": true,
+            "icon": "635:4372"
+          },
+          "trailingIcon2": {
+            "visible": false
+          }
+        }
+      },
+      {
+        "type": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Overline": {
+            "content": "",
+            "textStyle": "Body/Small",
+            "visible": false
+          },
+          "Headline": {
+            "content": "Notifications",
+            "textStyle": "Body/Medium"
+          },
+          "Supporting text": {
+            "content": "Control notification settings",
+            "textStyle": "Caption/Small",
+            "color": "neutral-50"
+          },
+          "Trailing supporting text": {
+            "content": "",
+            "textStyle": "Caption/Small",
+            "visible": false
+          },
+          "leadingIcon": {
+            "icon": "635:4322"
+          }
+        }
+      },
+      {
+        "type": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Overline": {
+            "content": "",
+            "textStyle": "Body/Small",
+            "visible": false
+          },
+          "Headline": {
+            "content": "Privacy",
+            "textStyle": "Body/Medium"
+          },
+          "Supporting text": {
+            "content": "Manage your privacy settings",
+            "textStyle": "Caption/Small",
+            "color": "neutral-50"
+          },
+          "Trailing supporting text": {
+            "content": "",
+            "textStyle": "Caption/Small",
+            "visible": false
+          },
+          "leadingIcon": {
+            "icon": "635:4140"
+          }
+        }
+      },
+      {
+        "type": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Overline": {
+            "content": "",
+            "textStyle": "Body/Small",
+            "visible": false
+          },
+          "Headline": {
+            "content": "Account",
+            "textStyle": "Body/Medium"
+          },
+          "Supporting text": {
+            "content": "Manage your account details",
+            "textStyle": "Caption/Small",
+            "color": "neutral-50"
+          },
+          "Trailing supporting text": {
+            "content": "",
+            "textStyle": "Caption/Small",
+            "visible": false
+          },
+          "leadingIcon": {
+            "icon": "635:4160"
+          }
+        }
+      }
+    ]
+  }
+}
+```

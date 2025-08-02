@@ -1,0 +1,239 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications, with the app bar at the top and bottom navigation at the bottom. This vertical arrangement is suitable for mobile screens and follows a common user interface pattern for displaying lists.",
+    "userFlowReasoning": "Users will see the recent notifications listed vertically. Tapping on a notification will take them to the details view.  Navigation to other app sections happens through the bottom navigation.",
+    "componentChoices": "I chose `10:10214` (list-item) for displaying notifications because it provides the necessary elements for an individual notification (headline, supporting text, leading and trailing elements), unlike `10:3856` (snackbar) which is inappropriate for this context and lacks the capacity for description and avatar, and `147:3743` (product card) which is visually too rich and not optimized for concise information delivery. The selected `10:10214` is more aligned with the minimalist approach best suited for notifications on mobile devices.",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear spacing and typography. The avatar and notification title will have larger text sizes and more prominence to guide quick scanning.  Timestamps are in smaller text.",
+    "variantSelectionRationale": "For `10:10214` (list-item), I chose `Condition: 2-line`, `Leading: Avatar`, `Trailing: Chevron`, `Show overline: False`, `Show supporting text: True`.  I omitted the `Show overline` to maintain visual cleanliness as no contextual information necessitates it. `Leading: Avatar` displays the user's avatar, and `Trailing: Chevron` indicates navigation to details, both satisfying the user's needs. Other `Leading` options would be unnecessary, and alternatives for `Trailing` are either not suitable for signaling further actions (check box, radio) or too verbose for the notification context (switch)."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications",
+          "subheadline": "",
+          "Settings": "",
+          "Label": ""
+        },
+        "items":[
+          {
+            "id": "10:7798",
+            "suggestedType":"avatar",
+            "variants":{
+              "Type":"Photo"
+            }
+          },
+          {
+            "id":"635:4372",
+            "suggestedType":"icon",
+            "variants":{
+              "style":"outlined"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "Chevron",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "Notification Title 1",
+          "Supporting text": "Notification Description 1",
+          "Trailing supporting text": "10:00 AM"
+        },
+        "items":[
+          {
+            "id":"10:7798",
+            "suggestedType":"avatar",
+            "variants":{
+              "Type":"Photo"
+            }
+          },
+          {
+            "id":"635:4724",
+            "suggestedType":"icon",
+            "variants":{
+              "direction":"right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "Chevron",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "Notification Title 2",
+          "Supporting text": "Notification Description 2",
+          "Trailing supporting text": "9:30 AM"
+        },
+        "items":[
+          {
+            "id":"10:7798",
+            "suggestedType":"avatar",
+            "variants":{
+              "Type":"Photo"
+            }
+          },
+          {
+            "id":"635:4724",
+            "suggestedType":"icon",
+            "variants":{
+              "direction":"right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "Chevron",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "Notification Title 3",
+          "Supporting text": "Notification Description 3",
+          "Trailing supporting text": "9:00 AM"
+        },
+        "items":[
+          {
+            "id":"10:7798",
+            "suggestedType":"avatar",
+            "variants":{
+              "Type":"Photo"
+            }
+          },
+          {
+            "id":"635:4724",
+            "suggestedType":"icon",
+            "variants":{
+              "direction":"right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "Chevron",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "Notification Title 4",
+          "Supporting text": "Notification Description 4",
+          "Trailing supporting text": "8:30 AM"
+        },
+        "items":[
+          {
+            "id":"10:7798",
+            "suggestedType":"avatar",
+            "variants":{
+              "Type":"Photo"
+            }
+          },
+          {
+            "id":"635:4724",
+            "suggestedType":"icon",
+            "variants":{
+              "direction":"right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "Chevron",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "Notification Title 5",
+          "Supporting text": "Notification Description 5",
+          "Trailing supporting text": "8:00 AM"
+        },
+        "items":[
+          {
+            "id":"10:7798",
+            "suggestedType":"avatar",
+            "variants":{
+              "Type":"Photo"
+            }
+          },
+          {
+            "id":"635:4724",
+            "suggestedType":"icon",
+            "variants":{
+              "direction":"right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,166 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout follows a vertical structure, prioritizing the hero image at the top, followed by product details, seller information, and a prominent CTA button. Top and bottom navigation bars ensure easy page navigation.",
+    "userFlowReasoning": "Users will first see the product image, then the key details (title, price), seller information, and finally the clear CTA to contact the seller. Top and bottom navigation bars maintain context and provide standard mobile UX.",
+    "componentChoices": "I chose the 'Image Carousel' component for displaying product photos over a single image component because it allows for multiple images and offers better visual engagement. For the seller's avatar and location, I used the 'Avatar Component' since it's specifically designed for this purpose.  A 'Button Component' is used for 'Contact Seller', offering standardized styling and accessibility over using a native rectangle. Top and bottom navigation is handled by 'Navigation Bar' components.",
+    "visualHierarchy": "Visual hierarchy is established through image prominence, title size, and button color contrast.  The 'Contact Seller' button's color provides the most visual emphasis. Clear spacing and padding between sections enhance readability and prevent visual clutter.",
+    "variantSelectionRationale": "I chose the 'Large' size variant for the 'Contact Seller' button to highlight the importance of this interaction and ensure ease of use on mobile screens. Other variant options like color and button type were set based on design system standards.",
+    "colorSelectionRationale": "Selected color style 'Primary/primary50' from colorStyles.primary for the 'Contact Seller' button to maintain design system consistency and convey a positive action.  This color is also used consistently throughout the app for primary CTAs. The background color is set to 'Neutral/neutral5' from colorStyles.neutral for improved contrast with text and image.",
+    "nativeElementJustification": "With moment significance of 0.7 and 'impress, guide, convert' emotional intent, this e-commerce Product Detail Page warrants enhanced treatment. A native rectangle is used as a background behind the product title and price to draw more attention while preserving all other elements as functional design system components."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": "Primary/primary10",
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        },
+        "items": [
+          {
+            "id": "10:7816",
+            "suggestedType": "image",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "width": "FILL",
+              "height": 200,
+              "fill": "Primary/primary50"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:3856",
+        "suggestedType": "text",
+        "variants": {
+          "Action": "False",
+          "Close affordance": "False",
+          "Longer action": "False",
+          "Lines": "One line"
+        },
+        "properties": {
+          "width": "FILL",
+          "text": "Product Title",
+          "fontSize": 22,
+          "fontWeight": "500",
+          "color": "Neutral/neutral90",
+          "alignment": "left"
+        }
+      },
+      {
+        "id": "10:3856",
+        "suggestedType": "text",
+        "variants": {
+          "Action": "False",
+          "Close affordance": "False",
+          "Longer action": "False",
+          "Lines": "One line"
+        },
+        "properties": {
+          "width": "FILL",
+          "text": "₦10,000",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "color": "Primary/primary50",
+          "alignment": "left"
+        }
+      },
+      {
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "id": "24:10352",
+            "suggestedType": "avatar",
+            "variants": {},
+            "properties": {
+              "width": 40,
+              "height": 40,
+              "fill": "Primary/primary50"
+            }
+          },
+          {
+            "id": "10:3856",
+            "suggestedType": "text",
+            "variants": {
+              "Action": "False",
+              "Close affordance": "False",
+              "Longer action": "False",
+              "Lines": "One line"
+            },
+            "properties": {
+              "width": "FILL",
+              "text": "Seller Name - Lagos, Nigeria",
+              "fontSize": 14,
+              "fontWeight": "400",
+              "color": "Neutral/neutral80",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "width": "FILL",
+          "text": "Contact Seller",
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "White/white100",
+          "alignment": "center"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "properties": {
+          "width": "FILL"
+        }
+      },
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "width": "FILL"
+        }
+      }
+    ]
+  }
+}
+```

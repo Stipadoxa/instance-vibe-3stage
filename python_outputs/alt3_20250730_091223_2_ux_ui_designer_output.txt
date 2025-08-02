@@ -1,0 +1,137 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate a list of notifications, with a top bar for user information and a bottom navigation bar for app navigation. This vertical arrangement is common for notification lists and ensures easy scannability on mobile devices.",
+    "userFlowReasoning": "Users will view the notification list in the main area of the screen. Tapping on a notification item will lead to the details view of that specific notification.  Additional interactions, such as marking as read or responding directly, may be implemented with swipe gestures or in-item buttons.",
+    "componentChoices": "I chose component ID \"10:10214\" (List item) for the notification items because it supports multiple lines of text and image leading elements, accommodating the user avatar, title, description, and timestamp simultaneously.  Alternative components like \"10:3856\" (snackbar) lack the necessary capacity for the requested content, while others such as \"147:3743\" (product card) are not thematically appropriate for notification display. Component \"10:5620\" (appbar) was selected for the top bar due to its support for leading and trailing elements (avatar and title). Component \"10:4724\" (Bottom navigation) was selected for the bottom navigation bar due to its suitable nature for app navigation.",
+    "visualHierarchy": "The user avatar will be positioned prominently as a leading element in each notification item. The notification title will appear above the description, with the timestamp placed at the end. This hierarchy ensures quick understanding of who the notification is from and its content.",
+    "variantSelectionRationale": "For component ID \"10:10214\", I selected the variant values  \"Condition\": \"2-line\", \"Leading\": \"Image\", \"Trailing\": \"None\", \"Show overline\": \"False\", \"Show supporting text\": \"True\" to accommodate the avatar, title, description, and timestamp without truncation. The \"2-line\" condition ensures enough space for the description. The \"Leading: Image\" variant prioritizes showing the user's avatar in the leading position as requested.  The 'Show supporting text' option is set to 'True' to account for the description of the notification.  Alternatives with fewer text lines or no image support would truncate information. For the appbar, the variants were selected to show an avatar and title for user identification.",
+    "contentAnalysisReasoning": "Content analysis revealed that each notification item requires an image (avatar), a title, a description, and a timestamp. This was deemed high-density content considering the mobile context.  Therefore, I prioritized ensuring all content was displayed in the selected list items without truncation. The additional requirement of a top bar and bottom navigation was accommodated with appropriate components.  Supporting requirements such as read/unread status will be implemented using component variants or appropriate styling choices."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 unread"
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Emma Thompson mentioned you",
+          "Supporting text": "Check out her latest post!",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "New message from John Smith",
+          "Supporting text": "He wants to discuss the project",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Meeting Reminder",
+          "Supporting text": "Team meeting at 3PM today",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Sarah Chen shared a photo",
+          "Supporting text": "View her new post!",
+          "Trailing supporting text": "30m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Order Confirmation",
+          "Supporting text": "Your order has been shipped!",
+          "Trailing supporting text": "10m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Search",
+            "Profile",
+            "Settings",
+            "More"
+          ]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,122 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertically organized to guide the user's eye naturally down the page.  Sections are separated with appropriate spacing to enhance readability and visual hierarchy. The hero image section occupies the top for maximum visual impact.",
+    "userFlowReasoning": "The user flow is designed to provide a clear and concise product experience.  The user starts by viewing the product images, then progresses to the details, seller information, and finally is prompted to contact the seller via a clear call to action.",
+    "componentChoices": "I chose the 'image' component (10:7816) over the 'avatar' component (10:7773, 24:10352) and 'card' component (147:3743) for the product images because the user needs multiple images and the 'image' component is specifically designed for handling images (multiple). The 'avatar' component is not suitable for multiple images while the 'card' component is overly structured for this use-case. I used the 'button' component for the 'Contact Seller' action for a clear call to action and consistent interaction across the application.",
+    "componentGaps": "User request requires Image Carousel, but design system lacks this component. I created carousel-like experience using auto-layout horizontal scroll with multiple image components (10:7816). This allows multiple product photos while maintaining semantic meaning.",
+    "visualHierarchy": "Visual hierarchy is established through a combination of size, color, and placement. The product title and price are prominently displayed using Headline/Large text style. Seller information is secondary, using a smaller text style. The 'Contact Seller' button uses high contrast color to further emphasize it.",
+    "variantSelectionRationale": "For the 'Contact Seller' button (10:3907), I chose the 'Size:Large', 'Type:Filled', 'Color:Green' variants.  'Large' size makes the button easily tappable. A 'Filled' type emphasizes the button, more prominently than an outlined one. The green color relates to the 'primary' color scheme, and aligns with the call to action. I selected the default state for ease of use.",
+    "nativeElementJustification": "With moment significance of 0.7 and decision_points journey position, this Product Detail Page warrants enhanced treatment. A native background gradient and decorative shapes enhance visual appeal and guide the user's eye towards important information like the main image and 'Contact Seller' button, while the primary focus remains on component-based interactions."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": {
+            "type": "LINEAR_GRADIENT",
+            "stops": [
+              {
+                "color": "Primary/primary10",
+                "position": 0
+              },
+              {
+                "color": "Primary/primary50",
+                "position": 1
+              }
+            ],
+            "angle": 90
+          },
+          "cornerRadius": 12
+        }
+      },
+      {
+        "id": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "2+ images"
+        },
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO"
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "textStyle": "Headline/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦10,000",
+          "textStyle": "Title/Large",
+          "color": "Primary/primary50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Seller Name",
+          "textStyle": "Title/Medium",
+          "color": "Neutral/neutral80",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "24:10352",
+        "type": "avatar",
+        "variants": {}
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Location",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

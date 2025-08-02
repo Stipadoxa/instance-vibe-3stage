@@ -1,0 +1,112 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement to guide the user's eye down the page, starting with a visually impactful hero section and progressing to key features, testimonials, and a clear call to action.  Spacing between sections is optimized for readability and visual breathing room.",
+    "userFlowReasoning": "The user flow prioritizes immediate engagement with the hero section, followed by a gradual introduction to key features, social proof, and finally a prominent call to action to drive free trial sign-ups.  This top-down approach maximizes conversion potential.",
+    "componentChoices": "I chose the 'Button' (10:3907) for the CTA because it's a standard, well-understood component with clear interaction patterns. I considered using a 'native-rectangle' for a more custom look but opted for the button to maintain consistency and usability.  The design system's button component also allows for easy customization of size, color, and label without needing any additional styling. I also considered using a 'card' (147:3743) for the CTA, but rejected this due to the need for a prominent, stand-alone CTA which the button fits better.",
+    "visualHierarchy": "Visual hierarchy is established through the use of a large headline in the hero section, followed by clear section headings.  Color, typography, and image placement are used to draw the user's eye to important information. The CTA button is prominently displayed at the bottom of the page, and a visually consistent color scheme is applied.",
+    "variantSelectionRationale": "For the CTA button, I chose the \"Size: Large\", \"Type: Filled\", and \"Color: Green\" variants. I considered smaller sizes and the 'Outlined' style but opted for the larger size to make it highly visible and engaging, while the filled style provides a more significant visual cue that's more noticeable from further away. Green aligns with common e-commerce patterns for positive actions, guiding users to take the next step with confidence.",
+    "nativeElementJustification": "With moment significance of 0.85 and first_touch journey position, this landing page warrants expressive treatment. Native gradient backgrounds and decorative shapes create memorable first impressions while component-based interactions ensure reliability.  The high impact score reflects this screen's importance in attracting new users and achieving conversions."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "E-commerce Landing Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 600,
+          "height": 400,
+          "fill": {
+            "type": "LINEAR_GRADIENT",
+            "stops": [
+              {
+                "position": 0,
+                "color": {
+                  "r": 0,
+                  "g": 0.7098039388656616,
+                  "b": 0.24705882370471954,
+                  "a": 1
+                }
+              },
+              {
+                "position": 1,
+                "color": {
+                  "r": 0.07843137551555634,
+                  "g": 0.6745098028182983,
+                  "b": 0.580392166557312,
+                  "a": 1
+                }
+              }
+            ]
+          },
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Headline",
+          "fontSize": 48,
+          "fontWeight": "bold",
+          "alignment": "center",
+          "color": "#ffffff",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Subheadline",
+          "fontSize": 24,
+          "fontWeight": "normal",
+          "alignment": "center",
+          "color": "#ffffff",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Start Free Trial"
+        }
+      },
+      {
+        "id": "147:3743",
+        "type": "card",
+        "variants": {
+          "view": "grid",
+          "type": "normal"
+        },
+        "properties": {
+          "Diamond": "Feature 1",
+          "#price": "Description",
+          "#tag": "More info",
+          "#title": "Feature title",
+          "#attribute1 value": "value"
+        }
+      }
+
+    ]
+  }
+}
+```

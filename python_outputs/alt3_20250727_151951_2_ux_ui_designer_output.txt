@@ -1,0 +1,111 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column vertical stack, optimizing for mobile screens.  Sufficient spacing will be added between components to ensure comfortable touch targets.",
+    "userFlowReasoning": "The user flow is straightforward: enter credentials, tap 'Login', or select a social media option.  Password recovery is accessible via a clearly labeled link.",
+    "componentChoices": "I chose '10:8492' (text input) for username/email and password fields, '10:3907' (button) for the primary login button, and used '10:10214' (list item) to create a container for social media buttons. I chose these over '10:12086' (searchbar) because the inputs are for simple text entry, not search, and using list-items allows for easy styling and arrangement of social login buttons.  I didn't use '10:12230' or '10:12276' (dialog) because this is a standard login screen, not a dialog box.",
+    "visualHierarchy": "Visual hierarchy is established through size and placement. The login button is prominent, above secondary actions.",
+    "variantSelectionRationale": "For the text input components, I've chosen State='enabled' and Type='Filled' to provide clear visual feedback to the user and a clear area for typing. For the primary login button, I selected Size='Medium', Type='Filled', and State='Default' to ensure its visual prominence as the primary action. I chose Color='Green' to follow mobile login conventions. I omitted other 'State' variants (Hover, Pressed, Progress, Disabled) because those are only applicable during interaction or exceptional circumstances, which are not needed in the default state.  The 'list item' component for social logins allows for clear visual distinction for each social platform. "
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items": [
+          {
+            "id": "635:4658",
+            "suggestedType": "icon",
+            "variants": {
+              "Type": "Default"
+            },
+            "textLayers": {
+              "Action": "Facebook"
+            }
+          },
+          {
+            "id": "635:4653",
+            "suggestedType": "chip",
+            "variants": {
+              "Type": "Default"
+            },
+            "textLayers": {
+              "Action": "Instagram"
+            }
+          }
+
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+          },
+        "textLayers": {
+          "Headline": "Forgot Password?"
+        }
+      }
+    ]
+  }
+}
+```

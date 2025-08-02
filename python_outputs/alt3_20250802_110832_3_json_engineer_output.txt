@@ -1,0 +1,107 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": "FILL",
+        "height": 200,
+        "fill": {
+          "type": "LINEAR_GRADIENT",
+          "stops": [
+            { "color": "primary-10", "offset": 0 },
+            { "color": "primary-5", "offset": 1 }
+          ]
+        },
+        "cornerRadius": 12
+      }
+    },
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "variants": {
+        "Type": "2+ images"
+      },
+      "properties": {
+        "images": [
+          { "url": "image1.jpg" },
+          { "url": "image2.jpg" },
+          { "url": "image3.jpg" }
+        ]
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Product Title",
+        "fontSize": 22,
+        "fontWeight": "bold",
+        "alignment": "start",
+        "color": "neutral-90",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "₦ 10,000",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "alignment": "start",
+        "color": "primary-50",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "text",
+      "componentNodeId": "10:8619",
+      "variants": {
+        "Platform": "Android+Web",
+        "Type": "Filled",
+        "State": "Enabled"
+      },
+      "properties": {
+        "labelText": "Product Description",
+        "content": "This is a detailed description of the product. It includes key features, specifications, and benefits."
+      }
+    },
+    {
+      "type": "native-circle",
+      "properties": {
+        "width": 40,
+        "height": 40,
+        "fill": "secondary-50",
+        "cornerRadius": 20,
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Large",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Contact Seller"
+      }
+    }
+  ]
+}
+```

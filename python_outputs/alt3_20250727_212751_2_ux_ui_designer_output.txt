@@ -1,0 +1,91 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout follows a vertical structure, placing the app bar at the top, the notification list in the center, and the bottom navigation at the bottom.  This is a standard mobile pattern for information delivery, ensuring a clear visual hierarchy and intuitive navigation.",
+    "userFlowReasoning": "Users can view the list of notifications, and potentially mark them as read (implied action) by tapping on each item.  The bottom navigation provides access to other parts of the application.",
+    "componentChoices": "I chose the 'appbar' (id: 10:5620), 'list-item' (id: 10:10214), and 'navigation' (id: 10:4724) components. I chose 'appbar' over 'snackbar' (id: 10:3856) because it's designed for displaying persistent information like user details, while snackbars are for temporary notifications. 'list-item' was preferred over 'card' (id: 147:3743) because cards are better for displaying products or more complex data.  Finally, 'navigation' was chosen instead of using multiple individual buttons for better structural grouping of the bottom navigation options.",
+    "visualHierarchy": "The app bar provides a prominent area for user information.  Notifications are presented in a vertical list, with clear visual separation between items through the use of dividers.  Bottom navigation is given less visual emphasis, as it’s a secondary action.",
+    "variantSelectionRationale": "For the appbar, I selected 'Mode=Light', 'Type=Default', and 'Elevation=flat' because these values provide a clean and uncluttered appearance suitable for a notifications screen.  For the list-item, I chose 'Condition=2-line', 'Leading=Image', 'Trailing=None', 'Show overline=False', and 'Show supporting text=True' to accommodate user avatar, title, description, and timestamp within each item.  'Trailing=None' was selected instead of using an icon or other trailing element because such visual element isn't needed for this context and only adds additional visual clutter. For bottom navigation, I chose 'Device=Mobile' to optimize for the mobile screen size. The alternative, Tablet, is not necessary at this time."
+  }
+}
+```
+```json
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7798",
+            "suggestedType": "avatar",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "id": "10:10214",
+            "suggestedType": "list-item",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items": [
+              {
+                "suggestedType": "text",
+                "text": "Notification Title"
+              },
+              {
+                "suggestedType": "text",
+                "text": "Notification Description"
+              },
+              {
+                "suggestedType": "text",
+                "text": "Timestamp"
+              }
+            ]
+          }
+
+        ]
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,114 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to guide the user through the key information in a natural flow.  The hero section takes up significant visual space to create a strong initial impact, followed by feature highlights, testimonials, and a prominent CTA. The footer provides essential legal and navigation elements.",
+    "userFlowReasoning": "The user journey begins with the visually arresting hero section, designed to capture attention and establish brand identity.  Users are then guided down the page through key features and social proof, culminating in a clear and compelling call to action to sign up for a free trial.",
+    "componentChoices": "I chose the 'Button' component (id: 10:3907) for the CTA because it's the designated design system component for interactive actions.  I considered using a native button or a custom-styled image but rejected these because maintaining consistency with the design system is paramount, plus they may not align to accessibility standards for interactive elements. The reference shows that the Button component is flexible enough for this use case.",
+    "visualHierarchy": "Visual hierarchy is established through a combination of size, color, spacing, and typography. The hero section headline uses the largest text size, while subsequent sections decrease in size. The use of images and icons also adds visual weight and guides user attention.",
+    "variantSelectionRationale": "For the CTA button, I selected the \"Size: Large\", \"Type: Filled\", \"Color: Green\", and \"State: Default\" variants. I considered \"Medium\" size but \"Large\" provides better prominence for this conversion-critical element.  Filled and Green options are consistent with positive calls-to-action. I chose the Default state because the button should be readily available for interaction.",
+    "nativeElementJustification": "With moment significance of 0.85 and first_touch journey position, and brand expression and conversion-critical business impact, this landing page warrants expressive treatment.  Native gradient backgrounds and decorative shapes create a memorable first impression while component-based interactions ensure usability and consistency with the design system.  The expressive treatment is consistent with the Analyzer's \"suggestedTreatment: expressive\" recommendation."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "E-commerce Landing Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 400,
+          "fill": {
+            "type": "GRADIENT_LINEAR",
+            "stops": [
+              {
+                "position": 0,
+                "color": {
+                  "r": 0.0,
+                  "g": 0.7,
+                  "b": 0.3
+                }
+              },
+              {
+                "position": 1,
+                "color": {
+                  "r": 0.0,
+                  "g": 0.4,
+                  "b": 0.6
+                }
+              }
+            ]
+          },
+          "cornerRadius": 0,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Your SaaS Product Name",
+          "fontSize": 48,
+          "fontWeight": "bold",
+          "alignment": "center",
+          "color": "primary-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Your concise and catchy tagline",
+          "fontSize": 24,
+          "fontWeight": "normal",
+          "alignment": "center",
+          "color": "primary-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-circle",
+        "properties": {
+          "width": 100,
+          "height": 100,
+          "fill": {
+            "r": 0.2,
+            "g": 0.6,
+            "b": 0.9
+          }
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Start Free Trial"
+        }
+      },
+      {
+        "id": "147:3743",
+        "type": "card",
+        "variants": {
+          "view": "grid",
+          "type": "normal"
+        }
+      }
+    ]
+  }
+}
+```

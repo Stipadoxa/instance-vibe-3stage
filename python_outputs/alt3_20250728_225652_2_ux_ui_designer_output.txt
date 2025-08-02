@@ -1,0 +1,137 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to optimize screen real estate on mobile.  The app bar provides clear screen identification and user information, while the bottom navigation ensures easy access to other sections of the app. Item spacing is minimized for compactness.",
+    "userFlowReasoning": "Users will see a list of notifications.  Tapping on a notification will open details. The design supports a simple, scannable view of notifications with minimal cognitive load.",
+    "componentChoices": "I chose the `appbar` (ID: 10:5620) and `list-item` (ID: 10:10214) components for the main structure. I selected `list-item` over `card` (ID: 147:3743) because it's more efficient for displaying a list of items, avoiding the extra visual weight of cards.  The `appbar` was chosen for its commonality as a top navigation structure.",
+    "visualHierarchy": "The visual hierarchy is established through clear typography and spacing. The app bar is prominent, followed by the notification list, and finally the bottom navigation. The headline text of the list item will be primary, while supporting text is secondary, conveying clear importance.",
+    "variantSelectionRationale": "For the `appbar`, I selected `Mode: Light` as the default for readability and `Type: Default` for a standard appearance; `Elevation: flat` to avoid unnecessary shadow. I chose `Condition: 2-line` and `Leading: Avatar` for `list-item` to accommodate the avatar, title and description text. I avoided `Leading: Icon` as the user requested an Avatar instead of an Icon.  `Show supporting text: True` is selected to render the description under title."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 8,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 new",
+          "Settings": "",
+          "Label": ""
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "Emma Thompson mentioned you",
+          "Supporting text": "Great point about the user retention metrics in today's meeting",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "John Doe liked your post",
+          "Supporting text": "Nice photo of your dog!",
+          "Trailing supporting text": "15m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "New message from Jane Smith",
+          "Supporting text": "Hi, how's your day going?",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "Meeting Reminder",
+          "Supporting text": "Team meeting at 3 PM today",
+          "Trailing supporting text": "3h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "Task Completed",
+          "Supporting text": "Project X milestone achieved",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": ["Home", "Saved", "Sell", "Sell", "Profile"]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

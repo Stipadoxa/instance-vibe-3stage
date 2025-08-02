@@ -1,0 +1,71 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column vertical stack, suitable for mobile screens and minimizing scrolling.  Elements are ordered based on typical login flows: username/email first, followed by password, login button, then secondary actions (password recovery, social logins), and finally a terms and conditions footnote.",
+    "userFlowReasoning": "The login flow follows a standard pattern: input fields, primary action, then alternative/support actions.  This is intuitive and efficient for users. Error messaging will appear below the relevant field for immediate feedback. ",
+    "componentChoices": "I chose the 'text input' (id: 10:8492) component for the username/email and password fields. I chose the 'button' (id: 10:3907) for the primary login button and considered using the 'button' for the social media login buttons as well. The 'text' component (id: 24:10333) is used for the T&C text.  I rejected using a 'searchbar' (id: 10:12086) for the input fields because it's not appropriate for username/password entry. I rejected using a 'list-item' (10:10214) because it is not designed for form inputs. ",
+    "visualHierarchy": "The primary login button will have a prominent size ('Large') and contrasting color ('Green') to make it visually dominant. Input fields will be clearly labeled, and the password recovery link will be visually distinct from the primary action with a smaller, less prominent style.",
+    "variantSelectionRationale": "For the login button (id: 10:3907), I selected 'Size: Large' and 'Color: Green' for better visibility and prominence,  rejecting 'Size: Medium' and 'Size: Small' as less impactful on a smaller screen. For input fields (id: 10:8492), I chose 'Type: Filled' to clearly define input areas, while 'State: enabled' is default. The T&C text is set to a secondary style to show it as a footnote, with no other variants specified as it's a static text element."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "24:10333",
+        "suggestedType": "text",
+        "textLayers": {
+          "POPULAR": "By logging in, you agree to our Terms and Conditions"
+        }
+      }
+    ]
+  }
+}
+```

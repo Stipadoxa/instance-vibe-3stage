@@ -1,0 +1,117 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout follows a vertical structure, prioritizing the hero image at the top, followed by product details, seller information, and finally, navigation at the bottom. This arrangement enhances readability and guides the user through the information naturally.",
+    "userFlowReasoning": "The user flow is designed to be intuitive. Users first see the product image, then essential details, seller information to build trust, and finally, a clear CTA to interact with the seller. Top and bottom navigation bars provide easy access to other parts of the app, minimizing the need to leave the product detail page.",
+    "componentChoices": "I chose the 'Image Carousel' component for showcasing product photos, instead of a 'Single Image' component (which is limited) and a 'Gallery' component (which might feel less visually appealing on mobile).  The carousel offers a more immersive visual experience while still being responsive on smaller screens.",
+    "visualHierarchy": "Visual hierarchy is established through size, color, and positioning. The product image is the focal point due to its prominent size and location at the top.  Headings use a larger font size and bold weight. The 'Contact Seller' button is emphasized through its color and size.",
+    "variantSelectionRationale": "For the 'Contact Seller' button, I selected the 'Filled', 'Large', 'Green' variant. This variant provides maximum visual prominence and clear actionability, unlike the 'Outlined' or 'Text' variants that are less visually impactful. The large size ensures sufficient tap target area for mobile users.",
+    "colorSelectionRationale": "Selected color style 'Primary/primary50' from colorStyles.primary for the 'Contact Seller' button to maintain brand consistency and visual appeal. The green color is associated with positive actions and conversions, aligning with the emotional intent of the design. ",
+    "nativeElementJustification": "With moment significance of 0.7 and 'impress and convert' emotional intent, this product detail page warrants enhanced treatment.  A native rectangle behind the product title and price adds visual interest and complements the hero image. This enhances the overall aesthetic appeal without compromising the usability of the component-based UI."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": "Primary/primary10",
+          "cornerRadius": 12
+        }
+      },
+      {
+        "id": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "1 image"
+        },
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": "Primary/primary50"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "false",
+          "Show supporting text": "true"
+        },
+        "properties": {
+          "headline": "Product Title",
+          "supporting text": "Product Description"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "false",
+          "Show supporting text": "false"
+        },
+        "properties": {
+          "headline": "Price: $19.99"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "false",
+          "Show supporting text": "true"
+        },
+        "properties": {
+          "headline": "Seller Name",
+          "supporting text": "Location"
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

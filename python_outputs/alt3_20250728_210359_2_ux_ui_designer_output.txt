@@ -1,0 +1,136 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical structure to present notifications in a scrollable list, optimized for mobile screens.  The top bar provides user information, while bottom navigation ensures easy access to other app sections. Item spacing is minimal to maximize screen real estate.",
+    "userFlowReasoning": "Users can view notification details by tapping on a notification item. Bottom navigation provides access to other areas of the application.",
+    "componentChoices": "I chose the `appbar` (id: 10:5620) for the top bar because it's a standard component for displaying header information. I selected the `list-item` (id: 10:10214) for the notification items because it offers flexible configuration options for avatars, titles, descriptions, and trailing elements (timestamps).  I considered using a `card` component but it contains many irrelevant elements for this screen. Also, a `snackbar` is unsuitable for displaying multiple notifications.",
+    "visualHierarchy": "Visual hierarchy is established through clear spacing, font sizes, and potentially bold text for unread notifications. The top bar and bottom navigation have distinct visual separation.",
+    "variantSelectionRationale": "For the `appbar`, I chose the `Mode: Light` variant for better visual contrast and readability. `Type: Default` is chosen as a versatile option. For `list-item`, I selected `Condition: 2-line` and `Leading: Avatar` variants because this is a suitable arrangement for notifications having an avatar and title/description pairs. I rejected the use of `Leading: Icon` for most items as it would not be contextually appropriate."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 new"
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Emma Thompson mentioned you",
+          "Supporting text": "Great point about the user retention metrics in today's meeting",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Team Meeting Reminder",
+          "Supporting text": "Daily standup starting in 15 minutes",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Payment Successful",
+          "Supporting text": "Your order #1234 has been processed.",
+          "Trailing supporting text": "3h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "New Follower",
+          "Supporting text": "@john_doe started following you!",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Account Update",
+          "Supporting text": "Your password has been changed.",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,115 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": 320,
+        "height": 200,
+        "fill": {
+          "type": "LINEAR_GRADIENT",
+          "stops": [
+            {
+              "color": "#00b53f",
+              "position": 0
+            },
+            {
+              "color": "#6ccc7b",
+              "position": 1
+            }
+          ]
+        },
+        "cornerRadius": 12,
+        "horizontalSizing": "FILL"
+      },
+      "items": [
+        {
+          "type": "image",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "1 image"
+          },
+          "properties": {
+            "source": "product_image_url"
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Product Title",
+        "fontSize": 22,
+        "fontWeight": "bold",
+        "alignment": "left",
+        "color": "#304049",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "₦10,000",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "alignment": "left",
+        "color": "#00b53f",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "avatar",
+          "componentNodeId": "10:7798",
+          "variants": {
+            "Type": "Photo"
+          },
+          "properties": {
+            "source": "seller_avatar_url"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Seller Name\nLocation",
+            "fontSize": 14,
+            "fontWeight": "normal",
+            "alignment": "left",
+            "color": "#6c8ea0",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Large",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Contact Seller"
+      }
+    }
+  ]
+}
+```

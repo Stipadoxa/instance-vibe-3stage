@@ -593,6 +593,12 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             # Placeholder response
             return f"[PLACEHOLDER RESPONSE - No AI client available]\n\nPrompt was: {prompt[:200]}...", {}
         
+        # 🔍 DEBUG: Log the actual prompt being sent
+        print(f"🔍 DEBUG: Sending prompt to AI (length: {len(prompt)}):")
+        print(f"🔍 PROMPT START: {prompt[:1000]}...")
+        if len(prompt) > 1000:
+            print(f"🔍 PROMPT END: ...{prompt[-500:]}")
+        
         try:
             # Prepare content for API call
             content = [prompt]
@@ -609,6 +615,13 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
                         print(f"⚠️ Failed to load image {img_path}: {e}")
             
             response = await self.gemini_client.generate_content_async(content)
+            
+            # 🔍 DEBUG: Log the AI response
+            print(f"🔍 DEBUG: AI Response (length: {len(response.text)}):")
+            print(f"🔍 RESPONSE START: {response.text[:500]}...")
+            if len(response.text) > 500:
+                print(f"🔍 RESPONSE END: ...{response.text[-200:]}")
+            
             token_usage = {
                 'prompt_tokens': len(prompt.split()) // 1.3,  # Rough estimate
                 'completion_tokens': len(response.text.split()) // 1.3,

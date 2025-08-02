@@ -1,0 +1,87 @@
+```
+## 🔍 MANDATORY DEBUG ANALYSIS
+
+**INPUT FORMAT DETECTION:**
+Format Type: [FORMAT A (direct)]
+Contains "improvedLayoutData": [NO]
+
+**DATA EXTRACTION:**
+Layout Source: [input.layoutContainer] 
+Component Count: [4]
+First Component ID: [10:8492]
+First Text Content: [Email or Username]
+
+**CONTENT VALIDATION:**
+Real Content Found: [Email or Username, Password, Login, Forgot Password?]
+Generic Templates Found: []
+Template Risk: [LOW]
+
+**PROCESSING COMMITMENT:**
+Will use extracted content: [YES]
+Will avoid templates: [YES]
+Ready to proceed: [YES]
+```
+
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Email or Username",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Password",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Login",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Forgot Password?",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    }
+  ]
+}
+```

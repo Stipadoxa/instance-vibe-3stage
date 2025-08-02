@@ -1,0 +1,143 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement for the notification list, placing the app bar at the top and bottom navigation at the bottom.  This is consistent with common mobile notification patterns and facilitates easy scanning.",
+    "userFlowReasoning": "The primary user flow is to view the list of notifications. Tapping on a notification item will lead to a detailed view of that notification. Navigation to other sections of the app is possible through the bottom navigation bar.",
+    "componentChoices": "I chose the `appbar` (10:5620), `list-item` (10:10214), and `navigation` (10:4724) components.  These components offer the necessary structure and visual elements for a notifications screen.  Alternatives such as `card` (147:3743) were rejected for the list items because they are not optimized for vertically scrolling lists and offer more features than strictly necessary for this screen. `snackbar` was not suitable for the overall layout as it is meant for temporary messages.",
+    "visualHierarchy": "The visual hierarchy is established through the use of clear spacing and font sizes. The app bar has a prominent headline, and the notification items are presented in a clear vertical list with distinct visual separation.",
+    "variantSelectionRationale": "For the `list-item`, I chose `Leading: Image` instead of `Leading: Icon`, `Leading: None`, etc., because the user story specifically requested a user avatar for each notification.  Similarly, `Condition: 2-line` allows for sufficient space to display both the title and description of notifications."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 new",
+          "Settings": "",
+          "Label": ""
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "Emma Thompson mentioned you",
+          "Supporting text": "Great point about the user retention metrics in today's meeting",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "New message from John Smith",
+          "Supporting text": "Hey there! Just checking in...",
+          "Trailing supporting text": "15m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "Reminder: Project X deadline",
+          "Supporting text": "Submit your report by the end of the day",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "System Update Available",
+          "Supporting text": "Please restart your device to install the latest updates",
+          "Trailing supporting text": "3h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Overline": "",
+          "Headline": "Account Verification Required",
+          "Supporting text": "Please verify your email address to continue using the app",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

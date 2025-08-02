@@ -1,0 +1,90 @@
+```
+## 🔍 MANDATORY DEBUG ANALYSIS
+
+**INPUT FORMAT DETECTION:**
+Format Type: FORMAT A (direct)
+Contains "improvedLayoutData": NO
+
+**DATA EXTRACTION:**
+Layout Source: input.layoutContainer
+Component Count: 4
+First Component ID: 10:8492
+First Text Content: Email Address
+
+**CONTENT VALIDATION:**
+Real Content Found: ["Email Address", "Password", "Login", "Forgot Password?"]
+Generic Templates Found: []
+Template Risk: LOW
+
+**PROCESSING COMMITMENT:**
+Will use extracted content: YES
+Will avoid templates: YES
+Ready to proceed: YES
+```
+
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Email Address",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Password",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Login",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Forgot Password?",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        }
+      }
+    }
+  ]
+}
+```
