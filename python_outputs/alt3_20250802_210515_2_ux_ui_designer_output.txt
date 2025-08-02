@@ -1,0 +1,149 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is vertically oriented, placing the top app bar at the top, followed by a scrollable section for product images and details, and concluding with the bottom navigation bar.  This flow prioritizes visual information before interactive elements.",
+    "userFlowReasoning": "The user first sees the product images, then essential information (title, price), seller details, and finally, a clear call-to-action to contact the seller. Navigation allows easy movement between product listings and user profile.",
+    "componentChoices": "I chose the `appbar` (10:5620) and `navigation` (10:4724) components for top and bottom navigation respectively, over using a custom header and footer because these components offer built-in styles and responsiveness. The `IMAGES` (10:7816) component is used for displaying product images to leverage its image handling capabilities over native image elements.",
+    "componentGaps": "User request requires a seller avatar component combined with name and location which doesn't exist in the design system. I combined the `avatar` (10:7773) component with two `native-text` elements for name and location. This provides a visually consistent way of showcasing seller information.",
+    "visualHierarchy": "The product title and price have the highest visual prominence, using the 'Headline/Large' text style. Seller information is secondary, using 'Title/Medium'. The 'Contact Seller' button is a prominent green filled button using the 'Button' component for easy discoverability. ",
+    "variantSelectionRationale": "For the 'Contact Seller' button (10:3907), I selected the \"Filled\" type and \"Large\" size over \"Outlined\" and \"Small\" because it offers maximum visual impact and is consistent with other primary calls to action.  The `appbar` is set to `Type: Default` to show the title instead of a search field. ",
+    "nativeElementJustification": "User request requires the display of seller's name and location in close proximity to the avatar component.  Available components do not allow for this specific arrangement. Therefore, `native-text` elements solve this by creating a customized layout of text elements adjacent to the avatar, while maintaining component-based interactions for the button and avatar."
+  }
+}
+```
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "appbar",
+        "id": "10:5620",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "headline": "Product Title",
+          "subheadline": "Subtitle",
+          "leadingIcon1": {
+            "visible": true,
+            "icon": "arrow"
+          },
+          "trailingIcon1": {
+            "visible": false
+          },
+          "trailingIcon2": {
+            "visible": false
+          }
+        }
+      },
+      {
+        "type": "IMAGES",
+        "id": "10:7816",
+        "variants": {
+          "Type": "1 image"
+        },
+        "properties": {
+          "imageSource": "product_image.jpg"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "textStyle": "Headline/Large",
+          "color": "primary-500",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦10,000",
+          "textStyle": "Headline/Medium",
+          "color": "primary-500",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 100,
+          "height": 100,
+          "cornerRadius": 50,
+          "fill": "Neutral/neutral10",
+          "items": [
+            {
+              "type": "avatar",
+              "id": "10:7773",
+              "variants": {
+                "Photo": "Yes"
+              },
+              "properties": {
+                "imageSource": "seller_avatar.jpg"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Seller Name",
+          "textStyle": "Title/Medium",
+          "color": "neutral-50",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Location, City",
+          "textStyle": "Body/Small",
+          "color": "neutral-50",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "button",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      },
+      {
+        "type": "navigation",
+        "id": "10:4724",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "properties": {
+          "tab1Label": "Home",
+          "tab2Label": "Saved",
+          "tab3Label": "Sell",
+          "tab4Label": "Chat",
+          "tab5Label": "Profile"
+        }
+      }
+    ]
+  }
+}
+```
