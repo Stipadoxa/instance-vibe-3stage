@@ -544,26 +544,52 @@ export class FigmaRenderer {
     
     const rect = figma.createRectangle();
     
-    // Set dimensions
-    if (rectData.width && rectData.height) {
-      rect.resize(rectData.width, rectData.height);
-    } else {
-      rect.resize(100, 100); // Default size
-    }
+    // Extract and apply properties from the properties object (same pattern as native text)
+    const props = rectData.properties || rectData;
     
-    // Set fill color
-    if (rectData.fill) {
-      rect.fills = [{ type: 'SOLID', color: rectData.fill }];
+    // Set dimensions - respect explicit width/height properties
+    const width = props.width || rectData.width || 100;
+    const height = props.height || rectData.height || 100;
+    rect.resize(width, height);
+    
+    // Set fill color - skip if invalid to avoid errors
+    if (props.fill || rectData.fill) {
+      const fillColor = props.fill || rectData.fill;
+      try {
+        if (typeof fillColor === 'string' && fillColor.includes('#')) {
+          // Convert hex string to RGB object
+          const hexColor = fillColor.replace('#', '');
+          if (hexColor.length === 6) {
+            const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+            const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+            const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+            // Only set if valid numbers
+            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+              rect.fills = [{ type: 'SOLID', color: { r, g, b } }];
+            }
+          }
+        } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
+          // Already an RGB object
+          rect.fills = [{ type: 'SOLID', color: fillColor }];
+        }
+      } catch (error) {
+        console.log('Skipping invalid fill color:', fillColor);
+      }
     }
     
     // Set corner radius
-    if (rectData.cornerRadius) {
-      rect.cornerRadius = rectData.cornerRadius;
+    if (props.cornerRadius || rectData.cornerRadius) {
+      const radius = props.cornerRadius || rectData.cornerRadius;
+      rect.cornerRadius = radius;
     }
     
-    // Handle sizing
-    if (rectData.horizontalSizing === 'FILL') {
+    // Apply child layout properties (same as native text)
+    this.applyChildLayoutProperties(rect, props);
+    
+    // Handle horizontal sizing properly (same as native text behavior)
+    if (props.horizontalSizing === 'FILL') {
       rect.layoutAlign = 'STRETCH';
+      rect.layoutGrow = 1;
     }
     
     container.appendChild(rect);
@@ -578,16 +604,46 @@ export class FigmaRenderer {
     
     const ellipse = figma.createEllipse();
     
-    // Set dimensions
-    if (ellipseData.width && ellipseData.height) {
-      ellipse.resize(ellipseData.width, ellipseData.height);
-    } else {
-      ellipse.resize(50, 50); // Default size
+    // Extract and apply properties from the properties object (same pattern as native text)
+    const props = ellipseData.properties || ellipseData;
+    
+    // Set dimensions - respect explicit width/height properties
+    const width = props.width || ellipseData.width || 50;
+    const height = props.height || ellipseData.height || 50;
+    ellipse.resize(width, height);
+    
+    // Set fill color - skip if invalid to avoid errors
+    if (props.fill || ellipseData.fill) {
+      const fillColor = props.fill || ellipseData.fill;
+      try {
+        if (typeof fillColor === 'string' && fillColor.includes('#')) {
+          // Convert hex string to RGB object
+          const hexColor = fillColor.replace('#', '');
+          if (hexColor.length === 6) {
+            const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+            const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+            const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+            // Only set if valid numbers
+            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+              ellipse.fills = [{ type: 'SOLID', color: { r, g, b } }];
+            }
+          }
+        } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
+          // Already an RGB object
+          ellipse.fills = [{ type: 'SOLID', color: fillColor }];
+        }
+      } catch (error) {
+        console.log('Skipping invalid fill color:', fillColor);
+      }
     }
     
-    // Set fill color
-    if (ellipseData.fill) {
-      ellipse.fills = [{ type: 'SOLID', color: ellipseData.fill }];
+    // Apply child layout properties (same as native text)
+    this.applyChildLayoutProperties(ellipse, props);
+    
+    // Handle horizontal sizing properly (same as native text behavior)
+    if (props.horizontalSizing === 'FILL') {
+      ellipse.layoutAlign = 'STRETCH';
+      ellipse.layoutGrow = 1;
     }
     
     container.appendChild(ellipse);

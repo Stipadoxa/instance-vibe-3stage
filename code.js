@@ -2876,19 +2876,38 @@
     static async createRectangleNode(rectData, container) {
       console.log("Creating native rectangle:", rectData);
       const rect = figma.createRectangle();
-      if (rectData.width && rectData.height) {
-        rect.resize(rectData.width, rectData.height);
-      } else {
-        rect.resize(100, 100);
+      const props = rectData.properties || rectData;
+      const width = props.width || rectData.width || 100;
+      const height = props.height || rectData.height || 100;
+      rect.resize(width, height);
+      if (props.fill || rectData.fill) {
+        const fillColor = props.fill || rectData.fill;
+        try {
+          if (typeof fillColor === "string" && fillColor.includes("#")) {
+            const hexColor = fillColor.replace("#", "");
+            if (hexColor.length === 6) {
+              const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+              const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+              const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+              if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                rect.fills = [{ type: "SOLID", color: { r, g, b } }];
+              }
+            }
+          } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
+            rect.fills = [{ type: "SOLID", color: fillColor }];
+          }
+        } catch (error) {
+          console.log("Skipping invalid fill color:", fillColor);
+        }
       }
-      if (rectData.fill) {
-        rect.fills = [{ type: "SOLID", color: rectData.fill }];
+      if (props.cornerRadius || rectData.cornerRadius) {
+        const radius = props.cornerRadius || rectData.cornerRadius;
+        rect.cornerRadius = radius;
       }
-      if (rectData.cornerRadius) {
-        rect.cornerRadius = rectData.cornerRadius;
-      }
-      if (rectData.horizontalSizing === "FILL") {
+      this.applyChildLayoutProperties(rect, props);
+      if (props.horizontalSizing === "FILL") {
         rect.layoutAlign = "STRETCH";
+        rect.layoutGrow = 1;
       }
       container.appendChild(rect);
       console.log("Rectangle created successfully");
@@ -2899,13 +2918,34 @@
     static async createEllipseNode(ellipseData, container) {
       console.log("Creating native ellipse:", ellipseData);
       const ellipse = figma.createEllipse();
-      if (ellipseData.width && ellipseData.height) {
-        ellipse.resize(ellipseData.width, ellipseData.height);
-      } else {
-        ellipse.resize(50, 50);
+      const props = ellipseData.properties || ellipseData;
+      const width = props.width || ellipseData.width || 50;
+      const height = props.height || ellipseData.height || 50;
+      ellipse.resize(width, height);
+      if (props.fill || ellipseData.fill) {
+        const fillColor = props.fill || ellipseData.fill;
+        try {
+          if (typeof fillColor === "string" && fillColor.includes("#")) {
+            const hexColor = fillColor.replace("#", "");
+            if (hexColor.length === 6) {
+              const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+              const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+              const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+              if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                ellipse.fills = [{ type: "SOLID", color: { r, g, b } }];
+              }
+            }
+          } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
+            ellipse.fills = [{ type: "SOLID", color: fillColor }];
+          }
+        } catch (error) {
+          console.log("Skipping invalid fill color:", fillColor);
+        }
       }
-      if (ellipseData.fill) {
-        ellipse.fills = [{ type: "SOLID", color: ellipseData.fill }];
+      this.applyChildLayoutProperties(ellipse, props);
+      if (props.horizontalSizing === "FILL") {
+        ellipse.layoutAlign = "STRETCH";
+        ellipse.layoutGrow = 1;
       }
       container.appendChild(ellipse);
       console.log("Ellipse created successfully");
@@ -7647,7 +7687,65 @@ Advanced Conditional Behavior
   }
 }
 
-Proper Layout Container Structure
+\u{1F527} CRITICAL: Full-Width vs Standard Layout Strategy
+
+When user requests "full-width", "edge-to-edge", or "hero" images/backgrounds:
+\u274C NEVER use root container padding - it prevents true full-width
+\u2705 ALWAYS use nested container strategy with zero root padding
+
+\u274C WRONG - Standard Layout (prevents full-width):
+{
+  "layoutContainer": {
+    "paddingLeft": 16,      // \u274C Blocks full-width elements
+    "paddingRight": 16,     // \u274C Blocks full-width elements
+    "items": [
+      {"type": "image"}     // \u274C Can't reach screen edges
+    ]
+  }
+}
+
+\u2705 CORRECT - Full-Width Layout Strategy:
+{
+  "layoutContainer": {
+    "paddingLeft": 0,       // \u2705 Allows true full-width
+    "paddingRight": 0,      // \u2705 Allows true full-width
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "itemSpacing": 0,       // \u2705 No gaps between sections
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",    // \u2705 Full-width section
+        "layoutMode": "VERTICAL",
+        "paddingLeft": 0,          // \u2705 Edge-to-edge
+        "paddingRight": 0,         // \u2705 Edge-to-edge
+        "items": [
+          {"type": "image"}        // \u2705 Reaches screen edges
+        ]
+      },
+      {
+        "type": "layoutContainer", 
+        "name": "Content Section", // \u2705 Padded content section
+        "layoutMode": "VERTICAL",
+        "paddingLeft": 16,         // \u2705 Content padding
+        "paddingRight": 16,        // \u2705 Content padding
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "itemSpacing": 16,
+        "items": [
+          {"type": "text"},         // \u2705 Properly padded content
+          {"type": "button"}
+        ]
+      }
+    ]
+  }
+}
+
+\u{1F3AF} Layout Strategy Decision Tree:
+- User mentions "full-width", "edge-to-edge", "hero", "cover" \u2192 Use nested containers
+- Regular content layout \u2192 Use standard padding strategy
+
+Proper Layout Container Structure (Standard Content)
 
 {
   "layoutContainer": {
