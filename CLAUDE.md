@@ -84,3 +84,13 @@ git checkout main
 # Update test prompt
 echo "new prompt here" > user-request.txt
 ```
+
+### Icon Swapping Implementation Notes
+
+- **Technical Insights**: Icon swapping works but requires careful timing
+  - Post-render component handling
+  - Proper COMPONENT_SET → COMPONENT type conversion
+  - Design system data flow (clientStorage → renderer)
+  - Semantic name resolution (AI names → component IDs)
+  - Robust instance targeting with multi-strategy search
+- **Production Readiness**: Feature is production-ready when these patterns are followed

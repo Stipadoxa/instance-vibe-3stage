@@ -2735,7 +2735,45 @@
         }
         await resolveComponentIds(migratedData.items);
         console.log("\u{1F7E2} USING SYSTEMATIC GENERATION METHOD");
-        return await this.generateUIFromDataSystematic(migratedData, figma.currentPage);
+        let designSystemData = null;
+        try {
+          console.log("\u{1F50D} Loading real design system data from storage...");
+          if (typeof figma !== "undefined" && figma.clientStorage) {
+            const scanSession = await figma.clientStorage.getAsync("design-system-scan");
+            if (scanSession && scanSession.components) {
+              designSystemData = {
+                components: scanSession.components,
+                colorStyles: scanSession.colorStyles || null,
+                scanTime: scanSession.scanTime,
+                totalCount: scanSession.components.length
+              };
+              const iconCount = scanSession.components.filter((comp) => comp.suggestedType === "icon").length;
+              console.log("\u2705 Loaded real design system data:", {
+                totalComponents: scanSession.components.length,
+                iconComponents: iconCount,
+                scanTime: new Date(scanSession.scanTime).toLocaleString(),
+                fileKey: scanSession.fileKey
+              });
+              const icons = scanSession.components.filter((comp) => comp.suggestedType === "icon");
+              console.log("\u{1F3A8} Available icons:", icons.slice(0, 10).map((icon) => `${icon.name} (${icon.id})`));
+            } else {
+              console.warn("\u26A0\uFE0F No design-system-scan data found in storage");
+              const lastScan = await figma.clientStorage.getAsync("last-scan-results");
+              if (lastScan && Array.isArray(lastScan)) {
+                designSystemData = {
+                  components: lastScan,
+                  totalCount: lastScan.length
+                };
+                console.log("\u2705 Using fallback last-scan-results data:", lastScan.length, "components");
+              }
+            }
+          } else {
+            console.warn("\u26A0\uFE0F figma.clientStorage not available");
+          }
+        } catch (error) {
+          console.error("\u274C Error loading design system data:", error);
+        }
+        return await this.generateUIFromDataSystematic(migratedData, figma.currentPage, designSystemData);
       } catch (e) {
         const errorMessage = e instanceof Error ? e.message : String(e);
         figma.notify(errorMessage, { error: true, timeout: 4e3 });
@@ -3459,7 +3497,10 @@ ${llmErrors}`);
       if (Object.keys(mediaProperties).length > 0) {
         await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
       }
-      this.applyVisibilityOverrides(instance, item);
+      await this.applyVisibilityOverrides(instance, item);
+      if (item.iconSwaps) {
+        await this.applyIconSwaps(instance, item.iconSwaps);
+      }
     }
     /**
      * Apply variants with modern Component Properties API
@@ -3513,7 +3554,7 @@ ${llmErrors}`);
     /**
      * Apply visibility overrides to component child elements
      */
-    static applyVisibilityOverrides(instance, itemData) {
+    static async applyVisibilityOverrides(instance, itemData) {
       console.log("\u{1F41B} applyVisibilityOverrides CALLED", {
         hasOverrides: !!itemData.visibilityOverrides,
         hasIconSwaps: !!itemData.iconSwaps,
@@ -3570,24 +3611,284 @@ ${llmErrors}`);
             }
           });
         }
-        if (itemData.iconSwaps) {
-          console.log("\u{1F41B} Processing icon swaps:", itemData.iconSwaps);
-          Object.entries(itemData.iconSwaps).forEach(([nodeId, iconName]) => {
-            console.log(`\u{1F41B} Looking for node ${nodeId} to swap icon to ${iconName}`);
-            const child = instance.findChild((node) => node.id === nodeId);
-            if (child && "componentProperties" in child) {
-              console.log(`\u{1F504} Icon swap requested: ${nodeId} \u2192 ${iconName} (child: ${child.name})`);
-            } else {
-              console.warn(`\u26A0\uFE0F Child node ${nodeId} not found or not suitable for icon swap`);
-              if (child) {
-                console.warn(`\u{1F41B} Child found but no componentProperties: ${child.name}, type: ${child.type}`);
-              }
-            }
-          });
-        }
         console.log("\u{1F41B} applyVisibilityOverrides completed successfully");
       } catch (error) {
         console.error("\u274C Visibility override application failed:", error);
+      }
+    }
+    /**
+     * Simple icon resolution using existing design system structure
+     */
+    static resolveIcon(iconName, designSystemData) {
+      if (!(designSystemData == null ? void 0 : designSystemData.components)) {
+        console.warn("\u26A0\uFE0F No design system data available for icon resolution");
+        return null;
+      }
+      console.log(`\u{1F50D} Resolving icon "${iconName}" from ${designSystemData.components.length} components`);
+      console.log(
+        `\u{1F50D} Available icons:`,
+        designSystemData.components.filter((comp) => comp.suggestedType === "icon").map((comp) => `${comp.name} (${comp.id})`)
+      );
+      const iconComponent = designSystemData.components.find(
+        (comp) => comp.suggestedType === "icon" && comp.name.toLowerCase().includes(iconName.toLowerCase())
+      );
+      if (iconComponent) {
+        console.log(`\u2705 Resolved icon "${iconName}" \u2192 ${iconComponent.id} (${iconComponent.name})`);
+        return iconComponent.id;
+      }
+      console.warn(`\u274C Icon "${iconName}" not found in design system`);
+      return null;
+    }
+    /**
+     * Get cached design system data for icon resolution
+     */
+    static getCachedDesignSystemData() {
+      var _a, _b;
+      if (!this.currentDesignSystemData) {
+        console.warn("\u26A0\uFE0F No design system data available for icon resolution");
+        return null;
+      }
+      console.log("\u2705 Using design system data with", ((_b = (_a = this.currentDesignSystemData) == null ? void 0 : _a.components) == null ? void 0 : _b.length) || 0, "components");
+      return this.currentDesignSystemData;
+    }
+    /**
+     * Set design system data for the current rendering session
+     */
+    static setDesignSystemData(data) {
+      var _a;
+      this.currentDesignSystemData = data;
+      console.log("\u{1F4CB} Design system data loaded for rendering:", ((_a = data == null ? void 0 : data.components) == null ? void 0 : _a.length) || 0, "components");
+    }
+    /**
+     * Apply icon swaps after component rendering is complete
+     */
+    static async applyIconSwaps(instance, iconSwaps) {
+      var _a, _b;
+      console.log("\u{1F504} Applying icon swaps AFTER rendering:", iconSwaps);
+      const designSystemData = this.getCachedDesignSystemData();
+      let schema = null;
+      let componentId = null;
+      try {
+        const mainComponent = await instance.getMainComponentAsync();
+        componentId = mainComponent == null ? void 0 : mainComponent.id;
+        if (componentId) {
+          schema = ComponentPropertyEngine.getComponentSchema(componentId);
+          if (schema) {
+            console.log(`\u{1F4CB} Using schema for component ${componentId}:`, schema);
+          } else {
+            console.warn(`\u26A0\uFE0F No schema found for component ${componentId}`);
+          }
+        } else {
+          console.warn(`\u26A0\uFE0F No main component found for instance`);
+        }
+      } catch (error) {
+        console.warn(`\u26A0\uFE0F Error getting main component:`, error);
+      }
+      for (const [nodeId, iconName] of Object.entries(iconSwaps)) {
+        console.log(`\u{1F504} Icon swap: ${nodeId} \u2192 ${iconName}`);
+        let targetInstance = null;
+        if (schema && schema.componentInstances) {
+          console.log(`\u{1F4CB} Schema-based search for "${nodeId}"...`);
+          console.log(`\u{1F4CB} Available componentInstances:`, schema.componentInstances);
+          for (const compInstance of schema.componentInstances) {
+            const instName = compInstance.nodeName.toLowerCase();
+            const instId = compInstance.nodeId;
+            console.log(`\u{1F4CB} Checking schema instance: ${compInstance.nodeName} (${instId})`);
+            if (nodeId.includes("leading") && instName.includes("leading")) {
+              try {
+                const foundNode = instance.findChild((node) => node.id === instId) || instance.findAll((node) => node.id.includes(instId))[0];
+                if (foundNode && foundNode.type === "INSTANCE") {
+                  targetInstance = foundNode;
+                  console.log(`\u{1F4CB} Found leading instance via schema: ${foundNode.name} (${foundNode.id})`);
+                  break;
+                } else if (foundNode) {
+                  console.log(`\u{1F4CB} Found container "${foundNode.name}", searching for icon instances inside...`);
+                  try {
+                    const iconInstances = ((_a = foundNode.findAll) == null ? void 0 : _a.call(foundNode, (n) => n.type === "INSTANCE")) || [];
+                    if (iconInstances.length > 0) {
+                      targetInstance = iconInstances[0];
+                      console.log(`\u{1F4CB} Found icon inside container: ${targetInstance.name} (${targetInstance.id})`);
+                      break;
+                    }
+                  } catch (nestedError) {
+                    console.warn(`\u{1F4CB} Error searching inside container:`, nestedError);
+                  }
+                }
+              } catch (error) {
+                console.warn(`\u{1F4CB} Error finding schema instance ${instId}:`, error);
+              }
+            }
+          }
+        }
+        if (!targetInstance) {
+          console.log(`\u{1F50D} Fallback search for "${nodeId}"...`);
+          try {
+            console.log(`\u{1F50D} All children of ${instance.name}:`, instance.children.map((child) => ({
+              name: child.name,
+              type: child.type,
+              id: child.id
+            })));
+            const allInstances = instance.findAll((node) => node.type === "INSTANCE");
+            console.log(`\u{1F50D} Found ${allInstances.length} total instances in component`);
+            for (const inst of allInstances) {
+              const instName = inst.name.toLowerCase();
+              console.log(`\u{1F50D} Checking instance: ${inst.name} (${inst.id})`);
+              if (nodeId.includes("leading") && instName.includes("leading")) {
+                targetInstance = inst;
+                console.log(`\u{1F50D} Found by semantic match: ${inst.name}`);
+                break;
+              } else if (nodeId.includes("trailing") && instName.includes("trailing")) {
+                targetInstance = inst;
+                console.log(`\u{1F50D} Found by semantic match: ${inst.name}`);
+                break;
+              } else if (nodeId.includes("icon") && instName.includes("icon")) {
+                targetInstance = inst;
+                console.log(`\u{1F50D} Found by semantic match: ${inst.name}`);
+                break;
+              }
+            }
+            if (!targetInstance && allInstances.length > 0) {
+              console.log(`\u{1F50D} No semantic match, checking all instances for potential icon swaps...`);
+              for (const inst of allInstances) {
+                console.log(`\u{1F50D} Instance details: ${inst.name} (${inst.id})`);
+                try {
+                  const mainComp = await inst.getMainComponentAsync();
+                  console.log(`\u{1F50D} Instance ${inst.name} has mainComponent: ${(mainComp == null ? void 0 : mainComp.name) || "none"}`);
+                  if (mainComp && mainComp.name.toLowerCase().includes("icon")) {
+                    targetInstance = inst;
+                    console.log(`\u{1F50D} Found potential icon by mainComponent: ${inst.name} \u2192 ${mainComp.name}`);
+                    break;
+                  }
+                } catch (error) {
+                  console.warn(`\u{1F50D} Error checking mainComponent for ${inst.name}:`, error);
+                }
+              }
+            }
+          } catch (error) {
+            console.warn(`\u{1F50D} Fallback search failed:`, error);
+          }
+        }
+        if (!targetInstance) {
+          console.log(`\u{1F50D} Searching by exact ID: ${nodeId}`);
+          let node = instance.findChild((node2) => node2.id === nodeId);
+          if (node && node.type === "INSTANCE") {
+            targetInstance = node;
+          } else if (node) {
+            console.log(`\u{1F50D} Found node ${nodeId} (type: ${node.type}), searching for component instances within...`);
+            try {
+              const instances = ((_b = node.findAll) == null ? void 0 : _b.call(node, (n) => n.type === "INSTANCE")) || [];
+              if (instances.length > 0) {
+                targetInstance = instances[0];
+                console.log(`\u{1F50D} Found nested instance: ${targetInstance.name} (${targetInstance.id})`);
+              }
+            } catch (error) {
+              console.warn(`\u{1F50D} Error searching within node:`, error);
+            }
+          }
+        }
+        if (!targetInstance) {
+          console.log(`\u{1F50D} Broader search for any matching instances...`);
+          try {
+            const allInstances = instance.findAll((node) => node.type === "INSTANCE");
+            for (const inst of allInstances) {
+              if (inst.id.includes(nodeId) || inst.id === nodeId) {
+                targetInstance = inst;
+                console.log(`\u{1F50D} Found instance by ID match: ${inst.name} (${inst.id})`);
+                break;
+              }
+              try {
+                const childNode = inst.findChild((n) => n.id === nodeId);
+                if (childNode && childNode.type === "INSTANCE") {
+                  targetInstance = childNode;
+                  console.log(`\u{1F50D} Found nested instance within ${inst.name}: ${childNode.name}`);
+                  break;
+                }
+              } catch (nestedError) {
+              }
+            }
+          } catch (error) {
+            console.warn(`\u{1F50D} Recursive search failed:`, error);
+          }
+        }
+        if (targetInstance) {
+          try {
+            const iconId = this.resolveIcon(iconName, designSystemData);
+            if (iconId) {
+              const iconNode = await figma.getNodeByIdAsync(iconId);
+              let iconComponent = null;
+              if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT") {
+                iconComponent = iconNode;
+              } else if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT_SET") {
+                const componentSet = iconNode;
+                iconComponent = componentSet.defaultVariant || componentSet.children.find((child) => child.type === "COMPONENT");
+              }
+              if (iconComponent && iconComponent.type === "COMPONENT") {
+                console.log(`\u{1F504} Attempting to swap component: ${targetInstance.name} \u2192 ${iconComponent.name}`);
+                targetInstance.swapComponent(iconComponent);
+                console.log(`\u2705 Successfully swapped ${nodeId} to ${iconName} (${iconId})`);
+              } else {
+                console.error(`\u274C Could not get valid component for ${iconName}: ${iconId}`);
+              }
+            } else {
+              console.warn(`\u274C Could not resolve icon "${iconName}"`);
+            }
+          } catch (error) {
+            console.error(`\u274C Icon swap failed for ${nodeId} \u2192 ${iconName}:`, error);
+          }
+        } else {
+          console.warn(`\u26A0\uFE0F No suitable component instance found for ${nodeId}`);
+          console.log(`\u{1F6A8} FALLBACK: Attempting to swap any icon instance to "${iconName}"`);
+          try {
+            const allInstances = instance.findAll((node) => node.type === "INSTANCE");
+            console.log(`\u{1F41B} Available instances:`, allInstances.map((i) => `${i.name} (${i.id})`));
+            if (allInstances.length > 0) {
+              const firstInstance = allInstances[0];
+              console.log(`\u{1F6A8} Trying to swap first available instance: ${firstInstance.name}`);
+              const iconId = this.resolveIcon(iconName, designSystemData);
+              console.log(`\u{1F6A8} FALLBACK: Icon ID resolved to: ${iconId}`);
+              if (iconId) {
+                console.log(`\u{1F6A8} FALLBACK: Getting component node for ID: ${iconId}`);
+                const iconNode = await figma.getNodeByIdAsync(iconId);
+                console.log(`\u{1F6A8} FALLBACK: Got node:`, iconNode == null ? void 0 : iconNode.name, iconNode == null ? void 0 : iconNode.type);
+                let iconComponent = null;
+                if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT") {
+                  iconComponent = iconNode;
+                  console.log(`\u{1F6A8} FALLBACK: Using COMPONENT directly`);
+                } else if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT_SET") {
+                  console.log(`\u{1F6A8} FALLBACK: Got COMPONENT_SET, finding default component...`);
+                  const componentSet = iconNode;
+                  const defaultComponent = componentSet.defaultVariant;
+                  if (defaultComponent) {
+                    iconComponent = defaultComponent;
+                    console.log(`\u{1F6A8} FALLBACK: Using default variant: ${defaultComponent.name}`);
+                  } else {
+                    console.log(`\u{1F6A8} FALLBACK: No default variant, trying first child...`);
+                    const firstChild = componentSet.children.find((child) => child.type === "COMPONENT");
+                    if (firstChild) {
+                      iconComponent = firstChild;
+                      console.log(`\u{1F6A8} FALLBACK: Using first child component: ${firstChild.name}`);
+                    }
+                  }
+                }
+                if (iconComponent && iconComponent.type === "COMPONENT") {
+                  console.log(`\u{1F6A8} FALLBACK: Attempting to swap ${firstInstance.name} \u2192 ${iconComponent.name}`);
+                  try {
+                    firstInstance.swapComponent(iconComponent);
+                    console.log(`\u2705 FALLBACK SUCCESS: Swapped ${firstInstance.name} to ${iconName}`);
+                  } catch (swapError) {
+                    console.error(`\u274C FALLBACK: Swap failed:`, swapError);
+                  }
+                } else {
+                  console.error(`\u274C FALLBACK: Could not get valid COMPONENT from ${iconNode == null ? void 0 : iconNode.type}`);
+                }
+              } else {
+                console.error(`\u274C FALLBACK: No icon ID resolved for "${iconName}"`);
+              }
+            }
+          } catch (error) {
+            console.warn(`\u{1F6A8} Fallback swap failed:`, error);
+          }
+        }
       }
     }
     /**
@@ -3770,12 +4071,16 @@ ${llmErrors}`);
     /**
      * Enhanced dynamic generation using systematic approach
      */
-    static async generateUIFromDataSystematic(layoutData, parentNode) {
+    static async generateUIFromDataSystematic(layoutData, parentNode, designSystemData) {
       try {
+        if (designSystemData) {
+          this.setDesignSystemData(designSystemData);
+        }
         console.log("\u{1F527} Starting generateUIFromDataSystematic with data:", {
           hasLayoutContainer: !!layoutData.layoutContainer,
           hasItems: !!layoutData.items,
-          parentType: parentNode.type
+          parentType: parentNode.type,
+          hasDesignSystemData: !!designSystemData
         });
         const schemas = ComponentPropertyEngine.getAllSchemas();
         if (schemas.length === 0) {
@@ -4395,6 +4700,8 @@ ${llmErrors}`);
   // NEW: Design tokens cache
   // Static storage for Text Styles scanned from the design system
   _FigmaRenderer.cachedTextStyles = null;
+  // Static field to store design system data for this rendering session
+  _FigmaRenderer.currentDesignSystemData = null;
   var FigmaRenderer = _FigmaRenderer;
 
   // src/core/design-system-scanner-service.ts
