@@ -1,5 +1,8 @@
+"use strict";
 // src/core/component-property-engine.ts
 // Systematic component property validation and processing engine
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ComponentPropertyEngine = exports.PerformanceTracker = void 0;
 class TabComponentHandler {
     preprocessProperties(properties) {
         // Ensure Label is treated as array
@@ -34,7 +37,7 @@ class ChipComponentHandler {
         return 'chip appearance and behavior';
     }
 }
-export class PerformanceTracker {
+class PerformanceTracker {
     static async track(operation, fn) {
         const start = Date.now();
         try {
@@ -61,9 +64,10 @@ export class PerformanceTracker {
         return report;
     }
 }
+exports.PerformanceTracker = PerformanceTracker;
 PerformanceTracker.metrics = new Map();
 // ===== MAIN ENGINE CLASS =====
-export class ComponentPropertyEngine {
+class ComponentPropertyEngine {
     static async initialize() {
         try {
             await PerformanceTracker.track('engine-initialization', async () => {
@@ -243,6 +247,13 @@ export class ComponentPropertyEngine {
         return 'icon';
     }
     static validateAndProcessProperties(componentId, rawProperties) {
+        console.log('🔍 PROPERTY ENGINE - Schema lookup:', {
+            componentId,
+            rawProperties,
+            hasSchema: this.componentSchemas.has(componentId),
+            totalSchemas: this.componentSchemas.size,
+            allSchemaIds: Array.from(this.componentSchemas.keys())
+        });
         const schema = this.componentSchemas.get(componentId);
         if (!schema) {
             return {
@@ -487,6 +498,7 @@ export class ComponentPropertyEngine {
         return PerformanceTracker.getReport();
     }
 }
+exports.ComponentPropertyEngine = ComponentPropertyEngine;
 ComponentPropertyEngine.componentSchemas = new Map();
 ComponentPropertyEngine.componentHandlers = new Map([
     ['tab', new TabComponentHandler()],

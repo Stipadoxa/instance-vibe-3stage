@@ -1,6 +1,9 @@
-import { BaseRole } from './BaseRole';
-import { PromptLoader } from '../PromptLoader';
-export class UIDesignerRole extends BaseRole {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UIDesignerRole = void 0;
+const BaseRole_1 = require("./BaseRole");
+const PromptLoader_1 = require("../PromptLoader");
+class UIDesignerRole extends BaseRole_1.BaseRole {
     constructor(geminiClient, debugLogger) {
         super();
         this.geminiClient = geminiClient;
@@ -47,7 +50,7 @@ export class UIDesignerRole extends BaseRole {
             hasDesignSystem: !!designSystemScan
         });
         try {
-            const prompt = await PromptLoader.loadPrompt('ui-designer');
+            const prompt = await PromptLoader_1.PromptLoader.loadPrompt('ui-designer');
             this.safeLog('Prompt loaded', { promptLength: prompt.length });
             const componentsAvailable = ((_g = designSystemScan === null || designSystemScan === void 0 ? void 0 : designSystemScan.components) === null || _g === void 0 ? void 0 : _g.length) || 0;
             const designSystemInfo = this.analyzeDesignSystem(designSystemScan);
@@ -349,3 +352,4 @@ Design System Available: ${!!previousStage}`;
         return categories;
     }
 }
+exports.UIDesignerRole = UIDesignerRole;

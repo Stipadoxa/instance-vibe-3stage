@@ -1,7 +1,10 @@
+"use strict";
 // src/core/validation-engine.ts
 // Quality assurance and validation engine for AIDesigner
-import { GeminiAPI } from '../ai/gemini-api';
-export class ValidationEngine {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ValidationEngine = void 0;
+const gemini_api_1 = require("../ai/gemini-api");
+class ValidationEngine {
     constructor(config) {
         this.config = Object.assign(Object.assign({}, ValidationEngine.DEFAULT_CONFIG), config);
     }
@@ -185,6 +188,10 @@ export class ValidationEngine {
         if (item.properties) {
             this.validateProperties(item.properties, `${path}.properties`, warnings);
         }
+        // Check visibility overrides
+        if (item.visibilityOverrides || item.iconSwaps) {
+            this.validateVisibilityOverrides(item, path, errors, warnings);
+        }
         // Recursive validation for nested items
         if (item.items && Array.isArray(item.items)) {
             item.items.forEach((nestedItem, index) => {
@@ -215,6 +222,81 @@ export class ValidationEngine {
                 path: path,
                 suggestion: 'Move variant properties like "Condition", "Leading" into a variants object'
             });
+        }
+    }
+    /**
+     * Validate visibility overrides structure and node IDs
+     */
+    validateVisibilityOverrides(item, path, errors, warnings) {
+        // Validate visibilityOverrides structure
+        if (item.visibilityOverrides) {
+            if (typeof item.visibilityOverrides !== 'object') {
+                errors.push({
+                    code: 'INVALID_VISIBILITY_OVERRIDES_TYPE',
+                    message: 'visibilityOverrides must be an object',
+                    path: `${path}.visibilityOverrides`,
+                    severity: 'medium',
+                    fixable: false
+                });
+            }
+            else {
+                // Validate each override entry
+                Object.entries(item.visibilityOverrides).forEach(([nodeId, visible]) => {
+                    if (typeof visible !== 'boolean') {
+                        errors.push({
+                            code: 'INVALID_VISIBILITY_VALUE',
+                            message: `Visibility value for node ${nodeId} must be boolean`,
+                            path: `${path}.visibilityOverrides.${nodeId}`,
+                            severity: 'medium',
+                            fixable: true
+                        });
+                    }
+                    // Basic node ID format validation
+                    if (!nodeId.match(/^\d+:\d+$/)) {
+                        warnings.push({
+                            code: 'INVALID_NODE_ID_FORMAT',
+                            message: `Node ID ${nodeId} may not be valid Figma node ID`,
+                            path: `${path}.visibilityOverrides.${nodeId}`,
+                            suggestion: 'Use format like "10:5622" from design system componentInstances'
+                        });
+                    }
+                });
+            }
+        }
+        // Validate iconSwaps structure
+        if (item.iconSwaps) {
+            if (typeof item.iconSwaps !== 'object') {
+                errors.push({
+                    code: 'INVALID_ICON_SWAPS_TYPE',
+                    message: 'iconSwaps must be an object',
+                    path: `${path}.iconSwaps`,
+                    severity: 'medium',
+                    fixable: false
+                });
+            }
+            else {
+                // Validate each swap entry
+                Object.entries(item.iconSwaps).forEach(([nodeId, iconName]) => {
+                    if (typeof iconName !== 'string') {
+                        errors.push({
+                            code: 'INVALID_ICON_NAME_TYPE',
+                            message: `Icon name for node ${nodeId} must be string`,
+                            path: `${path}.iconSwaps.${nodeId}`,
+                            severity: 'medium',
+                            fixable: true
+                        });
+                    }
+                    // Basic node ID format validation
+                    if (!nodeId.match(/^\d+:\d+$/)) {
+                        warnings.push({
+                            code: 'INVALID_NODE_ID_FORMAT',
+                            message: `Node ID ${nodeId} may not be valid Figma node ID`,
+                            path: `${path}.iconSwaps.${nodeId}`,
+                            suggestion: 'Use format like "10:5622" from design system componentInstances'
+                        });
+                    }
+                });
+            }
         }
     }
     /**
@@ -269,7 +351,7 @@ export class ValidationEngine {
      */
     async performAIValidation(layoutData, originalPrompt) {
         try {
-            const geminiAPI = await GeminiAPI.createFromStorage();
+            const geminiAPI = await gemini_api_1.GeminiAPI.createFromStorage();
             if (!geminiAPI)
                 return null;
             const validationPrompt = `You are a UX design expert. Please analyze this JSON layout and provide feedback.
@@ -434,6 +516,7 @@ Please provide the corrected JSON that fixes these errors while maintaining the 
         this.config = Object.assign(Object.assign({}, this.config), newConfig);
     }
 }
+exports.ValidationEngine = ValidationEngine;
 ValidationEngine.DEFAULT_CONFIG = {
     enableAIValidation: true,
     enableStructuralValidation: true,

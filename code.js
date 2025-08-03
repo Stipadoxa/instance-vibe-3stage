@@ -3452,7 +3452,6 @@ ${llmErrors}`);
       } else {
         console.log("\u26A0\uFE0F NO VARIANTS TO APPLY - variants object is empty");
       }
-      this.applyVisibilityOverrides(instance, item);
       this.applyChildLayoutProperties(instance, layoutProperties);
       if (Object.keys(textProperties).length > 0) {
         await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
@@ -3460,6 +3459,7 @@ ${llmErrors}`);
       if (Object.keys(mediaProperties).length > 0) {
         await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
       }
+      this.applyVisibilityOverrides(instance, item);
     }
     /**
      * Apply variants with modern Component Properties API
@@ -3514,31 +3514,80 @@ ${llmErrors}`);
      * Apply visibility overrides to component child elements
      */
     static applyVisibilityOverrides(instance, itemData) {
-      if (!itemData.visibilityOverrides && !itemData.iconSwaps) return;
+      console.log("\u{1F41B} applyVisibilityOverrides CALLED", {
+        hasOverrides: !!itemData.visibilityOverrides,
+        hasIconSwaps: !!itemData.iconSwaps,
+        overrideCount: Object.keys(itemData.visibilityOverrides || {}).length,
+        iconSwapCount: Object.keys(itemData.iconSwaps || {}).length,
+        instanceName: instance.name,
+        instanceId: instance.id,
+        itemType: itemData.type
+      });
+      if (!itemData.visibilityOverrides && !itemData.iconSwaps) {
+        console.log("\u{1F41B} No overrides to apply, returning early");
+        return;
+      }
+      console.log("\u{1F41B} Instance children:", instance.children.map((child) => ({
+        name: child.name,
+        id: child.id,
+        type: child.type,
+        visible: child.visible
+      })));
       try {
         if (itemData.visibilityOverrides) {
+          console.log("\u{1F41B} Processing visibility overrides:", itemData.visibilityOverrides);
           Object.entries(itemData.visibilityOverrides).forEach(([nodeId, visible]) => {
-            const child = instance.findChild((node) => node.id === nodeId);
+            console.log(`\u{1F41B} Looking for node ${nodeId} to set visibility to ${visible}`);
+            let child = instance.findChild((node) => node.id === nodeId);
+            if (!child) {
+              console.log(`\u{1F41B} Exact match failed, trying base node ID matching for ${nodeId}`);
+              child = instance.findChild((node) => node.id.endsWith(nodeId) || node.id.includes(nodeId));
+              if (!child) {
+                console.log(`\u{1F41B} Direct child search failed, searching all descendants for ${nodeId}`);
+                try {
+                  child = instance.findAll((node) => node.id.includes(nodeId))[0];
+                  if (child) {
+                    console.log(`\u{1F41B} Found in descendants: ${child.id} (${child.name})`);
+                  }
+                } catch (findAllError) {
+                  console.warn(`\u{1F41B} findAll search failed:`, findAllError);
+                }
+              }
+            }
             if (child) {
-              child.visible = visible;
-              console.log(`\u2705 Applied visibility override: ${nodeId} = ${visible}`);
+              try {
+                const previousVisible = child.visible;
+                child.visible = visible;
+                const childName = child.name || "unnamed";
+                console.log(`\u2705 Applied visibility override: ${nodeId} = ${visible} (was: ${previousVisible}, name: ${childName}, actualId: ${child.id})`);
+              } catch (nodeError) {
+                console.warn(`\u26A0\uFE0F Error accessing node ${nodeId}:`, nodeError);
+                console.warn(`\u{1F41B} Node may have been invalidated during component instantiation`);
+              }
             } else {
               console.warn(`\u26A0\uFE0F Child node ${nodeId} not found for visibility override`);
+              console.warn(`\u{1F41B} Available node IDs:`, instance.children.map((c) => c.id));
             }
           });
         }
         if (itemData.iconSwaps) {
+          console.log("\u{1F41B} Processing icon swaps:", itemData.iconSwaps);
           Object.entries(itemData.iconSwaps).forEach(([nodeId, iconName]) => {
+            console.log(`\u{1F41B} Looking for node ${nodeId} to swap icon to ${iconName}`);
             const child = instance.findChild((node) => node.id === nodeId);
             if (child && "componentProperties" in child) {
-              console.log(`\u{1F504} Icon swap requested: ${nodeId} \u2192 ${iconName}`);
+              console.log(`\u{1F504} Icon swap requested: ${nodeId} \u2192 ${iconName} (child: ${child.name})`);
             } else {
               console.warn(`\u26A0\uFE0F Child node ${nodeId} not found or not suitable for icon swap`);
+              if (child) {
+                console.warn(`\u{1F41B} Child found but no componentProperties: ${child.name}, type: ${child.type}`);
+              }
             }
           });
         }
+        console.log("\u{1F41B} applyVisibilityOverrides completed successfully");
       } catch (error) {
-        console.warn("\u26A0\uFE0F Visibility override application failed:", error);
+        console.error("\u274C Visibility override application failed:", error);
       }
     }
     /**

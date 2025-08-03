@@ -1,6 +1,9 @@
+"use strict";
 // src/core/gemini-service.ts
 // Gemini API service for AIDesigner plugin - handles all AI generation logic
-export class GeminiService {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GeminiService = void 0;
+class GeminiService {
     /**
      * Get API key from storage
      */
@@ -200,6 +203,33 @@ export class GeminiService {
         return '●'.repeat(apiKey.length - 4) + apiKey.slice(-4);
     }
     /**
+     * Analyze image with Gemini API for design feedback
+     */
+    static async analyzeImage(imageBytes, prompt) {
+        try {
+            const apiKey = await this.getApiKey();
+            if (!apiKey) {
+                throw new Error('No API key found. Please configure your API key first.');
+            }
+            const base64 = btoa(String.fromCharCode(...imageBytes));
+            const response = await this.callGeminiAPI(apiKey, prompt, { base64, type: 'image/png' }, {
+                temperature: 0.1,
+                maxOutputTokens: 1024,
+                responseMimeType: "application/json"
+            });
+            if (response.success) {
+                return response.data || '';
+            }
+            else {
+                throw new Error(response.error || 'Analysis failed');
+            }
+        }
+        catch (error) {
+            console.error('Vision analysis failed:', error);
+            throw error;
+        }
+    }
+    /**
      * Format error message for user display
      */
     static formatErrorMessage(error) {
@@ -220,6 +250,7 @@ export class GeminiService {
         return error;
     }
 }
+exports.GeminiService = GeminiService;
 GeminiService.API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 GeminiService.DEFAULT_CONFIG = {
     temperature: 0.2,

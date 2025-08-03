@@ -1,15 +1,18 @@
-import { PipelineLogger } from '../../utils/pipeline-logger';
-import { PipelineDebugLogger } from '../../utils/pipeline-debug-logger';
-import { ProductManagerRole } from '../roles/ProductManagerRole';
-import { ProductDesignerRole } from '../roles/ProductDesignerRole';
-import { UXDesignerRole } from '../roles/UXDesignerRole';
-import { UIDesignerRole } from '../roles/UIDesignerRole';
-import { JSONEngineerRole } from '../roles/JSONEngineerRole';
-export class PipelineOrchestrator {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PipelineOrchestrator = void 0;
+const pipeline_logger_1 = require("../../utils/pipeline-logger");
+const pipeline_debug_logger_1 = require("../../utils/pipeline-debug-logger");
+const ProductManagerRole_1 = require("../roles/ProductManagerRole");
+const ProductDesignerRole_1 = require("../roles/ProductDesignerRole");
+const UXDesignerRole_1 = require("../roles/UXDesignerRole");
+const UIDesignerRole_1 = require("../roles/UIDesignerRole");
+const JSONEngineerRole_1 = require("../roles/JSONEngineerRole");
+class PipelineOrchestrator {
     constructor(geminiClient) {
         this.startTime = 0;
-        this.logger = new PipelineLogger();
-        this.debugLogger = new PipelineDebugLogger();
+        this.logger = new pipeline_logger_1.PipelineLogger();
+        this.debugLogger = new pipeline_debug_logger_1.PipelineDebugLogger();
         this.geminiClient = geminiClient;
         if (geminiClient) {
             console.log('🤖 PipelineOrchestrator initialized with AI client');
@@ -48,7 +51,7 @@ export class PipelineOrchestrator {
                 length: input.length,
                 preview: input.substring(0, 200) + (input.length > 200 ? '...' : '')
             });
-            const stage1 = new ProductManagerRole(this.geminiClient, this.debugLogger);
+            const stage1 = new ProductManagerRole_1.ProductManagerRole(this.geminiClient, this.debugLogger);
             const result1 = await stage1.execute(input);
             console.log('📥 STAGE 1 OUTPUT:', {
                 contentLength: result1.content.length,
@@ -69,7 +72,7 @@ export class PipelineOrchestrator {
                 aiUsed: result1.metadata.aiUsed,
                 contentPreview: result1.content.substring(0, 300) + (result1.content.length > 300 ? '...' : '')
             });
-            const stage2 = new ProductDesignerRole(this.geminiClient, this.debugLogger);
+            const stage2 = new ProductDesignerRole_1.ProductDesignerRole(this.geminiClient, this.debugLogger);
             const result2 = await stage2.execute(result1);
             console.log('📥 STAGE 2 OUTPUT:', {
                 contentLength: result2.content.length,
@@ -90,7 +93,7 @@ export class PipelineOrchestrator {
                 aiUsed: result2.metadata.aiUsed,
                 contentPreview: result2.content.substring(0, 300) + (result2.content.length > 300 ? '...' : '')
             });
-            const stage3 = new UXDesignerRole(this.geminiClient, this.debugLogger);
+            const stage3 = new UXDesignerRole_1.UXDesignerRole(this.geminiClient, this.debugLogger);
             const result3 = await stage3.execute(result2);
             console.log('📥 STAGE 3 OUTPUT:', {
                 contentLength: result3.content.length,
@@ -121,7 +124,7 @@ export class PipelineOrchestrator {
                         designSystemData.components.slice(0, 3).map((c) => `${c.name}(${c.suggestedType})`) : []
                 }
             });
-            const stage4 = new UIDesignerRole(this.geminiClient, this.debugLogger);
+            const stage4 = new UIDesignerRole_1.UIDesignerRole(this.geminiClient, this.debugLogger);
             const uiDesignerInput = {
                 uxOutput: result3,
                 designSystem: designSystemData
@@ -148,7 +151,7 @@ export class PipelineOrchestrator {
                 designSystemUsed: result4.metadata.designSystemUsed,
                 contentPreview: result4.content.substring(0, 300) + (result4.content.length > 300 ? '...' : '')
             });
-            const stage5 = new JSONEngineerRole(this.geminiClient, this.debugLogger);
+            const stage5 = new JSONEngineerRole_1.JSONEngineerRole(this.geminiClient, this.debugLogger);
             const result5 = await stage5.execute(result4);
             console.log('📥 STAGE 5 OUTPUT:', {
                 contentLength: result5.content.length,
@@ -323,3 +326,4 @@ export class PipelineOrchestrator {
         }
     }
 }
+exports.PipelineOrchestrator = PipelineOrchestrator;

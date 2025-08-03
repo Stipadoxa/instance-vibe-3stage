@@ -1,6 +1,9 @@
-import { BaseRole } from './BaseRole';
-import { PromptLoader } from '../PromptLoader';
-export class ProductDesignerRole extends BaseRole {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProductDesignerRole = void 0;
+const BaseRole_1 = require("./BaseRole");
+const PromptLoader_1 = require("../PromptLoader");
+class ProductDesignerRole extends BaseRole_1.BaseRole {
     constructor(geminiClient, debugLogger) {
         super();
         this.geminiClient = geminiClient;
@@ -10,7 +13,7 @@ export class ProductDesignerRole extends BaseRole {
         var _a, _b, _c, _d, _e;
         this.safeLog('ProductDesigner execute started', { inputStage: input.metadata.stage });
         try {
-            const prompt = await PromptLoader.loadPrompt('product-designer');
+            const prompt = await PromptLoader_1.PromptLoader.loadPrompt('product-designer');
             this.safeLog('Prompt loaded', { promptLength: prompt.length });
             // Prepare context with PRD content replacement
             const contextWithPRD = prompt.replace('[PRD_CONTENT_PLACEHOLDER]', input.content);
@@ -100,3 +103,4 @@ ${input.content.substring(0, 300)}...
 Status: Stage 2 ready with real prompt from your file`;
     }
 }
+exports.ProductDesignerRole = ProductDesignerRole;

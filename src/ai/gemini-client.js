@@ -1,3 +1,4 @@
+"use strict";
 // src/ai/gemini-client.ts
 // Enhanced Gemini Client with improved error handling and API integration
 var __rest = (this && this.__rest) || function (s, e) {
@@ -11,7 +12,9 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-export class GeminiClient {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GeminiClient = void 0;
+class GeminiClient {
     constructor(config) {
         if (!config.apiKey) {
             throw new Error('Gemini API key is required');
@@ -374,6 +377,7 @@ export class GeminiClient {
         }
     }
 }
+exports.GeminiClient = GeminiClient;
 GeminiClient.DEFAULT_CONFIG = {
     model: 'gemini-1.5-flash',
     maxRetries: 3,
