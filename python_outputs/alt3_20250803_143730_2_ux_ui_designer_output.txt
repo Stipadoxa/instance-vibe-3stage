@@ -1,0 +1,137 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses Strategy A (Full-Width + Content Sections) because the user requested a full-width hero image.  This prioritizes the visual impact of the car image while allowing for sufficient space for other product details below.",
+    "userFlowReasoning": "The user flow is straightforward: view the hero image, then scan key details (title, price, seller info), and finally, take the primary action (Contact Seller).",
+    "componentChoices": "I chose the 10:7816 (IMAGES) component for the hero image over a simple 10:7816 (image) component because the user wants a full-width image. This component will allow for the full width display while supporting different aspect ratios.",
+    "componentGaps": "User request requires a seller avatar, but the design system lacks a dedicated component that combines an avatar with name and location. I addressed this by using a 10:7773 (avatar / big) component for the avatar image, and native-text components for the seller name and location. This combination provides a clear and visually appealing solution.",
+    "visualHierarchy": "Visual hierarchy is established through: 1. Full-width hero image, 2. Large headline for title, 3. Medium headline for price, 4. Body text for seller info.  This guides user attention naturally.",
+    "variantSelectionRationale": "For the 10:3907 (Button) component, I selected the \"Size: Large\", \"Type: Filled\", \"Color: Green\", and \"State: Default\" variants.  Large size ensures easy tap target on mobile, filled type provides clear visual feedback, green matches primary action conventions, and default state is for initial display.",
+    "nativeElementJustification": "User request requires display of seller name, price, and location text in a specific hierarchy and style.  While native-text supports this, using the system text style \"Headline/Large\" for the product title and \"Headline/Medium\" for price ensures consistency with the design system's established typography."
+  }
+}
+```
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 0,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "10:7816",
+            "name": "Hero Image",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "imageSource": "bmw_x5_2023.jpg"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "BMW X5 2023",
+              "textStyle": "Headline/Large",
+              "color": "neutral-90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$45,000",
+              "textStyle": "Headline/Medium",
+              "color": "primary-50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Info",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "10:7773",
+                "name": "Seller Avatar",
+                "variants": {
+                  "Photo": "Yes"
+                },
+                "properties": {
+                  "imageSource": "john_smith_avatar.jpg"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "name": "Seller Details",
+                "layoutMode": "VERTICAL",
+                "itemSpacing": 4,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "John Smith",
+                      "textStyle": "Body/Medium",
+                      "color": "neutral-90"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Lagos, Nigeria",
+                      "textStyle": "Body/Small",
+                      "color": "neutral-50"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "10:3907",
+            "name": "Contact Seller Button",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

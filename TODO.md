@@ -22,14 +22,15 @@
 
 ### 🔄 Pending (Easy → Hard)
 
-#### 🟡 Medium (15-30 minutes)
-- [ ] **Add text style usage instruction to designer prompt**
+- [x] **Add text style usage instruction to designer prompt**
   - Instruct designer to use design system text styles instead of manual font properties
   - Should check DESIGN_SYSTEM_DATA for available text styles first
   - Use textStyle property instead of fontSize/fontWeight when styles exist
   - Ensure typography consistency with design system
   - **Difficulty**: Requires understanding text style format in design system
-  - Status: 🔄 Pending
+  - Status: ✅ Complete
+
+#### 🟡 Medium (15-30 minutes)
 
 - [ ] **Fix layout strategy for full-width elements (images, backgrounds)**
   - **Problem**: Current approach puts 16px padding on root container, preventing true full-width
