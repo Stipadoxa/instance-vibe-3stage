@@ -42,11 +42,51 @@ When working with multi-element components (appbar, navigation, etc.), make inte
 - Hide secondary navigation when focus is needed
 - Highlight current section appropriately
 
+### ICON SWAPPING FOR CONTEXTUAL RELEVANCE
+
+**When to Use Icon Swaps:**
+- Replace generic icons with contextually specific ones
+- Adapt interface icons to match page purpose and user intent
+- Enhance visual communication through appropriate iconography
+
+**Common Icon Swap Patterns:**
+- **Settings Pages**: Swap to "settings", "gear", "preferences" icons
+- **Profile Pages**: Swap to "person", "profile", "account" icons  
+- **Product Pages**: Swap to "bookmark", "save", "favorite" icons
+- **Contact Pages**: Swap to "phone", "email", "message" icons
+- **Share Features**: Swap to "share", "export", "send" icons
+- **Navigation**: Swap to "home", "back", "menu" icons
+
+**Semantic Icon Names:**
+Use human-readable icon names, not component IDs:
+- ✅ Good: "settings", "bookmark", "phone", "share"
+- ❌ Bad: "635:4372", "I123:456", component IDs
+
+**Icon Swap Strategy:**
+1. **Identify Context**: What is the page/component purpose?
+2. **Assess Current Icons**: Do default icons serve the context?
+3. **Choose Appropriate Icons**: Select icons that match user intent
+4. **Combine with Visibility**: Hide irrelevant icons, swap relevant ones
+
+**Examples:**
+```
+Product Detail Page:
+- Hide: search icon (user already found product)
+- Swap: generic icon → "bookmark" (save for later)
+- Keep: navigation icons
+
+Settings Page:
+- Swap: trailing icon → "settings" (contextual relevance)
+- Hide: commercial/shopping icons
+- Keep: profile and account icons
+```
+
 ### DECISION DOCUMENTATION
-For each visibility decision, briefly document your reasoning:
+For each design decision, briefly document your reasoning:
 - Which elements you're hiding and why
-- Which elements you're keeping and why
-- Any icon swaps and their rationale
+- Which elements you're keeping and why  
+- Any icon swaps and their contextual rationale
+- How visibility + icon swaps work together
 
 **Example Decision:**
 "Hiding search icon on product detail page because user is already viewing specific item. Keeping bookmark icon for save functionality which is contextually relevant."

@@ -196,15 +196,73 @@ For components with child elements that may need contextual hiding:
 ```
 
 ### OVERRIDE APPLICATION RULES
+
+#### Visibility Overrides
 - `visibilityOverrides`: Object with `nodeId: boolean` pairs
 - Only specify overrides for elements that change from default visibility
 - Use actual component child node IDs from design system data
-- `iconSwaps`: Object with `nodeId: iconName` pairs for icon replacements
+- Hide elements that don't serve the current page context
+
+#### Icon Swaps (PRODUCTION READY)
+- `iconSwaps`: Object with `nodeId: iconName` pairs for contextual icon replacement
+- **Use semantic icon names**: "settings", "bookmark", "phone", "share" 
+- **NOT component IDs**: Never use "635:4372" or "I123:456"
+- **Timing**: Icon swaps happen AFTER component rendering is complete
+- **Component Sets**: System automatically handles Figma variant extraction
+
+**Icon Swap Guidelines:**
+```json
+// ✅ CORRECT: Semantic names
+"iconSwaps": {
+  "leading-icon": "settings",    // Human-readable
+  "trailing-icon": "bookmark"    // Contextually appropriate
+}
+
+// ❌ WRONG: Component IDs  
+"iconSwaps": {
+  "10:5622": "635:4372"         // Don't use IDs
+}
+```
+
+**Common Icon Patterns by Context:**
+- **Settings Pages**: "settings", "gear", "preferences"
+- **Profile Pages**: "person", "profile", "account" 
+- **Product Pages**: "bookmark", "save", "favorite"
+- **Contact Pages**: "phone", "email", "message"
+- **Share Features**: "share", "export", "send"
+- **Navigation**: "home", "back", "menu", "arrow"
 
 ### SUPPORTED OVERRIDE PATTERNS
-**Appbar trailing icons**: Hide/show based on page context
-**Navigation tabs**: Hide unused sections, show relevant ones
-**Action buttons**: Remove non-contextual actions
+**Appbar components**: 
+- Hide icons that don't match page purpose
+- Swap generic icons for contextually relevant ones
+- Example: Product page → hide search, swap to bookmark
+
+**Navigation components**: 
+- Hide unused sections, show relevant tabs
+- Swap navigation icons based on current context
+
+**Action buttons**: 
+- Remove non-contextual actions
+- Replace with purpose-specific actions
+
+### COMBINING VISIBILITY + ICON SWAPS
+Use both features together for optimal contextual adaptation:
+
+```json
+{
+  "visibilityOverrides": {
+    "10:5633": false,           // Hide search (not needed on product page)
+    "10:5634": false            // Hide secondary action
+  },
+  "iconSwaps": {
+    "10:5625": "bookmark",      // Swap to save action
+    "10:5622": "share"          // Swap to share functionality  
+  }
+}
+```
+
+**Strategy**: Hide irrelevant elements, swap remaining ones to appropriate icons
 
 ### FINDING NODE IDS
 Use the componentInstances array in design system data:
@@ -229,6 +287,9 @@ Before output, verify:
 - [ ] No textStyle on component instances
 - [ ] All nested containers have layoutAlign: "STRETCH"
 - [ ] All required variant properties included
+- [ ] Icon swaps use semantic names (not component IDs)
+- [ ] Visibility overrides and icon swaps work together logically
+- [ ] Node IDs in overrides exist in component structure
 
 ## ERROR PREVENTION
 
@@ -239,6 +300,9 @@ Before output, verify:
 4. ❌ Adding textStyle to components
 5. ❌ Nesting items inside layoutContainer
 6. ❌ Using arrays for nested component text properties
+7. ❌ Using component IDs in iconSwaps instead of semantic names
+8. ❌ Swapping icons without considering visibility context
+9. ❌ Using non-existent node IDs in visibilityOverrides
 
 **Success Indicators:**
 - ✅ Output starts with `{` and ends with `}`
