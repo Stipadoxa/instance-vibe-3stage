@@ -47,7 +47,10 @@ When layout strategy requires full-width content:
 {"type": "component", "id": "verified-image-id", "horizontalSizing": "FILL", "variants": {...}}
 
 // Full-width image placeholder (if no image component)
-{"type": "native-rectangle", "properties": {"horizontalSizing": "FILL", "height": 200, "fill": "placeholder-color"}}
+{"type": "native-rectangle", "properties": {"horizontalSizing": "FILL", "height": 200, "fill": {"type": "IMAGE"}}}
+
+// Avatar with image fill
+{"type": "native-circle", "properties": {"width": 64, "height": 64, "fill": {"type": "IMAGE"}}}
 
 // Full-width text
 {"type": "native-text", "properties": {"horizontalSizing": "FILL", "content": "..."}}
@@ -66,8 +69,21 @@ When layout strategy requires full-width content:
 When designs require images:
 1. **First**: Check DESIGN_SYSTEM_DATA for image components
 2. **If image component exists**: Use component with proper ID and variants
-3. **If no image component**: Use `native-rectangle` as image placeholder with appropriate sizing and color
-4. **Never**: Use generic `"type": "image"` - this doesn't follow component or native element patterns
+3. **If no image component but need image placeholder**: Use `native-rectangle` or `native-circle` with `"fill": {"type": "IMAGE"}`
+4. **If need simple colored placeholder**: Use `native-rectangle` with solid color fill
+5. **Never**: Use generic `"type": "image"` - this doesn't follow component or native element patterns
+
+**Image Placeholder Examples:**
+```json
+// Product photo placeholder
+{"type": "native-rectangle", "properties": {"horizontalSizing": "FILL", "height": 200, "cornerRadius": 8, "fill": {"type": "IMAGE"}}}
+
+// Avatar placeholder  
+{"type": "native-circle", "properties": {"width": 64, "height": 64, "fill": {"type": "IMAGE"}}}
+
+// Hero image placeholder
+{"type": "native-rectangle", "properties": {"horizontalSizing": "FILL", "height": 300, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}}
+```
 1. NEVER invent or guess component IDs
 2. NEVER use component IDs not explicitly listed in DESIGN_SYSTEM_DATA
 3. NEVER assume components exist without verification
@@ -136,6 +152,15 @@ Use when images, backgrounds, or media need edge-to-edge display:
             "aspectRatio": "16:9"
           }
         }
+        // OR if no image component available:
+        // {
+        //   "type": "native-rectangle", 
+        //   "properties": {
+        //     "horizontalSizing": "FILL",
+        //     "height": 240,
+        //     "fill": {"type": "IMAGE", "scaleMode": "FILL"}
+        //   }
+        // }
       ]
     },
     {
@@ -313,7 +338,39 @@ If no system text styles available, use manual properties:
 }
 ```
 
-### native-circle
+**Image Fill Support for Placeholders:**
+For image placeholders (product photos, avatars, hero images, etc.):
+```json
+{
+  "type": "native-rectangle",
+  "properties": {
+    "width": 300,
+    "height": 200,
+    "cornerRadius": 8,
+    "fill": {
+      "type": "IMAGE",
+      "scaleMode": "FILL"
+    },
+    "horizontalSizing": "FILL"
+  }
+}
+```
+
+**Image Fill Options:**
+- `"type": "IMAGE"` - Always required for image fills
+- `"scaleMode"` - Optional, defaults to "FILL"
+  - `"FILL"` - Image fills entire shape (may crop)
+  - `"FIT"` - Image fits within shape (may show borders)
+  - `"TILE"` - Image repeats as pattern
+
+**When to Use Image Fills:**
+- Product photos and galleries
+- User avatars and profile pictures  
+- Hero images and banners
+- Background textures or patterns
+- Any placeholder that users will replace with images
+
+### native-circle (Perfect for avatars and profile images)
 ```json
 {
   "type": "native-circle", 
@@ -321,6 +378,21 @@ If no system text styles available, use manual properties:
     "width": 60,
     "height": 60,
     "fill": {"r": 0.2, "g": 0.6, "b": 0.9}     // Or use EXACT color name from DESIGN_SYSTEM_DATA
+  }
+}
+```
+
+**Image Fill for Avatars:**
+```json
+{
+  "type": "native-circle",
+  "properties": {
+    "width": 80,
+    "height": 80,
+    "fill": {
+      "type": "IMAGE",
+      "scaleMode": "FILL"
+    }
   }
 }
 ```

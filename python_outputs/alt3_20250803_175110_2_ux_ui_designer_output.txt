@@ -1,0 +1,135 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical `layoutMode` with `itemSpacing` set to 0 for a clean, seamless transition between sections.  The hero image section fills the entire width of the screen (`horizontalSizing: "FILL"`) to maximize visual impact as requested. The content section below follows with standard padding for readability.  The seller information and button are vertically stacked for a clear flow.
+
+3. **User Flow Reasoning:** The user first sees the visually striking hero image, then their attention is guided downwards to the key product information (title, price), followed by seller details (name, avatar, location), ending with a clear call to action ("Contact Seller"). This flow prioritizes visual appeal and efficient information access.
+
+4. **Component Choices:**  The design system lacks a dedicated "Product Detail Screen" component or a full-width image component that fits all requirements. I could have potentially used the `product card` component (`147:3743`), but it would not have provided a full width hero image, and its default layout is not suitable for this context.  Therefore, I opted to use a combination of native elements and other components, creating a custom layout to meet the specific needs. This approach is more flexible and avoids unnecessary compromises.
+
+5. **Component Gaps:** The user request explicitly requires a full-width hero image which neither `10:7816` (IMAGES) nor any other image component in the design system directly supports the required full-width sizing.  There is no component to represent the seller’s avatar in an integrated way with other seller information. I therefore used a `native-rectangle` as a placeholder for the hero image with `horizontalSizing: "FILL"` to achieve the full-width effect and a `native-circle` as a placeholder for the avatar, along with native text components for the other seller information. This workaround effectively meets the user's requirement for visual impact without compromising the overall structure. This provides a superior user experience and adheres to the constraint of edge-to-edge image display.
+
+6. **Visual Hierarchy:** The hero image's size and placement at the top establishes visual dominance. The product title and price are prominently displayed with larger text sizes. Seller information follows with a slightly smaller text size to create a clear hierarchy.
+
+7. **Variant Selection Rationale:**  The `button` component (`10:3907`) is used with the variants: `"Platform": "Android+Web"`, `"Size": "Medium"`, `"Type": "Filled"`, `"State": "Default"`, `"Color": "Green"`.  A filled button is chosen to emphasize the call-to-action. Medium size was selected as it provides a good balance between visibility and space efficiency on the mobile screen.
+
+8. **Native Element Justification:**  The use of `native-rectangle` for the hero image is justified because the design system lacks a component suitable for a full-width hero image with aspect ratio control.  A `native-circle` is used for the avatar because this functionality is not addressed by existing components that would align with other elements.  Native text elements are used to display the title, price, seller name, location. This enables precise control over text styles to meet the design requirements.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 0,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "height": 200,
+              "cornerRadius": 12,
+              "fill": "Neutral/neutral5"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "BMW X5 2023",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$45,000",
+              "textStyle": "Headline/Small",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 40,
+                  "height": 40,
+                  "fill": "Neutral/neutral5"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "VERTICAL",
+                "itemSpacing": 4,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "John Smith",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Lagos, Nigeria",
+                      "textStyle": "Caption/Small",
+                      "color": "Neutral/neutral50"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

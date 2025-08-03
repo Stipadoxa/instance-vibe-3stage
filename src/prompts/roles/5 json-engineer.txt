@@ -37,7 +37,8 @@ User Intent → Schema Property Mapping:
 • "subtitle/description" → "Supporting text" (if in schema)
 • Button text → "Default" or "Action" (check textLayers)
 ```
-PRESERVE DESIGNER LAYOUT SPECIFICATIONS
+
+### PRESERVE DESIGNER LAYOUT SPECIFICATIONS
 
 You MUST preserve the exact layout specifications from the UX_UI_DESIGNER_OUTPUT:
 - If Designer specifies itemSpacing: 0, output itemSpacing: 0
@@ -46,8 +47,6 @@ You MUST preserve the exact layout specifications from the UX_UI_DESIGNER_OUTPUT
 - DO NOT use example template values that override the Designer's intentional specifications
 
 The Designer's layout decisions (spacing, padding, sizing modes) are intentional design choices that must be preserved in your JSON output.
-
-
 
 **Process:**
 1. Check `textLayers` array first: `["Default", "placeholder-text"]`
@@ -126,6 +125,105 @@ All nested containers and text elements:
 }
 ```
 
+## IMAGE FILL IMPLEMENTATION
+
+When the designer specifies image fills, you must preserve and enhance them according to these patterns:
+
+### Conversion Rules
+**CRITICAL**: Never convert `"type": "IMAGE"` fills to solid colors - always preserve image fill structure.
+
+**Input Pattern (Designer):**
+```json
+{
+  "type": "native-rectangle", 
+  "properties": {
+    "fill": {
+      "type": "IMAGE",
+      "scaleMode": "FILL"
+    }
+  }
+}
+```
+
+**Output Pattern (Your Response):**
+```json
+{
+  "type": "native-rectangle",
+  "properties": {
+    "width": 200,
+    "height": 150,
+    "fill": {
+      "type": "IMAGE", 
+      "scaleMode": "FILL"
+    }
+  }
+}
+```
+
+### Processing Checklist
+1. ✅ **Preserve** - Keep exact `fill.type: "IMAGE"` structure
+2. ✅ **Add Dimensions** - Include width/height if missing (required for rendering)
+3. ✅ **Maintain scaleMode** - Don't modify unless designer specifies change
+4. ✅ **No URL needed** - System handles placeholder generation automatically
+
+### Scale Mode Reference
+- `"FILL"` - Image covers entire shape, may crop
+- `"FIT"` - Image fits within shape, may show empty space  
+- `"TILE"` - Image repeats across shape
+- `"STRETCH"` - Image stretches to exact shape dimensions
+
+### Common Implementation Patterns
+
+**Hero Section Background:**
+```json
+{
+  "type": "native-rectangle",
+  "properties": {
+    "width": 375,
+    "height": 200, 
+    "fill": {"type": "IMAGE", "scaleMode": "FILL"},
+    "horizontalSizing": "FILL"
+  }
+}
+```
+
+**Profile Avatar:**
+```json
+{
+  "type": "native-circle",
+  "properties": {
+    "width": 60,
+    "height": 60,
+    "fill": {"type": "IMAGE", "scaleMode": "FILL"}
+  }
+}
+```
+
+**Tiled Pattern Background:**
+```json
+{
+  "type": "native-rectangle", 
+  "properties": {
+    "width": 300,
+    "height": 100,
+    "fill": {"type": "IMAGE", "scaleMode": "TILE"}
+  }
+}
+```
+
+**Card Thumbnail:**
+```json
+{
+  "type": "native-rectangle",
+  "properties": {
+    "width": 120,
+    "height": 80,
+    "fill": {"type": "IMAGE", "scaleMode": "FIT"},
+    "cornerRadius": 8
+  }
+}
+```
+
 ## OUTPUT FORMAT - SINGLE JSON OBJECT
 
 **CRITICAL**: Output exactly one JSON object. No markdown, no code blocks, no separators.
@@ -139,7 +237,7 @@ All nested containers and text elements:
     "paddingRight": [USE_DESIGNER_VALUE], 
     "paddingBottom": [USE_DESIGNER_VALUE],
     "paddingLeft": [USE_DESIGNER_VALUE]
-  }
+  },
   "items": [
     {
       "type": "appbar",
@@ -290,6 +388,8 @@ Before output, verify:
 - [ ] Icon swaps use semantic names (not component IDs)
 - [ ] Visibility overrides and icon swaps work together logically
 - [ ] Node IDs in overrides exist in component structure
+- [ ] Image fills preserved exactly as specified by designer
+- [ ] Native shapes with image fills include required dimensions
 
 ## ERROR PREVENTION
 
@@ -303,12 +403,16 @@ Before output, verify:
 7. ❌ Using component IDs in iconSwaps instead of semantic names
 8. ❌ Swapping icons without considering visibility context
 9. ❌ Using non-existent node IDs in visibilityOverrides
+10. ❌ Converting IMAGE fills to solid colors
+11. ❌ Missing width/height on native shapes with image fills
 
 **Success Indicators:**
 - ✅ Output starts with `{` and ends with `}`
 - ✅ All component IDs found in design system data
 - ✅ Text properties match schema exactly
 - ✅ JSON validates and parses correctly
+- ✅ Image fills preserved with proper dimensions
+- ✅ Scale modes maintained as specified
 
 ---
 

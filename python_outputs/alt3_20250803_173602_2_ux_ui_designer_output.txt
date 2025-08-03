@@ -1,0 +1,141 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout employs a `VERTICAL` layout mode for the root container, providing a clear top-to-bottom flow.  The hero image section uses a `VERTICAL` layout to keep the image full-width, while the content section below uses `VERTICAL` layout with `itemSpacing` of 16 for clear separation between elements.  Padding is used in the content section to create breathing room around text and other components, enhancing readability and visual appeal.
+
+3. **User Flow Reasoning:** The user flow is designed to be intuitive and straightforward. The full-width hero image immediately captures attention, followed by key product information (title, price), seller information (name, avatar, location), and finally a clear call-to-action ("Contact Seller") button. This order prioritizes visual impact and facilitates quick decision-making.
+
+4. **Component Choices:**  I chose the `image` component (ID: 10:7816) for the hero image because it best fits the requirement of displaying a full-width image. I considered using a `card` component (ID: 147:3743), but it introduces unnecessary borders and constraints, unsuitable for the full-width hero design. The `button` component (ID: 10:3907) was chosen for the "Contact Seller" button due to its standard design and clear interaction patterns.  Alternatives like native buttons were considered, but the system button offers better styling consistency.  For the avatar, I chose the `avatar/single` component (ID: 10:7798)  over `avatar/big` (ID: 10:7773) because it's appropriate for this context and the `variants` support image display.
+
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying price and seller information in a structured manner.  Therefore, I employed `native-text` elements to create the necessary labels for "Price", "Seller Name", and "Location," leveraging the available text styles from the design system for consistent typography.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through size, position, and color. The hero image dominates the top, establishing immediate visual focus. The product title (`native-text` with "Title/Large" text style) is prominently displayed below, followed by the price in a slightly smaller size (`native-text` with "Title/Medium" text style). Seller information is further down and uses smaller text sizes and lighter color contrasts.
+
+7. **Variant Selection Rationale:** For the button, I selected the `variants` to include: `Platform: Android+Web`, `Size: Medium`, `Type: Filled`, `State: Default`, and `Color: Green`. I used these because these variant values best reflect a standard primary call-to-action.
+
+8. **Native Element Justification:**  Native text elements were used to handle the price and seller information display since no suitable components exist in the provided design system that combine label and information within a single, flexible layout.  This approach ensures the content is presented clearly and maintains the intended visual hierarchy.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 0,
+        "items": [
+          {
+            "type": "image",
+            "name": "Hero Image",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "width": "FILL",
+              "height": 200
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingRight": 16, "paddingBottom": 16, "paddingLeft": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "name": "Product Title",
+            "properties": {
+              "content": "BMW X5 2023",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "name": "Price",
+            "properties": {
+              "content": "$45,000",
+              "textStyle": "Title/Medium",
+              "color": "Primary/primary50",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Info",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "avatar",
+                "name": "Seller Avatar",
+                "variants": {
+                  "Type": "Photo"
+                },
+                "properties": {}
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "VERTICAL",
+                "itemSpacing": 4,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "name": "Seller Name",
+                    "properties": {
+                      "content": "John Smith",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "name": "Location",
+                    "properties": {
+                      "content": "Lagos, Nigeria",
+                      "textStyle": "Body/Small",
+                      "color": "Neutral/neutral50",
+                      "alignment": "left"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "Contact Seller",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Primary/primary50"
+            },
+            "properties": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

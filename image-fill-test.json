@@ -1,0 +1,149 @@
+{
+  "layoutContainer": {
+    "name": "Image Fill Test",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 20,
+    "paddingTop": 20,
+    "paddingBottom": 20,
+    "paddingLeft": 20,
+    "paddingRight": 20,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Image Fill Testing",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Test Grid",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "imageUrl": "https://picsum.photos/300/300?random=1",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "fill": {
+                "type": "IMAGE",
+                "imageUrl": "https://picsum.photos/300/300?random=2",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Placeholder Tests",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Placeholder Grid",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 120,
+              "height": 120,
+              "cornerRadius": 4,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "TILE"
+              }
+            }
+          },
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 120,
+              "height": 120,
+              "fill": {
+                "type": "IMAGE",
+                "imageUrl": "invalid-url",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Mixed Fill Types",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Mixed Grid",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": "#FF6B6B"
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "imageUrl": "https://picsum.photos/200/200?random=3",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "fill": {
+                "r": 0.3,
+                "g": 0.7,
+                "b": 0.9
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

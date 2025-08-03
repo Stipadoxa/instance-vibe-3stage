@@ -2895,6 +2895,8 @@
             }
           } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
             rect.fills = [{ type: "SOLID", color: fillColor }];
+          } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
+            await this.applyImageFill(rect, fillColor);
           }
         } catch (error) {
           console.log("Skipping invalid fill color:", fillColor);
@@ -2911,6 +2913,146 @@
       }
       container.appendChild(rect);
       console.log("Rectangle created successfully");
+    }
+    /**
+     * Apply image fill to a shape element (rectangle or ellipse)
+     */
+    static async applyImageFill(element, fillData) {
+      console.log("\u{1F50D} DEBUG: applyImageFill called with:", fillData);
+      console.log("\u{1F50D} DEBUG: Element type:", element.type);
+      try {
+        const imageUrl = fillData.imageUrl;
+        const scaleMode = fillData.scaleMode || "FILL";
+        console.log("\u{1F50D} DEBUG: imageUrl:", imageUrl);
+        console.log("\u{1F50D} DEBUG: scaleMode:", scaleMode);
+        if (!imageUrl) {
+          console.log("\u{1F50D} DEBUG: No imageUrl - attempting native placeholder");
+          try {
+            const checkeredPattern = new Uint8Array([
+              137,
+              80,
+              78,
+              71,
+              13,
+              10,
+              26,
+              10,
+              // PNG signature
+              0,
+              0,
+              0,
+              13,
+              73,
+              72,
+              68,
+              82,
+              // IHDR chunk
+              0,
+              0,
+              0,
+              2,
+              0,
+              0,
+              0,
+              2,
+              // 2x2 pixels
+              8,
+              2,
+              0,
+              0,
+              0,
+              144,
+              93,
+              104,
+              // RGB color type
+              22,
+              0,
+              0,
+              0,
+              24,
+              73,
+              68,
+              65,
+              // IDAT chunk
+              84,
+              8,
+              29,
+              1,
+              13,
+              0,
+              242,
+              255,
+              // Compressed data
+              255,
+              255,
+              255,
+              240,
+              240,
+              240,
+              240,
+              240,
+              // White and light gray pixels
+              240,
+              255,
+              255,
+              255,
+              35,
+              40,
+              1,
+              153,
+              // Creating checkered pattern
+              0,
+              0,
+              0,
+              0,
+              73,
+              69,
+              78,
+              68,
+              // IEND chunk
+              174,
+              66,
+              96,
+              130
+            ]);
+            const placeholderImage = figma.createImage(checkeredPattern);
+            console.log("\u{1F50D} DEBUG: Created placeholder image with hash:", placeholderImage.hash);
+            const placeholderPaint = {
+              type: "IMAGE",
+              imageHash: placeholderImage.hash,
+              scaleMode
+            };
+            console.log("\u{1F50D} DEBUG: Created ImagePaint:", placeholderPaint);
+            element.fills = [placeholderPaint];
+            console.log("\u{1F50D} DEBUG: Applied fills to element");
+            console.log("\u{1F50D} DEBUG: Element fills after setting:", element.fills);
+            return;
+          } catch (placeholderError) {
+            console.log("\u{1F50D} DEBUG: Placeholder creation failed:", placeholderError);
+            throw placeholderError;
+          }
+        }
+        console.log("\u{1F50D} DEBUG: Creating image from URL:", imageUrl);
+        const image = await figma.createImageAsync(imageUrl);
+        console.log("\u{1F50D} DEBUG: Created image with hash:", image.hash);
+        const imagePaint = {
+          type: "IMAGE",
+          imageHash: image.hash,
+          scaleMode
+          // FILL, STRETCH, FIT, CROP, etc.
+        };
+        console.log("\u{1F50D} DEBUG: Created ImagePaint from URL:", imagePaint);
+        element.fills = [imagePaint];
+        console.log("\u{1F50D} DEBUG: Applied URL image fill successfully");
+        console.log("\u{1F50D} DEBUG: Element fills after URL setting:", element.fills);
+      } catch (error) {
+        console.log("\u{1F50D} DEBUG: applyImageFill error occurred:", error);
+        console.log("\u{1F50D} DEBUG: Falling back to solid gray");
+        const grayFill = { type: "SOLID", color: { r: 0.8, g: 0.8, b: 0.8 } };
+        element.fills = [grayFill];
+        console.log("\u{1F50D} DEBUG: Applied gray fallback:", grayFill);
+        console.log("\u{1F50D} DEBUG: Element fills after fallback:", element.fills);
+      }
     }
     /**
      * Create native ellipse element
@@ -2937,6 +3079,8 @@
             }
           } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
             ellipse.fills = [{ type: "SOLID", color: fillColor }];
+          } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
+            await this.applyImageFill(ellipse, fillColor);
           }
         } catch (error) {
           console.log("Skipping invalid fill color:", fillColor);

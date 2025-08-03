@@ -1,0 +1,143 @@
+{
+  "layoutContainer": {
+    "name": "Default Image Fill Test",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 20,
+    "paddingTop": 20,
+    "paddingBottom": 20,
+    "paddingLeft": 20,
+    "paddingRight": 20,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Default Image Placeholders",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Default Placeholders",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE"
+              }
+            }
+          },
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "fill": {
+                "type": "Image"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Different Scale Modes",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Scale Mode Tests",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 120,
+              "height": 80,
+              "cornerRadius": 4,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 120,
+              "height": 80,
+              "cornerRadius": 4,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "TILE"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Mixed with Regular Fills",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Mixed Types",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": "#4ECDC4"
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE"
+              }
+            }
+          },
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "fill": {
+                "r": 0.95,
+                "g": 0.6,
+                "b": 0.2
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

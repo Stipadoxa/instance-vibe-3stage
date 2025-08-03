@@ -1,0 +1,121 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout employs a `VERTICAL` layout mode for the root container, ensuring a top-to-bottom flow.  The hero image section uses a nested `VERTICAL` container to maintain its full width, and the content section below utilizes a `VERTICAL` container to arrange elements vertically with 16px spacing between items and 16px padding.  The `horizontalSizing` property is set to `"FILL"` for the hero image to ensure it expands to fill the container's width.
+
+3. **User Flow Reasoning:** The user first sees the visually prominent hero image, then quickly grasps key product details (title, price) before proceeding to seller information and contact option. This flow prioritizes visual impact and efficient information delivery.
+
+4. **Component Choices:**  I considered using `product card` (`147:3743`) for the entire layout but opted for a combination of native elements and individual components due to the requirement for a full-width hero image and specific text styling needs. This allows for greater customization than the available card variations could provide. I also considered using `appbar` but decided against it, as it would introduce unnecessary navigation elements to this specific product detail view.
+
+5. **Component Gaps:** The design system lacks a dedicated component for a full-width hero image with integrated text overlay.  Therefore, I used a combination of `native-image` with `"horizontalSizing": "FILL"` for the full-width hero image and `native-text` components for the title, price, seller info, and location. This leverages native capabilities to meet the visual requirement and design system components for consistency where appropriate.
+
+6. **Visual Hierarchy:**  The hero image takes prominence at the top, creating a visual impact.  The title and price follow with larger text styles (using `native-text` with appropriate `textStyles` from the design system), followed by the seller information and contact button.  Clear visual separation is established through appropriate spacing and the use of dividers where needed.
+
+7. **Variant Selection Rationale:** The design system's `Button` component (`10:3907`) offers several variants. I selected `"Type": "Filled"`, `"Size": "Medium"`, `"Color": "Green"`, and `"State": "Default"` for the "Contact Seller" button to ensure a clear and consistent call to action while adhering to the design system's primary color guidelines.
+
+
+8. **Native Element Justification:**  Native elements (`native-image`, `native-text`) were used to create the full-width hero image and to precisely control the typography for the product title and price as required to visually highlight these key elements. This solution ensures the design intent is met while remaining within the design system constraints as much as possible.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 0,
+        "items": [
+          {
+            "type": "image",
+            "horizontalSizing": "FILL",
+            "height": 240,
+            "source": "[Car Image URL]"
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingRight": 16, "paddingBottom": 16, "paddingLeft": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "BMW X5 2023",
+              "textStyle": "Headline/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$45,000",
+              "textStyle": "Title/Large",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "id": "10:7773",
+                "variants": {
+                  "Photo": "Yes"
+                },
+                "properties": {
+                  "source": "[John Smith Avatar URL]"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "John Smith",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Lagos, Nigeria",
+              "textStyle": "Body/Small",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

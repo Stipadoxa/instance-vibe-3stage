@@ -552,7 +552,7 @@ export class FigmaRenderer {
     const height = props.height || rectData.height || 100;
     rect.resize(width, height);
     
-    // Set fill color - skip if invalid to avoid errors
+    // Set fill color - support solid colors and image fills
     if (props.fill || rectData.fill) {
       const fillColor = props.fill || rectData.fill;
       try {
@@ -571,6 +571,9 @@ export class FigmaRenderer {
         } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
           // Already an RGB object
           rect.fills = [{ type: 'SOLID', color: fillColor }];
+        } else if (fillColor && typeof fillColor === 'object' && fillColor.type === 'IMAGE') {
+          // Handle image fill
+          await this.applyImageFill(rect, fillColor);
         }
       } catch (error) {
         console.log('Skipping invalid fill color:', fillColor);
@@ -597,6 +600,90 @@ export class FigmaRenderer {
   }
 
   /**
+   * Apply image fill to a shape element (rectangle or ellipse)
+   */
+  static async applyImageFill(element: RectangleNode | EllipseNode, fillData: any): Promise<void> {
+    console.log('🔍 DEBUG: applyImageFill called with:', fillData);
+    console.log('🔍 DEBUG: Element type:', element.type);
+    
+    try {
+      const imageUrl = fillData.imageUrl;
+      const scaleMode = fillData.scaleMode || 'FILL';
+      
+      console.log('🔍 DEBUG: imageUrl:', imageUrl);
+      console.log('🔍 DEBUG: scaleMode:', scaleMode);
+      
+      if (!imageUrl) {
+        console.log('🔍 DEBUG: No imageUrl - attempting native placeholder');
+        
+        // Try different approaches to create image placeholder
+        try {
+          // Create a simple 2x2 checkered pattern (light gray and white)
+          const checkeredPattern = new Uint8Array([
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
+            0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, // 2x2 pixels
+            0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x5D, 0x68, // RGB color type
+            0x16, 0x00, 0x00, 0x00, 0x18, 0x49, 0x44, 0x41, // IDAT chunk
+            0x54, 0x08, 0x1D, 0x01, 0x0D, 0x00, 0xF2, 0xFF, // Compressed data
+            0xFF, 0xFF, 0xFF, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, // White and light gray pixels
+            0xF0, 0xFF, 0xFF, 0xFF, 0x23, 0x28, 0x01, 0x99, // Creating checkered pattern
+            0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, // IEND chunk
+            0xAE, 0x42, 0x60, 0x82
+          ]);
+          
+          const placeholderImage = figma.createImage(checkeredPattern);
+          console.log('🔍 DEBUG: Created placeholder image with hash:', placeholderImage.hash);
+          
+          const placeholderPaint: ImagePaint = {
+            type: 'IMAGE',
+            imageHash: placeholderImage.hash,
+            scaleMode: scaleMode as any
+          };
+          
+          console.log('🔍 DEBUG: Created ImagePaint:', placeholderPaint);
+          element.fills = [placeholderPaint];
+          console.log('🔍 DEBUG: Applied fills to element');
+          console.log('🔍 DEBUG: Element fills after setting:', element.fills);
+          return;
+          
+        } catch (placeholderError) {
+          console.log('🔍 DEBUG: Placeholder creation failed:', placeholderError);
+          throw placeholderError;
+        }
+      }
+      
+      console.log('🔍 DEBUG: Creating image from URL:', imageUrl);
+      // Create image from URL
+      const image = await figma.createImageAsync(imageUrl);
+      console.log('🔍 DEBUG: Created image with hash:', image.hash);
+      
+      // Create ImagePaint fill
+      const imagePaint: ImagePaint = {
+        type: 'IMAGE',
+        imageHash: image.hash,
+        scaleMode: scaleMode as any // FILL, STRETCH, FIT, CROP, etc.
+      };
+      
+      console.log('🔍 DEBUG: Created ImagePaint from URL:', imagePaint);
+      element.fills = [imagePaint];
+      console.log('🔍 DEBUG: Applied URL image fill successfully');
+      console.log('🔍 DEBUG: Element fills after URL setting:', element.fills);
+      
+    } catch (error) {
+      console.log('🔍 DEBUG: applyImageFill error occurred:', error);
+      console.log('🔍 DEBUG: Falling back to solid gray');
+      
+      // Ultimate fallback to solid gray for debugging
+      const grayFill = { type: 'SOLID', color: { r: 0.8, g: 0.8, b: 0.8 } };
+      element.fills = [grayFill];
+      console.log('🔍 DEBUG: Applied gray fallback:', grayFill);
+      console.log('🔍 DEBUG: Element fills after fallback:', element.fills);
+    }
+  }
+
+
+  /**
    * Create native ellipse element
    */
   static async createEllipseNode(ellipseData: any, container: FrameNode): Promise<void> {
@@ -612,7 +699,7 @@ export class FigmaRenderer {
     const height = props.height || ellipseData.height || 50;
     ellipse.resize(width, height);
     
-    // Set fill color - skip if invalid to avoid errors
+    // Set fill color - support solid colors and image fills
     if (props.fill || ellipseData.fill) {
       const fillColor = props.fill || ellipseData.fill;
       try {
@@ -631,6 +718,9 @@ export class FigmaRenderer {
         } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
           // Already an RGB object
           ellipse.fills = [{ type: 'SOLID', color: fillColor }];
+        } else if (fillColor && typeof fillColor === 'object' && fillColor.type === 'IMAGE') {
+          // Handle image fill
+          await this.applyImageFill(ellipse, fillColor);
         }
       } catch (error) {
         console.log('Skipping invalid fill color:', fillColor);
