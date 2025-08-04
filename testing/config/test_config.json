@@ -1,0 +1,26 @@
+{
+  "default_settings": {
+    "target_success_rate": 0.8,
+    "max_iterations_per_test": 10,
+    "early_stopping_enabled": true,
+    "save_all_outputs": true,
+    "verbose_logging": true
+  },
+  "test_sequence": [
+    "test1_login",
+    "test2_settings",
+    "test3_product_listing",
+    "test4_product_detail",
+    "test5_seller_dashboard"
+  ],
+  "quality_thresholds": {
+    "max_native_elements_warning": 3,
+    "max_layout_depth_warning": 4,
+    "required_component_coverage": 0.8
+  },
+  "output_settings": {
+    "save_pipeline_logs": true,
+    "save_quality_reports": true,
+    "generate_visual_diffs": false
+  }
+}
