@@ -748,8 +748,14 @@ export class FigmaRenderer {
     
     console.log("🔍 Applying text properties:", properties);
     
-    // Get all text nodes in the instance
-    const allTextNodes = instance.findAll(n => n.type === 'TEXT') as TextNode[];
+    // Get all text nodes in the instance with error handling
+    let allTextNodes: TextNode[] = [];
+    try {
+      allTextNodes = instance.findAll(n => n.type === 'TEXT') as TextNode[];
+    } catch (findError) {
+      console.error(`❌ Error finding text nodes in component instance:`, findError.message);
+      return; // Skip text property application if we can't find nodes
+    }
     console.log("🔍 Available text nodes in component:", 
       allTextNodes.map(textNode => ({
         name: textNode.name, 
@@ -1467,9 +1473,18 @@ export class FigmaRenderer {
   static async createComponentInstanceSystematic(item: any, container: FrameNode): Promise<void> {
     if (!item.componentNodeId) return;
 
-    const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
+    let componentNode;
+    try {
+      componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
+    } catch (nodeError) {
+      console.error(`❌ Error accessing component ${item.componentNodeId}:`, nodeError.message);
+      await this.createMissingComponentPlaceholder(item.componentNodeId, container);
+      return;
+    }
+    
     if (!componentNode) {
       console.warn(`⚠️ Component with ID ${item.componentNodeId} not found. Skipping.`);
+      await this.createMissingComponentPlaceholder(item.componentNodeId, container);
       return;
     }
     
@@ -1518,33 +1533,65 @@ export class FigmaRenderer {
     });
 
     // Create and configure instance
-    const instance = masterComponent.createInstance();
-    container.appendChild(instance);
+    let instance;
+    try {
+      instance = masterComponent.createInstance();
+      container.appendChild(instance);
+    } catch (createError) {
+      console.error(`❌ Error creating instance of ${masterComponent.name}:`, createError.message);
+      // Create a placeholder instead
+      await this.createMissingComponentPlaceholder(item.componentNodeId, container);
+      return;
+    }
 
-    // Apply properties in correct order
-    if (Object.keys(variants).length > 0) {
-      console.log('✅ About to apply variants:', variants);
-      await this.applyVariantsSystematic(instance, variants, componentNode);
-    } else {
-      console.log('⚠️ NO VARIANTS TO APPLY - variants object is empty');
+    // Apply properties in correct order with error handling
+    try {
+      if (Object.keys(variants).length > 0) {
+        console.log('✅ About to apply variants:', variants);
+        await this.applyVariantsSystematic(instance, variants, componentNode);
+      } else {
+        console.log('⚠️ NO VARIANTS TO APPLY - variants object is empty');
+      }
+    } catch (variantError) {
+      console.error(`❌ Error applying variants to ${masterComponent.name}:`, variantError.message);
     }
     
-    this.applyChildLayoutProperties(instance, layoutProperties);
-    
-    if (Object.keys(textProperties).length > 0) {
-      await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
+    try {
+      this.applyChildLayoutProperties(instance, layoutProperties);
+    } catch (layoutError) {
+      console.error(`❌ Error applying layout properties to ${masterComponent.name}:`, layoutError.message);
     }
     
-    if (Object.keys(mediaProperties).length > 0) {
-      await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
+    try {
+      if (Object.keys(textProperties).length > 0) {
+        await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
+      }
+    } catch (textError) {
+      console.error(`❌ Error applying text properties to ${masterComponent.name}:`, textError.message);
+    }
+    
+    try {
+      if (Object.keys(mediaProperties).length > 0) {
+        await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
+      }
+    } catch (mediaError) {
+      console.error(`❌ Error applying media properties to ${masterComponent.name}:`, mediaError.message);
     }
     
     // Apply visibility overrides and icon swaps at the very end after all other properties
-    await this.applyVisibilityOverrides(instance, item);
+    try {
+      await this.applyVisibilityOverrides(instance, item);
+    } catch (visibilityError) {
+      console.error(`❌ Error applying visibility overrides to ${masterComponent.name}:`, visibilityError.message);
+    }
     
     // Apply icon swaps AFTER everything else is rendered
-    if (item.iconSwaps) {
-      await this.applyIconSwaps(instance, item.iconSwaps);
+    try {
+      if (item.iconSwaps) {
+        await this.applyIconSwaps(instance, item.iconSwaps);
+      }
+    } catch (iconError) {
+      console.error(`❌ Error applying icon swaps to ${masterComponent.name}:`, iconError.message);
     }
   }
 
@@ -2037,10 +2084,22 @@ export class FigmaRenderer {
       return;
     }
 
-    // Use fast modern API for finding text nodes
-    const allTextNodes = await PerformanceTracker.track('find-text-nodes', async () => 
-      instance.findAllWithCriteria({ types: ['TEXT'] }) as TextNode[]
-    );
+    // Use fast modern API for finding text nodes with error handling
+    let allTextNodes: TextNode[] = [];
+    try {
+      allTextNodes = await PerformanceTracker.track('find-text-nodes', async () => 
+        instance.findAllWithCriteria({ types: ['TEXT'] }) as TextNode[]
+      );
+    } catch (findError) {
+      console.error(`❌ Error finding text nodes in component ${componentId}:`, findError.message);
+      // Fallback to original method if available
+      try {
+        await this.applyTextProperties(instance, textProperties);
+      } catch (fallbackError) {
+        console.error(`❌ Fallback text application also failed:`, fallbackError.message);
+      }
+      return;
+    }
 
     for (const [propKey, propValue] of Object.entries(textProperties)) {
       const textLayerInfo = schema.textLayers[propKey];
@@ -2158,15 +2217,21 @@ export class FigmaRenderer {
       return;
     }
 
-    // Get all potential media nodes
-    const allMediaNodes = await PerformanceTracker.track('find-media-nodes', async () => {
-      const vectors = instance.findAllWithCriteria({ types: ['VECTOR'] });
-      const rectangles = instance.findAllWithCriteria({ types: ['RECTANGLE'] });
-      const ellipses = instance.findAllWithCriteria({ types: ['ELLIPSE'] });
-      const components = instance.findAllWithCriteria({ types: ['INSTANCE', 'COMPONENT'] });
-      
-      return [...vectors, ...rectangles, ...ellipses, ...components];
-    });
+    // Get all potential media nodes with error handling
+    let allMediaNodes: any[] = [];
+    try {
+      allMediaNodes = await PerformanceTracker.track('find-media-nodes', async () => {
+        const vectors = instance.findAllWithCriteria({ types: ['VECTOR'] });
+        const rectangles = instance.findAllWithCriteria({ types: ['RECTANGLE'] });
+        const ellipses = instance.findAllWithCriteria({ types: ['ELLIPSE'] });
+        const components = instance.findAllWithCriteria({ types: ['INSTANCE', 'COMPONENT'] });
+        
+        return [...vectors, ...rectangles, ...ellipses, ...components];
+      });
+    } catch (findError) {
+      console.error(`❌ Error finding media nodes in component ${componentId}:`, findError.message);
+      return; // Skip media property application if we can't find nodes
+    }
 
     for (const [propKey, propValue] of Object.entries(mediaProperties)) {
       const mediaLayerInfo = schema.mediaLayers[propKey];
@@ -2537,33 +2602,175 @@ export class FigmaRenderer {
     if (!items || !Array.isArray(items)) return currentFrame;
     
     for (const item of items) {
-      if (item.type === 'layoutContainer') {
-        console.log('🔧 Creating nested layoutContainer:', item.name, 'layoutMode:', item.layoutMode);
-        const nestedFrame = figma.createFrame();
-        currentFrame.appendChild(nestedFrame);
+      try {
+        // Pre-process item to fix common issues
+        const processedItem = {...item};
         
-        // Apply child layout properties
-        this.applyChildLayoutProperties(nestedFrame, item);
+        // Validate and potentially transform native types
+        if (processedItem.type?.startsWith('native-')) {
+          const validatedType = this.validateNativeType(processedItem.type);
+          
+          if (!validatedType) {
+            console.error(`❌ Skipping invalid native element type: ${processedItem.type}`);
+            continue;
+          }
+          
+          // If it transformed to layoutContainer, handle accordingly
+          if (validatedType === 'layoutContainer') {
+            processedItem.type = 'layoutContainer';
+            processedItem.layoutMode = processedItem.layoutMode || 'VERTICAL';
+            processedItem.itemSpacing = processedItem.itemSpacing || 8;
+            // Move items if they were in properties
+            if (processedItem.properties?.items) {
+              processedItem.items = processedItem.properties.items;
+              delete processedItem.properties.items;
+            }
+          } else {
+            processedItem.type = validatedType;
+          }
+        }
         
-        await this.generateUIFromDataSystematic({ layoutContainer: item, items: item.items }, nestedFrame);
-      } 
-      else if (item.type === 'frame' && item.layoutContainer) {
-        const nestedFrame = figma.createFrame();
-        currentFrame.appendChild(nestedFrame);
-        await this.generateUIFromDataSystematic(item, nestedFrame);
-      }
-      else if (item.type === 'native-text' || item.type === 'text') {
-        await this.createTextNode(item, currentFrame);
-      }
-      else if (item.type === 'native-rectangle') {
-        await this.createRectangleNode(item, currentFrame);
-      }
-      else if (item.type === 'native-circle') {
-        await this.createEllipseNode(item, currentFrame);
-      }
-      else {
-        // Use systematic approach for components
-        await this.createComponentInstanceSystematic(item, currentFrame);
+        // Normalize component ID property
+        if (processedItem.type === 'component') {
+          processedItem.componentNodeId = processedItem.componentNodeId || 
+                                         processedItem.componentId || 
+                                         processedItem.id;
+          delete processedItem.componentId;
+          delete processedItem.id;
+        }
+        
+        // Sanitize width properties
+        if (processedItem.properties?.width) {
+          const sanitizedWidth = this.sanitizeWidth(processedItem.properties.width);
+          if (sanitizedWidth === null && processedItem.properties.width === '100%') {
+            processedItem.properties.horizontalSizing = 'FILL';
+            delete processedItem.properties.width;
+          } else if (sanitizedWidth !== null) {
+            processedItem.properties.width = sanitizedWidth;
+          } else {
+            delete processedItem.properties.width;
+          }
+        }
+        
+        // Handle container width
+        if (processedItem.width && processedItem.layoutMode) {
+          const sanitizedWidth = this.sanitizeWidth(processedItem.width);
+          if (sanitizedWidth !== null) {
+            processedItem.width = sanitizedWidth;
+          } else {
+            delete processedItem.width;
+            processedItem.counterAxisSizingMode = 'AUTO';
+          }
+        }
+        
+        // Process based on type
+        if (processedItem.type === 'layoutContainer') {
+          console.log('🔧 Creating nested layoutContainer:', processedItem.name, 'layoutMode:', processedItem.layoutMode);
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          
+          // Apply child layout properties
+          this.applyChildLayoutProperties(nestedFrame, processedItem);
+          
+          await this.generateUIFromDataSystematic({ 
+            layoutContainer: processedItem, 
+            items: processedItem.items 
+          }, nestedFrame);
+          
+        } else if (processedItem.type === 'frame' && processedItem.layoutContainer) {
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          await this.generateUIFromDataSystematic(processedItem, nestedFrame);
+          
+        } 
+        // NATIVE ELEMENTS - Handle these BEFORE component resolution
+        else if (processedItem.type === 'native-text' || processedItem.type === 'text') {
+          await this.createTextNode(processedItem, currentFrame);
+          continue;
+        }
+        else if (processedItem.type === 'native-rectangle') {
+          await this.createRectangleNode(processedItem, currentFrame);
+          continue;
+        }
+        else if (processedItem.type === 'native-circle') {
+          await this.createEllipseNode(processedItem, currentFrame);
+          continue;
+        }
+        // COMPONENT ELEMENTS
+        else if (processedItem.type === 'component') {
+          if (!processedItem.componentNodeId) {
+            console.error('❌ No component ID found after normalization');
+            continue;
+          }
+          
+          let componentNode;
+          try {
+            componentNode = await figma.getNodeByIdAsync(processedItem.componentNodeId);
+          } catch (nodeError) {
+            console.warn(`⚠️ Error accessing component ${processedItem.componentNodeId}: ${nodeError.message}`);
+            componentNode = null;
+          }
+          
+          if (!componentNode) {
+            console.warn(`⚠️ Component ${processedItem.componentNodeId} not found - creating placeholder`);
+            await this.createMissingComponentPlaceholder(processedItem.componentNodeId, currentFrame);
+            continue;
+          }
+          
+          // Get component info from design system scan data if available
+          let componentInfo = null;
+          try {
+            // Import DesignSystemScannerService at runtime to avoid circular imports
+            const { DesignSystemScannerService } = await import('./design-system-scanner-service');
+            const scanSession = await DesignSystemScannerService.getScanSession();
+            if (scanSession?.components) {
+              componentInfo = scanSession.components.find(c => c.id === processedItem.componentNodeId);
+            }
+          } catch (error) {
+            console.warn('⚠️ Could not load component info from scan data:', error);
+          }
+          
+          // Normalize properties
+          if (processedItem.properties && componentInfo?.textLayers) {
+            processedItem.properties = this.normalizePropertyNames(
+              processedItem.properties, 
+              componentInfo.textLayers
+            );
+          }
+          
+          // Validate and fix variants
+          if (processedItem.variants && componentInfo?.variantDetails) {
+            processedItem.variants = this.validateAndFixVariants(
+              processedItem.variants,
+              componentInfo.variantDetails
+            );
+          }
+          
+          // Use systematic approach for components with processed data
+          await this.createComponentInstanceSystematic(processedItem, currentFrame);
+        }
+        else {
+          // Use systematic approach for other types
+          await this.createComponentInstanceSystematic(processedItem, currentFrame);
+        }
+        
+      } catch (itemError) {
+        console.error(`❌ Error rendering item:`, itemError);
+        console.log('Problematic item:', JSON.stringify(item, null, 2));
+        
+        // Create error placeholder
+        try {
+          const errorFrame = figma.createFrame();
+          errorFrame.name = `Error: ${itemError.message}`;
+          errorFrame.fills = [{type: 'SOLID', color: {r: 1, g: 0.8, b: 0.8}}];
+          errorFrame.resize(200, 50);
+          currentFrame.appendChild(errorFrame);
+        } catch (e) {
+          console.error('Could not create error placeholder:', e);
+        }
+        
+        // Continue with next item instead of failing entire render
+        continue;
       }
     }
     
@@ -3044,5 +3251,259 @@ export class FigmaRenderer {
         textNodeId: textNode?.id
       });
     }
+  }
+
+  /**
+   * Validates native element types and provides fallbacks
+   */
+  static validateNativeType(type: string): string | null {
+    const ALLOWED_NATIVE_TYPES = ['native-text', 'native-rectangle', 'native-circle'];
+    
+    if (ALLOWED_NATIVE_TYPES.includes(type)) {
+      return type;
+    }
+    
+    // Attempt intelligent fallback
+    const fallbackMap: Record<string, string> = {
+      'native-grid': 'layoutContainer',
+      'native-list-item': 'layoutContainer',
+      'native-rating': 'native-rectangle',
+      'native-image': 'native-rectangle',
+      'native-vertical-scroll': 'layoutContainer',
+      'native-horizontal-scroll': 'layoutContainer'
+    };
+    
+    if (fallbackMap[type]) {
+      console.warn(`⚠️ Unknown native type "${type}" - falling back to "${fallbackMap[type]}"`);
+      return fallbackMap[type];
+    }
+    
+    console.error(`❌ Unknown native type "${type}" - no fallback available`);
+    return null;
+  }
+
+  /**
+   * Sanitizes width properties to handle percentages and invalid values
+   */
+  static sanitizeWidth(width: any): number | null {
+    // Handle percentage strings
+    if (typeof width === 'string') {
+      // Remove percentage and convert
+      if (width.endsWith('%')) {
+        const percentage = parseFloat(width);
+        if (width === '100%') {
+          console.warn('⚠️ Converting width "100%" to horizontalSizing: "FILL"');
+          return null; // Signal to use FILL instead
+        } else {
+          // Convert percentage to approximate fixed width
+          const defaultContainerWidth = 375; // Mobile width
+          const calculated = (defaultContainerWidth * percentage) / 100;
+          console.warn(`⚠️ Converting width "${width}" to ${calculated}px`);
+          return calculated;
+        }
+      }
+      
+      // Try parsing as number
+      const parsed = parseFloat(width);
+      if (!isNaN(parsed)) {
+        return parsed;
+      }
+    }
+    
+    if (typeof width === 'number') {
+      return width;
+    }
+    
+    console.warn(`⚠️ Invalid width value: ${width}`);
+    return null;
+  }
+
+  /**
+   * Normalizes property names to match component schemas
+   */
+  static normalizePropertyNames(properties: any, textLayers?: string[]): any {
+    if (!properties) return {};
+    
+    const normalized = {...properties};
+    
+    // Common property aliases
+    const aliases: Record<string, string[]> = {
+      'Action': ['text', 'label', 'action', 'Default', 'buttonText'],
+      'label-text': ['label', 'labelText', 'text'],
+      'placeholder-text': ['placeholder', 'placeholderText'],
+      'isPassword': ['isSecure', 'secure', 'password'],
+      'Headline': ['title', 'heading', 'headline'],
+      'Supporting text': ['subtitle', 'description', 'supportingText'],
+      'Default': ['text', 'content', 'label']
+    };
+    
+    // If we have schema, use it for validation
+    if (textLayers && textLayers.length > 0) {
+      Object.keys(properties).forEach(propName => {
+        if (!textLayers.includes(propName)) {
+          // Find correct property name
+          for (const [correct, wrongNames] of Object.entries(aliases)) {
+            if (wrongNames.includes(propName) && textLayers.includes(correct)) {
+              console.warn(`⚠️ Normalizing property "${propName}" to "${correct}"`);
+              normalized[correct] = properties[propName];
+              delete normalized[propName];
+              break;
+            }
+          }
+        }
+      });
+    }
+    
+    return normalized;
+  }
+
+  /**
+   * Validates and fixes component variants
+   */
+  static validateAndFixVariants(
+    variants: any,
+    variantDetails: any
+  ): any {
+    if (!variants || !variantDetails) {
+      return variants || {};
+    }
+    
+    const fixed = {...variants};
+    
+    // Validate existing variants
+    Object.entries(variants).forEach(([propName, value]) => {
+      const validValues = variantDetails[propName];
+      
+      if (!validValues) {
+        console.warn(`⚠️ Unknown variant property "${propName}" - removing`);
+        delete fixed[propName];
+        return;
+      }
+      
+      // Check if value is valid
+      if (!validValues.includes(value)) {
+        // Try case-insensitive match
+        const match = validValues.find((v: string) => 
+          v.toLowerCase() === String(value).toLowerCase()
+        );
+        
+        if (match) {
+          console.warn(`⚠️ Fixing variant case: "${value}" → "${match}"`);
+          fixed[propName] = match;
+        } else {
+          console.warn(`⚠️ Invalid variant value "${value}" for "${propName}". Using default: "${validValues[0]}"`);
+          fixed[propName] = validValues[0];
+        }
+      }
+    });
+    
+    // Add missing required variants
+    Object.entries(variantDetails).forEach(([propName, values]: [string, any]) => {
+      if (!fixed[propName] && Array.isArray(values) && values.length > 0) {
+        console.warn(`⚠️ Adding missing variant "${propName}" with default: "${values[0]}"`);
+        fixed[propName] = values[0];
+      }
+    });
+    
+    return fixed;
+  }
+
+  /**
+   * Pre-render validation of entire layout data
+   */
+  static validateLayoutData(layoutData: any): {valid: boolean, errors: string[], warnings: string[]} {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    
+    // Validate root structure
+    if (!layoutData.layoutContainer && !layoutData.items) {
+      errors.push('Missing layoutContainer or items at root level');
+    }
+    
+    // Recursive validation function
+    const validateItems = (items: any[], path: string = '') => {
+      if (!Array.isArray(items)) return;
+      
+      items.forEach((item, index) => {
+        const itemPath = `${path}[${index}]`;
+        
+        // Check for unknown native types
+        if (item.type?.startsWith('native-') && 
+            !['native-text', 'native-rectangle', 'native-circle'].includes(item.type)) {
+          warnings.push(`Invalid native type "${item.type}" at ${itemPath} - will attempt fallback`);
+        }
+        
+        // Check for percentage widths
+        if (typeof item.width === 'string' && item.width.includes('%')) {
+          warnings.push(`Percentage width "${item.width}" at ${itemPath} - will convert`);
+        }
+        
+        if (typeof item.properties?.width === 'string' && item.properties.width.includes('%')) {
+          warnings.push(`Percentage width "${item.properties.width}" in properties at ${itemPath} - will convert`);
+        }
+        
+        // Check for component ID
+        if (item.type === 'component') {
+          if (!item.componentNodeId && !item.componentId && !item.id) {
+            errors.push(`Missing component ID at ${itemPath}`);
+          } else if (!item.componentNodeId) {
+            warnings.push(`Using legacy property name for component ID at ${itemPath} - will normalize`);
+          }
+        }
+        
+        // Recurse into nested items
+        if (item.items) {
+          validateItems(item.items, `${itemPath}.items`);
+        }
+        if (item.layoutContainer?.items) {
+          validateItems(item.layoutContainer.items, `${itemPath}.layoutContainer.items`);
+        }
+      });
+    };
+    
+    const items = layoutData.items || layoutData.layoutContainer?.items;
+    if (items) {
+      validateItems(items);
+    }
+    
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings
+    };
+  }
+
+  /**
+   * Creates a visual placeholder for missing components
+   */
+  static async createMissingComponentPlaceholder(
+    componentId: string,
+    parentNode: FrameNode
+  ): Promise<RectangleNode> {
+    const placeholder = figma.createRectangle();
+    placeholder.name = `Missing Component: ${componentId}`;
+    placeholder.fills = [{type: 'SOLID', color: {r: 1, g: 0.9, b: 0.9}}];
+    placeholder.resize(200, 100);
+    placeholder.cornerRadius = 8;
+    placeholder.strokes = [{type: 'SOLID', color: {r: 0.8, g: 0.2, b: 0.2}}];
+    placeholder.strokeWeight = 2;
+    placeholder.dashPattern = [5, 5];
+    parentNode.appendChild(placeholder);
+    
+    try {
+      const text = figma.createText();
+      await figma.loadFontAsync({family: "Inter", style: "Regular"});
+      text.characters = `Component\n${componentId}\nnot found`;
+      text.fontSize = 12;
+      text.fills = [{type: 'SOLID', color: {r: 0.5, g: 0.5, b: 0.5}}];
+      text.textAlignHorizontal = 'CENTER';
+      text.textAlignVertical = 'CENTER';
+      text.resize(200, 100);
+      placeholder.appendChild(text);
+    } catch (e) {
+      console.warn('Could not add text to placeholder:', e);
+    }
+    
+    return placeholder;
   }
 }

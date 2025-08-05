@@ -1105,7 +1105,7 @@ figma.ui.onmessage = async (msg: any) => {
 
         case 'render-json-direct':
             try {
-                const { json, source } = msg.payload;
+                const { json, source, forceRender } = msg.payload;
                 console.log('🎨 Rendering JSON directly from:', source);
                 
                 // Transform JSON structure if needed (3-stage pipeline uses layoutContainer wrapper)
@@ -1119,6 +1119,35 @@ figma.ui.onmessage = async (msg: any) => {
                 }
                 
                 console.log('🔧 Transformed JSON for rendering:', renderData);
+                
+                // Validate layout data before rendering
+                const validation = FigmaRenderer.validateLayoutData(renderData);
+                
+                if (validation.warnings.length > 0) {
+                    console.warn('⚠️ Layout validation warnings:', validation.warnings);
+                }
+                
+                if (!validation.valid) {
+                    console.error('❌ Layout validation failed:', validation.errors);
+                    
+                    // Send detailed error to UI
+                    figma.ui.postMessage({
+                        type: 'validation-error',
+                        errors: validation.errors,
+                        warnings: validation.warnings,
+                        source: source
+                    });
+                    
+                    // If forceRender flag is set, try anyway
+                    if (forceRender) {
+                        console.warn('⚠️ Force render flag set - attempting render despite errors...');
+                        figma.notify('Attempting render with error recovery...', { timeout: 2000 });
+                    } else {
+                        figma.notify(`Layout validation failed: ${validation.errors[0]}`, { error: true });
+                        return;
+                    }
+                }
+                
                 console.log('🔧 JSON has items?', !!renderData.items, 'Count:', renderData.items?.length);
                 console.log('🔧 JSON layoutMode:', renderData.layoutMode);
                 console.log('🔧 JSON properties:', {
@@ -1127,8 +1156,8 @@ figma.ui.onmessage = async (msg: any) => {
                     primaryAxisSizingMode: renderData.primaryAxisSizingMode
                 });
                 
-                // Try to render the JSON
-                const newFrame = await FigmaRenderer.generateUIFromDataDynamic(renderData);
+                // Try to render the JSON with systematic validation
+                const newFrame = await FigmaRenderer.generateUIFromDataSystematic(renderData, figma.currentPage);
                 
                 console.log('🔧 Generated frame:', newFrame, 'ID:', newFrame?.id);
                 
@@ -1138,11 +1167,13 @@ figma.ui.onmessage = async (msg: any) => {
                         result: {
                             frameId: newFrame.id,
                             generatedJSON: json,
-                            source: source
+                            source: source,
+                            validationWarnings: validation.warnings
                         }
                     });
                     
-                    figma.notify(`✅ ${source} JSON rendered successfully!`, { timeout: 3000 });
+                    const warningText = validation.warnings.length > 0 ? ` (${validation.warnings.length} warnings)` : '';
+                    figma.notify(`✅ ${source} JSON rendered successfully${warningText}!`, { timeout: 3000 });
                 } else {
                     throw new Error('Failed to create frame');
                 }
@@ -1153,7 +1184,8 @@ figma.ui.onmessage = async (msg: any) => {
                 
                 figma.ui.postMessage({
                     type: 'json-render-error',
-                    error: errorMessage
+                    error: errorMessage,
+                    source: source || 'unknown'
                 });
                 
                 figma.notify(`❌ JSON render failed: ${errorMessage}`, { error: true });

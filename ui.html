@@ -135,6 +135,38 @@
             width: auto;
             margin: 0 4px 0 0;
         }
+
+        .error-box {
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .warning-box {
+            background: #ffc;
+            border: 1px solid #fc9;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .error-box h4, .warning-box h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .error-box ul, .warning-box ul {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 11px;
+        }
+
+        .error-box li, .warning-box li {
+            margin-bottom: 4px;
+        }
         .input-group {
             margin-bottom: 12px;
         }
@@ -761,6 +793,23 @@
                 <textarea id="jsonInput" placeholder="Paste JSON from python3 instance.py alt3 output..." style="height: 100px; font-family: monospace; font-size: 10px;"></textarea>
             </div>
             <button class="btn" onclick="renderFromJSON()" id="jsonRenderBtn">🎨 Render JSON</button>
+            
+            <!-- Validation Feedback -->
+            <div id="validation-feedback" style="display: none; margin-top: 10px;">
+                <div class="error-box" id="validation-errors" style="display: none;">
+                    <h4>Validation Errors:</h4>
+                    <ul id="error-list"></ul>
+                </div>
+                <div class="warning-box" id="validation-warnings" style="display: none;">
+                    <h4>Warnings (will auto-fix):</h4>
+                    <ul id="warning-list"></ul>
+                </div>
+                <label style="margin-top: 10px;">
+                    <input type="checkbox" id="force-render"> 
+                    Force render despite errors
+                </label>
+            </div>
+            
             <button class="btn btn-secondary" onclick="testScreenshotRequest()" id="testScreenshotBtn" style="margin-top: 8px;">📸 Test Screenshot Request</button>
             
             <!-- Design Feedback Option -->
@@ -2249,6 +2298,7 @@ function isValidImageSelected() {
         async function renderFromJSON() {
             const jsonInput = document.getElementById('jsonInput').value.trim();
             const jsonRenderBtn = document.getElementById('jsonRenderBtn');
+            const forceRender = document.getElementById('force-render')?.checked || false;
             
             if (!jsonInput) {
                 showStatus('generationStatus', '❌ Please paste JSON from 3-stage pipeline.', 'error');
@@ -2258,6 +2308,9 @@ function isValidImageSelected() {
             jsonRenderBtn.disabled = true;
             jsonRenderBtn.textContent = '🔄 Rendering...';
             showStatus('generationStatus', '🎨 Rendering JSON from 3-stage pipeline...', 'info');
+            
+            // Hide validation feedback
+            document.getElementById('validation-feedback').style.display = 'none';
             
             try {
                 // Clean JSON (remove markdown if present)
@@ -2272,7 +2325,8 @@ function isValidImageSelected() {
                         type: 'render-json-direct',
                         payload: {
                             json: parsedJSON,
-                            source: '3-stage-pipeline'
+                            source: '3-stage-pipeline',
+                            forceRender: forceRender
                         }
                     }
                 }, '*');
@@ -2506,10 +2560,16 @@ function isValidImageSelected() {
                     jsonRenderBtn.disabled = false;
                     jsonRenderBtn.textContent = '🎨 Render JSON';
                     
-                    showStatus('generationStatus', `✅ ${msg.result.source} JSON rendered successfully!`, 'success');
+                    let successMessage = `✅ ${msg.result.source} JSON rendered successfully!`;
+                    if (msg.result.validationWarnings && msg.result.validationWarnings.length > 0) {
+                        successMessage += ` (${msg.result.validationWarnings.length} warnings auto-fixed)`;
+                    }
+                    showStatus('generationStatus', successMessage, 'success');
                     
-                    // UI was generated successfully
+                    // Hide validation feedback on success
+                    document.getElementById('validation-feedback').style.display = 'none';
                     
+                    // Clear input on success
                     document.getElementById('jsonInput').value = '';
                     break;
 
@@ -2520,6 +2580,38 @@ function isValidImageSelected() {
                     jsonRenderBtnError.textContent = '🎨 Render JSON';
                     
                     showStatus('generationStatus', `❌ JSON render failed: ${msg.error}`, 'error');
+                    break;
+
+                case 'validation-error':
+                    clearStatus('generationStatus');
+                    const jsonRenderBtnValidation = document.getElementById('jsonRenderBtn');
+                    jsonRenderBtnValidation.disabled = false;
+                    jsonRenderBtnValidation.textContent = '🎨 Render JSON';
+                    
+                    // Show validation feedback
+                    const feedback = document.getElementById('validation-feedback');
+                    const errorBox = document.getElementById('validation-errors');
+                    const warningBox = document.getElementById('validation-warnings');
+                    const errorList = document.getElementById('error-list');
+                    const warningList = document.getElementById('warning-list');
+                    
+                    feedback.style.display = 'block';
+                    
+                    if (msg.errors && msg.errors.length > 0) {
+                        errorBox.style.display = 'block';
+                        errorList.innerHTML = msg.errors.map(e => `<li>${e}</li>`).join('');
+                    } else {
+                        errorBox.style.display = 'none';
+                    }
+                    
+                    if (msg.warnings && msg.warnings.length > 0) {
+                        warningBox.style.display = 'block';
+                        warningList.innerHTML = msg.warnings.map(w => `<li>${w}</li>`).join('');
+                    } else {
+                        warningBox.style.display = 'none';
+                    }
+                    
+                    showStatus('generationStatus', `❌ Validation failed: ${msg.errors ? msg.errors.length : 0} errors, ${msg.warnings ? msg.warnings.length : 0} warnings`, 'error');
                     break;
 
 
