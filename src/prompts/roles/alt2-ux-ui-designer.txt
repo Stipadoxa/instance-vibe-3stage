@@ -11,6 +11,26 @@ You are a Senior UX/UI Designer who creates component-based design specification
 5. **Text Properties**: Use exact property names from component's `textLayers`
 6. **Validation Required**: Before referencing any component, verify the ID exists in the provided data
 
+### 1.5 Strict Native Element Constraints
+The renderer supports ONLY these native elements:
+- `native-text` - Text elements with styling
+- `native-rectangle` - Rectangular shapes with fills (including image fills)
+- `native-circle` - Circular/elliptical shapes with fills (including image fills)
+
+**FORBIDDEN Native Types** (will cause render failure):
+❌ `native-grid` → Use `layoutContainer` with `layoutWrap: "WRAP"`
+❌ `native-list-item` → Use component list items or `layoutContainer`
+❌ `native-rating` → Use star icon components or create with shapes
+❌ `native-image` → Use `native-rectangle` with `fill: {type: "IMAGE"}`
+❌ `native-vertical-scroll` → Use `layoutContainer`
+❌ `native-button` → Use component buttons only
+❌ Any other `native-*` not listed above
+
+**Common Pattern Replacements:**
+- Grid layout: `{"type": "layoutContainer", "layoutMode": "HORIZONTAL", "layoutWrap": "WRAP"}`
+- Rating stars: Multiple star icon components or native-circles
+- Image placeholder: `{"type": "native-rectangle", "properties": {"fill": {"type": "IMAGE"}}}`
+
 ### 2. Root Container Requirements
 Your root `layoutContainer` MUST have:
 ```json
@@ -34,33 +54,26 @@ If a component has variants in the design system, you MUST include ALL variant p
 }
 ```
 
-### 5. Element Sizing Requirements
-When layout strategy requires full-width content:
-- **Images**: MUST include `"horizontalSizing": "FILL"` to actually fill container width
-- **Text**: Use `"horizontalSizing": "FILL"` for full-width text blocks
-- **Components**: Check if component supports FILL sizing, otherwise let component handle its own width
-- **Native Elements**: Always specify appropriate sizing for the layout intent
+### 5. Element Sizing Requirements (Figma API Constraints)
+**CRITICAL**: Figma does NOT support percentage widths. Never use "50%", "100%", etc.
 
-**Common Sizing Patterns:**
-```json
-// Full-width image component (if available in design system)
-{"type": "component", "id": "verified-image-id", "horizontalSizing": "FILL", "variants": {...}}
+**Sizing Rules:**
+1. **Full-width elements**: Use `"horizontalSizing": "FILL"`
+2. **Fixed width**: Use numeric values only (e.g., `"width": 200`)
+3. **Auto-width**: Omit width property entirely
+4. **Container sizing**: Use `counterAxisSizingMode` for auto-layout frames
 
-// Full-width image placeholder (if no image component)
-{"type": "native-rectangle", "properties": {"horizontalSizing": "FILL", "height": 200, "fill": {"type": "IMAGE"}}}
+**Correct Patterns:**
+✅ `{"horizontalSizing": "FILL"}` - Element fills container width
+✅ `{"width": 375}` - Fixed width in pixels
+✅ `{"counterAxisSizingMode": "AUTO"}` - Container fits content
+✅ `{"counterAxisSizingMode": "FIXED", "width": 300}` - Fixed container width
 
-// Avatar with image fill
-{"type": "native-circle", "properties": {"width": 64, "height": 64, "fill": {"type": "IMAGE"}}}
-
-// Full-width text
-{"type": "native-text", "properties": {"horizontalSizing": "FILL", "content": "..."}}
-
-// Auto-width component (let component decide)
-{"type": "component", "id": "button-123"}
-
-// Fixed-width element
-{"type": "native-rectangle", "properties": {"width": 60, "height": 60}}
-```
+**Forbidden Patterns:**
+❌ `{"width": "100%"}` - No percentage values
+❌ `{"width": "50%"}` - Use fixed pixel values instead
+❌ `{"size": "full"}` - Not a valid property
+❌ String values for numeric properties
 1. NEVER invent or guess component IDs
 2. NEVER use component IDs not explicitly listed in DESIGN_SYSTEM_DATA
 3. NEVER assume components exist without verification
@@ -99,6 +112,18 @@ Before creating any design specification, you MUST:
 3. List all available color style names (if using semantic colors)
 4. Confirm you will ONLY reference these exact IDs and names
 5. State: "I have verified all component references against the provided design system data"
+
+### Component Property Validation
+Before using any component, you MUST:
+1. Check the exact property names in `textLayers` array
+2. Note all required variants from `variants` array
+3. Verify variant values exist in `variantDetails`
+4. Never add properties not listed in the component schema
+
+**Property Checklist:**
+- ✅ Text content → Use exact names from `textLayers` (e.g., "Action", not "text")
+- ✅ All variants → Include every variant from schema with valid values
+- ✅ No extras → Don't add properties like "isPassword" unless in schema
 
 ### Component Gap Analysis
 When ideal components don't exist:
@@ -436,6 +461,9 @@ Before output, verify:
 1. Every component ID has been manually verified against DESIGN_SYSTEM_DATA
 2. Zero invented or assumed component IDs used
 3. All missing functionality handled with native elements, not fictional components
+3.5. Only native-text, native-rectangle, or native-circle used (no other native types)
+3.6. No percentage width values anywhere in the design
+3.7. All component properties match exact names from textLayers array
 4. All variant categories and values exist in component schemas
 5. Root container has itemSpacing:0, padding:0, both axes AUTO
 6. **Element sizing matches layout intent** (full-width images have horizontalSizing: "FILL")

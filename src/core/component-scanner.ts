@@ -1151,6 +1151,23 @@ export class ComponentScanner {
           }
       }
       
+      // Add renderer constraints section
+      prompt += `## CRITICAL RENDERER CONSTRAINTS\n\n`;
+      prompt += `### The ONLY native elements supported:\n`;
+      prompt += `- **native-text**: Text elements with styling\n`;
+      prompt += `- **native-rectangle**: Rectangles (supports image fills)\n`;
+      prompt += `- **native-circle**: Circles/ellipses (supports image fills)\n\n`;
+      prompt += `### NEVER use these (they don't exist):\n`;
+      prompt += `- ❌ native-grid (use layoutContainer with wrap)\n`;
+      prompt += `- ❌ native-list-item (use list components)\n`;
+      prompt += `- ❌ native-rating (use star components)\n`;
+      prompt += `- ❌ native-image (use native-rectangle with image fill)\n`;
+      prompt += `- ❌ Any other native-* type\n\n`;
+      prompt += `### Sizing Rules:\n`;
+      prompt += `- ✅ Use "horizontalSizing": "FILL" for full width\n`;
+      prompt += `- ✅ Use numeric values for fixed width (e.g., 200)\n`;
+      prompt += `- ❌ NEVER use percentages like "50%" or "100%"\n\n`;
+      
       prompt += `## Available Components in Design System:\n\n`;
       
       Object.keys(componentsByType).sort().forEach(type => {
