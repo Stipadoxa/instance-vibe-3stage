@@ -1,0 +1,185 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 80,
+                "height": 80,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                }
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Doe",
+                    "textStyle": "Title/Large",
+                    "color": "Neutral/neutral90",
+                    "layoutAlign": "STRETCH",
+                    "horizontalSizing": "FILL"
+                  }
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "john.doe@example.com",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral50",
+                    "layoutAlign": "STRETCH",
+                    "horizontalSizing": "FILL"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "properties": {
+                "label-text": "Name",
+                "placeholder-text": "Enter your name"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "properties": {
+                "label-text": "Email",
+                "placeholder-text": "Enter your email"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8619",
+              "variants": {
+                "Platform": "Android+Web",
+                "Type": "Filled",
+                "State": "Enabled"
+              },
+              "properties": {
+                "label-text": "Password"
+              }
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "Save Changes"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8459",
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Order History",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "properties": {
+                "Headline": "Order #12345",
+                "Supporting text": "2023-10-26",
+                "Trailing supporting text": "₦1000"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "properties": {
+                "Headline": "Order #67890",
+                "Supporting text": "2023-11-15",
+                "Trailing supporting text": "₦2500"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```

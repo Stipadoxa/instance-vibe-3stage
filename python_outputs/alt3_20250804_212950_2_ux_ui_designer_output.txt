@@ -1,0 +1,166 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure. The hero section (image gallery) takes full width, followed by a content section with a vertical layout for clear information hierarchy.  Consistent spacing of 16px is used between sections and elements within the content section for visual breathing room.  HorizontalSizing is used to ensure image components fill their containers width.
+
+3. **User Flow Reasoning:** The user flow prioritizes quick information access.  Key information like the product title, price, and condition are displayed prominently above the fold.  The image gallery allows users to easily review the product's condition from multiple angles.  The seller profile section provides trust signals and information about the seller, encouraging user confidence.  The prominent 'Contact Seller' button facilitates the next step in the purchase journey.
+
+4. **Component Choices:**  I chose `10:7816` (IMAGES) for the image gallery because it's designed for multiple images and flexible image arrangement, unlike alternative components like `147:3743` which is primarily for product card views. Also, `10:7816` is ideal for the responsive sizing the user request implied in the analysis results.  I selected the `10:3907` (Button) component for the 'Contact Seller' button because it's the designated interactive element for actions and provides consistent styling with the rest of the design system components, instead of using a native button that could be visually inconsistent.
+
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying a seller rating and profile. To address this, I've combined a `native-horizontal` container for side-by-side positioning of the avatar (`10:7773` or `10:7798` depending on image availability) and  `native-text` components to display the seller's name and rating. This arrangement offers clear visual presentation while respecting design system styling principles for other components.  Additional information such as the location of the seller, number of reviews and verified id status is included as native text layers.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through: a) Size and placement: Large headline for product title, prominent price, and clear condition indicators. b) Contrast: Primary colors and system text styles are strategically used for critical information (primary, secondary and tertiary classification). c) Spacing: Consistent spacing provides visual separation and avoids visual clutter.
+
+7. **Variant Selection Rationale:** For the `10:3907` (Button) component, I chose the "Size: Medium", "Type: Filled", "Color: Green", and "State: Default" variants to create a clear and inviting call to action that's easy to identify while staying consistent with the site's brand colours and design system.  I've selected the "Photo: Yes" variant for the `10:7773` (Avatar/Big) component to display an actual profile picture instead of a placeholder.
+
+8. **Native Element Justification:**  As mentioned earlier, native elements (`native-horizontal`, `native-text`, and `native-vertical` containers) were necessary to create the seller profile section due to the lack of a dedicated component in the design system to display this information in a visually consistent way. Using native containers ensures responsive behavior for the overall structure of this component.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7816",
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Type": "2+ images"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2023 Apple MacBook Pro 16\"",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "₦ 1,500,000",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Good Condition",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Profile",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "id": "10:7773",
+                "variants": {
+                  "Photo": "Yes"
+                }
+              },
+              {
+                "type": "native-vertical",
+                "properties":{
+                  "width": "AUTO"
+                },
+                "items":[
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Jane Doe",
+                      "textStyle": "Label/Large",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "4.8 (123 Reviews) • Verified ID",
+                      "textStyle": "Label/Small",
+                      "color": "Neutral/neutral50",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Lagos, Nigeria",
+                      "textStyle": "Label/Small",
+                      "color": "Neutral/neutral50",
+                      "alignment": "left"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "This is a detailed description of the used laptop.  It includes specifications, condition details, and any other relevant information.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

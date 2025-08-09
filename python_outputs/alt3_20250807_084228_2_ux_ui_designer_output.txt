@@ -1,0 +1,153 @@
+SECTIONS:
+
+logo: Contains the CraftMart logo to establish brand identity and provide visual appeal.  This is a standard element of a login screen.
+
+form: Contains the email and password input fields, the login button, and the "forgot password" link. This section facilitates user authentication.  It's the core functional element of a login page.
+
+links: Includes the "Create Account" link to guide new users to the signup process. This promotes user acquisition and account creation.
+
+
+DESIGN RATIONALE:
+
+Component Inventory Verification: I have verified all component references against the provided design system data.
+
+Section Planning: The login screen follows the "Login" page type pattern from the SECTION PATTERNS.  The logo sits at the top, followed by the form for login credentials and a clear "Create Account" link at the bottom.  This structure is intuitive and user-friendly.
+
+Layout Decisions: The root container (`layoutContainer`) adheres strictly to the provided sizing rules (width: 414, counterAxisSizingMode: "FIXED", zero padding). Level 1 containers (logo, form, links) use `"horizontalSizing": "FILL"` to span the full width.  They'll also have padding of 16px on all sides for visual breathing room.  Nested elements within the form (input fields, button) will auto-size naturally, respecting the nested container sizing rules.
+
+User Flow Reasoning:  The user flow is straightforward. The user sees the logo, enters their credentials in the form, and clicks the "Sign In" button.  If they forget their password, they can click the appropriate link.  If they don't have an account, the link directs them to the signup page.
+
+Component Choices: I chose the `Button` (component ID: `10:3907`) for the login button and will utilize the `text input` (component ID: `10:8492`) for the email and password fields.  I considered using a custom form component if one existed, but none were explicitly designed for this purpose in the Design System.
+
+Component Gaps: The request doesn't specify a specific logo image, so I will add a placeholder using `native-rectangle` with a nested image fill.  No other component gaps were identified.
+
+Visual Hierarchy: The logo is the most prominent element, setting the context. The form's input fields are clearly labeled and organized. The "Sign In" button has visual prominence due to its size and color (Primary/primary50), guiding the user to the primary action. The secondary action ("Create Account") is de-emphasized slightly by its placement and link styling.
+
+Variant Selection Rationale:  For the button, I selected the "Filled" and "Large" variants of the `Button` component (10:3907)  because it provides the optimal visual emphasis for primary call-to-actions in a form context. Other size and type variants are less suitable for this prominent interaction. For the input fields, the "Filled" variant of the `text input` component (10:8492) is the most visually appealing for a login screen and also offers clarity.
+
+Native Element Justification: A `native-rectangle` element will be used for the logo placeholder image because there's no dedicated logo component in the design system.
+
+
+DESIGN SPECIFICATION:
+
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "height": 50,
+            "width": 150, 
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FIT"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "horizontalSizing": "FILL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Email Address",
+            "placeholder-text": "your.email@example.com",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Password",
+            "placeholder-text": "********",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "items":[
+            {
+              "type": "native-text",
+              "properties": {
+                "text": "Forgot Password?",
+                "textStyle": "Caption/Small",
+                "color": "Neutral/neutral50"
+              }
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Sign In",
+            "variants": {
+              "Type": "Filled",
+              "Size": "Large",
+              "Color": "Green",
+              "State": "Default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Create Account",
+            "textStyle": "Body/Medium",
+            "color": "Primary/primary50"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

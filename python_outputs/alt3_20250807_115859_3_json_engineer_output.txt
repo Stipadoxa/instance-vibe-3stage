@@ -1,0 +1,295 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Image Gallery",
+      "layoutMode": "HORIZONTAL",
+      "layoutWrap": "WRAP",
+      "itemSpacing": 4,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 160,
+            "height": 120,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 160,
+            "height": 120,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 160,
+            "height": 120,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Details",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Used Dell XPS 15 Laptop",
+            "textStyle": "Title/Large",
+            "color": "Neutral/neutral90",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$800",
+            "textStyle": "Headline/Medium",
+            "color": "Primary/primary50",
+            "alignment": "left",
+            "horizontalSizing": "AUTO"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Condition Details",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 4,
+          "paddingTop": 8,
+          "paddingBottom": 8,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Condition: Excellent",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50",
+                "alignment": "left",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Some minor scratches",
+                "textStyle": "Body/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "left",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Seller Profile",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "paddingTop": 8,
+          "paddingBottom": 8,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 40,
+                "height": 40,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 20
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "name": "Seller Name & Rating",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 4,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "primaryAxisSizingMode": "AUTO",
+              "counterAxisSizingMode": "AUTO",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Doe",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90",
+                    "alignment": "left",
+                    "horizontalSizing": "FILL"
+                  }
+                },
+                {
+                  "type": "layoutContainer",
+                  "name": "Rating Stars",
+                  "layoutMode": "HORIZONTAL",
+                  "itemSpacing": 2,
+                  "paddingTop": 0,
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "primaryAxisSizingMode": "AUTO",
+                  "counterAxisSizingMode": "AUTO",
+                  "horizontalSizing": "AUTO",
+                  "layoutAlign": "STRETCH",
+                  "items": [
+                    {
+                      "type": "native-circle",
+                      "properties": {
+                        "width": 12,
+                        "height": 12,
+                        "fill": "Primary/primary50"
+                      }
+                    },
+                    {
+                      "type": "native-circle",
+                      "properties": {
+                        "width": 12,
+                        "height": 12,
+                        "fill": "Primary/primary50"
+                      }
+                    },
+                    {
+                      "type": "native-circle",
+                      "properties": {
+                        "width": 12,
+                        "height": 12,
+                        "fill": "Primary/primary50"
+                      }
+                    },
+                    {
+                      "type": "native-circle",
+                      "properties": {
+                        "width": 12,
+                        "height": 12,
+                        "fill": "Primary/primary50"
+                      }
+                    },
+                    {
+                      "type": "native-circle",
+                      "properties": {
+                        "width": 12,
+                        "height": 12,
+                        "fill": "Neutral/neutral30"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "counterAxisSizingMode": "AUTO"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This is a description of the used Dell XPS 15 laptop. It includes details about its specifications, condition, and any other relevant information that a potential buyer might want to know.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Contact Seller",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "Action": "Contact Seller"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

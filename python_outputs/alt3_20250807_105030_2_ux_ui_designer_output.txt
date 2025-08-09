@@ -1,0 +1,198 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been cross-referenced with the provided `DESIGN_SYSTEM_DATA` and verified for existence and type.
+
+2. **Layout Decisions:** The layout uses a vertical structure, placing a header at the top for clarity and a scrollable list of notification settings below.  Each setting is a list item with a leading label, switch component for toggling, and trailing padding for visual consistency. 16px padding is used consistently for content sections for readability.
+
+3. **User Flow Reasoning:** The user interacts directly with toggle switches to manage their preferences. No explicit save button is needed, as each toggle change is assumed to be saved immediately.
+
+4. **Component Choices:** The `10:9912` (switch) component was chosen for its clear on/off state and familiar interaction pattern.  Alternatives like custom shapes or checkbox groups would not provide the same intuitive user experience in this context.
+
+5. **Component Gaps:** The design system does not include a dedicated notification settings screen, but the provided components are sufficient. There was no need for custom native elements to overcome functional limitations.
+
+6. **Visual Hierarchy:** A clear vertical layout establishes hierarchy.  Section headers (if used) would have larger text.  Each notification type setting is displayed as a distinct list item, improving visual clarity.
+
+7. **Variant Selection Rationale:** For the switch component (`10:9912`), the "enabled" state is used by default. The `Selected` variant will dynamically change to "true" or "false" depending on user interaction.  Other variants (focused, hovered, pressed) are handled by default component behavior.
+
+8. **Native Element Justification:** No native elements were needed, as the existing components adequately meet the functional needs of the design.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification List",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "1-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "False"
+                  },
+                  "textLayers": {
+                    "Headline": "Push Notifications"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "1-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "False"
+                  },
+                  "textLayers": {
+                    "Headline": "Email Alerts"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "1-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "False"
+                  },
+                  "textLayers": {
+                    "Headline": "SMS Updates"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "1-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "False"
+                  },
+                  "textLayers": {
+                    "Headline": "Promotional Offers"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

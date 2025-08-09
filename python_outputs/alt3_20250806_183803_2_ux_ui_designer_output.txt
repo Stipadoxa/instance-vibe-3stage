@@ -1,0 +1,198 @@
+```json
+SECTIONS:
+1. header: Contains the search bar (`10:12086`) for filtering products and the page title ("Search Results for \"Electronics\"") and description,  providing immediate context and search functionality.
+2. filters: Includes a filter button (`10:3907`) to open a filter modal (not implemented here but could utilize `10:12230` or `10:12276`) allowing users to refine search results by price, brand, and category. This offers granular control over the product listings.
+3. results: Displays a grid of product cards (`147:3743`) showcasing product images, titles, prices, and seller ratings. This is the core content of the page, enabling product discovery and comparison.
+
+DESIGN RATIONALE:
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+2. **Section Planning:** The section blueprint follows the "Listing" pattern: header, filters, and results.  The header establishes the search context and provides the primary search input. The filters section allows users to refine their search.  The results section shows the products matching the search criteria. This fulfills the user request's need for a clear and functional product listing page.
+3. **Layout Decisions:** The layout uses a vertical layout for the root container. The header occupies the top section, the filters are placed below the header, and the results use a horizontal wrap layout to create a grid for the product cards. This approach prioritizes search and filtering options at the top and then presents a visually appealing and easily navigable product grid. Level 1 containers use `horizontalSizing: "FILL"` for full width. Spacing is managed through content padding on Level 1 containers (`paddingTop`, `paddingBottom`, `paddingLeft`, `paddingRight`) and `itemSpacing`.
+4. **User Flow Reasoning:** The user flow begins with the search bar at the top. After performing a search, the user can use the filter button to further refine the results.  This is standard e-commerce pattern. Users then browse through the product grid and can select products to view more details, or proceed to the checkout.
+5. **Component Choices:** I chose `10:12086` (search-field) for the search bar because it directly addresses the user's requirement for a dedicated search input.  I chose `10:3907` (Button) for the filter button for its clear visual style and standard interactive behavior in the design system.  I chose `147:3743` (product card) for the product listings due to its suitability for grid layouts and its built-in elements for displaying product information. The alternative `10:10214` lacks image support needed.
+6. **Component Gaps:** The user request specifies a filter modal, but the design system doesn't provide a pre-built modal component. I would address this in a future iteration using a dialog component (`10:12230` or `10:12276`) to present filter options.  For now, a filter button acts as placeholder.
+7. **Visual Hierarchy:** Visual hierarchy is achieved through section arrangement, sizing, and typography. The header is the most prominent, followed by the filters section, and then the product cards in the results section.  Clear visual separation is achieved through spacing.
+8. **Variant Selection Rationale:** For the search bar (`10:12086`), I would use the "default" State. For the filter button (`10:3907`), I chose "Medium" Size and "Filled" Type for optimal visual prominence and discoverability.  These variant choices provide the appropriate visual cues for the respective elements' functions.
+9. **Native Element Justification:**  The page title and description, and product details within the product cards are implemented using `native-text` elements because these properties are not part of the `147:3743` component schema. This allows me to include required information (reviews, seller, price) that are not accommodated within the product card component itself.  Product images within the card utilize `native-rectangle` elements with image fills.
+
+
+DESIGN SPECIFICATION:
+```json
+{
+  "layoutContainer": {
+    "name": "Electronics Listing Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "componentId": "10:12086",
+            "variants": {
+              "Device": "Mobile",
+              "State": "default"
+            },
+            "textLayers": {
+              "Search in %Category%": "Search Electronics"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Search Results for \"Electronics\"",
+              "textStyle": "Headline/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Browse our wide selection of electronics, including laptops, smartphones, headphones, and more.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "component",
+            "componentId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Filter"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "component",
+            "componentId": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#price": "$1999.00",
+              "#title": "Apple MacBook Pro 14-inch (2023)",
+              "#attribute1 value": "4.8",
+              "#attribute1 value": "(1247)"
+            },
+            "imageNodes": {
+              "image": "macbookpro14.jpg"
+            }
+          },
+          {
+            "type": "component",
+            "componentId": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#price": "$349.99",
+              "#title": "Sony WH-1000XM5 Wireless Noise-Cancelling Headphones",
+              "#attribute1 value": "4.6",
+              "#attribute1 value": "(876)"
+            },
+            "imageNodes": {
+              "image": "sonyheadphones.jpg"
+            }
+          },
+          {
+            "type": "component",
+            "componentId": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#price": "$1199.99",
+              "#title": "Samsung Galaxy S23 Ultra 512GB",
+              "#attribute1 value": "4.7",
+              "#attribute1 value": "(2345)"
+            },
+            "imageNodes": {
+              "image": "galaxys23ultra.jpg"
+            }
+          },
+          {
+            "type": "component",
+            "componentId": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#price": "$1799.99",
+              "#title": "LG C2 65-inch OLED TV",
+              "#attribute1 value": "4.9",
+              "#attribute1 value": "(567)"
+            },
+            "imageNodes": {
+              "image": "lgtv.jpg"
+            }
+          },
+          {
+            "type": "component",
+            "componentId": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#price": "$149.99",
+              "#title": "Logitech G Pro X Wireless Gaming Headset",
+              "#attribute1 value": "4.4",
+              "#attribute1 value": "(1023)"
+            },
+            "imageNodes": {
+              "image": "logitechheadset.jpg"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Showing 1-5 of 25 results",
+          "textStyle": "Caption/Small",
+          "color": "Neutral/neutral50",
+          "alignment": "center"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,86 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "enabled"
+      },
+      "properties": {
+        "placeholder-text": "Email",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "placeholder-text": "Password",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 24,
+            "height": 24,
+            "fill": {
+              "type": "SOLID",
+              "color": "#005693"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Medium",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Login",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Forgot password?",
+        "textStyleId": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+        "color": "#005693",
+        "alignment": "CENTER",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    }
+  ]
+}
+```

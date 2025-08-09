@@ -1,0 +1,218 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "itemSpacing": 16,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Notification Settings",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Manage how you receive updates from Acme Corp.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 12,
+          "horizontalSizing": "FILL",
+          "items": [
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Push Notifications",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:9912",
+                  "variants": {
+                    "Selected": "true",
+                    "State": "enabled",
+                    "Icon": "false"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Receive instant alerts on your mobile device.",
+                "textStyle": "Caption/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "left"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Email Alerts",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:9912",
+                  "variants": {
+                    "Selected": "false",
+                    "State": "enabled",
+                    "Icon": "false"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Get important updates and summaries to your inbox.",
+                "textStyle": "Caption/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "left"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "SMS Updates",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:9912",
+                  "variants": {
+                    "Selected": "false",
+                    "State": "enabled",
+                    "Icon": "false"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Receive critical alerts via text message (may incur charges).",
+                "textStyle": "Caption/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "left"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Promotional Offers",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:9912",
+                  "variants": {
+                    "Selected": "true",
+                    "State": "enabled",
+                    "Icon": "false"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Stay informed about special deals and discounts.",
+                "textStyle": "Caption/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "left"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "justifyContent": "flex-end",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "properties": {
+                "Action": "Save Changes"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "You can change these settings at any time.",
+            "textStyle": "Caption/Small",
+            "color": "Neutral/neutral50",
+            "alignment": "center"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

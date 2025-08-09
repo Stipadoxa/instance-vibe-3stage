@@ -1,0 +1,94 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to present information in a clear, top-to-bottom flow.  Each input field and button is given sufficient spacing (16px padding) for readability and to avoid a cramped feel. The "Forgot Password?" link is placed below the login button for intuitive access and visual separation.  The `horizontalSizing: "FILL"` property is used for full-width elements like the input fields, ensuring they occupy the entire screen width on various devices.
+
+3. **User Flow Reasoning:** The user flow is straightforward:  The user enters their email and password, then clicks the "Login" button.  If they forget their password, they can tap the "Forgot Password?" link to initiate the password reset flow. The design prioritizes simplicity and clarity to enhance user experience.
+
+4. **Component Choices:**
+    * **Text Input (`10:8492`):** I chose the `text input` component over creating custom native text input fields for consistency with the design system. It provides built-in placeholder text, input validation features, and a familiar user experience.  Variants are chosen to accommodate the needed keyboard types for email and password fields.
+    * **Button (`10:3907`):**  The `Button` component was selected over native elements to maintain a uniform button style across the application.  The "Filled" type is used to provide a clear call to action.
+
+5. **Component Gaps:** The design system lacks dedicated components for a login screen and secure password handling. To address this, I combined existing components (text input and button) and implemented password masking using native styling properties within the `text input` component.  The native styling provides visual security of user's input by visually masking their password entry.
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through the vertical layout and spacing. Input fields are more prominent than the login button, which is larger than the "Forgot Password?" link.  This ensures users interact with the input fields first then proceed to the call to action.
+
+7. **Variant Selection Rationale:**
+    * **Text Input (`10:8492`):**  The `State: "enabled"` and `Type: "Filled"` variants are used to ensure the text input fields are active and visually appealing.  Different keyboard types will be implemented for the email and password fields.
+    * **Button (`10:3907`):**  The `State: "Default"`, `Size: "Medium"`, `Type: "Filled"`, and `Color: "Green"` variants were chosen to create a visually prominent and readily clickable login button.
+
+8. **Native Element Justification:** Native styling properties are used within the `text input` component to visually mask the password field for security. This is a functional requirement that cannot be fully met by the available components in the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Marketplace Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32, "paddingBottom": 32, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:8492",
+        "name": "Email Input",
+        "variants": {
+          "State": "enabled",
+          "Type": "Filled"
+        },
+        "properties": {
+          "placeholder-text": "Email",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "name": "Password Input",
+        "variants": {
+          "State": "enabled",
+          "Type": "Filled"
+        },
+        "properties": {
+          "placeholder-text": "Password",
+          "horizontalSizing": "FILL",
+          "isPassword": true //Native styling applied here to mask password
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "name": "Login Button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Login",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "name": "Forgot Password Link",
+        "properties": {
+          "content": "Forgot Password?",
+          "textStyle": "Body/Small",
+          "color": "Tertiary/tertiary50",
+          "alignment": "center",
+          "horizontalSizing": "FILL"
+        }
+      }
+    ]
+  }
+}
+```

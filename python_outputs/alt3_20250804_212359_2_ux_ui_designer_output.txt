@@ -1,0 +1,165 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout utilizes a vertical layout for the main container.  The hero section, containing the product images, is given full width using `horizontalSizing: "FILL"` for the `native-rectangle` placeholder (as no dedicated image component exists in the design system). Subsequent sections (product details, seller profile, description, and button) are vertically stacked with consistent 16px padding for readability and visual breathing room.  This vertical structure prioritizes information hierarchy and allows for easy scrolling.
+
+3. **User Flow Reasoning:** The user flow is designed to be straightforward.  Users see the hero images first, followed by key details (title, price, condition), then the seller profile, description, and finally the "Contact Seller" button, encouraging quick engagement.
+
+4. **Component Choices:**  There is no single ideal component for displaying multiple product images; the design system lacks a dedicated carousel or image gallery component.  Therefore,  a workaround is used (explained below).  No other components directly address this specific feature request. For the button, I chose the "Button" component (`id: "10:3907"`) because it's a standard, readily available component that provides clear call-to-action functionality. This is preferred to custom solutions for consistency.  For the text elements I leveraged the text styles available in the design system.
+
+5. **Component Gaps:** The user request requires an image gallery or carousel for showcasing multiple product photos, but this functionality is missing from the design system. I implemented a workaround using a vertical `layoutContainer` to hold multiple `native-rectangle` components, each configured with `horizontalSizing: "FILL"` and `"fill": {"type": "IMAGE"}` to act as image placeholders. This provides a functional solution that allows for full-width image display within the constraints of the design system.  This method is also responsive, scaling the images appropriately for different screen sizes.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through a combination of layout and typography. The product title and price are emphasized with larger text sizes.  Subsequent sections are progressively smaller to guide the user's eye downwards.  Spacing and padding are consistently used to separate sections and enhance readability.
+
+7. **Variant Selection Rationale:** For the "Contact Seller" button, I chose the `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, and `Color: "Green"` variants from the available variants in the design system. The filled button style provides visual prominence and clear feedback to the user. The medium size is ideal for mobile-first design, allowing for a clear tap target while not taking up excessive space.  The green color is chosen to associate the action with a positive or affirming result.
+
+8. **Native Element Justification:** Because a component for displaying multiple product images is missing, the `native-rectangle` element is used to create scalable image placeholders which fill their container and maintain the visual layout.  This provides a visually appealing and functional alternative within the constraints of the provided design system.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "height": 200,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "height": 200,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Used Laptop - Powerful and Reliable",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦ 800,000",
+          "textStyle": "Headline/Medium",
+          "color": "Primary/primary50",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Good Condition",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Profile",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 64,
+              "height": 64,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Jane Doe",
+                  "textStyle": "Body/Large",
+                  "color": "Neutral/neutral90",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "4.8 (123 Reviews)",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Description of the laptop goes here.  Include details about specifications, condition, and any other relevant information.",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

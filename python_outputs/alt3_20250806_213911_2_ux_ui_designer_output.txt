@@ -1,0 +1,173 @@
+SECTIONS:
+
+logo: [A CraftMart logo will be placed here to reinforce branding and provide visual appeal.  This is standard practice for login screens.]
+
+form: [This section contains the email and password input fields, the login button, and the "Forgot Password?" link. It facilitates user authentication.]
+
+links: [This section includes the "Create Account" link, allowing users to easily create a new account if they don't have one yet. This is a common feature on login screens.]
+
+
+DESIGN RATIONALE:
+
+Component Inventory Verification: I have verified all component references against the provided design system data.
+
+Section Planning: The login screen follows the "Login" pattern from the `suggestedPageType` in the User Request Analyzer output. This pattern suggests the sections: logo, form, social, links, security, and footer.  However, given the simplicity of the user request, I've omitted the social, security, and footer sections for brevity and clarity.  The user request only explicitly requests a login form and a "forgot password" link, so the core focus remains on those elements.
+
+Layout Decisions: The layout is vertical, following the common convention for login forms. The logo is at the top to establish branding and the form is below it.  Spacing between sections will be handled using padding within Level 1 containers as per the Hierarchical Container Sizing rules. The Level 0 (root) container will have `width: 414`, `counterAxisSizingMode: "FIXED"`, and all padding set to 0.  Level 1 containers will use `horizontalSizing: "FILL"` and appropriate padding for visual spacing. Nested containers will auto-size.
+
+User Flow Reasoning:  The user flow is straightforward. The user enters their email address and password into the respective fields. Clicking "Sign In" submits the credentials for authentication. If they forget their password, they click the "Forgot Password?" link, which will likely redirect them to a password recovery flow. Clicking "Create Account" will navigate the user to a registration screen.
+
+Component Choices: I chose the `Button` component (ID: `10:3907`) for the "Sign In" button and the `text input` components (ID: `10:8492`) for the email and password fields.  I chose `Hyperlink Component` (implicitly using `native-text` with appropriate styling) for the "Forgot Password?" and "Create Account" links.   Alternatives considered but rejected include using a custom-built button (Strategy C: Native Elements) or repurposing other components for the buttons and inputs (Strategy B: Semantic Equivalent) because the provided `Button` and `text input` components offer the best balance of functionality, visual consistency, and ease of implementation.
+
+Component Gaps: The request does not specify any specific features that are lacking in the Design System. All needed components are present.
+
+Visual Hierarchy:  The logo will have the largest visual weight, followed by the "Welcome back" title and description. The email and password fields will be of equal prominence, and the "Sign In" button will be the primary call-to-action, having a more prominent visual style and slightly larger size than the "Forgot Password?" and "Create Account" hyperlinks.
+
+Variant Selection Rationale: For the button, I'll use the "Filled", "Medium", and "Default" variants of the `Button` component.  The "Filled" type provides a clear visual cue for a button, "Medium" is a standard size for login buttons, and "Default" is the appropriate state for an enabled button.
+
+Native Element Justification: Native text elements will be used for the labels, placeholder text, and the "Forgot Password?" and "Create Account" hyperlinks because these need very specific styling that isn't provided by other components and requires flexibility in text layout and formatting.
+
+
+DESIGN SPECIFICATION:
+
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "height": 50,
+          "horizontalSizing": "FILL",
+          "fill": {
+            "type": "SOLID",
+            "color": { "r": 1, "g": 1, "b": 1 }
+          }
+        },
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "CraftMart Logo",
+              "textStyle": "Headline/Large",
+              "color": "Neutral/neutral90"
+            }
+          }
+        ]
+
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Welcome back to CraftMart!",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Sign in to access your saved items, purchase history, and seller dashboard.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "label-text": "Email Address",
+              "placeholder-text": "your.email@example.com",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "label-text": "Password",
+              "placeholder-text": "********",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Sign In",
+              "variants": {
+                "Type": "Filled",
+                "Size": "Medium",
+                "State": "Default",
+                "Color": "Primary/primary50"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Forgot Password?",
+              "textStyle": "Body/Small",
+              "color": "Neutral/neutral50"
+              
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Don't have an account?",
+              "textStyle": "Body/Small",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Create Account",
+              "textStyle": "Body/Small",
+              "color": "Primary/primary50",
+              "underline": true
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

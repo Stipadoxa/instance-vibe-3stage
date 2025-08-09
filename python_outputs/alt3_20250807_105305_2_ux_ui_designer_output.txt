@@ -1,0 +1,245 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been verified against the provided `DESIGN_SYSTEM_DATA`.  The `10:9912` (switch) component is crucial for the toggle functionality.  The `10:10214` (list-item) component is the primary building block for the notification settings list.
+
+2. **Layout Decisions:** The layout uses a vertical structure (`layoutMode: "VERTICAL"`) to present notification categories sequentially.  Each notification type is housed in a full-width container (`horizontalSizing: "FILL"` and `layoutAlign: "STRETCH"`) within the list-item component to ensure consistent spacing and alignment.  A `16` pixel spacing between items (`itemSpacing: 16`) provides visual breathing room. Padding on the main content container enhances readability.
+
+3. **User Flow Reasoning:** The user flows naturally from top to bottom, toggling each notification type individually.  The clear labeling and descriptive text next to each toggle enhance understandability and control.
+
+4. **Component Choices:** The `10:9912` (switch) component was selected over creating custom toggle elements because it provides the necessary functionality and visual consistency within the design system, while `10:10214` list-item provides a robust structure to contain both the toggle and description text.
+
+5. **Component Gaps:** The design system lacks a combined component to represent a list item with an integrated toggle. A workaround is using the `10:10214` list-item component with a `10:9912` (switch) component inside.
+
+6. **Visual Hierarchy:**  The visual hierarchy is established using clear section headings (`native-text` with appropriate text styles for larger font sizes).   The notification types are presented in a clear list format using the list-item component, creating a visual separation between different options.
+
+7. **Variant Selection Rationale:** For the `10:9912` switch component, the "enabled" state is used by default.  The "selected" variant will change based on user interaction.
+
+8. **Native Element Justification:** No native elements beyond `native-text` (for headings and descriptions) were necessary as the design system components successfully meet all functional requirements.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Headline/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification List",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "Switch",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Push Notifications",
+                        "textStyle": "Body/Medium",
+                        "color": "Neutral/neutral90",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Receive push notifications for updates.",
+                        "textStyle": "Caption/Small",
+                        "color": "Neutral/neutral50",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "Switch",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Email Alerts",
+                        "textStyle": "Body/Medium",
+                        "color": "Neutral/neutral90",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Receive email alerts for important events.",
+                        "textStyle": "Caption/Small",
+                        "color": "Neutral/neutral50",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "Switch",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "SMS Updates",
+                        "textStyle": "Body/Medium",
+                        "color": "Neutral/neutral90",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Receive SMS updates for time-sensitive information.",
+                        "textStyle": "Caption/Small",
+                        "color": "Neutral/neutral50",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "Switch",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Promotional Offers",
+                        "textStyle": "Body/Medium",
+                        "color": "Neutral/neutral90",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    },
+                    {
+                      "type": "native-text",
+                      "properties": {
+                        "content": "Receive notifications about special offers and promotions.",
+                        "textStyle": "Caption/Small",
+                        "color": "Neutral/neutral50",
+                        "alignment": "left",
+                        "horizontalSizing": "AUTO"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

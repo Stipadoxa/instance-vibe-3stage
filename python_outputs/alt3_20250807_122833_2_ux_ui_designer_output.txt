@@ -1,0 +1,229 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs used in this design have been manually verified against the provided `DESIGN_SYSTEM_DATA`.  No custom components were created.
+
+2. **Layout Decisions:** The layout uses a vertical structure for mobile-first design. The header section contains quick stats cards, arranged horizontally to optimize screen usage.  The activity feed follows below, employing a vertical layout for easy scrolling.  Action buttons are placed prominently above the bottom navigation. Consistent padding (16px horizontal, 20px vertical for main sections) is used throughout for visual harmony and readability.
+
+3. **User Flow Reasoning:** The user flow prioritizes at-a-glance information (quick stats) followed by recent activity.  Key actions (create new listing, view messages) are readily accessible before bottom navigation.  This sequence encourages efficient overview and immediate engagement.
+
+4. **Component Choices:**  `147:3743` (product card) is used for quick stats cards because it's the most suitable pre-built component to display key metrics with clear visual representation.  The `10:10214` (List item) is suitable to display the recent activity feed. The `10:4724` (Bottom navigation) component is used for its functionality and ready-made design.
+
+5. **Component Gaps:** The design system lacks a dedicated "stats card" component optimized for numerical data visualization.  Instead of creating a custom component, I utilize the `147:3743` (product card) component and adapt its styling to fulfill this role.
+
+6. **Visual Hierarchy:** The visual hierarchy is established through size, position, and color.  The quick stats cards are larger and more prominently positioned than the activity feed.  Primary colors are used sparingly for call-to-action buttons, while secondary and tertiary colors are used for other elements to ensure appropriate visual weight.
+
+7. **Variant Selection Rationale:**  For the buttons (`10:3907`), "Filled" type and "Medium" size variants were selected for optimal mobile visibility and interaction.  The color variant is set to "Green" for creating a new listing button and to a primary color for the "View all messages" button. Bottom navigation ("Mobile" device) is chosen due to the mobile-first approach.
+
+8. **Native Element Justification:** No native elements were used beyond those explicitly allowed, and they fill a functional gap instead of decorative purposes.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Stats Cards Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "STRETCH",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "textLayers": {
+                    "#price": "Total Listings: 15",
+                    "#title": "Total Listings"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "STRETCH",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "textLayers": {
+                    "#price": "Views This Week: 120",
+                    "#title": "Views This Week"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "STRETCH",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "textLayers": {
+                    "#price": "New Messages: 5",
+                    "#title": "New Messages"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              }
+            },
+            "textLayers": {
+              "Headline": "New Listing Added",
+              "Supporting text": "Product X added at 10:00 AM"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              }
+            },
+            "textLayers": {
+              "Headline": "New Message Received",
+              "Supporting text": "From John Doe at 11:30 AM"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons Row",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 0,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "SPACE_BETWEEN",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            "textLayers": {
+              "Action": "Create New Listing"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Primary/primary50"
+              }
+            },
+            "textLayers": {
+              "Action": "View All Messages"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "variants": {
+            "Device": "Mobile"
+          }
+        }
+      }
+    ]
+  }
+}
+```

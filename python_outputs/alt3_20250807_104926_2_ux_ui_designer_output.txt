@@ -1,0 +1,196 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.  All component IDs used are present in `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout employs a vertical structure, mirroring the natural flow of a settings page. Each notification type is presented as a `listItem` for clear separation and visual organization.  Padding is used consistently to ensure comfortable spacing between elements and sections. The vertical spacing between list items is 16px, offering visual breathing room.
+
+3. **User Flow Reasoning:** The user interacts with the page by toggling individual switches to control notification preferences. The clear labels and descriptions provide context for each setting, facilitating ease of use.
+
+4. **Component Choices:** I chose the `switch` component (`10:9912`) for its clear on/off visual communication and native feel. This is superior to a custom-built toggle solution in terms of UX consistency and familiarity.  The `listItem` component (`10:10214`) was selected for its ability to cleanly structure the notification list with clear labels and visual hierarchy.
+
+5. **Component Gaps:** The design system lacks a single, pre-built component that combines a label, description, and a toggle switch in one unified element.  Therefore, I utilized a combination of the `listItem` component with the `switch` component nested within.  The label and description are provided within the properties of the `listItem` component.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the use of clear section headings (if needed, `native-text` with appropriate text styles) and consistent spacing. The prominent position of the toggle switches ensures that the primary action is immediately apparent.
+
+7. **Variant Selection Rationale:** For the `switch` component, the `State: enabled` variant is used to ensure interactive functionality.  The `Selected` variant will dynamically change between `true` and `false` based on user interaction.
+
+8. **Native Element Justification:** No native elements beyond those explicitly allowed were necessary.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Notification List",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 16,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Push Notifications",
+                    "Supporting text": "Receive real-time updates."
+                  }
+                },
+                "items":[
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties":{
+                      "variants":{
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Email Alerts",
+                    "Supporting text": "Get notifications via email."
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "variants":{
+                          "Selected": "false",
+                          "State": "enabled",
+                          "Icon": "false"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "SMS Updates",
+                    "Supporting text": "Receive updates via SMS."
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "variants":{
+                          "Selected": "false",
+                          "State": "enabled",
+                          "Icon": "false"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Promotional Offers",
+                    "Supporting text": "Receive updates on special offers."
+                  },
+                  "items":[
+                    {
+                      "type": "component",
+                      "componentNodeId": "10:9912",
+                      "properties":{
+                        "variants":{
+                          "Selected": "false",
+                          "State": "enabled",
+                          "Icon": "false"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

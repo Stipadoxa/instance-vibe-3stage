@@ -1,0 +1,145 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in this design have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout utilizes a vertical structure for a clear top-to-bottom flow. The search bar and filter button occupy the top section, followed by a horizontally wrapped grid of product cards for efficient space utilization on mobile. Consistent 16px padding is used for content sections, 12px for horizontal rows.
+
+3. **User Flow Reasoning:** The user first encounters the search bar for input, then the filter button for refinement. Next, the grid presents search results, allowing for quick visual scanning and selection of products.  Each product card provides essential information with prominent visuals.
+
+4. **Component Choices:** I chose the `appbar` (10:5620) component for the top section because it provides a standardized header structure, accommodating the search bar and filter button.  A `layoutContainer` with `layoutWrap: "WRAP"` was chosen for the product grid for the flexibility of dynamic product numbers. I used the `product card` (147:3743) component to display product details.
+
+5. **Component Gaps:** The design system lacks a dedicated rating component.  To address this gap, I've opted to use multiple `icon/star` (635:4752) components within the `product card` to visually represent seller ratings.  Additionally, there's no search bar component that works seamlessly with the appbar.  I've used a `search-field` (10:12086) within the appbar to handle this.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through:
+    - Prominent placement of the search bar and filter at the top.
+    - Larger font sizes for product titles within the cards.
+    - Clear visual separation between sections using spacing and dividers.
+    - Use of color styles for emphasis (Primary for titles, Secondary for prices).
+    - Star icons for rating are prominently displayed.
+
+7. **Variant Selection Rationale:** For the `appbar`, I selected `Mode: Light`, `Type: search-field`, and `Elevation: flat`. I selected the "grid" view for the `product card`.  These variants are appropriate for the page's context.
+
+8. **Native Element Justification:**  To display product images, `native-rectangle` elements with image fills are used within the `product card` component. This is necessary because the `product card` only provides placeholders.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "component",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "variants": {
+            "Mode": "Light",
+            "Type": "search-field",
+            "Elevation": "flat"
+          },
+          "horizontalSizing": "FILL"
+        },
+        "items":[
+          {
+            "type": "layoutContainer",
+            "name": "SearchBar Container",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 16, "paddingRight": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:12086",
+                "properties": {
+                  "variants": {
+                    "Device": "Mobile",
+                    "State": "default"
+                  },
+                  "horizontalSizing": "FILL"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "variants": {
+                    "Platform": "Android+Web",
+                    "Size": "Medium",
+                    "Type": "Text",
+                    "State": "Default",
+                    "Color": "Green"
+                  },
+                  "horizontalSizing": "AUTO",
+                  "textLayers": {
+                    "Action": "Filter"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Grid",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 12,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

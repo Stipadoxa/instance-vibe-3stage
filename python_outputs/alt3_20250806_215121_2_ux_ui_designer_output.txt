@@ -1,0 +1,179 @@
+### SECTIONS:
+
+**logo**: Contains the CraftMart logo (placeholder) to establish brand identity and provide visual recognition.
+
+**form**: Contains the email and password input fields, login button, and "forgot password" link.  This section facilitates user authentication and is the core functional element of the login screen. Uses the `text input` and `Button` components from the design system.
+
+**links**: Contains links to "Terms of Service" and "Privacy Policy" to comply with legal requirements and build user trust. Also includes a "Create Account" link to guide users to the signup process.  Leverages native-text elements for styling flexibility and linking.
+
+
+### DESIGN RATIONALE:
+
+**Component Inventory Verification**: I have verified all component references against the provided design system data.
+
+**Section Planning**: The login screen follows the "Login" section pattern: logo→form→social→links→security→footer.  Since social login is suggested but not mandatory, it's omitted for this initial design. The footer is also omitted for simplicity, focusing on core login functionality. The sections are arranged vertically to create a clear and straightforward user flow.
+
+**Layout Decisions**: The layout is vertical, placing the logo at the top for immediate brand recognition, followed by the form for primary interaction, and finally the links at the bottom for secondary actions. Level 1 containers (logo, form, links) use `"horizontalSizing": "FILL"` to span the full width (414px) of the screen.  Padding of 16px is applied to these containers for visual breathing room. Level 2+ containers within the form section will auto-size according to their content. The root container strictly adheres to the mandatory sizing rules: `"width": 414`, `"counterAxisSizingMode": "FIXED"`, and all padding set to 0.
+
+**User Flow Reasoning**: The user flow is linear and intuitive. The logo establishes context, the form allows for input and authentication, and the links provide alternative actions or additional information.
+
+**Component Choices**:
+
+*   **Input field:** I chose the `text input` component (ID: `10:8492`) for both email and password fields because it provides a consistent and pre-styled input experience.  Alternatives like `text area` (ID: `10:8619`) are less suitable for single-line inputs.
+*   **Button:** I chose the `Button` component (ID: `10:3907`) for the "Sign In" and "Create Account" buttons due to its styling consistency within the design system.  While other components could potentially create button-like functionality, this ensures visual coherence.  The `variants` property will be used to distinguish primary vs secondary button styles.
+*   **Hyperlink:**  I used a `native-text` element for the "Forgot password?" link because the design system does not appear to include a dedicated hyperlink component.
+
+**Component Gaps**: The design system lacks a dedicated component for the "Terms of Service" and "Privacy Policy" links.  However, these are easily implemented using native-text elements styled for hyperlinks.  There is also no component for creating a simple, styled footer.
+
+**Visual Hierarchy**: The visual hierarchy is established through size, contrast, and position.  The logo is the largest element, the input fields are prominent and well-spaced, the primary "Sign In" button is larger and more visually distinct than the secondary "Create Account" button (using variants within the button component).  The links are smaller and subtly placed at the bottom, indicating their secondary importance.
+
+**Variant Selection Rationale**: For the `Button` component, I will use the "Filled" type for the primary "Sign In" button and "Text" type for the secondary "Create Account" button, offering visual distinction.  The color will be specified using semantic color names to ensure design system compliance.
+
+**Native Element Justification**:  Native-text elements were used for the "Forgot password?", "Terms of Service", and "Privacy Policy" links, and "Create Account" text because the design system does not include a dedicated component for creating hyperlinks.
+
+
+
+### DESIGN SPECIFICATION:
+
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "padding": 16,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "CraftMart logo (placeholder)",
+            "textStyle": "Headline/Large"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Discover unique handcrafted treasures",
+            "textStyle": "Body/Medium"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "padding": 16,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "youremail@example.com",
+            "label-text": "Email Address",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "********",
+            "label-text": "Password",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Forgot password?",
+            "textStyle": "Body/Small",
+            "color": "Neutral/neutral50"
+
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Sign In",
+            "variants": {
+              "Type": "Filled",
+              "Size": "Medium",
+              "Color": "Primary/primary50",
+              "State": "Default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "padding": 16,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Don't have an account? ",
+            "textStyle": "Body/Small",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Create Account",
+            "textStyle": "Body/Small",
+            "color": "Primary/primary50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "padding": 16,
+      "horizontalSizing": "FILL",
+      "items":[
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Terms of Service",
+            "textStyle": "Body/Small",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "Privacy Policy",
+            "textStyle": "Body/Small",
+            "color": "Neutral/neutral50"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

@@ -1,0 +1,131 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertically stacked layout (Strategy A: Full-Width Mobile Screen) to accommodate the email and password fields, login button, and "Forgot Password" link.  Padding is used within inner containers to provide visual breathing room between elements, creating a clean and uncluttered interface.
+
+3. **User Flow Reasoning:**  The user flow is straightforward: The user enters their email and password, then taps the "Login" button. If they forget their password, they can tap the "Forgot Password" link to initiate the password recovery process.
+
+4. **Component Choices:** I chose the `10:8492` (text input) component for the email and password fields because it provides built-in placeholder text, error handling, and supports visual cues (using variants) for improved usability.  The `10:3907` (button) component was selected for the "Login" button due to its clear visual affordance and readily available styling options. The `native-text` element was used for the "Forgot Password?" link to create the hyperlink functionality and avoid the use of forbidden native button types.
+
+5. **Component Gaps:** The design system lacks a dedicated "Forgot Password" component. To address this, I used a `native-text` element styled as a link to provide the functionality.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through vertical positioning and component sizing. The input fields are grouped together, followed by the login button for a clear call to action.  The "Forgot Password?" link is visually de-emphasized by its smaller size and less prominent color compared to the main call-to-action button.
+
+
+7. **Variant Selection Rationale:** For the text input fields (`10:8492`), I've selected the "Filled" type for visual clarity and consistency. The "Enabled" state is used by default.  For the login button (`10:3907`), "Filled", "Medium", and "Green" Size and color variants were selected for appropriate visual emphasis and alignment with the Design system color palette.
+
+8. **Native Element Justification:** The "Forgot Password?" link requires hyperlink functionality, which is not directly provided by any existing components in the Design System. The `native-text` element with appropriate styling was the optimal solution to provide this functionality.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Email Address"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Password"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "Size": "Medium",
+                    "Color": "Green",
+                    "State": "Default"
+                  },
+                  "textLayers": {
+                    "Action": "Login"
+                  }
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot password?",
+                  "textStyle": "Body/Small",
+                  "color": "secondary-50",
+                  "alignment": "center",
+                  "horizontalSizing": "AUTO"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

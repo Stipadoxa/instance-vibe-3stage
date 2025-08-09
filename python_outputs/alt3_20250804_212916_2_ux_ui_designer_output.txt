@@ -1,0 +1,185 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout employs a vertical structure.  The hero section (image gallery) utilizes a horizontal layout with wrapping to accommodate multiple product images.  The content section uses a vertical layout for a clear information hierarchy.  Consistent 16px padding is used in content sections for readability and visual breathing room. Full-width images use `horizontalSizing: "FILL"` to maximize visual impact.
+
+3. **User Flow Reasoning:** The user first sees product images and key information (title, price) to quickly assess interest.  Scrolling down reveals more details (seller profile, condition, description), culminating in a prominent "Contact Seller" button.
+
+4. **Component Choices:**  The design system lacks a dedicated carousel or image gallery component, therefore a `native-rectangle` with `fill: { "type": "IMAGE", "scaleMode": "FILL"}` is implemented for showcasing multiple product images.   The system `button` component (`id: "10:3907"`) is used for the "Contact Seller" button.  Alternative components considered for the button were `chip` and `text-button` variants but were rejected in favour of the `button` as the action requested requires more visual prominence.  I chose the `list-item` component for displaying condition details and specifications because it inherently supports the layout and text formatting appropriate for bullet lists.
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying an image gallery with thumbnail previews. To resolve this, I used a combination of `native-rectangle` components with image fills (`fill: {"type": "IMAGE"}`), arranged in a horizontal wrapped layout, to create a dynamic image gallery. This solution allows for flexible image display regardless of the number of images and responsiveness to screen sizes.
+
+6. **Visual Hierarchy:** Visual prominence is achieved through size, positioning, and color.  The product title, price, and main product image take up the most space and are most prominent.  Seller profile information is visually separated but equally important and clearly displayed.  The "Contact Seller" button is positioned at the end of the scroll for natural user flow, using its inherent emphasis provided by design system styling.
+
+7. **Variant Selection Rationale:** For the "Contact Seller" button (`10:3907`), I selected the `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, and `Color: "Green"` variants.  Medium size offers good tap target area on mobile screens. Filled button styling provides greater emphasis. Default state is the base. The green color offers a clear positive action indication. Alternative variant considerations included `small` or `large` size and `outlined` type, but these were judged to be less prominent.
+
+8. **Native Element Justification:**  Due to the absence of a dedicated image gallery component, I used `native-rectangle` elements with image fills to create an image gallery in order to show multiple product images. Native elements allowed for a tailored and user friendly solution that satisfies the user request, and this gallery is implemented with `horizontalSizing: "FILL"` to maintain the full width required.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2023 MacBook Pro 16\"",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "₦ 1,500,000",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "true",
+              "Show supporting text": "true"
+            },
+            "textOverrides": {
+              "Overline": "Condition:",
+              "Headline": "Excellent",
+              "Supporting text": "Minor scratches on the back"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Profile",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "id": "10:7773",
+                "variants": {
+                  "Photo": "Yes"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "John Doe",
+                  "textStyle": "Title/Medium",
+                  "color": "Neutral/neutral90",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "component",
+                "id": "635:4130",
+                "variants": {
+                  "Style": "Filled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Description of the laptop...",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textOverrides": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

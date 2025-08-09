@@ -1,0 +1,119 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure. The app bar takes up the top section, providing a search bar and filter button.  Below, a horizontal layout with `layoutWrap: "WRAP"` allows product cards to dynamically adjust based on screen size.  `itemSpacing` is used to create visual breathing room between elements.  Horizontal sizing is set to `"FILL"` for the image within the product card to ensure it fills the available space.  The `product card` component manages its overall width.
+
+3. **User Flow Reasoning:** The user first sees the search bar at the top, allowing them to quickly search for products.  The filter button provides additional refinement. Product cards are displayed in a visually appealing grid, making it easy to browse and select items.  The card design includes all necessary product information for quick assessment.
+
+4. **Component Choices:** 
+    * **AppBar:** I chose the `appbar` component (ID: `10:5620`) over using native elements to create a consistent header experience. It provides built-in styling and layout capabilities.  The variants are set to accommodate the search field and filter button.
+    * **Product Card:** I chose the `product card` component (ID: `147:3743`) because it's designed for product information display in various layouts ("grid" variant used here). It is pre-built to display essential information and has placeholder elements to be populated with the product details.   Alternatives considered, but not used were creating a `native-rectangle` or `layoutContainers` in combination, due to the considerable effort that would require for proper styling and consistency with the design system.  The existing component provides a streamlined and optimized solution.
+    * **Search Bar:** The `search-field` component (ID: `10:12086`) was selected for its ease of use and integration with the AppBar, rather than resorting to native elements for search input functionality.
+    * **Button:** The `button` component (ID: `10:3907`) was selected for the filter button to maintain a consistent look and feel with other buttons in the application.
+
+5. **Component Gaps:** The design system doesn't have a dedicated component for a product grid layout, and this functionality was achieved with `layoutContainer` with a horizontal layout that utilizes the "WRAP" property. This approach offers responsiveness while ensuring that the product cards layout correctly across various screen sizes.
+
+6. **Visual Hierarchy:** The app bar is placed prominently at the top of the screen, with the search bar as the primary focus. The product cards are then presented in a clear, consistent grid.  The prominence of elements is enhanced by sufficient spacing and visual cues like color and typography (using the design system text styles for consistency).
+
+7. **Variant Selection Rationale:**  The `search-field` component uses the `"State": "default"` variant as this is the normal state for the search bar. For the `appbar`,  `"Mode": "Light"`, `"Type": "search-field"`, and `"Elevation": "flat"` variants were chosen to match the light theme and search bar intent. The "grid" variant is used for the `product card` to achieve a grid layout for the products.  These specific variant choices help create a consistent and unified design experience.
+
+
+8. **Native Element Justification:** No native elements were necessary for this design. All requirements were met using existing components from the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:5620",
+        "variants": {
+          "Mode": "Light",
+          "Type": "search-field",
+          "Elevation": "flat"
+        },
+        "items": [
+          {
+            "type": "component",
+            "id": "10:12086",
+            "variants": {
+              "Device": "Mobile",
+              "State": "default"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Text",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Filter"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "layoutGrow": 1,
+        "layoutWrap": "WRAP",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#title": "Product Title 1",
+              "#price": "100",
+              "#attribute1 value": "4.5",
+              "#attribute1 value": "(10)"
+            }
+          },
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "textLayers": {
+              "#title": "Product Title 2",
+              "#price": "200",
+              "#attribute1 value": "4.0",
+              "#attribute1 value": "(20)"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

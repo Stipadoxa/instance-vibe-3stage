@@ -1,0 +1,217 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout employs a vertical scrolling structure.  The top section features a full-width image gallery (`horizontalSizing: "FILL"`) for showcasing multiple product photos. Below this, a vertical container (`layoutMode: "VERTICAL"`) houses the product title, price (using primary color for prominence), condition details, and seller profile information (including a star rating implemented using multiple star icons).  A description section follows, utilizing a `layoutContainer` to ensure proper text wrapping. Finally, a "Contact Seller" button is placed at the bottom.  Consistent padding (16px) is used around all content sections to ensure readability and visual separation between elements, and 16px spacing between Level 1 containers.
+
+
+3. **User Flow Reasoning:** The user flow is designed to be intuitive and efficient.  Upon entering the page, the user is immediately greeted with multiple product images. Key information like the title, price, and condition is prominently displayed above the fold, followed by the seller's profile for trust-building. The product description is placed below to provide more details. The prominent "Contact Seller" button at the end of the page facilitates easy communication with the seller.
+
+4. **Component Choices:**
+    - For the image gallery, I'm using `10:7816` (IMAGES) component with the "2+ images" variant to display multiple product photos. I chose this over creating a custom gallery using native elements because it leverages pre-built functionality and ensures design system consistency.  Creating a custom solution would be more complex and might compromise responsive behavior.
+
+    - For the seller profile avatar, I chose `10:7773` (avatar / big) with the "Yes" variant for Photo.  I considered `24:10352` (avatar / stack) but  `10:7773` is better suited for the visual prominence expected for a seller profile image on a detail page.
+
+    - The "Contact Seller" button uses component `10:3907` (Button). I selected the "Green" color variant for its clear call-to-action nature. I considered a "Text" button type for a less prominent button but decided against it because the action should stand out.
+
+5. **Component Gaps:** The design system lacks a dedicated star rating component.  To address this, I implemented a star rating using multiple instances of the `635:4759` (icon/star) component with the filled style to represent a rating. This provides a clear visual representation of the seller's rating, matching common e-commerce patterns.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through a combination of layout (placement), typography (`textStyles`), and color. The product title and price are large and in a prominent color (primary color), while other information uses smaller typography (Label/Medium, Body/Medium) and neutral colors. This guides the user's eye to the most important details first.
+
+7. **Variant Selection Rationale:**  I chose the "Green" color variant for the "Contact Seller" button to emphasize its importance (`10:3907`). I could have used other color variants but green aligns with general e-commerce conventions for call to action buttons and stands out well against the background.
+
+8. **Native Element Justification:** There is no component for the image gallery carousel functionality itself.  To address this gap, I'm using a `layoutContainer` with `layoutWrap: "WRAP"` to create a horizontal scrollable area to hold multiple `native-rectangle` elements (with image fills). This offers flexibility to dynamically handle varying image sizes and numbers.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "layoutWrap": "WRAP",
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2023 MacBook Pro 16\"",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "₦1,200,000",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Good Condition",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7773",
+                "variants": {
+                  "Photo": "Yes"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "John Doe",
+                  "textStyle": "Label/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8619",
+            "variants": {
+              "Platform": "Android+Web",
+              "Type": "Filled",
+              "State": "Enabled"
+            },
+            "properties": {
+              "label-text": "Description"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

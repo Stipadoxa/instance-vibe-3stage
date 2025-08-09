@@ -1,0 +1,158 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical structure.  The hero section (product images) utilizes a horizontal layout with `horizontalSizing: "FILL"` for full-width image display. Subsequent sections (title/price, seller info, description, button) are vertically stacked with appropriate padding for readability and visual separation.  Consistent spacing of 16 pixels is used between sections.
+
+3. **User Flow Reasoning:** The user flow prioritizes quick review of key product information (images, title, price) before diving into details.  The seller's profile and rating build trust, while the description provides comprehensive details.  The prominent "Contact Seller" button encourages interaction.
+
+4. **Component Choices:**  I chose `native-rectangle` with `"fill": {"type": "IMAGE"}` for product image display because there is no dedicated image component in the Design System which would allow multiple images. Although `10:7816` (IMAGES) is suggested for this role, this component will not enable image carousel capabilities. Other components were not suitable as alternatives.  For the "Contact Seller" button I have chosen `10:3907` (Button) in the "Medium", "Filled", "Green" variants.  This provides a clear call to action.
+
+5. **Component Gaps:** The design system lacks components for a multi-image carousel and a rating display. To solve the multi-image carousel gap, I use a `native-rectangle` as a placeholder which in a full-fledged implementation would have an image carousel component.  For ratings, I used `native-text` to display the numerical rating and number of reviews. This provides a functional workaround to present essential information.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the size and position of elements. The hero image section dominates the top, followed by the title and price.  Seller information and description have a lesser visual weight, placed below with clear visual dividers.
+
+7. **Variant Selection Rationale:** For the "Contact Seller" button (`10:3907`), I selected "Medium" size for optimal mobile usability, "Filled" style for clear visual prominence, and "Green" color for positive connotation. Other style options like "outlined" were less suited for a primary action.
+
+8. **Native Element Justification:** The carousel and rating display requirements cannot be satisfied with the available components.  `native-rectangle` elements with image fills act as placeholders for the image carousel, while `native-text` displays the rating information effectively. This approach maintains a consistent look while enabling required functionality.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "height": 200,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Title and Price",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 4,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2023 MacBook Pro 14\"",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "leading"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "₦1,200,000",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50",
+              "alignment": "leading"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Info",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7773",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "4.8 (123 Reviews)",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "leading"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Description",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Like new condition, only used for a month. Full specs below...",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "leading"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

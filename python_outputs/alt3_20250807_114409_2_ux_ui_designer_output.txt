@@ -1,0 +1,146 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been manually checked against the provided `DESIGN_SYSTEM_DATA` JSON.  No invented component IDs were used.
+
+2. **Layout Decisions:** The layout uses a vertical, mobile-first approach. The screen is divided into distinct sections: Hero Image Section (multiple images in a scrollable container), Product Details Section (title, price, condition), Seller Profile Section (avatar, rating), Description Section, and Action Section (Contact Seller button).  Spacing between sections is 16px, and internal padding within sections is 16px for consistency and readability.
+
+3. **User Flow Reasoning:** The user flow prioritizes information hierarchy, placing the most crucial details (images, title, price) at the top.  The description follows, giving users context.  The seller profile and contact button are readily accessible. The visual hierarchy guides the user through the information.
+
+4. **Component Choices:**  The `product card` component (ID: 147:3743) was considered for its potential to encapsulate product details, but  it doesn't meet the multi-image gallery requirement and seller rating. This necessitated a customized approach.
+
+5. **Component Gaps:** The design system lacks a dedicated image gallery component and a star rating component.  For the image gallery, I use a `layoutContainer` with `layoutMode: "HORIZONTAL"` and `layoutWrap: "WRAP"` to create a horizontally scrolling gallery.  For the star rating, I will use multiple `native-circle` components to represent stars.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through size, position, and color. The hero images are prominent at the top.  Headings use larger text sizes, and body text is smaller.  Primary colors are used sparingly for emphasis on key calls to action.
+
+7. **Variant Selection Rationale:**  For the "Contact Seller" button (`10:3907`), I use the `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, and `Color: "Green"` variants to ensure consistency and clear visual cue.
+
+8. **Native Element Justification:** The lack of a dedicated image gallery and star rating component necessitated the use of `native-rectangle` (for images, using image fills) and `native-circle` (for stars in the rating system).
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Detail - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Image Section",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 4,
+        "paddingTop": 0, "paddingBottom": 16, "paddingLeft": 0, "paddingRight": 0,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {"type": "native-rectangle", "properties": {"width": 180, "height": 120, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+          {"type": "native-rectangle", "properties": {"width": 180, "height": 120, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+          {"type": "native-rectangle", "properties": {"width": 180, "height": 120, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}}
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Details Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {"type": "native-text", "properties": {"content": "Used Dell XPS 15", "textStyle": "Title/Large", "color": "Neutral/neutral90", "horizontalSizing": "FILL"}},
+          {"type": "native-text", "properties": {"content": "₦ 800,000", "textStyle": "Headline/Medium", "color": "Primary/primary50", "horizontalSizing": "FILL"}}
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Profile Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 0, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "START",
+        "items": [
+          {"type": "native-rectangle", "properties": {"width": 48, "height": 48, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+          {"type": "native-text", "properties": {"content": "John Doe", "textStyle": "Label/Medium", "color": "Neutral/neutral90", "horizontalSizing": "AUTO"}},
+          {
+            "type": "layoutContainer",
+            "name": "Rating",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 2,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 8, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "AUTO",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {"type": "native-circle", "properties": {"width": 12, "height": 12, "fill": "Primary/primary50"}},
+              {"type": "native-circle", "properties": {"width": 12, "height": 12, "fill": "Primary/primary50"}},
+              {"type": "native-circle", "properties": {"width": 12, "height": 12, "fill": "Primary/primary50"}},
+              {"type": "native-circle", "properties": {"width": 12, "height": 12, "fill": "Primary/primary50"}},
+              {"type": "native-circle", "properties": {"width": 12, "height": 12, "fill": "Neutral/neutral50"}}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Description Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {"type": "native-text", "properties": {"content": "Excellent condition, barely used.  Comes with original box and charger.", "textStyle": "Body/Medium", "color": "Neutral/neutral50", "horizontalSizing": "FILL"}}
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 32, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            "textLayers": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,175 @@
+```json
+SECTIONS:
+1. gallery: Contains a carousel of product images (image1.jpg, image2.jpg, image3.jpg) to showcase the laptop from multiple angles. This is crucial for used goods to highlight condition.
+2. essentials: Displays the laptop's title ("Dell XPS 13 9310 - Used Laptop"), price ($850.00), and condition ("Excellent - Minor scuffs...").  Provides key information for purchase decisions.
+3. seller: Shows seller profile information (John Smith, Member since 2018, 4.9 rating, 125 reviews) to build trust and allow buyers to assess seller reliability.  Includes a "Contact Seller" button for direct communication.
+
+```
+
+```json
+DESIGN RATIONALE:
+1. Component Inventory Verification: I have verified all component references against the provided design system data.
+2. Section Planning: The section blueprint follows the E-commerce pattern: gallery → essentials → seller → (potential future sections: reviews, related). This structure prioritizes visual appeal, key information, and seller credibility, aligning with user expectations for a used laptop listing.
+3. Layout Decisions: The layout employs a vertical layout, placing the gallery at the top for immediate visual impact.  Essentials and seller information follow in vertically stacked sections, providing a clear, sequential flow. The "Contact Seller" button is prominently placed within the seller section. Level 1 containers use `horizontalSizing: "FILL"` for full width.
+4. User Flow Reasoning:  The user flow is designed to be linear and efficient:  (1) View attractive images of the laptop; (2) quickly grasp essential details (price, condition); (3) assess seller reputation; (4) contact the seller directly. This minimizes friction and encourages interaction.
+5. Component Choices: I chose the `IMAGES` component (id: 10:7816) for the image gallery because it supports multiple images, offering a superior user experience compared to a single static image.  I would have chosen a carousel component if one were available. For the seller section, I will use native elements to achieve the needed layout and styling options.
+6. Component Gaps: The design system lacks a carousel component for the image gallery.  I created a workaround using the `IMAGES` component (id: 10:7816, variant: "2+ images") combined with a native-rectangle as a placeholder for the images. This allows for a visual showcase with clear image display while respecting API limitations. A dedicated seller rating component is missing.  A workaround will be implemented using native elements for the seller's rating and review count.  
+7. Visual Hierarchy: Visual hierarchy is established using image prominence at the top, followed by larger text sizes for title and price.  Seller information uses a slightly smaller text size to indicate secondary importance. The "Contact Seller" button uses a distinct color to serve as a clear primary action.
+8. Variant Selection Rationale: For the "Contact Seller" button, I will use the `Button` component (id: 10:3907) with variant `Type: "Filled"` and `Color: "Green"` because this is a clear and common pattern for primary actions in e-commerce settings.  Other variants would be less suitable, as a text button would be less visible.
+9. Native Element Justification:  The design system lacks components for seller profile display and organization.   Native `native-text` elements with appropriate text styles from the design system are used to present the seller's name, membership duration, and rating. This approach effectively meets the functional requirements within the constraints of the given design system.
+
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:7816",
+            "variants": {
+              "Type": "2+ images"
+            },
+            "items": [
+              {"type": "native-rectangle", "properties": {"fill": {"type": "IMAGE", "url": "image1.jpg"}, "horizontalSizing": "FILL"}},
+              {"type": "native-rectangle", "properties": {"fill": {"type": "IMAGE", "url": "image2.jpg"}, "horizontalSizing": "FILL"}},
+              {"type": "native-rectangle", "properties": {"fill": {"type": "IMAGE", "url": "image3.jpg"}, "horizontalSizing": "FILL"}}
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Dell XPS 13 9310 - Used Laptop",
+                  "textStyle": "Title/Large",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "$850.00",
+                      "textStyle": "Headline/Medium",
+                      "color": "Primary/primary50"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Listed 3 days ago",
+                      "textStyle": "Label/Small",
+                      "color": "Neutral/neutral50"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Excellent - Minor scuffs on the bottom casing, otherwise in pristine condition. Fully functional.",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Intel Core i7-1165G7, 16GB RAM, 512GB SSD, 13.4-inch FHD+ display",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Includes original charger.",
+                  "textStyle": "Body/Small",
+                  "color": "Neutral/neutral50"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7773",
+                "variants": {
+                  "Photo": "Yes"
+                },
+                "properties": {
+                  "fill": {"type": "IMAGE", "url": "seller_image.jpg"}
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "VERTICAL",
+                "items":[
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "John Smith",
+                      "textStyle": "Title/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Member since 2018. 4.9 average rating (125 reviews)",
+                      "textStyle": "Label/Small",
+                      "color": "Neutral/neutral50"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

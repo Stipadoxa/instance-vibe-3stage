@@ -1,0 +1,239 @@
+﻿ERROR 1: "no setter for property"
+  Trigger Pattern:
+  - Native elements (native-rectangle) incorrectly used as containers with items array
+  - Missing width property when native element has children
+  Example:
+  {
+    "type": "native-rectangle",
+    "properties": {
+      "height": 100,
+      "cornerRadius": 8,
+      "fill": {"type": "SOLID", "color": {...}},
+      "items": [
+        {"type": "native-text", "properties": {...}}
+      ]
+    }
+    // Missing: "width" property
+  }
+  Fix:
+  Convert to proper layoutContainer structure:
+  {
+    "type": "layoutContainer",
+    "layoutMode": "VERTICAL",
+    "horizontalSizing": "FILL",
+    "backgroundColor": "...",
+    "cornerRadius": 8,
+    "items": [...]
+  }
+  ---
+  ERROR 2: Text style resolution error
+  Trigger Pattern:
+  - String-based textStyle references to design tokens
+  - Design system tokens not properly resolved
+  Example:
+  {
+    "type": "native-text",
+    "properties": {
+      "content": "Label Text",
+      "textStyle": "Label/Medium"  // String reference
+    }
+  }
+  Fix:
+  Use explicit object format:
+  {
+    "type": "native-text",
+    "properties": {
+      "content": "Label Text",
+      "textStyle": {
+        "fontSize": 14,
+        "fontWeight": 400
+      }
+    }
+  }
+  ---
+  ERROR 3: Layout sizing conflicts
+  Trigger Pattern:
+  - Using layoutAlign: "STRETCH" without proper parent sizing definition
+  - Missing horizontalSizing or width on parent containers
+  Example:
+  {
+    "type": "layoutContainer",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "layoutAlign": "STRETCH"  // Parent has no sizing defined
+        }
+      }
+    ]
+  }
+  Fix:
+  Define parent container sizing:
+  {
+    "type": "layoutContainer",
+    "horizontalSizing": "FILL",  // or explicit width
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "layoutAlign": "STRETCH"
+        }
+      }
+    ]
+  }
+
+
+
+
+
+
+
+
+  ERROR 2: "Error resolving text style '[object Object]': not a function"
+  Trigger Pattern:
+  - Using string-based textStyle references (design tokens) combined with individual style properties
+  - Mixed style definition approach causing conflicts
+  Example:
+  {
+    "type": "native-text",
+    "properties": {
+      "content": "Total Listings",
+      "textStyle": "Label/Medium",  // String reference to design token
+      "textColor": "Neutral/neutral50",
+      "fontSize": 14,              // Individual property conflicts with textStyle
+      "fontWeight": 400            // Individual property conflicts with textStyle
+    }
+  }
+  Problem:
+  The renderer attempts to resolve the textStyle string reference "Label/Medium" as a design token, but when it can't find the token
+  definition or the resolution function fails, it returns [object Object] which then causes the "not a function" error.
+  Working Pattern:
+  Choose ONE approach - either string references OR individual properties:
+  Option 1 - String References Only:
+  {
+    "type": "native-text",
+    "properties": {
+      "content": "Total Listings",
+      "textStyle": "Label/Medium",     // Only string reference
+      "textColor": "Neutral/neutral50" // Color can be separate
+    }
+  }
+  Option 2 - Individual Properties Only:
+  {
+    "type": "native-text",
+    "properties": {
+      "content": "Total Listings",
+      "textStyle": {                   // Object with explicit properties
+        "fontSize": 14,
+        "fontWeight": 400
+      },
+      "textColor": "Neutral/neutral50"
+    }
+  }
+  Fix:
+  Remove the conflicting individual style properties when using string textStyle references, or convert string references to explicit
+  object definitions.
+⏺ Update Todos
+  ⎿  ☒ Analyze 'Error resolving text style [object Object]: not a function' error pattern
+     ☒ Find JSONs that cause text style resolution errors
+     ☒ Identify common patterns in text style failures
+     ☒ Document specific JSON structures and fixes for text style errors
+     ☒ Create detailed analysis for text style error
+⏺ Key findings for this error:
+  1. The error occurs when mixing string-based textStyle references with individual style properties
+  2. Working JSONs consistently use only string references without conflicting individual properties
+  3. The design token resolution fails when there are conflicting property definitions
+  4. Critical insight: The failing JSONs have both "textStyle": "Label/Medium" AND "fontSize": 14, "fontWeight": 400 - this dual
+  definition causes the resolver confusion
+
+
+
+
+ERRO3: "Uncaught InvalidStateError: The source image could not be decoded"
+  Trigger Pattern:
+  - NOT a JSON structure issue - both working and failing JSONs use identical IMAGE fill syntax
+  - Runtime error caused by corrupted hardcoded PNG placeholder data in the renderer
+  - Occurs when the renderer attempts to create placeholder images for IMAGE fills without imageUrl
+  Example:
+  {
+    "type": "native-rectangle",
+    "properties": {
+      "width": 48,
+      "height": 48,
+      "fill": {
+        "type": "IMAGE",         // This structure is correct
+        "scaleMode": "FILL"      // This structure is correct
+      }
+    }
+  }
+  Problem:
+  The issue is NOT in the JSON but in the renderer's hardcoded PNG bytes at figma-renderer.ts:672-683. The placeholder image creation
+  fails because:
+  1. Corrupted PNG data - The hardcoded checkered pattern bytes are malformed
+  2. Figma's image decoder rejects the invalid PNG
+  3. Error throws before fallback gray fill can execute
+  Working vs Failing:
+  - Same JSON structure works sometimes and fails other times
+  - Non-deterministic - depends on execution path and when placeholder creation is triggered
+  - Files with IMAGE fills may randomly succeed or fail based on runtime conditions
+  Fix:
+  The solution is NOT in changing JSON structure, but in fixing the renderer code:
+  Option 1 - Fix PNG Data:
+  // Replace corrupted PNG bytes with valid minimal PNG
+  const validCheckeredPattern = new Uint8Array([/* valid PNG bytes */]);
+  Option 2 - Skip Image Creation (Recommended):
+  // Use solid fill placeholder instead of PNG image
+  if (!fillData.imageUrl) {
+    element.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.9, b: 0.9 } }];
+    return;
+  }
+  Key Insight: This error is a runtime PNG processing bug, not a JSON schema validation error. The JSON structure is correct - the
+  renderer's image handling is broken.
+⏺ Update Todos
+  ⎿  ☒ Analyze 'Uncaught InvalidStateError: The source image could not be decoded' error pattern
+     ☒ Find JSONs that cause image decode errors
+     ☒ Identify common patterns in image decode failures
+     ☒ Document specific JSON structures and fixes for image decode errors
+     ☒ Create detailed analysis for image decode error
+⏺ That concludes the analysis of the third major error type. The key finding is that unlike the first two errors which were JSON
+  structure issues, this image decode error is actually a renderer bug where the hardcoded PNG placeholder data is corrupted, causing
+  runtime failures that are not related to the JSON structure at all.
+
+
+
+
+
+
+Non-Fatal Errors Analysis
+  ERROR 1: "Fetch API cannot load http://localhost:8002/api/screenshot-request. Refused to connect because it violates the document's 
+  Content Security Policy."
+  ERROR 2: "Refused to connect to '' because it violates the following Content Security Policy directive: 'default-src data: blob:  '. 
+  Note that 'connect-src' was not explicitly set, so 'default-src' is used as a fallback."
+  Analysis:
+  These are Content Security Policy (CSP) violations caused by attempted HTTP requests to a screenshot service that no longer exists or
+  is inaccessible.
+  Root Cause:
+  - Legacy screenshot functionality - The renderer is trying to connect to http://localhost:8002/api/screenshot-request
+  - CSP blocking - Figma's security policy blocks HTTP connections to localhost
+  - Broken/removed service - The screenshot API endpoint doesn't exist or isn't running
+  Why They Don't Affect Rendering:
+  - These are background fetch requests that fail silently
+  - The main rendering logic continues normally
+  - Screenshot functionality is optional/auxiliary - not core to UI generation
+  Pattern:
+  - ALL test files exhibit these errors - indicating it's a system-wide issue
+  - Non-blocking - rendering completes successfully despite the failed requests
+  - Network-related - not JSON structure or rendering logic issues
+  Likely Cause:
+  You're absolutely right - this appears to be old broken functionality where:
+  1. The renderer previously had a screenshot feature
+  2. It made HTTP requests to a local screenshot service
+  3. That service was removed/disabled but the code still attempts the requests
+  4. Figma's CSP now blocks these localhost connections for security
+  Fix Recommendations:
+  1. Remove the screenshot request code from the renderer
+  2. Update CSP to allow localhost connections if screenshot functionality is needed
+  3. Add conditional logic to skip screenshot requests in production
+  4. Clean up dead code related to the screenshot service
+  These errors confirm the existence of legacy code that should be cleaned up - they're harmless but indicate unused/broken functionality
+   still being executed.

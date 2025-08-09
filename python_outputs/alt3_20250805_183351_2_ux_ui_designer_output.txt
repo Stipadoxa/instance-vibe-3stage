@@ -1,0 +1,100 @@
+**DESIGN RATIONALE**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout utilizes a vertical `layoutContainer` as the root, providing a clear top-to-bottom flow of notification settings.  Each notification type is represented as a separate `listItem` within a `layoutContainer`, creating a scrollable list.  A consistent vertical spacing of 16 pixels is used between list items to ensure readability and visual separation. The `horizontalSizing` property is not used for list items, allowing them to naturally size to fit their content.
+
+3. **User Flow Reasoning:** The user will scroll through the list of notification types.  Each list item presents the notification type (text label) alongside a toggle switch. Toggling the switch changes the notification setting, directly reflecting the visual state (on/off).  No explicit save button is needed as changes are assumed to be saved implicitly.
+
+4. **Component Choices:** I chose the `listItem` (ID: 10:10214) component for each notification setting. I considered using a `layoutContainer` with individual text and switch components, but the `listItem` is more semantically appropriate for this list-based structure and provides a more visually integrated presentation. The built-in `Leading` and `Trailing` variants of the `listItem` simplify component composition.  
+
+5. **Component Gaps:** The design system lacks a pre-built notification settings component.  However, the combination of the `listItem` (ID: 10:10214), using the `Leading` variant as "Switch" and the `switch` component (ID: 10:9912) for each notification item effectively meets the requirements, providing a consistent and user-friendly interface.
+
+
+6. **Visual Hierarchy:** The visual hierarchy is established through clear labeling and consistent spacing. The notification type label in each list item has primary text styling for prominence. The toggle switch, placed next to the label, provides immediate visual feedback for the current state (on/off).
+
+
+7. **Variant Selection Rationale:** For the `listItem` component, I chose `Leading: Switch` to directly integrate the toggle switch into the list item's structure, which is more intuitive than using a separate container for each toggle.  The `Condition: 2-line` variant accommodates both the notification type label and a brief description.
+
+
+8. **Native Element Justification:**  No native elements were necessary, as all functional requirements could be met using the existing components in the design system.
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "listItem",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": "Push Notifications",
+          "Supporting text": "Receive push notifications for important updates."
+        }
+      },
+      {
+        "type": "listItem",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": "Email Alerts",
+          "Supporting text": "Receive email notifications for important updates."
+        }
+      },
+      {
+        "type": "listItem",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": "SMS Updates",
+          "Supporting text": "Receive SMS notifications for important updates."
+        }
+      },
+      {
+        "type": "listItem",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": "Promotional Offers",
+          "Supporting text": "Receive notifications about promotional offers and discounts."
+        }
+      }
+    ]
+  }
+}
+```

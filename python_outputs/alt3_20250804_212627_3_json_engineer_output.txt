@@ -1,0 +1,141 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "name": "Hero Image",
+      "properties": {
+        "horizontalSizing": "FILL",
+        "height": 200,
+        "fill": {
+          "type": "IMAGE",
+          "scaleMode": "FILL"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "name": "Product Title",
+      "properties": {
+        "content": "Refurbished Dell XPS 13",
+        "textStyle": "Title/Large",
+        "color": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "name": "Price",
+      "properties": {
+        "content": "₦850,000",
+        "textStyle": "Title/Medium",
+        "color": "Primary/primary50",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Condition Details",
+      "layoutMode": "VERTICAL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": true,
+            "Show supporting text": true
+          },
+          "properties": {
+            "Overline": "Condition",
+            "Headline": "Excellent",
+            "Supporting text": "Minor scratches on the casing",
+            "Trailing supporting text": ""
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Seller Profile",
+      "layoutMode": "HORIZONTAL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7773",
+          "variants": {
+            "Photo": "Yes"
+          }
+        },
+        {
+          "type": "native-text",
+          "name": "Seller Name & Rating",
+          "properties": {
+            "content": "John Doe  ⭐⭐⭐⭐ (4.5)",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "native-text",
+      "name": "Description",
+      "properties": {
+        "content": "This is a refurbished Dell XPS 13 laptop in excellent condition. It features...",
+        "textStyle": "Body/Medium",
+        "color": "Neutral/neutral50",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Medium",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Contact Seller"
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,104 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs referenced below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to present information in a clear, sequential manner.  The `itemSpacing` is set to 16 for comfortable visual breathing room between elements.  Padding is applied to the inner containers to prevent content from feeling cramped against the edges.  All input fields and the login button utilize `horizontalSizing: "FILL"` to ensure they span the full width of their container, providing a clean and modern look.
+
+3. **User Flow Reasoning:** The user flow is straightforward:  the user enters their email, enters their password, and then taps the login button. If they forget their password, they can tap the "Forgot password?" link to initiate the password reset flow.  This aligns with standard login screen best practices for ease of use.
+
+4. **Component Choices:**
+    - **Input Fields:** I chose `"type": "component", "id": "10:8492"` (text input) for both email and password fields because it provides built-in placeholder text, error handling (if needed later), and a consistent look and feel with other inputs in the app. I considered using `"type": "native-text"` for simpler text inputs but chose the component for better user experience and design system compliance.  I considered `"type": "component", "id": "10:8619"` (text area), but this is unsuitable for single-line inputs.
+
+    - **Login Button:** I selected `"type": "component", "id": "10:3907"` (Button) for the login button due to its versatile variants (size, type, color, and state).  I considered a simple `native-rectangle`, but the button component offers better accessibility and visual feedback during interaction.
+
+    - **Forgot Password Link:** I used `"type": "native-text"` to create the "Forgot password?" link since a dedicated component doesn't exist. This allows for straightforward text styling, and it remains visually consistent with other text elements.
+
+5. **Component Gaps:** The design system lacks a dedicated "password visibility toggle" component within the input field. To address this, I've incorporated a `"type": "component", "id": "635:4518"` (eye icon) within the password input field's trailing section and will handle the visibility toggle using native functionality. This provides a standard and recognizable way for users to control password visibility while adhering to the overall design system.
+
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through typography and spacing.  The email and password labels use a consistent label text style for clarity.  The login button is visually prominent due to its size and color, guiding the user's focus. The "Forgot password?" link has a smaller, less prominent style to maintain hierarchy.
+
+7. **Variant Selection Rationale:** For the login button, I chose the following variants: `"variants": { "State": "Default", "Size": "Medium", "Type": "Filled", "Color": "Green"}`. A medium-sized filled button is considered optimal for mobile screens, and green is associated with positive actions, clearly indicating the login function. The default state is used unless the user interacts with the button.
+
+8. **Native Element Justification:** The "Forgot password?" link requires an interactive underline to indicate its clickability; this functionality isn't directly supported by any of the design system components.  Thus, I employed a `"type": "native-text"` element with a custom style (underline) to create this functionality effectively.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32, "paddingBottom": 32, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "properties": {
+          "placeholder-text": "Email Address",
+          "label-text": "Email Address"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Password",
+              "label-text": "Password"
+            }
+          },
+          {
+            "type": "component",
+            "id": "635:4518",
+            "variants": {
+              "style": "visible"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "State": "Default",
+          "Size": "Medium",
+          "Type": "Filled",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Login"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Forgot password?",
+          "textStyle": "Body/Small",
+          "color": "Neutral/neutral50",
+          "underline": true,
+          "alignment": "center",
+          "horizontalSizing": "FILL"
+        }
+      }
+    ]
+  }
+}
+```

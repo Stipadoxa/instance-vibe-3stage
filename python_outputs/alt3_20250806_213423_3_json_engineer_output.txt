@@ -1,0 +1,158 @@
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "layoutContainer": {
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "name": "CraftMart Logo",
+            "properties": {
+              "width": 150,
+              "height": 150
+            }
+          }
+        ]
+      }
+    },
+    {
+      "layoutContainer": {
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-text",
+            "name": "Login Title",
+            "properties": {
+              "content": "Welcome back to CraftMart!",
+              "textStyle": "Title/Medium"
+            }
+          },
+          {
+            "type": "native-text",
+            "name": "Login Description",
+            "properties": {
+              "content": "Sign in to access your saved items, orders, and seller dashboard.",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "layoutContainer": {
+              "layoutMode": "VERTICAL",
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "10:8492",
+                  "properties": {
+                    "label-text": "Email Address",
+                    "placeholder-text": "your.email@example.com",
+                    "variants": {
+                      "Type": "Filled",
+                      "State": "enabled"
+                    }
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:8492",
+                  "properties": {
+                    "label-text": "Password",
+                    "placeholder-text": "********",
+                    "variants": {
+                      "Type": "Filled",
+                      "State": "enabled"
+                    }
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:3907",
+                  "properties": {
+                    "Action": "Sign In",
+                    "variants": {
+                      "Type": "Filled",
+                      "Size": "Large",
+                      "Color": "Green",
+                      "State": "Default"
+                    }
+                  }
+                },
+                {
+                  "type": "native-text",
+                  "name": "Forgot Password Link",
+                  "properties": {
+                    "content": "Forgot Password?",
+                    "textStyle": "Body/Small",
+                    "color": "Neutral/neutral50"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "layoutContainer": {
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-text",
+            "name": "Create Account Link",
+            "properties": {
+              "content": "Create Account",
+              "textStyle": "Body/Small",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "native-text",
+            "name": "Terms of Service",
+            "properties": {
+              "content": "Terms of Service",
+              "textStyle": "Body/Small",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "native-text",
+            "name": "Privacy Policy",
+            "properties": {
+              "content": "Privacy Policy",
+              "textStyle": "Body/Small",
+              "color": "Neutral/neutral50"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```

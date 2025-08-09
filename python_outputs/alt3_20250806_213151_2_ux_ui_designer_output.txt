@@ -1,0 +1,145 @@
+SECTIONS:
+
+logo: Contains the CraftMart logo to reinforce brand identity and provide a visual anchor for the login screen.
+
+form: Contains email and password input fields, a login button (primary CTA), and a "forgot password" link (secondary action) for user authentication.  This is the core functional section of the login screen.
+
+links: Includes a "Create Account" link to guide new users to the signup process, aligning with user flow.
+
+
+DESIGN RATIONALE:
+
+Component Inventory Verification: I have verified all component references against the provided design system data.
+
+Section Planning: The login screen follows the "Login" page type pattern from the User Request Analyzer, prioritizing the form section for authentication.  The logo is placed at the top for brand reinforcement, and links are provided at the bottom to direct users to either create an account or reset their password.
+
+Layout Decisions:  The layout is vertical, placing the logo at the top (Level 1 container with top padding), the form in the center (Level 1 container with padding), and the links at the bottom (Level 1 container with bottom padding).  All Level 1 containers use `"horizontalSizing": "FILL"` to span the full width (414px). Internal elements within the form and links sections are Level 2+ containers and will auto-size. Root container padding is 0, preventing API errors.
+
+User Flow Reasoning: The user flow is straightforward. The user first sees the logo, then focuses on the form to input their credentials, and finally has options to either log in or create an account/reset password.
+
+Component Choices: I chose the "Button" component (id: "10:3907") for the login button because it provides a clear, interactive element for the primary action. I chose the "InputFields" component (id: "10:8492") for the email and password fields, as it's the dedicated component for user input.  I chose the "Links" component for navigation to signup and forgot password.
+
+Component Gaps: The request does not require any functionality that is not present within the design system.
+
+Visual Hierarchy: The visual hierarchy is established using size and color. The login button is visually prominent due to its size and primary color. The "forgot password" and "create account" links are secondary in prominence with smaller text and underline style. The logo holds visual weight but is subordinate to the primary task.
+
+Variant Selection Rationale: I selected the "filled" style for the primary "Sign In" button to give it clear visual prominence, and the "text" style for the secondary "Create Account" button. The "outlined" style is chosen for both input fields for clarity and consistency with the design system.  I selected the "underline" style for links for conventional visual representation of hyperlinks.  The size of the buttons and links are set to be appropriate within the provided component options.
+
+Native Element Justification: No native elements are used as all required elements are available as components within the provided Design System.
+
+
+DESIGN SPECIFICATION:
+
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "text": "CraftMart",
+          "textStyle": "Headline/Large",
+          "color": "Neutral/neutral90"
+        }
+      },
+      {
+        "layoutContainer": {
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "horizontalSizing": "FILL",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "label-text": "Email Address",
+                "placeholder-text": "youremail@example.com",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "label-text": "Password",
+                "placeholder-text": "********",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Sign In",
+                "variants": {
+                  "Type": "Filled",
+                  "Size": "Medium",
+                  "Color": "Primary/primary50",
+                  "State": "Default"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "label-text": "Forgot password?",
+                "variants": {
+                  "Type": "text",
+                  "State": "enabled"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "layoutContainer": {
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "horizontalSizing": "FILL",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Create Account",
+                "variants": {
+                  "Type": "Text",
+                  "Size": "Small",
+                  "Color": "Primary/primary50",
+                  "State": "Default"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```

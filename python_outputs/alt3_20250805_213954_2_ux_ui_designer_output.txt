@@ -1,0 +1,175 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical scrolling approach.  The top section features a full-width image gallery (`horizontalSizing: "FILL"`) for showcasing the laptop's photos. Below this, a vertical container (`layoutMode: "VERTICAL"`) houses the product title, price, condition details, seller profile (including a star rating implemented using individual star icons from the design system), product description, and finally, a "Contact Seller" button.  Padding (`paddingTop`, `paddingBottom`, `paddingLeft`, `paddingRight`) is applied to the Level 1 containers to create visual breathing room around content elements. The `itemSpacing` property is used to space out elements vertically within the Level 1 and 2 container.
+
+3. **User Flow Reasoning:** The user first sees an appealing gallery of the laptop. Key information (title and price) is presented prominently below. Condition details and seller profile build trust and provide relevant context.  The description gives more specific details, and a clear "Contact Seller" button encourages direct interaction.  All interactive elements are designed with clear visual cues, following established patterns.
+
+4. **Component Choices:** I chose the `10:7816` (`IMAGES`) component for the image gallery over using multiple individual native-rectangles because it provides a consistent, well-tested image carousel experience.  I chose `10:3907` (`Button`)  for the "Contact Seller" button over using a native-rectangle because this ensures it is styled according to the design system and provides standard touch target sizes for better usability.  For the seller's rating, I'm using multiple instances of `635:4752` (`icon/star`) component, instead of a custom rating bar.
+
+5. **Component Gaps:** The user request requires a dedicated "image gallery" component, but the design system lacks a single, dedicated component for this functionality. To address this gap, I leveraged the `10:7816` (`IMAGES`) component, which provides a satisfactory image display functionality, albeit with limitations compared to a fully-featured image gallery.  This allows multiple images to be shown while still remaining within design system guidelines. The description uses the `10:8619` (`text area`) component for multiline text input.
+
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the use of size, spacing and typography. The product title and price are the largest and most prominent elements, followed by the images.  The seller's profile and condition details are visually distinct but less prominent than the primary information.  The description sits below, providing more in-depth context.
+
+7. **Variant Selection Rationale:** For the Button (`10:3907`), I selected the `Filled` type and `Green` color to visually highlight the call to action. This is chosen over `Outlined` or `Text` because it provides a more prominent and clear call to action.
+
+8. **Native Element Justification:**  The user request for a star rating component doesn't directly match any component provided.  Therefore, I chose to implement the star rating using multiple instances of the  `635:4752` (`icon/star`) component from the Design System. This allows for a visually appealing and intuitive representation of the seller's rating. This satisfies the requirement while remaining aligned to the Design System.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "component",
+        "componentNodeId": "10:7816",
+        "variants": {
+          "Type": "2+ images"
+        },
+        "horizontalSizing": "FILL"
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2023 MacBook Pro 16\"",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$1200",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Excellent Condition",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7773",
+                "variants": {
+                  "Photo": "Yes"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "John Doe",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 2,
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "635:4752",
+                    "variants": {
+                      "Star": "half"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8619",
+            "variants": {
+              "Platform": "Android+Web",
+              "Type": "Filled",
+              "State": "Enabled"
+            },
+            "properties": {
+              "label-text": "Description"
+            },
+            "horizontalSizing": "FILL"
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

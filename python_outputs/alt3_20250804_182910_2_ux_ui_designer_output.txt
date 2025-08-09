@@ -1,0 +1,128 @@
+**DESIGN RATIONALE**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The profile page uses a vertical layout (`layoutMode`: "VERTICAL").  The top section contains the user's profile picture (using an avatar component) and name, arranged horizontally. Below this, the email address is displayed followed by a horizontal divider (`10:8459`). The order history is presented as a list using the `10:10214` list item component. Each order in the list displays relevant details such as date, items, and total. Finally, an "Edit Profile" button (`10:3907`), styled as a primary button is placed at the bottom.  Consistent spacing of 16 pixels is used between sections. Full-width elements utilize `"horizontalSizing": "FILL"` where appropriate (not applicable for all components).
+
+3. **User Flow Reasoning:** The user flow is straightforward. Users see their profile information at a glance. The "Edit Profile" button leads to a separate screen to modify the details, enabling a clean and focused experience on this primary view.
+
+4. **Component Choices:**
+    * **Avatar:** I chose `10:7773` (avatar / big) over `10:7798` (avatar / single) and `24:10352` (avatar  / stack) because it allows for a larger profile picture, consistent with typical user profile pages. The `Photo` variant is set to "Yes".
+    * **List Item:** I chose `10:10214` (List item) for the order history because it provides a structured way to display multiple orders with headline (order summary) and supporting text (details) sections.  Variants used are tailored to present two lines of information (Condition: "2-line")
+    * **Button:** I chose `10:3907` (Button) for "Edit Profile" because it is a clear and universally understood call to action. The `Type` variant is set to "Filled" and the `Size` variant to "Medium", and `Color` to "Green"  for visual prominence.
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying user profile information holistically. Therefore, I combined existing components (`10:7773`, `10:10214`, `10:3907`, `native-text`) to achieve this functionality. This approach maintains a consistent visual style while effectively presenting the required information.  A dedicated Order History component would have been ideal, however, this current solution allows for expansion and better customization.
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through size and placement. The name and avatar are prominent at the top.  The email address follows, then the order history is separated by a divider to enhance visual distinction. The "Edit Profile" button is placed at the bottom, and is colored green, improving it's visual prominence.
+
+7. **Variant Selection Rationale:**  Variant choices are detailed in section 4.  These selections ensure clarity, consistency and appropriate size for mobile and desktop layouts.
+
+8. **Native Element Justification:**  `native-text` elements were utilized to display the user's name and email address. While a text component might seem appropriate, the direct use of `native-text` allows for precise control over text style to ensure it is visually distinct and prominent on the screen without needing to introduce additional components.
+
+
+
+**DESIGN SPECIFICATION**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "layoutContainer": {
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "id": "10:7773",
+              "variants": {
+                "Photo": "Yes"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Jane Doe",
+                "textStyle": "Headline/Medium",
+                "color": "Neutral/neutral90"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "jane.doe@example.com",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Order #1234",
+              "Supporting text": "Date: 2023-10-26, Items: 2, Total: $50.00"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Order #5678",
+              "Supporting text": "Date: 2023-11-15, Items: 1, Total: $25.00"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Edit Profile"
+        }
+      }
+    ]
+  }
+}
+```

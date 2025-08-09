@@ -1,0 +1,268 @@
+SECTIONS:
+
+gallery: This section displays multiple product images using the `IMAGES` component (id: `10:7816`).  It allows users to quickly assess the laptop's visual condition and features.  This fulfills the "multiple product photos" requirement from the user request and aligns with the `gallery` section of the E-commerce pattern.
+
+essentials: This section presents core product details. It uses `native-text` elements for the title and price (from "primary" and "data" in the JSON input), and `10:10214` List item components for the remaining specifications (processor, RAM, storage, etc., from the "data" array in the JSON input). This satisfies the "title, price, condition details" aspects of the user request and maps to the `essentials` section of the E-commerce pattern.
+
+purchase:  This section contains the primary call to action using a `Button` component (id: `10:3907`). The "primary" action from the JSON input ("Contact Seller") will populate the `Action` property. A secondary button ("Make Offer" from the JSON input) can also be included here, possibly using another instance of the `Button` component.  This section addresses the "contact seller button" and optional "Make Offer" from the user request, aligning with the `purchase` section of the E-commerce pattern.
+
+seller:  This section displays seller information.  A `native-rectangle` element with an `IMAGE` fill displays the seller's profile picture.  `native-text` displays the seller's name, details (Member since..., ratings), and rating, drawn from the "users" array in the JSON input. This fulfills the "seller profile with rating" requirement from the user request and adheres to the `seller` section of the E-commerce pattern.
+
+description: This section shows the product description using the `10:8619` text area component. The content from the "description" field in the JSON input will populate the "label-text" property. This satisfies the "description" requirement from the user request.  It's not strictly a section in the standard E-commerce pattern but is a crucial part of the product detail page.
+
+
+DESIGN RATIONALE:
+
+Component Inventory Verification: I have verified all component references against the provided design system data.
+
+Section Planning: The page is structured according to the e-commerce pattern: gallery, essentials, purchase, seller, and a dedicated description section. This layout prioritizes visual information first, followed by key product details, purchase options, seller credibility, and finally, a comprehensive product description. This flow aims to quickly engage the user and provide all necessary information.
+
+Layout Decisions: The root container (`layoutContainer`) has a `width` of 414 and uses `"counterAxisSizingMode": "FIXED"`. Level 1 containers (gallery, essentials, purchase, seller, description) use `"horizontalSizing": "FILL"` and have 16px padding for spacing. Nested containers (within Level 1 sections) will size automatically. This adheres strictly to the Hierarchical Container Sizing rules. Vertical spacing between sections is achieved by appropriate padding within each Level 1 container, not by extra elements.
+
+User Flow Reasoning:  The user journey starts with visually engaging product images.  Next, key details like price and condition are prominent.  The primary CTA ("Contact Seller") is clear and easily accessible.  The seller information builds trust, and lastly, the comprehensive description answers any remaining questions.
+
+Component Choices: I chose `10:7816` (IMAGES) for the gallery, as it natively handles multiple images.  `10:10214` (List item) was selected for the specs because it provides a structured presentation for detailed data. The Button (`10:3907`) offers versatile customization to handle primary and secondary actions.  `10:8619` (text area) is most suitable for displaying extensive descriptions.  I chose these over less suitable alternatives like using multiple `native-text` instances for the specification list (which would lack structure), or a single `native-text` for the description (which would be less user-friendly for long text).
+
+Component Gaps: The request requires image carousels, but the design system lacks a specific carousel component. I constructed this using the `IMAGES` component which supports multiple images. This is a suitable approach, although a dedicated carousel might offer enhanced user experience. Similarly, there is no dedicated rating component, so I used `native-text` to show the rating.
+
+Visual Hierarchy: The product images in the gallery section are visually dominant, creating immediate appeal. The title and price are prominently sized using  `native-text`. The  `10:10214` list items are clearly structured.  Seller information is given less visual weight but still clearly visible.  The description is placed last and uses a visually less prominent text style.
+
+Variant Selection Rationale: For the button (id: 10:3907), the "Filled" and "Medium" variants were chosen for optimal readability and visual prominence. These were chosen over "Outlined" to offer a better contrast against the background.
+
+
+Native Element Justification: `native-text` elements were used for the title, price, seller name, seller details, and rating because these text elements needed flexibility in styling that is not offered by the design system components.  `native-rectangle` with `IMAGE` fill was used to display the profile picture placeholder because the Design System's avatar components did not offer enough flexibility in size and shape.
+
+
+DESIGN SPECIFICATION:
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "container",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:7816",
+            "properties": {
+              "variants": {
+                "Type": "2+ images"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Dell XPS 13 9310 - Used - Excellent Condition",
+              "fontSize": 22,
+              "fontWeight": 500,
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "$899.00",
+              "fontSize": 16,
+              "fontWeight": 500,
+              "color": "Primary/primary50"
+            }
+          },          
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Condition",
+              "Supporting text": "Excellent",
+              "variants":{
+                "Condition": "1-line"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Processor",
+              "Supporting text": "Intel Core i7-1165G7",
+              "variants":{
+                "Condition": "1-line"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "RAM",
+              "Supporting text": "16GB LPDDR4x",
+              "variants":{
+                "Condition": "1-line"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Storage",
+              "Supporting text": "512GB SSD",
+              "variants":{
+                "Condition": "1-line"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Display",
+              "Supporting text": "13.4-inch InfinityEdge Touchscreen (2560 x 1600)",
+              "variants":{
+                "Condition": "1-line"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Contact Seller",
+              "variants": {
+                "Size": "Medium",
+                "Type": "Filled",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Make Offer",
+              "variants": {
+                "Size": "Medium",
+                "Type": "Outlined",
+                "Color": "Green"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "layoutMode": "HORIZONTAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 48,
+              "height": 48,
+              "cornerRadius": 24,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "layoutMode": "VERTICAL",
+            "items":[
+              {
+                "type": "native-text",
+                "properties": {
+                  "text": "John Smith",
+                  "fontSize": 16,
+                  "fontWeight": 500,
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "text": "Member since June 2020, 120+ positive ratings",
+                  "fontSize": 12,
+                  "fontWeight": 400,
+                  "color": "Neutral/neutral50"
+                }
+              },
+                {
+                "type": "native-text",
+                "properties": {
+                  "text": "4.8",
+                  "fontSize": 14,
+                  "fontWeight": 500,
+                  "color": "Primary/primary50"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8619",
+            "properties": {
+              "label-text": "Powerful and portable, this Dell XPS 13 is perfect for work or play.  Features a stunning 13.4-inch InfinityEdge display, fast Intel Core i7 processor, and plenty of RAM and storage.  Minor cosmetic wear, fully functional."
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

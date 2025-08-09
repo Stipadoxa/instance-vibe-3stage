@@ -27,6 +27,50 @@ export class FigmaRenderer {
   // Static storage for Text Styles scanned from the design system
   private static cachedTextStyles: TextStyle[] | null = null;
 
+  // Auto-positioning system to prevent overlapping renders
+  private static async getNextRenderPosition(width: number, height: number): Promise<{x: number, y: number}> {
+    const GRID_SPACING = 50; // Gap between frames
+    const COLUMN_WIDTH = 400; // Max width per column before wrapping
+    
+    try {
+      // Get stored position data
+      const positionData = await figma.clientStorage.getAsync('uxpal-render-positions');
+      let positions = positionData ? JSON.parse(positionData) : { nextX: 0, nextY: 0, currentRow: 0 };
+      
+      // Calculate position
+      const currentX = positions.nextX;
+      const currentY = positions.nextY;
+      
+      // Update for next render
+      positions.nextX += width + GRID_SPACING;
+      
+      // Wrap to next row if needed
+      if (positions.nextX > COLUMN_WIDTH * 3) { // Allow 3 columns max
+        positions.nextX = 0;
+        positions.nextY += Math.max(height, 600) + GRID_SPACING;
+        positions.currentRow++;
+      }
+      
+      // Save updated positions
+      await figma.clientStorage.setAsync('uxpal-render-positions', JSON.stringify(positions));
+      
+      return { x: currentX, y: currentY };
+    } catch (error) {
+      console.warn('Position tracking failed, using default:', error);
+      return { x: 0, y: 0 };
+    }
+  }
+
+  // Reset render positions to start fresh
+  static async resetRenderPositions(): Promise<void> {
+    try {
+      await figma.clientStorage.setAsync('uxpal-render-positions', JSON.stringify({ nextX: 0, nextY: 0, currentRow: 0 }));
+      console.log('🔄 Render positions reset to origin');
+    } catch (error) {
+      console.warn('Failed to reset positions:', error);
+    }
+  }
+
   /**
    * Main UI generation function - creates UI from structured JSON data
    */
@@ -36,6 +80,12 @@ export class FigmaRenderer {
     
     if (parentNode.type === 'PAGE' && containerData) {
       currentFrame = figma.createFrame();
+      
+      // Auto-position to prevent overlapping
+      const position = await this.getNextRenderPosition(containerData.width || 375, containerData.height || 600);
+      currentFrame.x = position.x;
+      currentFrame.y = position.y;
+      
       parentNode.appendChild(currentFrame);
     } else if (parentNode.type === 'FRAME') {
       currentFrame = parentNode;
@@ -46,7 +96,7 @@ export class FigmaRenderer {
     
     if (containerData && containerData !== layoutData) {
       currentFrame.name = containerData.name || "Generated Frame";
-      currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
+      currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL"
         ? containerData.layoutMode : "NONE";
         
       if (currentFrame.layoutMode !== 'NONE') {
@@ -156,7 +206,65 @@ export class FigmaRenderer {
         currentFrame.appendChild(nestedFrame);
         await this.generateUIFromData(item, nestedFrame);
         
-      } 
+      }
+      
+      // Safe defensive conversion for native elements with children
+      else if (item.type?.startsWith('native-') && (item.items || item.properties?.items)) {
+        console.warn(`⚠️ Invalid structure: ${item.type} cannot have child items`);
+        console.warn('📦 Auto-converting to layoutContainer to prevent crash');
+        
+        // Extract the items array (might be in different places)
+        const childItems = item.items || item.properties?.items || [];
+        
+        // Create a proper container that preserves visual intent
+        const safeContainer = {
+          type: 'layoutContainer',
+          layoutMode: 'VERTICAL',
+          itemSpacing: 0,
+          padding: 0,
+          items: childItems
+        };
+        
+        // Preserve visual styling if it was a styled rectangle
+        if (item.type === 'native-rectangle' && item.properties) {
+          // Transfer visual properties safely
+          if (item.properties.fill?.color) {
+            safeContainer.backgroundColor = item.properties.fill.color;
+          }
+          if (item.properties.cornerRadius) {
+            safeContainer.cornerRadius = item.properties.cornerRadius;
+          }
+          if (item.properties.padding) {
+            safeContainer.padding = item.properties.padding;
+          }
+          // Transfer sizing if present
+          if (item.properties.width) {
+            safeContainer.width = item.properties.width;
+          }
+          if (item.properties.height) {
+            safeContainer.height = item.properties.height;
+          }
+        }
+        
+        // Log what we're doing for debugging
+        console.log('🔄 Converted structure:', {
+          from: item.type,
+          to: 'layoutContainer',
+          preservedStyling: {
+            backgroundColor: safeContainer.backgroundColor || 'none',
+            cornerRadius: safeContainer.cornerRadius || 'none'
+          }
+        });
+        
+        // Process as container instead of native element
+        const nestedFrame = figma.createFrame();
+        currentFrame.appendChild(nestedFrame);
+        
+        this.applyChildLayoutProperties(nestedFrame, safeContainer);
+        
+        await this.generateUIFromData({ layoutContainer: safeContainer, items: safeContainer.items }, nestedFrame);
+        continue;
+      }
       // NATIVE ELEMENTS - Handle these BEFORE component resolution
       else if (item.type === 'native-text' || item.type === 'text') {
         await this.createTextNode(item, currentFrame);
@@ -180,8 +288,8 @@ export class FigmaRenderer {
           continue;
         }
         
-        const masterComponent = (componentNode.type === 'COMPONENT_SET' 
-          ? componentNode.defaultVariant 
+        const masterComponent = (componentNode.type === 'COMPONENT_SET'
+          ? componentNode.defaultVariant
           : componentNode) as ComponentNode | null;
           
         if (!masterComponent || masterComponent.type !== 'COMPONENT') {
@@ -309,8 +417,8 @@ export class FigmaRenderer {
       // Existing ID resolution logic
       const isPlaceholderID = (id: string): boolean => {
         if (!id) return true;
-        return id.includes('_id') || 
-               id.includes('placeholder') || 
+        return id.includes('_id') ||
+               id.includes('placeholder') ||
                !id.match(/^[0-9]+:[0-9]+$/);
       };
 
@@ -324,9 +432,9 @@ export class FigmaRenderer {
             }
             
             // SKIP native elements - they don't need component IDs
-            if (item.type === 'native-text' || 
-                item.type === 'text' || 
-                item.type === 'native-rectangle' || 
+            if (item.type === 'native-text' ||
+                item.type === 'text' ||
+                item.type === 'native-rectangle' ||
                 item.type === 'native-circle') {
               console.log(`ℹ️ Skipping native element: ${item.type}`);
               continue;
@@ -334,7 +442,7 @@ export class FigmaRenderer {
             
             if (item.type === 'frame' && item.items) {
               await resolveComponentIds(item.items);
-            } 
+            }
             else if (item.type !== 'frame') {
               if (!item.componentNodeId || isPlaceholderID(item.componentNodeId)) {
                 console.log(` Resolving component ID for type: ${item.type}`);
@@ -756,9 +864,9 @@ export class FigmaRenderer {
       console.error(`❌ Error finding text nodes in component instance:`, findError.message);
       return; // Skip text property application if we can't find nodes
     }
-    console.log("🔍 Available text nodes in component:", 
+    console.log("🔍 Available text nodes in component:",
       allTextNodes.map(textNode => ({
-        name: textNode.name, 
+        name: textNode.name,
         id: textNode.id,
         visible: textNode.visible,
         chars: textNode.characters || '[empty]'
@@ -772,7 +880,7 @@ export class FigmaRenderer {
     // Define semantic classification mappings
     const semanticMappings: {[key: string]: string[]} = {
       'primary-text': ['primary'],
-      'secondary-text': ['secondary'], 
+      'secondary-text': ['secondary'],
       'tertiary-text': ['tertiary'],
       'headline': ['primary', 'secondary'],
       'title': ['primary', 'secondary'],
@@ -805,7 +913,7 @@ export class FigmaRenderer {
       
       // Exclude non-text properties (styles, icons, layout configs)
       const nonTextProperties = new Set([
-        'horizontalSizing', 'variants', 'textStyle', 'colorStyleName', 
+        'horizontalSizing', 'variants', 'textStyle', 'colorStyleName',
         'leading-icon', 'trailing-icon', 'layoutAlign', 'layoutGrow'
       ]);
       
@@ -820,7 +928,7 @@ export class FigmaRenderer {
       
       // Method 1: Try exact node name match from scan data
       if (componentTextHierarchy) {
-        const hierarchyEntry = componentTextHierarchy.find(entry => 
+        const hierarchyEntry = componentTextHierarchy.find(entry =>
           entry.nodeName.toLowerCase() === propKey.toLowerCase() ||
           entry.nodeName.toLowerCase().replace(/\s+/g, '-') === propKey.toLowerCase()
         );
@@ -846,7 +954,7 @@ export class FigmaRenderer {
         const targetClassifications = semanticMappings[propKey.toLowerCase()];
         
         for (const classification of targetClassifications) {
-          const hierarchyEntry = componentTextHierarchy.find(entry => 
+          const hierarchyEntry = componentTextHierarchy.find(entry =>
             entry.classification === classification
           );
           
@@ -871,7 +979,7 @@ export class FigmaRenderer {
       
       // Method 3: Try partial node name match from scan data
       if (!textNode && componentTextHierarchy) {
-        const hierarchyEntry = componentTextHierarchy.find(entry => 
+        const hierarchyEntry = componentTextHierarchy.find(entry =>
           entry.nodeName.toLowerCase().includes(propKey.toLowerCase()) ||
           propKey.toLowerCase().includes(entry.nodeName.toLowerCase())
         );
@@ -1118,7 +1226,7 @@ export class FigmaRenderer {
     }
     
     // Try exact name match
-    const exactMatch = allMediaSlots.find(slot => 
+    const exactMatch = allMediaSlots.find(slot =>
       slot.name.toLowerCase() === propKey.toLowerCase() ||
       slot.name.toLowerCase().replace(/\s+/g, '-') === propKey.toLowerCase()
     );
@@ -1259,8 +1367,8 @@ export class FigmaRenderer {
       const nameLower = slot.name.toLowerCase();
       
       // Avatar classification - look for people, faces, profiles
-      if (nameLower.includes('avatar') || 
-          nameLower.includes('profile') || 
+      if (nameLower.includes('avatar') ||
+          nameLower.includes('profile') ||
           nameLower.includes('user') ||
           nameLower.includes('person') ||
           nameLower.includes('selfie') ||
@@ -1273,7 +1381,7 @@ export class FigmaRenderer {
       }
       
       // Icon classification - small graphics, symbols
-      else if (nameLower.includes('icon') || 
+      else if (nameLower.includes('icon') ||
                nameLower.includes('symbol') ||
                nameLower.includes('pictogram') ||
                (slot.type === 'vector-node' && nameLower.length < 10)) {
@@ -1303,7 +1411,7 @@ export class FigmaRenderer {
       }
       
       // Image classification - all image nodes and component instances with image-like names
-      else if (slot.type === 'image-node' || 
+      else if (slot.type === 'image-node' ||
                nameLower.includes('image') ||
                nameLower.includes('picture') ||
                nameLower.includes('photo')) {
@@ -1338,12 +1446,12 @@ export class FigmaRenderer {
    * Find media slots by position keywords
    */
   static findByPosition(mediaSlots: Array<{name: string, type: 'component-instance' | 'vector-node' | 'image-node'}>, position: 'leading' | 'trailing'): {name: string, type: 'component-instance' | 'vector-node' | 'image-node'} | null {
-    const positionKeywords = position === 'leading' 
+    const positionKeywords = position === 'leading'
       ? ['leading', 'start', 'left', 'first', 'begin']
       : ['trailing', 'end', 'right', 'last', 'final'];
     
-    return mediaSlots.find(slot => 
-      positionKeywords.some(keyword => 
+    return mediaSlots.find(slot =>
+      positionKeywords.some(keyword =>
         slot.name.toLowerCase().includes(keyword)
       )
     ) || null;
@@ -1380,7 +1488,7 @@ export class FigmaRenderer {
     
     const variantPropertyNames = [
       'condition', 'Condition',
-      'leading', 'Leading', 
+      'leading', 'Leading',
       'trailing', 'Trailing',
       'state', 'State',
       'style', 'Style',
@@ -1488,8 +1596,8 @@ export class FigmaRenderer {
       return;
     }
     
-    const masterComponent = (componentNode.type === 'COMPONENT_SET' 
-      ? componentNode.defaultVariant 
+    const masterComponent = (componentNode.type === 'COMPONENT_SET'
+      ? componentNode.defaultVariant
       : componentNode) as ComponentNode | null;
       
     if (!masterComponent || masterComponent.type !== 'COMPONENT') {
@@ -1506,7 +1614,7 @@ export class FigmaRenderer {
     };
     
     const validationResult = ComponentPropertyEngine.validateAndProcessProperties(
-      item.componentNodeId, 
+      item.componentNodeId,
       allProperties
     );
 
@@ -1517,7 +1625,7 @@ export class FigmaRenderer {
       console.error(`❌ Validation errors:`, validationResult.errors);
       
       // Create LLM-friendly error message
-      const llmErrors = validationResult.errors.map(err => 
+      const llmErrors = validationResult.errors.map(err =>
         `${err.message}${err.suggestion ? ` - ${err.suggestion}` : ''}${err.llmHint ? ` (${err.llmHint})` : ''}`
       ).join('\n');
       
@@ -1599,10 +1707,10 @@ export class FigmaRenderer {
    * Apply variants with modern Component Properties API
    */
   static async applyVariantsSystematic(instance: InstanceNode, variants: any, componentNode: any): Promise<void> {
-    console.log('🎨 VARIANT APPLICATION START', { 
-      variants, 
+    console.log('🎨 VARIANT APPLICATION START', {
+      variants,
       componentType: componentNode?.type,
-      instanceName: instance.name 
+      instanceName: instance.name
     });
     
     try {
@@ -1750,8 +1858,8 @@ export class FigmaRenderer {
       .map(comp => `${comp.name} (${comp.id})`)
     );
     
-    const iconComponent = designSystemData.components.find(comp => 
-      comp.suggestedType === 'icon' && 
+    const iconComponent = designSystemData.components.find(comp =>
+      comp.suggestedType === 'icon' &&
       comp.name.toLowerCase().includes(iconName.toLowerCase())
     );
     
@@ -1836,7 +1944,7 @@ export class FigmaRenderer {
           if (nodeId.includes('leading') && instName.includes('leading')) {
             // Find this instance in the actual rendered component
             try {
-              const foundNode = instance.findChild(node => node.id === instId) || 
+              const foundNode = instance.findChild(node => node.id === instId) ||
                                instance.findAll(node => node.id.includes(instId))[0];
               
               if (foundNode && foundNode.type === 'INSTANCE') {
@@ -1987,7 +2095,7 @@ export class FigmaRenderer {
               iconComponent = iconNode as ComponentNode;
             } else if (iconNode?.type === 'COMPONENT_SET') {
               const componentSet = iconNode as ComponentSetNode;
-              iconComponent = componentSet.defaultVariant || 
+              iconComponent = componentSet.defaultVariant ||
                             (componentSet.children.find(child => child.type === 'COMPONENT') as ComponentNode);
             }
             
@@ -2087,7 +2195,7 @@ export class FigmaRenderer {
     // Use fast modern API for finding text nodes with error handling
     let allTextNodes: TextNode[] = [];
     try {
-      allTextNodes = await PerformanceTracker.track('find-text-nodes', async () => 
+      allTextNodes = await PerformanceTracker.track('find-text-nodes', async () =>
         instance.findAllWithCriteria({ types: ['TEXT'] }) as TextNode[]
       );
     } catch (findError) {
@@ -2147,7 +2255,7 @@ export class FigmaRenderer {
       const layerLower = textLayerInfo.nodeName.toLowerCase();
       const propLower = propKey.toLowerCase();
       
-      return nodeLower === layerLower || 
+      return nodeLower === layerLower ||
              nodeLower.includes(propLower) ||
              nodeLower === propLower;
     });
@@ -2184,7 +2292,7 @@ export class FigmaRenderer {
     
     if (!textNode) {
       // Try exact name match
-      textNode = allTextNodes.find(n => 
+      textNode = allTextNodes.find(n =>
         n.name.toLowerCase() === textLayerInfo.nodeName.toLowerCase()
       );
     }
@@ -2310,7 +2418,7 @@ export class FigmaRenderer {
           uniqueFonts.set(`${font.family}-${font.style}`, font);
         });
         
-        const fontPromises = Array.from(uniqueFonts.values()).map(font => 
+        const fontPromises = Array.from(uniqueFonts.values()).map(font =>
           figma.loadFontAsync(font)
         );
         
@@ -2387,6 +2495,12 @@ export class FigmaRenderer {
     if (parentNode.type === 'PAGE' && containerData) {
       currentFrame = figma.createFrame();
       currentFrame.resize(containerData.width || 800, containerData.height || 600);
+      
+      // Auto-position to prevent overlapping
+      const position = await this.getNextRenderPosition(containerData.width || 800, containerData.height || 600);
+      currentFrame.x = position.x;
+      currentFrame.y = position.y;
+      
       parentNode.appendChild(currentFrame);
     } else if (parentNode.type === 'FRAME') {
       currentFrame = parentNode;
@@ -2415,7 +2529,7 @@ export class FigmaRenderer {
       });
       
       try {
-        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
+        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL"
           ? containerData.layoutMode : "NONE";
         console.log('🔧 Frame layoutMode set to:', currentFrame.layoutMode);
       } catch (e) {
@@ -2632,8 +2746,8 @@ export class FigmaRenderer {
         
         // Normalize component ID property
         if (processedItem.type === 'component') {
-          processedItem.componentNodeId = processedItem.componentNodeId || 
-                                         processedItem.componentId || 
+          processedItem.componentNodeId = processedItem.componentNodeId ||
+                                         processedItem.componentId ||
                                          processedItem.id;
           delete processedItem.componentId;
           delete processedItem.id;
@@ -2672,9 +2786,9 @@ export class FigmaRenderer {
           // Apply child layout properties
           this.applyChildLayoutProperties(nestedFrame, processedItem);
           
-          await this.generateUIFromDataSystematic({ 
-            layoutContainer: processedItem, 
-            items: processedItem.items 
+          await this.generateUIFromDataSystematic({
+            layoutContainer: processedItem,
+            items: processedItem.items
           }, nestedFrame);
           
         } else if (processedItem.type === 'frame' && processedItem.layoutContainer) {
@@ -2682,7 +2796,68 @@ export class FigmaRenderer {
           currentFrame.appendChild(nestedFrame);
           await this.generateUIFromDataSystematic(processedItem, nestedFrame);
           
-        } 
+        }
+        
+        // Safe defensive conversion for native elements with children
+        else if (processedItem.type?.startsWith('native-') && (processedItem.items || processedItem.properties?.items)) {
+          console.warn(`⚠️ Invalid structure: ${processedItem.type} cannot have child items`);
+          console.warn('📦 Auto-converting to layoutContainer to prevent crash');
+          
+          // Extract the items array (might be in different places)
+          const childItems = processedItem.items || processedItem.properties?.items || [];
+          
+          // Create a proper container that preserves visual intent
+          const safeContainer = {
+            type: 'layoutContainer',
+            layoutMode: 'VERTICAL',
+            itemSpacing: 0,
+            padding: 0,
+            items: childItems
+          };
+          
+          // Preserve visual styling if it was a styled rectangle
+          if (processedItem.type === 'native-rectangle' && processedItem.properties) {
+            // Transfer visual properties safely
+            if (processedItem.properties.fill?.color) {
+              safeContainer.backgroundColor = processedItem.properties.fill.color;
+            }
+            if (processedItem.properties.cornerRadius) {
+              safeContainer.cornerRadius = processedItem.properties.cornerRadius;
+            }
+            if (processedItem.properties.padding) {
+              safeContainer.padding = processedItem.properties.padding;
+            }
+            // Transfer sizing if present
+            if (processedItem.properties.width) {
+              safeContainer.width = processedItem.properties.width;
+            }
+            if (processedItem.properties.height) {
+              safeContainer.height = processedItem.properties.height;
+            }
+          }
+          
+          // Log what we're doing for debugging
+          console.log('🔄 Converted structure:', {
+            from: processedItem.type,
+            to: 'layoutContainer',
+            preservedStyling: {
+              backgroundColor: safeContainer.backgroundColor || 'none',
+              cornerRadius: safeContainer.cornerRadius || 'none'
+            }
+          });
+          
+          // Process as container instead of native element
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          
+          this.applyChildLayoutProperties(nestedFrame, safeContainer);
+          
+          await this.generateUIFromDataSystematic({
+            layoutContainer: safeContainer,
+            items: safeContainer.items
+          }, nestedFrame);
+          continue;
+        }
         // NATIVE ELEMENTS - Handle these BEFORE component resolution
         else if (processedItem.type === 'native-text' || processedItem.type === 'text') {
           await this.createTextNode(processedItem, currentFrame);
@@ -2733,7 +2908,7 @@ export class FigmaRenderer {
           // Normalize properties
           if (processedItem.properties && componentInfo?.textLayers) {
             processedItem.properties = this.normalizePropertyNames(
-              processedItem.properties, 
+              processedItem.properties,
               componentInfo.textLayers
             );
           }
@@ -2930,7 +3105,7 @@ export class FigmaRenderer {
     console.log(`🔧 Resolving design token: "${tokenName}"`);
     
     // Find exact match first
-    const exactMatch = this.cachedDesignTokens.find(token => 
+    const exactMatch = this.cachedDesignTokens.find(token =>
       token.type === 'COLOR' && token.name === tokenName
     );
     
@@ -2940,7 +3115,7 @@ export class FigmaRenderer {
     }
     
     // Try case-insensitive match
-    const caseInsensitiveMatch = this.cachedDesignTokens.find(token => 
+    const caseInsensitiveMatch = this.cachedDesignTokens.find(token =>
       token.type === 'COLOR' && token.name.toLowerCase() === tokenName.toLowerCase()
     );
     
@@ -2950,7 +3125,7 @@ export class FigmaRenderer {
     }
     
     // Try pattern matching: 'collection/name' format
-    const collectionMatch = this.cachedDesignTokens.find(token => 
+    const collectionMatch = this.cachedDesignTokens.find(token =>
       token.type === 'COLOR' && `${token.collection}/${token.name}`.toLowerCase() === tokenName.toLowerCase()
     );
     
@@ -3017,7 +3192,7 @@ export class FigmaRenderer {
       }
       
       // Fallback: case-insensitive search
-      const caseInsensitiveMatch = localPaintStyles.find(style => 
+      const caseInsensitiveMatch = localPaintStyles.find(style =>
         style.name.toLowerCase() === colorStyleName.toLowerCase()
       );
       if (caseInsensitiveMatch) {
@@ -3037,7 +3212,7 @@ export class FigmaRenderer {
 
   /**
    * ENHANCED: Resolve color references with 3-tier fallback system
-   * 1. Design Tokens (preferred) 
+   * 1. Design Tokens (preferred)
    * 2. Color Styles (legacy)
    * 3. Semantic color fallback
    */
@@ -3086,7 +3261,7 @@ export class FigmaRenderer {
     }
     
     // Fallback: case-insensitive search
-    const caseInsensitiveMatch = allCategories.find(style => 
+    const caseInsensitiveMatch = allCategories.find(style =>
       style.name.toLowerCase() === colorStyleName.toLowerCase()
     );
     
@@ -3209,7 +3384,7 @@ export class FigmaRenderer {
       }
       
       // Fallback: case-insensitive search
-      const caseInsensitiveMatch = localTextStyles.find(style => 
+      const caseInsensitiveMatch = localTextStyles.find(style =>
         style.name.toLowerCase() === textStyleName.toLowerCase()
       );
       if (caseInsensitiveMatch) {
@@ -3383,7 +3558,7 @@ export class FigmaRenderer {
       // Check if value is valid
       if (!validValues.includes(value)) {
         // Try case-insensitive match
-        const match = validValues.find((v: string) => 
+        const match = validValues.find((v: string) =>
           v.toLowerCase() === String(value).toLowerCase()
         );
         
@@ -3428,7 +3603,7 @@ export class FigmaRenderer {
         const itemPath = `${path}[${index}]`;
         
         // Check for unknown native types
-        if (item.type?.startsWith('native-') && 
+        if (item.type?.startsWith('native-') &&
             !['native-text', 'native-rectangle', 'native-circle'].includes(item.type)) {
           warnings.push(`Invalid native type "${item.type}" at ${itemPath} - will attempt fallback`);
         }

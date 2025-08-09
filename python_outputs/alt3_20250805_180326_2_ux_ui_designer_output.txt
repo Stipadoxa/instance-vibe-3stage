@@ -1,0 +1,250 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below are verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical layout container as the root, providing a clear top-to-bottom flow of notification types.  Each notification type is presented as a list item with a leading icon, label text (notification type), and a trailing toggle switch.  A small vertical spacing between list items enhances readability and visual separation.   The `horizontalSizing` property is not used for list items as their width adjusts automatically to content.
+
+3. **User Flow Reasoning:** The user can easily scan the list of notification types. Toggling the switch next to each notification immediately changes the notification status, providing immediate feedback. The visual design promotes clear and intuitive interaction.
+
+4. **Component Choices:** I chose the `10:9912` (switch) component for its clear on/off functionality and established visual style within the design system.  I considered using native elements to create custom switches but opted for the existing component to maintain design system consistency.  For the list items, I opted to use `10:10214` (List item) to organize notification settings neatly, given the requirement for a list structure. Alternatives considered were not well-suited for displaying both the textual description and the toggle switch simultaneously.
+
+
+5. **Component Gaps:** The design system lacks a pre-built component to specifically manage the notification preferences as a group. While `10:10214`  (list-item) component serves as the closest alternative, its use for a settings page required careful consideration of variants for optimal user experience. No additional gaps were identified.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through clear labeling and consistent spacing. The notification type labels are prominently displayed using a primary text style, while the switch provides a clear visual cue for interaction. The consistent use of leading icons and spacing between list items further enhances readability and creates a clean visual layout.
+
+
+7. **Variant Selection Rationale:** For the `10:9912` (switch) component, the `State: enabled` variant is consistently used to ensure the switches are interactive.  The `Selected` variant will change dynamically based on user interaction. For the `10:10214` (list-item) component, the `Leading: Icon` and `Trailing: Switch` variants were chosen to effectively present both the visual cue (icon) and the on/off control for each notification type.  The `Condition: 2-line` variant is employed to accommodate the text description for each notification type.
+
+8. **Native Element Justification:** No native elements were required to fulfill this design request as the existing design system components were sufficient to meet all functional requirements.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Choose which types of notifications you'd like to receive.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Icon",
+              "Trailing": "Switch",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items":[
+              {
+                "type": "component",
+                "id": "635:4324",
+                "variants": {
+                  "Style": "Filled"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Push Notifications",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive instant app updates and alerts.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Icon",
+              "Trailing": "Switch",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items":[
+              {
+                "type": "component",
+                "id": "635:4399",
+                "variants": {
+                  "style": "filled"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Email Alerts",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive important updates and notifications via email.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Icon",
+              "Trailing": "Switch",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+             "items":[
+              {
+                "type": "component",
+                "id": "635:4389",
+                "variants": {
+                  "style": "filled"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "SMS Updates",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive critical updates and time-sensitive information via SMS.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Icon",
+              "Trailing": "Switch",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items":[
+              {
+                "type": "component",
+                "id": "635:4595",
+                "variants": {
+                  "Style": "Filled"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Promotional Offers",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive special offers and promotions from our partners.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
