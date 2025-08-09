@@ -1,0 +1,87 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs referenced below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to present information in a clear, sequential manner.  The email and password fields are stacked vertically, followed by the login button and "Forgot Password" link.  Consistent spacing of 16 pixels is used between elements for visual breathing room.  All elements are sized to fit the screen width.
+
+3. **User Flow Reasoning:** The user flow is straightforward:  enter email, enter password, tap "Login". The "Forgot Password" link provides a clear path for password recovery if needed.  The design prioritizes ease of use and accessibility for a secure login experience.
+
+4. **Component Choices:**
+    * **Input Fields (`10:8492`):** I chose the `text input` component over using native text input fields. This provides a consistent look and feel with other text fields in the application and allows the design system to enforce appropriate input rules.   The `Filled` variant is used for a visually cleaner, more modern design.
+    * **Login Button (`10:3907`):** The `Button` component is used for the login action.  I chose this over using a native button for design consistency, allowing us to easily customize styles and actions in future iterations. The `Filled`, `Large`, and `Green` variants are used to provide visual emphasis.
+
+5. **Component Gaps:** The design system lacks a specific component for creating a simple "Forgot Password" link. Therefore, I've created a workaround using a `native-text` element styled as a hyperlink using a `tertiary` text style to maintain visual consistency with other secondary links. This provides a clear and accessible method for password recovery.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the size, placement, and color of elements. The input fields are larger and placed prominently above the login button, with the "Forgot Password" link in a secondary position to not detract from the primary action of logging in.
+
+7. **Variant Selection Rationale:**
+    * **Input Fields (`10:8492`):**  The `Filled` variant was chosen for the input fields to ensure consistency and aesthetic appeal, rather than the `Empty` variant which would have appeared less polished.
+    * **Login Button (`10:3907`):** The `Filled`, `Large`, and `Green` variants are used to visually represent the primary action of logging in.  The green color signals positive affirmation, the filled variant provides visual feedback, and large size indicates a key interaction point.
+
+8. **Native Element Justification:**  The "Forgot Password" link requires a simple text element with hyperlink functionality, a feature not directly supported by existing components. A `native-text` element styled as a hyperlink using text styling provides the functionality while minimizing deviation from the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32, "paddingBottom": 32, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "properties":{
+          "label-text": "Email Address"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "properties":{
+          "label-text": "Password",
+          "isSecure": true
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Login"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Forgot password?",
+          "textStyle": "Body/Small",
+          "color": "Tertiary/tertiary50",
+          "alignment": "center",
+          "underline": true
+        }
+      }
+    ]
+  }
+}
+```

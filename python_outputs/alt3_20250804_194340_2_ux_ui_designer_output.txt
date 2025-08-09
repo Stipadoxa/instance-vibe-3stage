@@ -1,0 +1,193 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The user profile page utilizes a vertical layout (`layoutMode: "VERTICAL"`) for a clear top-to-bottom flow of information.  Sections are separated by dividers (`10:8459`) for visual clarity and improved readability.  The `itemSpacing` is set to 16 pixels for comfortable visual breathing room between elements.  All padding is set to 16 pixels to create a consistent margin around the content.  For mobile compatibility, the page will use a single-column layout, adapting responsively to screen size.
+
+3. **User Flow Reasoning:** The user flow prioritizes ease of access to crucial information and actions.  The user's name and email are prominently displayed at the top, followed by input fields for editing this information.  A separate section for password change is included, emphasizing security.  The order history is presented in a scrollable list (`10:10214`), allowing users to easily review their past purchases.  Each order item includes concise details.  Navigation to order details is planned for future implementation.
+
+4. **Component Choices:** I chose the `10:8492` (text input) component for name and email editing due to its built-in validation capabilities and familiarity for users.  I chose the `10:10214` (list item) component for order history because of its clear visual representation of the order summary.  It's better than using `native-text` or `native-rectangle`, since it provides consistent spacing, text styling, and efficient presentation of multiple order details in a scrollable list. I could have potentially used a table if it existed in the design system.
+
+5. **Component Gaps:** The design system lacks a dedicated "order summary" component to display order details concisely.  Therefore, I will use a combination of the `10:10214` (list item) component, which provides a structured layout with space for overline, headline, supporting text and trailing text, filling these with `native-text` components for date and total amount.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through consistent use of the text styles defined in the design system.  Headings use larger font sizes and bolder weights than body text, while smaller labels maintain clarity while reducing visual prominence.  Important interactive elements (buttons) are clearly distinguished through color and shape.
+
+7. **Variant Selection Rationale:** For the text input components (`10:8492`), I will use the `Type: Filled` and `State: enabled` variants for a clean and uncluttered look. For the list item components (`10:10214`), I chose `Condition: 2-line` and `Leading: None` since we have a date and total amount to display. We could potentially add a leading icon in the future.  The `Show supporting text: True` variant will allow for visual distinction between important and less important parts of the list item.
+
+8. **Native Element Justification:**  To display the user's profile picture, I will use a `native-circle` component with a `"fill": {"type": "IMAGE"}` property because a dedicated avatar component with image support wasn't readily available within the design system, yet a visual representation of the avatar remains essential for user identification and the mobile app experience.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 80,
+                  "height": 80,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "VERTICAL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "John Doe",
+                      "textStyle": "Title/Large",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "john.doe@example.com",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral50"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "id": "10:8492",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                },
+                "properties": {
+                  "label-text": "Name",
+                  "placeholder-text": "Enter your name"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:8492",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                },
+                "properties": {
+                  "label-text": "Email",
+                  "placeholder-text": "Enter your email"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:8619",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Type": "Filled",
+                  "State": "Enabled"
+                },
+                "properties": {
+                  "label-text": "Password"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Save Changes"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8459",
+            "variants": {
+              "Position": "horizontal",
+              "Type": "full-width"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Order History",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "items": [
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "2-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Headline": "Order #12345",
+                  "Supporting text": "2023-10-26",
+                  "Trailing supporting text": "₦1000"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "2-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Headline": "Order #67890",
+                  "Supporting text": "2023-11-15",
+                  "Trailing supporting text": "₦2500"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,96 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.  All component IDs used are present in `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout employs a vertical structure, starting with a search bar and filter button in a horizontal container at the top. Below this, a wrapped horizontal layout container displays product cards in a grid-like fashion.  Padding and spacing are consistently applied using the provided container patterns (A, B, C).  The `itemSpacing` property ensures even distribution and visual breathing room between elements.
+
+3. **User Flow Reasoning:** The user flow is straightforward: search at the top, filter options to refine results, and a scrollable grid to browse products. This prioritizes quick access to information and efficient browsing.
+
+4. **Component Choices:** I chose the `appbar` (10:5620) component for the top bar because it provides a pre-built structure for header elements (search bar, filter button).  The `product card` (147:3743) is ideal for displaying product information concisely and consistently.
+
+5. **Component Gaps:** The design system lacks a dedicated component for seller ratings. I've implemented a workaround using multiple `icon/star` (635:4752) components to represent a star rating system.
+
+6. **Visual Hierarchy:**  The search bar is the most prominent element, positioned at the top.  Product cards are clearly grouped in a grid structure. Typography uses design system text styles to reinforce hierarchy (`Headline` for titles, `Label` for prices).
+
+7. **Variant Selection Rationale:**  For the `appbar` component, I selected the `Type: search-field` variant to incorporate the search bar seamlessly.  The `product card` uses the `view: grid` variant to match the required layout.  Star icons in the `product card` utilize the "full" variant to indicate a rating.
+
+8. **Native Element Justification:**  No native elements were required. All functionalities could be met using the available components, or were creatively implemented via component combinations.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "component",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "variants": {
+            "Mode": "Light",
+            "Type": "search-field",
+            "Elevation": "flat"
+          },
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Grid",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 12,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          },          
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,246 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs referenced below are verified to exist within the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure. The hero section (image gallery) is full-width to maximize visual impact.  Subsequent sections (title/price, seller info, description, button) utilize vertical spacing for clear hierarchy and readability. Consistent 16px padding is applied to content sections for comfortable visual breathing room.  HorizontalSizing is used where appropriate to ensure full-width elements fill their containers.
+
+
+3. **User Flow Reasoning:** The user first encounters a visually engaging hero section with product images, followed by essential information (title, price, condition).  Seller information and ratings build trust. The description provides details, and the prominent "Contact Seller" button facilitates the primary user goal.
+
+
+4. **Component Choices:**
+
+* **Image Gallery:** No dedicated "image gallery" component exists. I used multiple instances of `10:7816` (IMAGES component) arranged horizontally in a container to create the image carousel. This is preferred over using multiple `native-rectangle` elements, as the `IMAGES` component will likely have built-in image management features and styles that maintain design system consistency. 
+
+* **"Contact Seller" Button:** I selected the `10:3907` (Button) component with variants `{"Size": "Large", "Type": "Filled", "State": "Default", "Color": "Green"}` because this is the standard primary action button style.  Alternatives like "Outlined" or "Text" buttons would be less visually prominent and could confuse the user.
+
+
+5. **Component Gaps:**  A dedicated "Seller Profile Card" component was missing. This was addressed using a `native-rectangle` container with nested `native-text`, `635:4160` (icon/person), and  `635:4759` (icon/star) components, creating a functional equivalent.
+
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through the size and placement of elements. The hero image section is the largest, followed by the title and price in prominent text styles, then seller info, description and finally the action button.  
+
+
+7. **Variant Selection Rationale:**  The "Contact Seller" button uses `Size: Large` for maximum prominence and clear accessibility, and the color "Green" was chosen to emphasize its importance as a primary call to action. It's a clear and established pattern for positive primary actions in the design system.  
+
+
+8. **Native Element Justification:** Because no component in the Design System fully addressed the requirements for a seller profile layout and display of ratings, the native rectangle (for the container) and text elements were selected to implement the seller profile section. The use of native elements also provides a flexible layout to accommodate varying amounts of seller profile information.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7816",
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Type": "2+ images"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:7816",
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Type": "2+ images"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:7816",
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Type": "2+ images"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Info",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingRight": 16, "paddingBottom": 16, "paddingLeft": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2023 MacBook Pro 16\"",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "₦ 1,200,000",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Good Condition",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Info",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingRight": 16, "paddingBottom": 16, "paddingLeft": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 64,
+              "height": 64,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE"
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Details",
+            "layoutMode": "VERTICAL",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "John Doe",
+                  "textStyle": "Title/Medium",
+                  "color": "Neutral/neutral90",
+                  "alignment": "left",
+                  "horizontalSizing": "FILL"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "component",
+                    "id": "635:4160",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4759",
+                    "variants": {
+                      "style": "filled"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "4.8 (123)",
+                  "textStyle": "Label/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left",
+                  "horizontalSizing": "FILL"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Description",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingRight": 16, "paddingBottom": 16, "paddingLeft": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "This is a used laptop listing. It comes with a one year warranty. Please contact the seller for more details.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingRight": 16, "paddingBottom": 16, "paddingLeft": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

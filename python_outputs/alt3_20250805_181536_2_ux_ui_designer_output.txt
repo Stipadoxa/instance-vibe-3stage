@@ -1,0 +1,131 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical `layoutContainer` as the root, providing a clear top-to-bottom flow for the notification settings. Each notification type is presented as a separate `layoutContainer` with horizontal alignment, placing the label and toggle switch side-by-side.  A small vertical spacing is added between each notification setting item for visual separation.  The `horizontalSizing` property is not used since the items do not need to fill the entire width.
+
+3. **User Flow Reasoning:** The user flow is straightforward. Users can easily scan the list of notification types, check their current status (on/off), and toggle them using the switch. The descriptive text associated with each toggle helps users understand the meaning of each notification type.
+
+4. **Component Choices:** I chose the `10:9912` (switch) component for toggles because it's designed specifically for on/off controls, aligns directly with the user requirement for enabling or disabling each notification type, and offers a clear visual representation of the current state.  Alternatives considered were `10:9586` (checkboxes) and `10:9825` (radio buttons), but these are not optimal for simple on/off choices, leading to a less intuitive user experience in this context.
+
+5. **Component Gaps:** The design system lacks a pre-built component to directly represent a list-item with an associated toggle switch and description. The `10:10214` (list-item) component would be ideal for the structure, but it doesn't directly accommodate this particular combination of UI elements. I created a workaround using a combination of a horizontal `layoutContainer` for each notification item to accommodate the label (`native-text`), and the `10:9912` (switch) component which provide a structured visual layout while maintaining component-based interactions. This approach provides a cleaner, more readable user interface than using only native elements, and satisfies the user's requirement for an organized listing of notification settings.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through consistent spacing between the list items and a clear left-alignment of labels and toggles.  The notification types are ordered naturally, and using the standard `Body/Medium` text style ensures visual consistency.
+
+7. **Variant Selection Rationale:** The `10:9912` (switch) component uses the `State: enabled` variant for all toggles to indicate an active and responsive interface. The `Selected` variant will dynamically reflect the user's choice (true/false), providing immediate feedback. No other state variants are needed for this particular use case.
+
+8. **Native Element Justification:**  To render labels for each notification type, I used `native-text` elements with the "Body/Medium" text style from the design system. This is necessary because while `10:10214` (list-item) could be used for layout,  there is no available component to directly embed both the toggle switch and the descriptive text beside it within a list item. Therefore, the `native-text` element is used to fill this functional gap and complement the existing component structure.
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "layoutContainer": {
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Push Notifications",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50"
+              }
+            },
+            {
+              "type": "component",
+              "id": "10:9912",
+              "variants": {
+                "State": "enabled",
+                "Selected": "false"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "layoutContainer": {
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Email Alerts",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50"
+              }
+            },
+            {
+              "type": "component",
+              "id": "10:9912",
+              "variants": {
+                "State": "enabled",
+                "Selected": "false"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "layoutContainer": {
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "SMS Updates",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50"
+              }
+            },
+            {
+              "type": "component",
+              "id": "10:9912",
+              "variants": {
+                "State": "enabled",
+                "Selected": "false"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "layoutContainer": {
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Promotional Offers",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50"
+              }
+            },
+            {
+              "type": "component",
+              "id": "10:9912",
+              "variants": {
+                "State": "enabled",
+                "Selected": "false"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```

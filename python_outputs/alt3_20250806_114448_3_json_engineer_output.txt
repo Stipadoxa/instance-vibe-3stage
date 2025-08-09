@@ -1,0 +1,182 @@
+```json
+{
+  "layoutContainer": {
+    "name": "TaskFlow Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "itemSpacing": 16,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 100,
+            "height": 100,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Welcome back to TaskFlow!",
+            "textStyle": "Title/Large",
+            "color": "Neutral/neutral90",
+            "alignment": "center",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Manage your projects and collaborate seamlessly. Sign in to continue.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "center",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "placeholder-text": "your.email@example.com",
+            "label-text": "Email Address"
+          },
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "placeholder-text": "********",
+            "label-text": "Password"
+          },
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "Sign In"
+          },
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Forgot password?",
+            "textStyle": "Body/Small",
+            "color": "Neutral/neutral50",
+            "alignment": "left",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Create a free account",
+            "textStyle": "Body/Small",
+            "color": "Primary/primary50",
+            "alignment": "left",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Or sign in with",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "center",
+            "layoutAlign": "STRETCH"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "justifyContent": "center",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 48,
+                "height": 48,
+                "cornerRadius": 24,
+                "fill": {
+                  "type": "SOLID",
+                  "color": "#DB4437"
+                }
+              },
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 48,
+                "height": 48,
+                "cornerRadius": 24,
+                "fill": {
+                  "type": "SOLID",
+                  "color": "#4267B2"
+                }
+              },
+              "layoutAlign": "STRETCH"
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3856",
+          "variants": {
+            "Action": "true",
+            "Close affordance": "true",
+            "Longer action": "false",
+            "Lines": "One line"
+          },
+          "properties": {
+            "Supporting text": "Incorrect email or password. Please try again."
+          },
+          "layoutAlign": "STRETCH"
+        }
+      ]
+    }
+  ]
+}
+```

@@ -1,0 +1,153 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout utilizes a vertical layout mode for a clear top-to-bottom flow.  The top section features a full-width hero image area using a native-rectangle to accommodate multiple product photos. This is followed by sections for the product title, price, condition, seller profile (including rating), and product description, each separated by dividers (`10:8459`) for visual clarity.  Each section is given appropriate padding for readability and visual breathing room.  Horizontal sizing is managed to ensure the title and description (`native-text`) fill the available width.
+
+3. **User Flow Reasoning:** The user journey starts with visually appealing product images, immediately followed by essential information (title, price, condition).  Then, seller credibility (profile and rating) and detailed description are presented before a clear call to action ("Contact Seller").  This prioritized information delivery supports a quick and informative user experience.
+
+4. **Component Choices:**  I chose `10:7816` (IMAGES) for displaying multiple product photos (although it requires image placeholder for this prototype). I considered using multiple `native-rectangle` elements for each image, but `10:7816` is semantically more appropriate given its designed purpose. I also considered the `147:3743` (product card), but it wasn't suitable for the full-width hero image layout requirement. `10:3907` (Button) is used for "Contact Seller" for its clear visual and interaction pattern.
+
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying a hero image gallery.  To address this, I used a `native-rectangle` with an image fill to create a full-width image placeholder and accommodate multiple product images in a visually appealing manner. This provides a flexible solution to meet the visual requirements of the product detail page while adhering to the design system's style guidelines for image placeholders.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through element sizing, spacing, and typography.  The large, full-width hero image establishes immediate visual dominance.  The product title and price are prominently displayed using larger text styles, while other details are presented in a secondary or tertiary text hierarchy.  Dividers further segment the content for clarity.
+
+7. **Variant Selection Rationale:**  The "Contact Seller" button (`10:3907`) uses the "Filled", "Medium", and "Green" variants to provide a clear and visually prominent call-to-action. The filled style is more visually assertive than the outlined styles, increasing the likelihood of users noticing it.  Medium size offers comfortable tap area on mobile.
+
+8. **Native Element Justification:** The design system lacks a single component that manages a full-width hero image gallery.  Native `native-rectangle` elements provide the required flexibility to accommodate multiple images in a full-width layout, which is critical for achieving an impactful visual design.
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "name": "Hero Image",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "height": 200,
+          "fill": {
+            "type": "IMAGE",
+            "scaleMode": "FILL"
+          }
+        }
+      },
+      {
+        "type": "native-text",
+        "name": "Product Title",
+        "properties": {
+          "content": "Refurbished Dell XPS 13",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "name": "Price",
+        "properties": {
+          "content": "₦850,000",
+          "textStyle": "Title/Medium",
+          "color": "Primary/primary50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Condition Details",
+        "layoutMode": "VERTICAL",
+        "items":[
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants":{
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "true",
+              "Show supporting text": "true"
+            },
+            "textLayers":{
+              "Overline": "Condition",
+              "Headline": "Excellent",
+              "Supporting text": "Minor scratches on the casing",
+              "Trailing supporting text": ""
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Profile",
+        "layoutMode": "HORIZONTAL",
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7773",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "type": "native-text",
+            "name": "Seller Name & Rating",
+            "properties": {
+              "content": "John Doe  ⭐⭐⭐⭐ (4.5)",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "native-text",
+        "name": "Description",
+        "properties": {
+          "content": "This is a refurbished Dell XPS 13 laptop in excellent condition. It features...",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

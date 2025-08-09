@@ -1,0 +1,130 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 375,
+            "height": 200,
+            "fill": {
+              "type": "SOLID",
+              "color": {"r": 0.8, "g": 0.8, "b": 0.8}
+            },
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "BMW X5 2023",
+            "textStyle": "Headline/Large",
+            "color": "neutral-90"
+          },
+          "layoutAlign": "STRETCH",
+          "horizontalSizing": "FILL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$45,000",
+            "textStyle": "Headline/Medium",
+            "color": "primary-50"
+          },
+          "layoutAlign": "STRETCH",
+          "horizontalSizing": "FILL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutAlign": "STRETCH",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "10:7773",
+              "name": "Seller Avatar",
+              "variants": {
+                "Photo": "Yes"
+              },
+              "properties": {
+                "imageSource": "john_smith_avatar.jpg"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutAlign": "STRETCH",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 4,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Smith",
+                    "textStyle": "Body/Medium",
+                    "color": "neutral-90"
+                  },
+                  "layoutAlign": "STRETCH",
+                  "horizontalSizing": "FILL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Lagos, Nigeria",
+                    "textStyle": "Body/Small",
+                    "color": "neutral-50"
+                  },
+                  "layoutAlign": "STRETCH",
+                  "horizontalSizing": "FILL"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "10:3907",
+          "name": "Contact Seller Button",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "Contact Seller"
+          }
+        }
+      ]
+    }
+  ]
+}

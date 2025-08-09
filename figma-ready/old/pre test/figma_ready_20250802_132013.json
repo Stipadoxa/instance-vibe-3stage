@@ -1,0 +1,163 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": "FILL",
+        "height": 200,
+        "fill": {
+          "type": "GRADIENT_LINEAR",
+          "stops": [
+            {
+              "color": {
+                "r": 0,
+                "g": 0.7,
+                "b": 0.3
+              },
+              "position": 0
+            },
+            {
+              "color": {
+                "r": 0,
+                "g": 0.5,
+                "b": 0.1
+              },
+              "position": 1
+            }
+          ]
+        },
+        "cornerRadius": 12
+      }
+    },
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "variants": {
+        "Type": "2+ images"
+      },
+      "properties": {
+        "imageUrls": [
+          "image_url_1",
+          "image_url_2",
+          "image_url_3"
+        ]
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Product Title",
+        "fontSize": 22,
+        "fontWeight": "bold",
+        "alignment": "left",
+        "color": "#304049",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "\u20a610,000",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "alignment": "left",
+        "color": "#00b53f",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Seller Name",
+        "fontSize": 14,
+        "fontWeight": "normal",
+        "alignment": "left",
+        "color": "#304049",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "avatar",
+      "componentNodeId": "24:10352",
+      "variants": {},
+      "properties": {
+        "imageUrl": "seller_avatar_url"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Location",
+        "fontSize": 12,
+        "fontWeight": "normal",
+        "alignment": "left",
+        "color": "#6c8ea0",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Large",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Contact Seller"
+      }
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "properties": {
+        "items": [
+          {
+            "label": "Home",
+            "icon": "home_icon"
+          },
+          {
+            "label": "Search",
+            "icon": "search_icon"
+          },
+          {
+            "label": "Profile",
+            "icon": "profile_icon"
+          }
+        ]
+      }
+    },
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "properties": {
+        "headline": "Product Details",
+        "subheadline": ""
+      }
+    }
+  ]
+}

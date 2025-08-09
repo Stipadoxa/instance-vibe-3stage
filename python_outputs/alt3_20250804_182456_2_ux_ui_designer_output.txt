@@ -1,0 +1,250 @@
+**DESIGN RATIONALE**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The profile page uses a vertical layout (`layoutMode`: "VERTICAL").  The top section features a user avatar and name using native elements for flexibility. The subsequent sections (Order History, Profile Information, Change Password) are each contained within their own vertical layout containers (`layoutMode`: "VERTICAL") with appropriate padding for readability.  A `divider` component is used between sections to improve visual separation.  All containers utilize `primaryAxisSizingMode`: "AUTO" and `counterAxisSizingMode`: "AUTO" for optimal responsiveness.
+
+3. **User Flow Reasoning:** The user flow is straightforward, starting with a visual representation of the user's profile, followed by order history, then profile information editing, and finally password change.  This order prioritizes immediately visible user information before moving into account management actions.
+
+4. **Component Choices:**  I selected the `list-item` component (`id`: "10:10214") to display the order history summary because it provides a clear and concise way to show multiple items.  This was preferred over native lists due to the `list-item`'s built-in visual hierarchy and consistency with other list views in the application.  For input fields, `text input` (`id`: "10:8492") components are used for name, email, and address, and `text area` (`id`: "10:8619") is used for address to accommodate potentially longer text inputs.  These were selected over native text inputs because of their consistent styling and built-in validation capabilities. For buttons, the `Button` component (`id`: "10:3907`) is used because it provides a standardized interaction element.
+
+5. **Component Gaps:** The design system lacks a dedicated "order history summary" component, and there isn't a single component that combines the necessary elements for user profile editing.  Therefore, I used a combination of `list-item` components and `text input` components to achieve the required functionality, maintaining consistency with other list and form elements within the app.
+
+6. **Visual Hierarchy:** Prominence is established through the size and placement of the user avatar and name at the top.  Section headings use a larger text size (`textStyle`: "Title/Medium") than the body text (`textStyle`: "Body/Medium") to clearly distinguish sections.  The use of dividers and consistent spacing further enhances the visual flow.
+
+7. **Variant Selection Rationale:**  For the `list-item` component, I chose the "2-line" variant for order history items. This allows showing a short description alongside the order number.  The "None" variant is used for the `Leading` and `Trailing` properties because no icons are required for the order summary display.   For the buttons, "Medium" size and "Filled" type variants are used for optimal mobile and desktop visibility.
+
+8. **Native Element Justification:**  The user avatar and name are implemented with native elements (`native-circle` and `native-text`) to ensure the image fills the avatar area (`horizontalSizing`: "FILL") and the name text adapts to varying screen sizes (`horizontalSizing`: "FILL").  No design system component offered sufficient flexibility for these specific placement and sizing requirements.
+
+
+**DESIGN SPECIFICATION**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-circle",
+            "properties": {
+              "width": 80,
+              "height": 80,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "User Name",
+              "textStyle": "Headline/Medium",
+              "color": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Order History Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Order History",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers":{
+              "Headline": "Order #12345",
+              "Supporting text": "Date: 2023-10-26, Total: $50.00"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers":{
+              "Headline": "Order #67890",
+              "Supporting text": "Date: 2023-11-15, Total: $100.00"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Profile Information Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Profile Information",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "textLayers": {
+              "label-text": "Name"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "textLayers": {
+              "label-text": "Email"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8619",
+            "variants": {
+              "Platform": "Android+Web",
+              "Type": "Filled",
+              "State": "Enabled"
+            },
+            "textLayers": {
+              "label-text": "Address"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Change Password Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Change Password",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "textLayers": {
+              "label-text": "Current Password"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "textLayers": {
+              "label-text": "New Password"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "textLayers": {
+              "label-text": "Confirm Password"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Save Changes"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

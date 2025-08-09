@@ -1,0 +1,192 @@
+## DESIGN RATIONALE
+
+1. **Component Inventory Verification:** I have manually verified all component IDs against the provided `DESIGN_SYSTEM_DATA` JSON.  All component IDs used exist within the system's `components` array.
+
+2. **Layout Decisions:** The layout employs a vertical structure, prioritizing a clear information hierarchy.  The top section displays key stats using a horizontal layout for quick comparison. The recent activity feed follows below, employing a vertical layout. Action buttons and bottom navigation are placed strategically at the bottom for easy access. Padding and spacing are consistently applied using the defined container patterns to ensure visual breathing room and separation.
+
+3. **User Flow Reasoning:** The dashboard prioritizes at-a-glance information with quick stats cards prominently displayed. The recent activity feed provides ongoing updates, while action buttons guide the user to critical next steps. The bottom navigation enables easy switching between dashboard sections.
+
+4. **Component Choices:** I chose the `Bottom navigation` (ID: `10:4724`) component for the bottom navigation due to its established design and interactive capabilities. The `Button` (ID: `10:3907`) component is used for action buttons because it is a standard, well-defined component and it offers clear visual feedback for the user.  `product card` (ID: `147:3743`) is chosen for the quick stats, given its suitability for displaying concise information.
+
+5. **Component Gaps:** The user request requires a way to display a scrollable recent activity feed. The provided `List item` (ID: `10:10214`) lacks the ability to scroll. I created a workaround using a `layoutContainer` with `layoutMode: "VERTICAL"` and `primaryAxisSizingMode: "AUTO"` to simulate a scrollable list by allowing the content to exceed the container height.
+
+6. **Visual Hierarchy:**  Prominence is established through card sizes, typography, color contrast, and layout position.  The stats cards are larger and more centrally positioned than the activity feed to highlight their priority. Clear visual separation between sections is maintained through padding and consistent spacing.
+
+7. **Variant Selection Rationale:** For the action buttons ("Create New Listing" and "View All Messages"), the `Button` component variants were selected as follows: `Platform: "Android+Web"`, `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, `Color: "Green"`.  Filled buttons are preferred for their prominent appearance and clear affordance for actions.
+
+8. **Native Element Justification:**  While the `product card` component displays key metrics well, I utilized `native-text` for the numeric values within the cards to allow for precise control of text styles (weight, size, and alignment) and use specific text styles (e.g., for price) without overriding the component styles.
+
+
+## DESIGN SPECIFICATION
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Stats Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                },
+                "properties": {
+                  "width": 110,
+                  "horizontalSizing": "AUTO"
+                },
+                "items":[
+                  { "type": "native-text", "properties": { "content": "Total Listings", "textStyle": "Title/Small", "color": "Neutral/neutral50", "alignment": "center" } },
+                  { "type": "native-text", "properties": { "content": "125", "textStyle": "Headline/Small", "color": "Primary/primary50", "alignment": "center" } }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                },
+                "properties": {
+                  "width": 110,
+                  "horizontalSizing": "AUTO"
+                },
+                "items":[
+                  { "type": "native-text", "properties": { "content": "Views This Week", "textStyle": "Title/Small", "color": "Neutral/neutral50", "alignment": "center" } },
+                  { "type": "native-text", "properties": { "content": "587", "textStyle": "Headline/Small", "color": "Primary/primary50", "alignment": "center" } }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                },
+                "properties": {
+                  "width": 110,
+                  "horizontalSizing": "AUTO"
+                },
+                "items":[
+                  { "type": "native-text", "properties": { "content": "Messages", "textStyle": "Title/Small", "color": "Neutral/neutral50", "alignment": "center" } },
+                  { "type": "native-text", "properties": { "content": "22", "textStyle": "Headline/Small", "color": "Primary/primary50", "alignment": "center" } }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Activity Item 1",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              { "type": "native-text", "properties": { "content": "New listing created", "textStyle": "Body/Medium", "color": "Neutral/neutral50" } }
+            ]
+          }
+          // ... more activity items
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "SPACE_BETWEEN",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "Action": "Create New Listing"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "Action": "View All Messages"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "properties": {
+          "horizontalSizing": "FILL"
+        }
+      }
+    ]
+  }
+}
+```

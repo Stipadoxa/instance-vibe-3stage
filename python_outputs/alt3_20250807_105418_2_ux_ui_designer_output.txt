@@ -1,0 +1,205 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been cross-referenced with the provided `DESIGN_SYSTEM_DATA` to ensure validity.
+
+2. **Layout Decisions:** The layout uses a vertical list to present notification types. Each list item contains descriptive text using the `Body/Medium` text style and a toggle switch (`10:9912`) for on/off control.  Consistent 16px padding is applied to the main content container for readability.
+
+3. **User Flow Reasoning:** The user will scroll through the list of notification types. Tapping a toggle switch will immediately change the notification preference for that specific type.  No confirmation dialog is needed due to the immediate visual feedback from the toggle.
+
+4. **Component Choices:** The `10:10214` list item component was initially considered, but it lacks direct support for embedding a toggle switch within the item's structure.  Instead of resorting to native elements for the entire list item which would violate the "component-based" restriction, we opted to build the list item with a `layoutContainer` and include the text and toggle components, ensuring a clean and maintainable solution within the constraints provided.
+
+5. **Component Gaps:** The design system lacks a pre-built list item that allows for direct embedding of a toggle switch.  This functional gap was addressed by combining a `layoutContainer` (acting as a list item) with the `native-text` for descriptions and the `10:9912` switch component.
+
+6. **Visual Hierarchy:**  The primary visual hierarchy is established through the vertical list structure, with clear visual separation between notification types. The descriptive text is in `Body/Medium`, providing sufficient visual weight without overshadowing the toggle switches.
+
+7. **Variant Selection Rationale:** For the toggle switch (`10:9912`), the "enabled" state is used for all toggles to allow for interaction. The "Selected" variant will be dynamically updated based on user interaction.  This design offers a standard interface that is easily understood by users.
+
+
+8. **Native Element Justification:** No native elements beyond `native-text` were required to fulfill the design goals within the given constraints.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Notification Type 1",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Push Notifications",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50",
+                  "horizontalSizing": "AUTO"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:9912",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "State": "enabled",
+                    "Selected": "false",
+                    "Icon": "false"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Type 2",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Email Alerts",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50",
+                  "horizontalSizing": "AUTO"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:9912",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "State": "enabled",
+                    "Selected": "false",
+                    "Icon": "false"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Type 3",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "SMS Updates",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50",
+                  "horizontalSizing": "AUTO"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:9912",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "State": "enabled",
+                    "Selected": "false",
+                    "Icon": "false"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Type 4",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Promotional Offers",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50",
+                  "horizontalSizing": "AUTO"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:9912",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "State": "enabled",
+                    "Selected": "false",
+                    "Icon": "false"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

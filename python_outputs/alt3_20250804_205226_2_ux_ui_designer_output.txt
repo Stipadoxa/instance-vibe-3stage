@@ -1,0 +1,125 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout employs a vertical structure.  The top section contains the search bar and filter button, clearly positioned to guide user interaction. The product grid below uses a horizontal layout with `layoutWrap: "WRAP"` to dynamically adjust to different screen sizes, ensuring optimal presentation of product cards.  All elements are spaced using default margins and padding provided by the components where applicable.  The `horizontalSizing` property is used where appropriate to ensure images and text fields fully utilize their containers, enhancing visual balance and information readability.
+
+3. **User Flow Reasoning:** The user flow begins with the search bar at the top, allowing for immediate product searches. The filter button provides additional filtering options, while the grid layout allows for efficient browsing of results.  Each product card provides key information for quick decision making.
+
+4. **Component Choices:**  I chose the `product card` (ID: `147:3743`) component for displaying product listings due to its comprehensive structure. This component is the most comprehensive option currently available within the design system for this purpose and incorporates image display, title, price, rating and other attributes, meeting the user requirement efficiently.  Alternatives considered, but deemed less suitable, included using multiple native elements to create a similar card structure (more complex), or potentially a simpler card structure with missing key elements (less user-friendly).
+
+
+5. **Component Gaps:** The design system lacks a dedicated component for a search bar that seamlessly integrates with the specified overall design.   Therefore, I employed the `search-field` component (ID: `10:12086`) with its "filled" state variant, in combination with native elements, to achieve both functional and aesthetic requirements. The icon within the search bar utilizes an available icon from the design system for optimal consistency. A filter button is created by utilizing the Button (ID: `10:3907`) component.
+
+
+6. **Visual Hierarchy:** Visual hierarchy is established through typography (using design system text styles for Headline, Title, and Label), spacing, and the prominent placement of the search bar at the top. Product cards are visually separated to improve readability.  The primary information (product title and price) uses larger text sizes specified from the Design System text styles, creating visual prominence.
+
+7. **Variant Selection Rationale:** For the `search-field` component, the "filled" state variant was selected to give a more prominent visual cue for user input. For the `Button` component the "Medium" size was chosen as it's the most commonly used in the overall design system, achieving the right balance between size and visibility.  Alternative size variants (Large and Small)  were considered, but neither offered the visual balance needed in the design.
+
+
+8. **Native Element Justification:** To build the product card grid's structure, I used a `native-layoutContainer` with `layoutMode: "HORIZONTAL"`, and `layoutWrap: "WRAP"` to achieve the responsive grid structure. The `horizontalSizing` property is applied to the native-rectangle representing the product images to make them fill the width of their containers.  This approach allows for a flexible and efficient grid presentation. The use of native elements in this instance is justified because the design system lacks a dedicated grid layout component, a common UI pattern requiring flexibility.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:12086",
+            "variants": {
+              "Device": "Mobile",
+              "State": "filled"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Filter"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "layoutWrap": "WRAP",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "id": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              },
+              {
+                "type": "component",
+                "id": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              },
+              {
+                "type": "component",
+                "id": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              },
+              {
+                "type": "component",
+                "id": "147:3743",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

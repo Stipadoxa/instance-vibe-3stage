@@ -1,0 +1,144 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs referenced below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical layout container (`layoutContainer`) to arrange the notification settings in a list. Each setting is a `list-item` component, providing a consistent structure.  A 16pt spacing is used between list items to improve readability and separate items visually.  The `horizontalSizing` property is not used for the list items, as the default width behavior of the `list-item` component aligns with the design intent.
+
+3. **User Flow Reasoning:** Users can easily scan the list of notification settings and toggle them on/off using the toggle switches. The clear labels provide sufficient information about each setting. The visual separation between items ensures clarity and avoids cognitive overload.
+
+4. **Component Choices:** I chose the `list-item` component (ID: 10:10214) for each notification setting because it provides a structured and consistent way to display labels and switches, aligning perfectly with the design intent and mobile-friendly design requirements.  Alternatives considered but rejected were `card` (ID: 147:3743) due to its increased complexity and visual weight inappropriate for settings and `text` (ID: 24:10333) because this would require a separate component for each toggle.
+
+5. **Component Gaps:** The design system lacks a combined `toggle switch` + `label` element that perfectly meets the specification. This is a significant component gap for this type of settings screen.  I leveraged the `list-item` component (ID: 10:10214) in conjunction with the `switch` component (ID: 10:9912) as a workaround. The `switch` component's `Selected` variant property handles the on/off state. This approach maintains a consistent user experience while working within the design system constraints.  This provides a clean and efficient approach to managing user notification preferences.
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through the vertical list structure.  Consistent typography (using the design system's `Body/Medium` text style for labels) and spacing provide a clear visual flow.  There is no need for a specific visual hierarchy for the notification settings as the options all carry equal weight and importance.
+
+7. **Variant Selection Rationale:** For the `switch` component (ID: 10:9912), I used the `State: enabled` variant to ensure the switches are interactive. The `Selected` variant will dynamically change based on user interaction, reflecting the chosen notification preference.  No other variants are necessary in the context of a simple toggle.
+
+8. **Native Element Justification:** No native elements were required. All functional requirements were met using existing components from the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "Push Notifications",
+          "Supporting text": "Receive push notifications for important updates"
+        },
+        "items":[
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "Email Alerts",
+          "Supporting text": "Receive email alerts for important updates"
+        },
+        "items":[
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "SMS Updates",
+          "Supporting text": "Receive SMS updates for important updates"
+        },
+        "items":[
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "Promotional Offers",
+          "Supporting text": "Receive promotional offers and updates"
+        },
+        "items":[
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

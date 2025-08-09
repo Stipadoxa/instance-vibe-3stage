@@ -1,0 +1,188 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout employs a vertical structure.  The image gallery occupies the top section using `horizontalSizing: "FILL"` to ensure it spans the full width of the screen. The remaining sections (title, price, condition, seller info, description, button) are arranged vertically, each with appropriate padding for readability and visual separation.  Spacing between sections is set to 16 pixels for a comfortable visual rhythm.
+
+3. **User Flow Reasoning:** The user flow is designed to be linear and intuitive.  Users first see the product images, then the essential information (title, price, condition), followed by seller details and finally the call to action ("Contact Seller").  This order prioritizes key information and encourages contact.
+
+4. **Component Choices:**
+    * **Image Gallery (`10:7816`):** I chose the `IMAGES` component for the image gallery instead of creating a custom solution using `native-rectangle` because it provides built-in functionality for displaying multiple images within a standardized and responsive layout.  A native approach would require handling image resizing, loading, and error states manually.
+    * **Button (`10:3907`):** The `Button` component was chosen to maintain a consistent visual style and behavior for the "Contact Seller" call to action.  Custom buttons might deviate from the design system and disrupt user expectations.
+
+
+5. **Component Gaps:** The design system lacks a dedicated "star rating" component. To address this, I utilized multiple instances of the `icon/star` component (`635:4752`) to create a visual star rating.  Each star icon will be configured with appropriate variants (e.g., `Star: "full"`, `Star: "half"`, `Star: "empty"`) to reflect the seller's rating.  This approach ensures visual consistency within the design system while fulfilling the functionality.
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through the use of typography and spacing.  Headlines are displayed with larger, bolder fonts, while body text uses smaller, less prominent styles.  The "Contact Seller" button is visually prominent due to its color and position.  Clear spacing between sections also enhances readability and separation of information.
+
+7. **Variant Selection Rationale:**  For the "Contact Seller" button, I chose `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, and `Color: "Green"`.  This combination represents a clear and positive call to action, aligning with standard button conventions in e-commerce and the provided design system's button variant options.  Alternatives like `Type: "Outlined"` or `Type: "Text"` would appear less prominent.
+
+8. **Native Element Justification:**  There is no suitable component within the Design System for displaying the product description. The design system has a text area component, but it does not display the image as is. Because of this I have used a `native-text` element to render the product description. This allows for flexible formatting and accommodates varying lengths of text.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7816",
+            "variants": {
+              "Type": "2+ images"
+            },
+            "horizontalSizing": "FILL",
+            "height": 200
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "2015 MacBook Pro 13-inch",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦ 450,000",
+          "textStyle": "Headline/Medium",
+          "color": "Primary/primary50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Good condition, minor scratches",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items":[
+          {
+            "type": "component",
+            "id": "10:7798",
+            "variants": {
+              "Type": "Photo"
+            },
+            "width": 64,
+            "height": 64
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "John Doe",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 4,
+        "items": [
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            },
+            "width": 16,
+            "height": 16
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            },
+            "width": 16,
+            "height": 16
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            },
+            "width": 16,
+            "height": 16
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "half"
+            },
+            "width": 16,
+            "height": 16
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "empty"
+            },
+            "width": 16,
+            "height": 16
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "This is a detailed description of the used laptop. It includes information about the specifications, condition, and any other relevant details.",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        },
+        "horizontalSizing": "AUTO"
+      }
+    ]
+  }
+}
+```

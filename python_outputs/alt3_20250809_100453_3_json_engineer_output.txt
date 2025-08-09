@@ -1,0 +1,241 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Hero Image Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 16,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 375,
+            "height": 200,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Title and Price Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2023 MacBook Pro 16\"",
+            "textStyle": "Title/Large",
+            "color": "Neutral/neutral90",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$1200",
+            "textStyle": "Headline/Medium",
+            "color": "Primary/primary50",
+            "alignment": "left",
+            "horizontalSizing": "AUTO"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Details Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition: Excellent",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "left",
+            "horizontalSizing": "AUTO"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Description: This is a high-performance laptop...",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Seller Profile Section",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "paddingTop": 0,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7798",
+          "properties": {
+            "horizontalSizing": "AUTO",
+            "variants": {
+              "Type": "Photo"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Rating Section",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 4,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "AUTO",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 16,
+                "height": 16,
+                "fill": "Primary/primary50",
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 16,
+                "height": 16,
+                "fill": "Primary/primary50",
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 16,
+                "height": 16,
+                "fill": "Primary/primary50",
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 16,
+                "height": 16,
+                "fill": "Neutral/neutral10",
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 16,
+                "height": 16,
+                "fill": "Neutral/neutral10",
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Contact Button Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 32,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "Action": "Contact Seller"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

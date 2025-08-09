@@ -1,0 +1,134 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical list (`layoutMode`: `"VERTICAL"`) to present each notification setting.  Each setting is a list item (`10:10214`) containing descriptive text and a toggle switch. Item spacing is set to 16 pixels for readability.  The padding is set to 16 pixels on each side of the container to create visual breathing room within the overall settings area.  The use of a vertical list ensures a clear and easily scannable presentation of options. Full-width text (`horizontalSizing`: `"FILL"`) is used within each list item for clear label visibility. The toggle switch (`10:9912`) within each list item also employs auto-sizing to accommodate its inherent size.
+
+3. **User Flow Reasoning:**  Users can easily toggle each notification type on or off via the toggle switch.  Clear labels provide context. The on/off state of each toggle switch is persistent across sessions (this is assumed functionality based on the requirement and standard practice for setting pages; a persistence mechanism is not specified in the design system).
+
+4. **Component Choices:** I chose the `list-item` component (`10:10214`) with `"Leading": "None"`, `"Trailing": "Switch"` variants and the `switch` component (`10:9912`) for each setting.  I considered using a `checkbox` (`10:9586`) but the `switch` component provides a more intuitive on/off experience for this use case, better conveying the continuous nature of notification settings. A simple vertical `layoutContainer` is used.  Alternatives considered, but not selected, include using individual text and toggle components without a container, which would offer less structural organization.
+
+5. **Component Gaps:** The design system lacks a dedicated "settings screen" or "notification settings" component. The current components allow us to create a fully functional and intuitive notification settings screen as requested. No functional gaps exist.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through consistent spacing between list items, clear labels using a standard text style for all notification types, and the visual prominence of the toggle switches.  The toggle itself is the primary interaction element for each notification type.
+
+7. **Variant Selection Rationale:** For the `list-item` component, the `"Leading": "None"` variant was chosen because no leading icon is needed; the label text sufficiently identifies the notification type.  The `"Trailing": "Switch"` variant positions the toggle switch appropriately for intuitive interaction.  For the `switch` component, the `"Selected"` variant dynamically reflects the on/off state and the `"State": "enabled"` variant ensures user interaction is possible.  No other options were necessary or considered since this was the only switch option.
+
+8. **Native Element Justification:**  No native elements are required. All functional requirements are met using components from the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Push Notifications"
+        },
+        "items": [
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Email Alerts"
+        },
+        "items": [
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "true",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "SMS Updates"
+        },
+        "items": [
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "Switch",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Promotional Offers"
+        },
+        "items": [
+          {
+            "type": "component",
+            "id": "10:9912",
+            "variants": {
+              "Selected": "true",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,136 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been checked against the provided `DESIGN_SYSTEM_DATA`.  `10:3907` (Button), `10:8492` (text input), and `147:3743` (product card) are verified.  No unverified component IDs were used.
+
+2. **Layout Decisions:** The app bar is positioned at the top, using Strategy A (full-width). Product cards are displayed in a grid using Strategy C (wrapped grid layout), allowing for responsive wrapping across different screen sizes.  Padding and spacing are consistent with Pattern A and B to ensure visual clarity. The spacing between components is 16px vertically and 12px horizontally, ensuring comfortable readability and visual breathing room.
+
+3. **User Flow Reasoning:**  The user flow begins with the search bar for quick product discovery.  The filter button provides further refinement. A grid of product cards allows intuitive browsing. Tapping a card would transition to a detailed product view (not implemented here).
+
+4. **Component Choices:** I chose `10:3907` (Button) for the filter button due to its clear visual representation of an action.  `10:8492` (text input) was chosen for the search bar due to its familiar input pattern, and `147:3743` (product card) is selected for its ability to show multiple attributes in a visually organized structure.
+
+5. **Component Gaps:** The design system lacks a dedicated star rating component. I used multiple instances of the `635:4752` (icon/star) component to create the seller rating.
+
+6. **Visual Hierarchy:** The search bar is visually prominent at the top, establishing clear focus. The filter button is placed alongside, in a secondary position, indicating its supportive function.  Product cards are evenly spaced within the grid, highlighting each product equally. Typography follows the design system's hierarchy (Headings, Labels, Body text).
+
+7. **Variant Selection Rationale:** For the `10:3907` (Button) component, I selected variants: `{"Platform": "Android+Web", "Size": "Medium", "Type": "Filled", "State": "Default", "Color": "Green"}` This best represents the styling and function of a filter button.  The `147:3743` (product card) uses the variant `"view": "grid", "type": "normal"`.
+
+8. **Native Element Justification:** No native elements beyond `native-text` and `native-rectangle` were required, as the verified components and modified icons could address all the functional needs.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "App Bar",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "placeholder-text": "Search Electronics",
+              "State": "enabled",
+              "Type": "Filled"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green",
+              "Action": "Filter"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Grid",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 12,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "view": "grid",
+              "type": "normal",
+              "#title": "Product Title 1",
+              "#price": "₦10,000",
+              "#attribute1 value": "4.5",
+              "#attribute1 value": "(47)"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "view": "grid",
+              "type": "normal",
+              "#title": "Product Title 2",
+              "#price": "₦25,000",
+              "#attribute1 value": "4.0",
+              "#attribute1 value": "(12)"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "view": "grid",
+              "type": "normal",
+              "#title": "Product Title 3",
+              "#price": "₦5,000",
+              "#attribute1 value": "3.5",
+              "#attribute1 value": "(3)"
+            }
+          }
+          // Add more product cards here...
+        ]
+      }
+    ]
+  }
+}
+```

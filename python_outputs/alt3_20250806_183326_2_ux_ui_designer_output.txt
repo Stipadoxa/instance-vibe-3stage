@@ -1,0 +1,271 @@
+**SECTIONS:**
+
+1. **Header:** Contains the page title ("Notification Settings") and a brief description ("Manage how you receive updates from Acme Corp.") using `native-text` elements styled with appropriate design system text styles (e.g., `S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b` for the title and a smaller style for the description). This section provides context and sets the stage for the notification settings.
+
+2. **Notification List:** This section displays the list of notification types (Push Notifications, Email Alerts, SMS Updates, Promotional Offers) along with their descriptions.  Each item in the list is a `layoutContainer` with a `native-text` element for the name and details, and a `component` of type `switch` (`10:9912`).  The `horizontalSizing` property of the `layoutContainer` is set to `"FILL"` to make each item span the full width. The `switch` component will handle the on/off toggling. The state of the switch is controlled by the initial state in the `userRequest`.
+
+3. **Footer:** Contains a "Save Changes" button using the `component` of type `button` (`10:3907`). This button triggers the saving of user preferences.
+
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Section Planning:** The section blueprint follows a standard settings page pattern, common in many applications. The header provides essential context, the notification list is the core content area allowing users to configure settings, and the footer contains the primary action to save changes. This structure is intuitive and easy to navigate.
+
+3. **Layout Decisions:** A vertical layout is used for a clear top-to-bottom flow. The header is at the top, followed by the notification list, and the footer is at the bottom.  Level 1 containers (`layoutContainer`) use `"horizontalSizing": "FILL"` to ensure they occupy the full width of the screen, and `paddingTop`, `paddingBottom`, `paddingLeft`, and `paddingRight` are set to 16px to create content padding.  `itemSpacing` is set to 16px between list items. Components within list items use their natural sizing.
+
+4. **User Flow Reasoning:** Users can easily scan the list of notifications, understand their purpose from the provided description, and toggle them on/off using the toggle switches.  The "Save Changes" button at the bottom confirms their actions and saves the configuration.
+
+5. **Component Choices:** I chose the `switch` component (`10:9912`) over potentially using checkboxes (`10:9586`) because toggle switches are a more common and intuitive control for on/off settings.  For the button, I chose the `Button` component (`10:3907`) due to its prominent visual presence and standard design.
+
+6. **Component Gaps:**  No significant component gaps were identified. The design system adequately supports the creation of this notification settings page.
+
+7. **Visual Hierarchy:** The header is visually distinct with larger text.  The notification list items have clear visual separation using spacing and consistent layout. The footer is prominent through the use of a primary action button.
+
+8. **Variant Selection Rationale:** The `switch` component's `State` variant is set dynamically based on the initial state from the input JSON (on/off).  The button's `Type` variant is set to "Filled" for better prominence.
+
+
+9. **Native Element Justification:** No native elements beyond `native-text` are needed because the design system provides all the necessary components.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Manage how you receive updates from Acme Corp.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "horizontalSizing": "FILL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Push Notifications",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentId": "10:9912",
+                    "variants": {
+                      "Selected": "true",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive real-time alerts on your mobile device.",
+                  "textStyle": "Body/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "horizontalSizing": "FILL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Email Alerts",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentId": "10:9912",
+                    "variants": {
+                      "Selected": "false",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Get important updates and information sent to your inbox.",
+                  "textStyle": "Body/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "horizontalSizing": "FILL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "SMS Updates",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentId": "10:9912",
+                    "variants": {
+                      "Selected": "false",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive critical updates via text message (may incur SMS charges).",
+                  "textStyle": "Body/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "horizontalSizing": "FILL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Promotional Offers",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentId": "10:9912",
+                    "variants": {
+                      "Selected": "true",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Stay informed about special deals and new product launches.",
+                  "textStyle": "Body/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items":[
+          {
+            "type": "component",
+            "componentId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Save Changes"
+            },
+            "horizontalSizing": "FILL"
+          }
+        ]
+      }
+    ]
+  }
+}
+```

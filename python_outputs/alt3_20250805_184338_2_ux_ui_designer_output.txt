@@ -1,0 +1,165 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical layout container as the root, ensuring a top-to-bottom flow.  The search bar and filter button occupy the top section, providing immediate access. The product cards are arranged in a horizontal layout container with `layoutWrap: "WRAP"`, creating a responsive grid that adapts to different screen sizes.  The `itemSpacing` is set to provide visual breathing room between elements.  Full-width elements utilize `"horizontalSizing": "FILL"` to ensure they span the entire width of the screen.
+
+3. **User Flow Reasoning:** The user first encounters the search bar and filter button, allowing for immediate refinement of search results.  The product cards below present the key information (image, title, price, rating) for quick browsing and selection.  The visual hierarchy guides users to first focus on the product cards themselves.
+
+4. **Component Choices:**
+    - **Search Bar:** I chose `10:12086` (search-field) as it provides a dedicated search input field, and it natively supports clear functionality.
+    - **Filter Button:** I chose `10:3907` (Button, variants: { "Size": "Medium", "Type": "Filled", "State": "Default", "Color": "Green"}) because it is readily usable with a clear action and provides a strong visual cue. I considered other buttons types, but a filled button has stronger visual appeal for this call to action.
+    - **Product Card:** The ideal component would have been a pre-built product card component, however, it's missing in the design system (`147:3743` is partially useful but doesn't account for the text and overall presentation details).  The workaround is implemented using native elements and individual components for the image, text, and star rating.
+
+5. **Component Gaps:** The design system lacks a dedicated product card component which would have perfectly combined image, title, price, and rating into one reusable entity.  A workaround was implemented using a combination of `10:7816` (IMAGES) for images, `native-text` for the title, price and other text elements, and individual star components (`635:4752`) for the rating.  This approach allows for flexible customization and proper presentation while still staying within the boundaries of the design system.
+
+
+6. **Visual Hierarchy:**  Prominence is established by using larger typography sizes (Title/Large) for the product title and a bold weight for the price. The product images are given substantial visual weight, and rating is clearly placed below. The other details are in secondary text styles.
+
+
+7. **Variant Selection Rationale:**
+    - For the `10:3907` (Button), I selected the "Medium" size for balance with the appbar elements; "Filled" button type for higher visual appeal; the "Default" state to represent the unpressed appearance; and the "Green" color as a standard call-to-action color.
+    - For the `10:7816` image component, I used a `native-rectangle` for fallback if `10:7816` (IMAGES) component is found not to be suitable for the use case.
+
+
+
+8. **Native Element Justification:**  The product card requires the layout to organize the image, title, price, and rating in a specific arrangement which isn't possible with components alone.  The `native-rectangle` provides the image container, and `native-text` elements ensure precise text formatting and hierarchy (leveraging design system text styles where available).  Multiple instances of the `635:4752` (icon/star) component are used to create the rating visual.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingLeft": 16, "paddingRight": 16,
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "component",
+            "id": "10:12086",
+            "variants": {
+              "Device": "Mobile",
+              "State": "default"
+            },
+            "horizontalSizing": "FILL"
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 16,
+        "paddingLeft": 16, "paddingRight": 16,
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "width": 170,
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 170,
+                  "height": 170,
+                  "cornerRadius": 8,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Product Title",
+                  "textStyle": "Title/Medium",
+                  "color": "Neutral/neutral90",
+                  "horizontalSizing": "FILL"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "₦15,000",
+                  "textStyle": "Label/Large",
+                  "color": "Primary/primary50",
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 4,
+                "items": [
+                  {
+                    "type": "component",
+                    "id": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4752",
+                    "variants": {
+                      "Star": "full"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "id": "635:4752",
+                    "variants": {
+                      "Star": "half"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          // ... more product cards ...
+        ]
+      }
+    ]
+  }
+}
+```

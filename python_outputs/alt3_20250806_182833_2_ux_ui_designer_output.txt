@@ -1,0 +1,196 @@
+**SECTIONS:**
+1. **Header:** Contains the page title ("Notification Settings") and a brief description ("Customize how you receive updates from Acme Corp.") using `native-text` elements styled with appropriate design system text styles.  This section provides essential context for the user.
+2. **Notification List:**  This section displays a list of notification types (Push Notifications, Email Alerts, SMS Updates, Promotional Offers) using a `layoutContainer` with `layoutMode: "VERTICAL"`. Each item in the list is a `layoutContainer` with `layoutMode: "HORIZONTAL"` containing `native-text` for the notification name and details and a `component` of type `switch` to toggle the notification on or off. This allows users to easily manage their notification preferences.
+3. **Actions:** This section contains a primary button ("Save Changes") using a `component` of type `button` for saving user preferences. This section provides the user with a clear way to confirm their changes.
+
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Section Planning:** The section blueprint follows a common settings page pattern, prioritizing clarity and ease of use. The header provides context, the notification list allows for individual control, and the actions section offers a clear way to save changes. This structure aligns with user needs and best practices for notification settings pages.
+
+3. **Layout Decisions:** A vertical layout is used for a clear top-to-bottom flow. The header is at the top for immediate context.  The notification list uses a vertical layout with horizontal items for each notification type. This creates a clean and organized presentation of notification settings. Each `layoutContainer` within the notification list uses `horizontalSizing: "FILL"` to ensure that it takes up the entire width of the screen.
+
+4. **User Flow Reasoning:** The user flow is straightforward: The user sees the notification types, toggles their preferences, and saves the changes.  The clear layout and easily accessible toggle switches ensure a simple and efficient user experience.
+
+5. **Component Choices:** I chose the `10:9912` (`switch`) component over native elements or other input types because it provides a familiar and intuitive way to toggle notification settings.  The switch's visual design aligns well with the provided design system.
+
+6. **Component Gaps:** No component gaps were identified.  The design system provides all necessary components.
+
+7. **Visual Hierarchy:** The header is visually prominent due to its position and larger text size.  The notification items have a clear hierarchy within their own container, and sufficient spacing is employed to ensure readability and clear visual separation between each setting.
+
+8. **Variant Selection Rationale:** For the `10:9912` switch component, the `Selected` variant is dynamically set based on the initial state ("on" or "off") from the JSON input. The `State` variant will change dynamically to "enabled", "disabled", "focused", "hovered", or "pressed" depending on user interaction. The `Icon` variant is set to "false" as no icon is required for this specific implementation.
+
+9. **Native Element Justification:** No native elements were required beyond the default `native-text` for the header and descriptions to adhere to the design system and maintain consistency.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Customize how you receive updates from Acme Corp.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 16,
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Push Notifications",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "true",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Email Alerts",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "false",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "SMS Updates",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "false",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Promotional Offers",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "true",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Save Changes"
+            },
+            "horizontalSizing": "FILL"
+          }
+        ]
+      }
+    ]
+  }
+}
+```

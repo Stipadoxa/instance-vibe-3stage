@@ -1,0 +1,158 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been manually checked against the provided `DESIGN_SYSTEM_DATA` JSON.  No invented component IDs were used.
+
+2. **Layout Decisions:** The layout uses a vertical structure for mobile-first design.  The app bar occupies the top section, followed by a search bar, filter button and a horizontally wrapped grid of product cards. Consistent padding (16px horizontal, 20px vertical for main content sections) is used to create visual breathing room and improve readability.  A vertical spacing of 12px between items in the grid layout creates a clean and balanced layout.
+
+3. **User Flow Reasoning:** The user first sees the app bar for navigation and context. Next, they engage with the search bar and filter button to refine their search. The resulting products are then presented in a visually appealing grid, allowing easy scanning and selection.  Tapping a product card will lead to a product details page (not designed here).
+
+4. **Component Choices:** The `appbar` component (ID: 10:5620) is used for the top navigation bar, providing a consistent header across the application. The `text input` (ID: 10:8492) component is selected for the search bar, offering a familiar and user-friendly input experience.  The `button` (ID: 10:3907) component is used for the filter button. For the product card, I am using the `product card` component (ID: 147:3743) which incorporates the required visual elements including image, title, price and rating.
+
+5. **Component Gaps:** The design system lacks a dedicated rating component.  I've addressed this by using multiple `icon/star` (ID: 635:4752) components within a `layoutContainer`, representing the star rating for each product.
+
+6. **Visual Hierarchy:** The app bar and search bar have high visual prominence due to their position at the top of the screen.  Product cards have distinct visual separation through the use of `layoutContainer` with horizontal wrapping and spacing. Typography uses design system text styles (H1, H2, etc.) which will need to be defined in the final design file, with adjustments made based on the provided textStyles in the DESIGN_SYSTEM_DATA.
+
+7. **Variant Selection Rationale:** For the `button` component (ID: 10:3907), I selected the "Filled", "Medium", "Default", and "Green" variants to ensure the filter button is easily noticeable and consistent with the design system. For the `appbar`, I selected the "Default" type because it suits our search results page.  For the `product card` I selected a `grid` view and `normal` type to make the design visually consistent.
+
+8. **Native Element Justification:**  No native elements beyond `native-rectangle` (for image placeholders within product cards) and `native-text` (for supporting text within the product cards where needed) are necessary.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "component",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          },
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Search and Filter",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "textLayers": {
+                "Action": "Filter"
+              },
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Grid",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 12,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "width": 164,
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "width": 164,
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "width": 164,
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "variants": {
+                "view": "grid",
+                "type": "normal"
+              },
+              "width": 164,
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

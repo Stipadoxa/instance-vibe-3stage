@@ -1,0 +1,19 @@
+{
+  "pipeline": "alternative_3_stage",
+  "stage": 1,
+  "stage_name": "User Request Analyzer",
+  "timestamp": "20250806_213156",
+  "content": "```json\n{\n  \"userRequest\": \"Create a login screen for the marketplace app with email and password fields, a login button, and a 'forgot password' link\",\n  \"content\": {\n    \"primary\": {\n      \"title\": \"Welcome back to CraftMart!\",\n      \"description\": \"Sign in to access your saved items, orders, and personalized recommendations.\"\n    },\n    \"data\": {\n      \"items\": []\n    },\n    \"users\": [],\n    \"actions\": {\n      \"primary\": \"Sign In\",\n      \"secondary\": \"Create Account\"\n    },\n    \"metadata\": {\n      \"dates\": null,\n      \"status\": null,\n      \"additional\": \"CraftMart is a vibrant online marketplace for handmade goods.\"\n    },\n    \"form\": {\n      \"emailLabel\": \"Email Address\",\n      \"emailPlaceholder\": \"youremail@example.com\",\n      \"passwordLabel\": \"Password\",\n      \"passwordPlaceholder\": \"********\",\n      \"loginButton\": \"Sign In\",\n      \"forgotPasswordLink\": \"Forgot password?\",\n      \"signupLink\": \"Create Account\"\n    }\n  },\n  \"hasExplicitStructure\": false,\n  \"suggestedPageType\": \"Login\",\n  \"Technical Considerations\": {\n    \"UI Patterns\": [\n      \"Form\",\n      \"Buttons\",\n      \"Links\",\n      \"Input Fields\"\n    ],\n    \"PercentageWidths\": false,\n    \"ComplexLayouts\": false,\n    \"UnsupportedNativeElements\": false,\n    \"ComponentRequirements\": {\n      \"Buttons\": {\n        \"variants\": [\n          {\n            \"type\": \"primary\",\n            \"style\": \"filled\",\n            \"size\": \"medium\"\n          },\n          {\n            \"type\": \"secondary\",\n            \"style\": \"text\",\n            \"size\": \"small\"\n          }\n        ]\n      },\n      \"InputFields\": {\n        \"variants\": [\n          {\n            \"type\": \"email\",\n            \"style\": \"outlined\"\n          },\n          {\n            \"type\": \"password\",\n            \"style\": \"outlined\"\n          }\n        ]\n      },\n      \"Links\": {\n        \"variants\": [\n          {\n            \"type\": \"forgot-password\",\n            \"style\": \"underline\",\n            \"size\": \"small\"\n          },\n          {\n            \"type\": \"signup\",\n            \"style\": \"underline\",\n            \"size\": \"small\"\n          }\n        ]\n      }\n    }\n  }\n}\n```\n",
+  "metadata": {
+    "stage": "User Request Analyzer",
+    "ai_used": true,
+    "prompt_used": true,
+    "prompt_length": 8844,
+    "execution_time": 4.856255054473877,
+    "token_usage": {
+      "prompt_tokens": 856.0,
+      "completion_tokens": 146.0,
+      "total_tokens": 1002.0
+    }
+  }
+}

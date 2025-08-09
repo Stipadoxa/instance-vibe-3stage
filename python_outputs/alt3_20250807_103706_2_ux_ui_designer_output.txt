@@ -1,0 +1,118 @@
+```json
+{
+  "DESIGN RATIONALE": {
+    "Component Inventory Verification": "All component IDs have been verified against the provided `DESIGN_SYSTEM_DATA`.",
+    "Layout Decisions": "The login screen uses a vertical layout for a clear top-to-bottom flow.  The email and password fields are stacked vertically, followed by the login button and 'forgot password' link. Consistent 16px padding is used for all sections for visual breathing room. The `layoutAlign: \"STRETCH\"` is consistently used to ensure the full width components use the available viewport space.",
+    "User Flow Reasoning": "The user flow is straightforward.  The user inputs their email and password. The login button initiates the authentication process. The 'forgot password' link provides a path for password recovery. A simple, intuitive, and efficient flow that reduces cognitive load.",
+    "Component Choices": "I chose the `text input` component (ID: `10:8492`) for the email and password fields because it provides built-in placeholder text, error handling, and visual feedback. I chose the `Button` component (ID: `10:3907`) for the login button as it adheres to design system standards and provides default hover and pressed states for the login button. For the 'forgot password' link, a `native-text` component is used with custom styling to simulate a link.",
+    "Component Gaps": "The design system does not include a specific component for a 'forgot password' link. A `native-text` component provides the necessary functionality and allows for a consistent look with subtle underline styling. Password masking isn't natively supported by the input component; however, this is a client-side implementation detail outside of the scope of this design specification.",
+    "Visual Hierarchy": "Visual hierarchy is established through vertical positioning and component sizing. The email and password inputs are given equal prominence, and the login button is visually larger to emphasize its primary action. The 'forgot password' link is a smaller text size and styling to represent secondary interaction.",
+    "Variant Selection Rationale": "For the button, I have selected the following variants: `Platform: \"Android+Web\"`, `Size: \"Medium\"`, `Type: \"Filled\"`, `State: \"Default\"`, `Color: \"Green\"`. The medium size is chosen as appropriate for mobile, a filled button is used to highlight the primary action, and the green color is used for a positive action.",
+    "Native Element Justification": "The 'forgot password' link is implemented using a `native-text` element to achieve the desired functionality of a clickable link, because no component directly provides that functionality."
+  },
+  "DESIGN SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Login Screen - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 600,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Content Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "paddingTop": 20,
+          "paddingBottom": 20,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                },
+                "textLayers": {
+                  "placeholder-text": "Email Address"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                },
+                "textLayers": {
+                  "placeholder-text": "Password"
+                }
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "name": "Component Wrapper",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 0,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "primaryAxisSizingMode": "AUTO",
+              "counterAxisSizingMode": "AUTO",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "10:3907",
+                  "properties": {
+                    "horizontalSizing": "FILL",
+                    "variants": {
+                      "Platform": "Android+Web",
+                      "Size": "Medium",
+                      "Type": "Filled",
+                      "State": "Default",
+                      "Color": "Green"
+                    },
+                    "textLayers": {
+                      "Action": "Login"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Forgot password?",
+                "textStyle": "Body/Small",
+                "color": "Neutral/neutral50",
+                "underline": true,
+                "horizontalSizing": "AUTO"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```

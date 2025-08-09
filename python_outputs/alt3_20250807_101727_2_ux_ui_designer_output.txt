@@ -1,0 +1,131 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been checked against the provided `DESIGN_SYSTEM_DATA` JSON.
+
+2. **Layout Decisions:** The login screen uses a vertical layout for a clear top-to-bottom flow.  The email and password fields are stacked vertically, promoting a sequential input process. The login button and "forgot password" link are placed below the input fields for intuitive user interaction. Consistent padding (16px) is used around the content to provide visual breathing room.
+
+3. **User Flow Reasoning:** The user is guided through a linear flow: enter email, enter password, tap login. The "forgot password" link offers a clear path for password recovery. This simple flow aims to minimize cognitive load and frustration.
+
+4. **Component Choices:** I chose the `text input` component (`10:8492`) for email and password fields because it provides built-in placeholder text, error handling, and a clear visual representation of the input type.  The `button` component (`10:3907`) is used for the login button for its inherent interactive properties and visual feedback.
+
+5. **Component Gaps:** The design system lacks a specific "forgot password" link component styled for this context. I've implemented a workaround using a `native-text` element styled as a hyperlink. The `native-text` provides flexibility in text styling and visual appearance which couldn't be achieved with standard components.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the vertical layout, with clear spacing between elements. The login button is visually prominent, using a distinct design.  The text styles are used consistently.
+
+7. **Variant Selection Rationale:** For the login button (`10:3907`), I selected the "Filled", "Large", and "Default" variants to provide a visually prominent and clear call to action.
+
+8. **Native Element Justification:** The "forgot password" link requires specific styling (underlining, color) not directly offered by the available components. A `native-text` element allows for this targeted styling.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Email Address"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Password"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 0,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Platform": "Android+Web",
+                    "Size": "Large",
+                    "Type": "Filled",
+                    "State": "Default",
+                    "Color": "Green"
+                  },
+                  "textLayers": {
+                    "Action": "Login"
+                  }
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot password?",
+                  "textStyle": "Body/Small",
+                  "color": "secondary-500",
+                  "horizontalSizing": "AUTO",
+                  "underline": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

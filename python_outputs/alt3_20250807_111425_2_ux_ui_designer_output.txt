@@ -1,0 +1,307 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs have been manually checked against the provided `DESIGN_SYSTEM_DATA` JSON.
+
+2. **Layout Decisions:** The layout uses a vertical scrolling structure. The top section displays a carousel of product images. Below that, a section contains the title, price, and condition.  The seller profile with a star rating (implemented with individual star icons) follows, succeeded by the description and finally, a "Contact Seller" button.  Consistent padding and spacing (16px) are used throughout for visual clarity and mobile-first responsiveness.
+
+3. **User Flow Reasoning:** The user first sees the product images to quickly assess visual appeal. Then, key information (title, price, condition) is presented prominently, followed by seller details and a description to build trust.  The "Contact Seller" button provides clear call to action.
+
+4. **Component Choices:** I did not use any components that required a workaround.  
+
+5. **Component Gaps:** The design system lacks a dedicated image carousel and star rating component. For the image gallery, I implemented a workaround using multiple `native-rectangle` elements with image fills. For the star rating, I used multiple `native-circle` elements to represent filled and empty stars.
+
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through size, spacing, and typography. The product title uses a larger `native-text`  with the primary color to establish prominence. The price is displayed in a slightly smaller `native-text` with a primary color. The supporting text uses a smaller size `native-text` with a neutral color.
+
+7. **Variant Selection Rationale:**  Component variants were chosen for optimal presentation. For example, the "Contact Seller" button uses the `Medium` size and `Filled` type variant of the `button` component.  Color selection prioritizes primary color for calls-to-action and neutral for labels and supporting text.
+
+8. **Native Element Justification:**  The image carousel and star rating require native elements due to the lack of suitable components in the provided design system. The `native-rectangle` elements allow for flexible image display, while `native-circle` elements allow for customization needed to create a star rating system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Used Laptop Detail - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Image Carousel",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Details",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Used Dell XPS 15 Laptop",
+              "textStyle": "Title/Large",
+              "color": "primary-50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$800",
+              "textStyle": "Title/Medium",
+              "color": "primary-50",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Good Condition",
+              "textStyle": "Label/Medium",
+              "color": "neutral-50",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Profile",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 40,
+              "height": 40,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              },
+              "cornerRadius": 20
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "John Doe",
+              "textStyle": "Label/Medium",
+              "color": "neutral-50",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Star Rating",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 4,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "AUTO",
+            "layoutAlign": "START",
+            "items": [
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 12,
+                  "height": 12,
+                  "fill": {
+                    "r": 0,
+                    "g": 0.7098039388656616,
+                    "b": 0.24705882370471954
+                  }
+                }
+              },
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 12,
+                  "height": 12,
+                  "fill": {
+                    "r": 0,
+                    "g": 0.7098039388656616,
+                    "b": 0.24705882370471954
+                  }
+                }
+              },
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 12,
+                  "height": 12,
+                  "fill": {
+                    "r": 0,
+                    "g": 0.7098039388656616,
+                    "b": 0.24705882370471954
+                  }
+                }
+              },
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 12,
+                  "height": 12,
+                  "fill": {
+                    "r": 0.8196078538894653,
+                    "g": 0.8745098114013672,
+                    "b": 0.8980392217636108
+                  }
+                }
+              },
+              {
+                "type": "native-circle",
+                "properties": {
+                  "width": 12,
+                  "height": 12,
+                  "fill": {
+                    "r": 0.8196078538894653,
+                    "g": 0.8745098114013672,
+                    "b": 0.8980392217636108
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Description",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "This is a description of the used Dell XPS 15 laptop.  It has a 15.6-inch screen, an Intel Core i7 processor, and 16GB of RAM.",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Contact Seller",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "FILL",
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

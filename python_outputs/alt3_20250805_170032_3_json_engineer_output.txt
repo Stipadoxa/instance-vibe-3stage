@@ -1,0 +1,286 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 100,
+            "height": 100,
+            "cornerRadius": 50,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Jane Doe",
+            "textStyle": "Title/Large",
+            "color": "Neutral/neutral90",
+            "alignment": "center",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Order History",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "layoutWrap": "WRAP",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Order #1234",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90",
+                    "layoutAlign": "STRETCH",
+                    "horizontalSizing": "FILL"
+                  }
+                },
+                {
+                  "type": "layoutContainer",
+                  "layoutMode": "HORIZONTAL",
+                  "itemSpacing": 4,
+                  "items": [
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "half"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 16,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Order #5678",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral90",
+                    "layoutAlign": "STRETCH",
+                    "horizontalSizing": "FILL"
+                  }
+                },
+                {
+                  "type": "layoutContainer",
+                  "layoutMode": "HORIZONTAL",
+                  "itemSpacing": 4,
+                  "items": [
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "full"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "empty"
+                      }
+                    },
+                    {
+                      "type": "component",
+                      "componentNodeId": "635:4752",
+                      "variants": {
+                        "Star": "empty"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Shipping Address",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8619",
+          "variants": {
+            "Platform": "Android+Web",
+            "Type": "Filled",
+            "State": "Enabled"
+          },
+          "properties": {
+            "label-text": "123 Main St"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Change Password",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Current Password",
+            "placeholder-text": "Enter current password"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "New Password",
+            "placeholder-text": "Enter new password"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Confirm Password",
+            "placeholder-text": "Confirm new password"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "Save Changes"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

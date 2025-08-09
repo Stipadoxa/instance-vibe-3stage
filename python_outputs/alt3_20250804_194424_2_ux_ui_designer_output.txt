@@ -1,0 +1,227 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The profile page uses a vertical layout (`layoutMode`: "VERTICAL").  The top section contains the user's avatar and name, using a horizontal layout for alignment. Subsequent sections (order history, profile information, password change) are also vertically laid out with appropriate spacing (`itemSpacing`: 16) between sections for visual clarity and separation.  Full-width elements, such as the title and input fields, utilize `horizontalSizing`: "FILL" to ensure they occupy the entire available width.
+
+3. **User Flow Reasoning:** The user flow is designed to be intuitive and straightforward.  The order history is displayed first, followed by profile information and password change options.  The placement and visual prominence of elements guide users through the update process.  Clear labels and interactive elements help in making adjustments.
+
+4. **Component Choices:** 
+    * **For the Avatar:** I chose `10:7773` (avatar / big) over `10:7798` (avatar / single) and `24:10352` (avatar / stack) because it allows for a larger, more prominent display of the user's profile picture, which is crucial for user recognition and personalization.  The `Photo` variant is set to `Yes` to display the actual image.
+
+    * **For Input Fields:** I chose `10:8492` (text input) for name, email, and address input fields over `10:8619` (text area) because these fields require single-line input, and the text input component is semantically appropriate.
+
+    * **For the List of Orders:** I selected `10:10214` (List item) for displaying order history because it's the most suitable component for showing a list of items with details.  The `Condition` variant will be dynamically adjusted based on the order summary length (1, 2, or more lines).
+
+
+5. **Component Gaps:** The design system lacks a dedicated "order history" component to display a list of orders with summaries. I created a workaround using the `10:10214` (List item) component, dynamically adjusting the `Condition` variant for different order summary lengths. This provides a clean and visually consistent way to display the order history while still leveraging the design system components.  Further, a component for "Password Change" functionality was not found, so native elements were used.
+
+6. **Visual Hierarchy:** Visual hierarchy is established using a combination of size, spacing, and typography. The avatar and user name are prominently displayed at the top, while the other sections are presented in a clear, logical order using consistent spacing.  Headings use appropriately sized text styles from the design system's `textStyles` array.
+
+7. **Variant Selection Rationale:** For the `10:10214` (List item) component, I'll dynamically choose between the `Condition` variants ("1-line", "2-line", "3-line+") based on the length of each order's summary.  This ensures optimal display for varying amounts of order information.  This ensures efficient use of space.
+
+8. **Native Element Justification:** The password change functionality requires specific input fields (current, new, confirm) and security-focused interaction patterns not achievable with existing components.  Native elements (`native-text`, `native-input`) are used to create these custom elements, providing the necessary controls while remaining within the general framework of the existing system.
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7773",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Jane Doe",
+              "textStyle": "Headline/Medium",
+              "color": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Order History",
+          "textStyle": "Title/Medium",
+          "color": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          //Order History Items - Multiple instances of this structure.
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Order #1234",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Total: $50.00",
+              "textStyle": "Caption/Small",
+              "color": "Neutral/neutral50"
+            }
+          }
+        ]
+
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Profile Information",
+          "textStyle": "Title/Medium",
+          "color": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Name",
+              "label-text": "Name"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Email",
+              "label-text": "Email"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Address",
+              "label-text": "Address"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Change Password",
+          "textStyle": "Title/Medium",
+          "color": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Current Password",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "native-input",
+            "properties": {
+              "placeholder": "Current Password",
+              "secureTextEntry": true,
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "New Password",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "native-input",
+            "properties": {
+              "placeholder": "New Password",
+              "secureTextEntry": true,
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Confirm Password",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "native-input",
+            "properties": {
+              "placeholder": "Confirm Password",
+              "secureTextEntry": true,
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Save Changes"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

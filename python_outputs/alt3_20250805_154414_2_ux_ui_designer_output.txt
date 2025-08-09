@@ -1,0 +1,175 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The dashboard uses a vertical layout for the main content.  The top section features a horizontal layout for the stats cards, allowing for a responsive, flexible grid. The recent activity feed follows below, also in a vertical layout. The bottom navigation is positioned at the very bottom of the screen.  All containers utilize `counterAxisSizingMode: "AUTO"` to ensure content-driven height adjustments, maintaining responsiveness.  Horizontal spacing between elements will be 16px, and vertical spacing will be 16px between sections and 8px within sections.
+
+3. **User Flow Reasoning:** The user flow prioritizes quick access to key information and actions.  Stats cards provide at-a-glance performance metrics. The activity feed shows recent changes, and buttons provide direct access to create new listings or manage messages.  Bottom navigation provides consistent access to other key sections of the application.
+
+4. **Component Choices:** 
+    * **Stats Cards:** I chose `147:3743` (product card) for the stats cards because it provides a visually appealing and easily customizable structure.  While other components could potentially display information, the `147:3743`  offers better visual presentation for key performance indicators.
+    * **Activity Feed:**  The design system lacks a dedicated activity feed component.  The workaround is to use `10:10214` (List item) to display activity entries in a vertical layout.   Alternatives such as the card could have been used, but the list is more efficient in displaying many activity updates. 
+    * **Buttons:** I chose `10:3907` (Button) for its straightforward functionality and styling options, which are more adaptable to different action intents than native elements. 
+    * **Bottom Navigation:** I chose `10:4724` (Bottom navigation) due to its explicit design for bottom navigation patterns. The navigation bar would have been a less intuitive alternative.
+
+5. **Component Gaps:**  The design system lacks components for creating a quick stats overview and a dynamic activity feed.  For the quick stats section, I used the `147:3743` (product card) component as a suitable alternative. For the activity feed, I have used the `10:10214` (List item) component, leveraging its flexibility. These components provide a close enough approximation to the desired layout.
+
+6. **Visual Hierarchy:** Prominence is established through the sizing and positioning of elements. Stats cards are larger and placed at the top, followed by the activity feed, and lastly action buttons.  This creates a clear visual hierarchy guiding the user through the essential dashboard information.
+
+7. **Variant Selection Rationale:** For the Buttons, the `10:3907` component will use the "Size: Medium", "Type: Filled", "State: Default", "Color: Green" variants. This combination balances visual clarity and efficient use of screen real estate while following the overall design language of the app.
+
+
+8. **Native Element Justification:**  No native elements are required for this specific design; all UI elements can be implemented using available components or combinations thereof.  The design system provides enough flexibility to achieve the required functionality.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "width": 160,
+            "textLayers":{
+              "#title": "Total Listings",
+              "#price": "123"
+            }
+          },
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "width": 160,
+            "textLayers":{
+              "#title": "Views This Week",
+              "#price": "456"
+            }
+          },
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "width": 160,
+            "textLayers":{
+              "#title": "Unread Messages",
+              "#price": "789"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "textLayers": {
+              "Headline": "New listing created"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "textLayers": {
+              "Headline": "New message received"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Create New Listing"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "View All Messages"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:4724",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "horizontalSizing": "FILL",
+        "height": 60
+      }
+    ]
+  }
+}
+```
