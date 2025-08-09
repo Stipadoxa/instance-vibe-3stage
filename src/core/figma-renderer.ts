@@ -47,7 +47,7 @@ export class FigmaRenderer {
       // Wrap to next row if needed
       if (positions.nextX > COLUMN_WIDTH * 3) { // Allow 3 columns max
         positions.nextX = 0;
-        positions.nextY += Math.max(height, 600) + GRID_SPACING;
+        positions.nextY += Math.max(height, 812) + GRID_SPACING;
         positions.currentRow++;
       }
       
@@ -145,17 +145,41 @@ export class FigmaRenderer {
       
       currentFrame.resize(initialWidth, minHeight);
       
-      // Configure auto-layout AFTER initial sizing
+      // Configure auto-layout FIRST, then sizing properties
       if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
-        currentFrame.layoutMode = containerData.layoutMode;
+        // Step 1: Enable auto-layout
+        try {
+          currentFrame.layoutMode = containerData.layoutMode;
+          console.log('✅ Set layoutMode to:', containerData.layoutMode);
+        } catch (layoutModeError) {
+          console.warn('⚠️ Could not set layoutMode:', layoutModeError.message);
+          return currentFrame; // Exit early if auto-layout can't be enabled
+        }
         
-        // Key change: Use AUTO for primary axis (vertical) to hug content
-        currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
-        currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+        // Step 2: Set sizing modes AFTER auto-layout is enabled
+        try {
+          // Key change: Use AUTO for primary axis (vertical) to hug content
+          currentFrame.primaryAxisSizingMode = "AUTO"; // Force content hugging regardless of JSON
+          console.log('✅ Set primaryAxisSizingMode to AUTO');
+        } catch (sizingError) {
+          console.warn('⚠️ Could not set primaryAxisSizingMode:', sizingError.message);
+        }
         
-        // Set minimum height constraint
-        if (containerData.minHeight) {
-          currentFrame.minHeight = containerData.minHeight;
+        try {
+          currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+          console.log('✅ Set counterAxisSizingMode to FIXED');
+        } catch (counterError) {
+          console.warn('⚠️ Could not set counterAxisSizingMode:', counterError.message);
+        }
+        
+        // Step 3: Set minimum height constraint AFTER sizing modes
+        try {
+          if (minHeight) {
+            currentFrame.minHeight = minHeight;
+            console.log('✅ Set minHeight to:', minHeight);
+          }
+        } catch (minHeightError) {
+          console.warn('⚠️ Could not set minHeight:', minHeightError.message);
         }
       }
       
@@ -2582,17 +2606,41 @@ export class FigmaRenderer {
       
       currentFrame.resize(initialWidth, minHeight);
       
-      // Configure auto-layout AFTER initial sizing
+      // Configure auto-layout FIRST, then sizing properties
       if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
-        currentFrame.layoutMode = containerData.layoutMode;
+        // Step 1: Enable auto-layout
+        try {
+          currentFrame.layoutMode = containerData.layoutMode;
+          console.log('✅ Set layoutMode to:', containerData.layoutMode);
+        } catch (layoutModeError) {
+          console.warn('⚠️ Could not set layoutMode:', layoutModeError.message);
+          return currentFrame; // Exit early if auto-layout can't be enabled
+        }
         
-        // Key change: Use AUTO for primary axis (vertical) to hug content
-        currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
-        currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+        // Step 2: Set sizing modes AFTER auto-layout is enabled
+        try {
+          // Key change: Use AUTO for primary axis (vertical) to hug content
+          currentFrame.primaryAxisSizingMode = "AUTO"; // Force content hugging regardless of JSON
+          console.log('✅ Set primaryAxisSizingMode to AUTO');
+        } catch (sizingError) {
+          console.warn('⚠️ Could not set primaryAxisSizingMode:', sizingError.message);
+        }
         
-        // Set minimum height constraint
-        if (containerData.minHeight) {
-          currentFrame.minHeight = containerData.minHeight;
+        try {
+          currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+          console.log('✅ Set counterAxisSizingMode to FIXED');
+        } catch (counterError) {
+          console.warn('⚠️ Could not set counterAxisSizingMode:', counterError.message);
+        }
+        
+        // Step 3: Set minimum height constraint AFTER sizing modes
+        try {
+          if (minHeight) {
+            currentFrame.minHeight = minHeight;
+            console.log('✅ Set minHeight to:', minHeight);
+          }
+        } catch (minHeightError) {
+          console.warn('⚠️ Could not set minHeight:', minHeightError.message);
         }
       }
       
@@ -3056,10 +3104,21 @@ export class FigmaRenderer {
       currentFrame.width = postProcessContainerData.width;
     }
 
-    if (parentNode.type === 'PAGE') {
-      // Adjust root frame height after content is rendered
-      await this.adjustRootFrameHeight(currentFrame, containerData?.minHeight || 812);
+    // Add this BEFORE the final return statement
+    // After all content is rendered, adjust height if this is a root frame
+    if (parentNode.type === 'PAGE' && currentFrame.layoutMode !== 'NONE') {
+      const minHeight = containerData.minHeight || 812;
+      await this.adjustRootFrameHeight(currentFrame, minHeight);
       
+      console.log('🎯 Final root frame dimensions:', {
+        width: currentFrame.width,
+        height: currentFrame.height,
+        primaryAxisSizing: currentFrame.primaryAxisSizingMode,
+        minHeight: currentFrame.minHeight
+      });
+    }
+
+    if (parentNode.type === 'PAGE') {      
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);
       

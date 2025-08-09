@@ -1988,7 +1988,7 @@
           if (!schema) return;
           const debugFrame = figma.createFrame();
           debugFrame.name = `Debug: ${schema.name}`;
-          debugFrame.resize(400, 600);
+          debugFrame.resize(400, 812);
           debugFrame.fills = [{ type: "SOLID", color: { r: 0.95, g: 0.95, b: 0.95 } }];
           await figma.loadFontAsync({ family: "Inter", style: "Bold" });
           await figma.loadFontAsync({ family: "Inter", style: "Regular" });
@@ -2152,7 +2152,7 @@
             positions.nextX += width + GRID_SPACING;
             if (positions.nextX > COLUMN_WIDTH * 3) {
               positions.nextX = 0;
-              positions.nextY += Math.max(height, 600) + GRID_SPACING;
+              positions.nextY += Math.max(height, 812) + GRID_SPACING;
               positions.currentRow++;
             }
             await figma.clientStorage.setAsync("uxpal-render-positions", JSON.stringify(positions));
@@ -2224,11 +2224,32 @@
             const minHeight = containerData.minHeight || 812;
             currentFrame.resize(initialWidth, minHeight);
             if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
-              currentFrame.layoutMode = containerData.layoutMode;
-              currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
-              currentFrame.counterAxisSizingMode = "FIXED";
-              if (containerData.minHeight) {
-                currentFrame.minHeight = containerData.minHeight;
+              try {
+                currentFrame.layoutMode = containerData.layoutMode;
+                console.log("\u2705 Set layoutMode to:", containerData.layoutMode);
+              } catch (layoutModeError) {
+                console.warn("\u26A0\uFE0F Could not set layoutMode:", layoutModeError.message);
+                return currentFrame;
+              }
+              try {
+                currentFrame.primaryAxisSizingMode = "AUTO";
+                console.log("\u2705 Set primaryAxisSizingMode to AUTO");
+              } catch (sizingError) {
+                console.warn("\u26A0\uFE0F Could not set primaryAxisSizingMode:", sizingError.message);
+              }
+              try {
+                currentFrame.counterAxisSizingMode = "FIXED";
+                console.log("\u2705 Set counterAxisSizingMode to FIXED");
+              } catch (counterError) {
+                console.warn("\u26A0\uFE0F Could not set counterAxisSizingMode:", counterError.message);
+              }
+              try {
+                if (minHeight) {
+                  currentFrame.minHeight = minHeight;
+                  console.log("\u2705 Set minHeight to:", minHeight);
+                }
+              } catch (minHeightError) {
+                console.warn("\u26A0\uFE0F Could not set minHeight:", minHeightError.message);
               }
             }
             const position = await this.getNextRenderPosition(initialWidth, minHeight);
@@ -4146,11 +4167,32 @@ ${llmErrors}`);
               const minHeight = containerData.minHeight || 812;
               currentFrame.resize(initialWidth, minHeight);
               if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
-                currentFrame.layoutMode = containerData.layoutMode;
-                currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
-                currentFrame.counterAxisSizingMode = "FIXED";
-                if (containerData.minHeight) {
-                  currentFrame.minHeight = containerData.minHeight;
+                try {
+                  currentFrame.layoutMode = containerData.layoutMode;
+                  console.log("\u2705 Set layoutMode to:", containerData.layoutMode);
+                } catch (layoutModeError) {
+                  console.warn("\u26A0\uFE0F Could not set layoutMode:", layoutModeError.message);
+                  return currentFrame;
+                }
+                try {
+                  currentFrame.primaryAxisSizingMode = "AUTO";
+                  console.log("\u2705 Set primaryAxisSizingMode to AUTO");
+                } catch (sizingError) {
+                  console.warn("\u26A0\uFE0F Could not set primaryAxisSizingMode:", sizingError.message);
+                }
+                try {
+                  currentFrame.counterAxisSizingMode = "FIXED";
+                  console.log("\u2705 Set counterAxisSizingMode to FIXED");
+                } catch (counterError) {
+                  console.warn("\u26A0\uFE0F Could not set counterAxisSizingMode:", counterError.message);
+                }
+                try {
+                  if (minHeight) {
+                    currentFrame.minHeight = minHeight;
+                    console.log("\u2705 Set minHeight to:", minHeight);
+                  }
+                } catch (minHeightError) {
+                  console.warn("\u26A0\uFE0F Could not set minHeight:", minHeightError.message);
                 }
               }
               const position = await this.getNextRenderPosition(initialWidth, minHeight);
@@ -4503,8 +4545,17 @@ ${llmErrors}`);
               console.log("\u{1F527} Post-processing: Re-enforcing frame width to:", postProcessContainerData.width);
               currentFrame.width = postProcessContainerData.width;
             }
+            if (parentNode.type === "PAGE" && currentFrame.layoutMode !== "NONE") {
+              const minHeight = containerData.minHeight || 812;
+              await this.adjustRootFrameHeight(currentFrame, minHeight);
+              console.log("\u{1F3AF} Final root frame dimensions:", {
+                width: currentFrame.width,
+                height: currentFrame.height,
+                primaryAxisSizing: currentFrame.primaryAxisSizingMode,
+                minHeight: currentFrame.minHeight
+              });
+            }
             if (parentNode.type === "PAGE") {
-              await this.adjustRootFrameHeight(currentFrame, (containerData == null ? void 0 : containerData.minHeight) || 812);
               figma.currentPage.selection = [currentFrame];
               figma.viewport.scrollAndZoomIntoView([currentFrame]);
               const perfReport = ComponentPropertyEngine.getPerformanceReport();
