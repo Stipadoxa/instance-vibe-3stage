@@ -72,6 +72,64 @@ export class FigmaRenderer {
   }
 
   /**
+   * Calculates the actual height needed for all content
+   */
+  private static calculateContentHeight(frame: FrameNode): number {
+    let maxBottom = 0;
+    
+    for (const child of frame.children) {
+      const childBottom = child.y + child.height;
+      maxBottom = Math.max(maxBottom, childBottom);
+    }
+    
+    // Add frame padding
+    const paddingBottom = 'paddingBottom' in frame ? frame.paddingBottom : 0;
+    return maxBottom + paddingBottom;
+  }
+
+  /**
+   * Adjusts root frame height after content is rendered
+   * Ensures minimum viewport height while hugging content
+   */
+  private static async adjustRootFrameHeight(rootFrame: FrameNode, minHeight: number = 812): Promise<void> {
+    try {
+      // Wait for layout to settle
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Calculate actual content height
+      const contentHeight = this.calculateContentHeight(rootFrame);
+      
+      console.log('📏 Content height analysis:', {
+        contentHeight,
+        minHeight,
+        shouldAdjust: contentHeight > minHeight,
+        currentFrameHeight: rootFrame.height,
+        primaryAxisSizing: rootFrame.primaryAxisSizingMode
+      });
+      
+      // If content exceeds minimum, let it grow naturally
+      // If content is smaller, keep minimum height
+      if (contentHeight > minHeight && rootFrame.primaryAxisSizingMode === "AUTO") {
+        console.log('✅ Content height exceeds minimum - frame will hug content');
+        // Auto-layout will handle this automatically
+      } else {
+        console.log('📐 Content fits within minimum - maintaining', minHeight, 'px height');
+        // Frame will stay at minHeight due to minHeight constraint
+      }
+      
+      // Force layout update
+      if (rootFrame.layoutMode !== 'NONE') {
+        // Trigger auto-layout recalculation
+        const currentSpacing = rootFrame.itemSpacing;
+        rootFrame.itemSpacing = currentSpacing;
+      }
+      
+    } catch (error) {
+      console.warn('⚠️ Failed to adjust root frame height:', error);
+    }
+  }
+
+  /**
    * Main UI generation function - creates UI from structured JSON data
    */
   static async generateUIFromData(layoutData: any, parentNode: FrameNode | PageNode): Promise<FrameNode> {
@@ -81,8 +139,28 @@ export class FigmaRenderer {
     if (parentNode.type === 'PAGE' && containerData) {
       currentFrame = figma.createFrame();
       
+      // Set initial size - width fixed, height to minimum
+      const initialWidth = containerData.width || 375;
+      const minHeight = containerData.minHeight || 812;
+      
+      currentFrame.resize(initialWidth, minHeight);
+      
+      // Configure auto-layout AFTER initial sizing
+      if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
+        currentFrame.layoutMode = containerData.layoutMode;
+        
+        // Key change: Use AUTO for primary axis (vertical) to hug content
+        currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
+        currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+        
+        // Set minimum height constraint
+        if (containerData.minHeight) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+      }
+      
       // Auto-position to prevent overlapping
-      const position = await this.getNextRenderPosition(containerData.width || 375, containerData.height || 600);
+      const position = await this.getNextRenderPosition(initialWidth, minHeight);
       currentFrame.x = position.x;
       currentFrame.y = position.y;
       
@@ -376,6 +454,9 @@ export class FigmaRenderer {
     }
     
     if (parentNode.type === 'PAGE') {
+      // Adjust root frame height after content is rendered
+      await this.adjustRootFrameHeight(currentFrame, containerData?.minHeight || 812);
+      
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);
       figma.notify(`UI "${currentFrame.name}" generated!`, { timeout: 2500 });
@@ -2494,10 +2575,29 @@ export class FigmaRenderer {
     
     if (parentNode.type === 'PAGE' && containerData) {
       currentFrame = figma.createFrame();
-      currentFrame.resize(containerData.width || 800, containerData.height || 600);
+      
+      // Set initial size - width fixed, height to minimum
+      const initialWidth = containerData.width || 375;
+      const minHeight = containerData.minHeight || 812;
+      
+      currentFrame.resize(initialWidth, minHeight);
+      
+      // Configure auto-layout AFTER initial sizing
+      if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
+        currentFrame.layoutMode = containerData.layoutMode;
+        
+        // Key change: Use AUTO for primary axis (vertical) to hug content
+        currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
+        currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+        
+        // Set minimum height constraint
+        if (containerData.minHeight) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+      }
       
       // Auto-position to prevent overlapping
-      const position = await this.getNextRenderPosition(containerData.width || 800, containerData.height || 600);
+      const position = await this.getNextRenderPosition(initialWidth, minHeight);
       currentFrame.x = position.x;
       currentFrame.y = position.y;
       
@@ -2957,6 +3057,9 @@ export class FigmaRenderer {
     }
 
     if (parentNode.type === 'PAGE') {
+      // Adjust root frame height after content is rendered
+      await this.adjustRootFrameHeight(currentFrame, containerData?.minHeight || 812);
+      
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);
       

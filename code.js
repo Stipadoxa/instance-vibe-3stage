@@ -2172,6 +2172,46 @@
           }
         }
         /**
+         * Calculates the actual height needed for all content
+         */
+        static calculateContentHeight(frame) {
+          let maxBottom = 0;
+          for (const child of frame.children) {
+            const childBottom = child.y + child.height;
+            maxBottom = Math.max(maxBottom, childBottom);
+          }
+          const paddingBottom = "paddingBottom" in frame ? frame.paddingBottom : 0;
+          return maxBottom + paddingBottom;
+        }
+        /**
+         * Adjusts root frame height after content is rendered
+         * Ensures minimum viewport height while hugging content
+         */
+        static async adjustRootFrameHeight(rootFrame, minHeight = 812) {
+          try {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            const contentHeight = this.calculateContentHeight(rootFrame);
+            console.log("\u{1F4CF} Content height analysis:", {
+              contentHeight,
+              minHeight,
+              shouldAdjust: contentHeight > minHeight,
+              currentFrameHeight: rootFrame.height,
+              primaryAxisSizing: rootFrame.primaryAxisSizingMode
+            });
+            if (contentHeight > minHeight && rootFrame.primaryAxisSizingMode === "AUTO") {
+              console.log("\u2705 Content height exceeds minimum - frame will hug content");
+            } else {
+              console.log("\u{1F4D0} Content fits within minimum - maintaining", minHeight, "px height");
+            }
+            if (rootFrame.layoutMode !== "NONE") {
+              const currentSpacing = rootFrame.itemSpacing;
+              rootFrame.itemSpacing = currentSpacing;
+            }
+          } catch (error) {
+            console.warn("\u26A0\uFE0F Failed to adjust root frame height:", error);
+          }
+        }
+        /**
          * Main UI generation function - creates UI from structured JSON data
          */
         static async generateUIFromData(layoutData, parentNode) {
@@ -2180,7 +2220,18 @@
           const containerData = layoutData.layoutContainer || layoutData;
           if (parentNode.type === "PAGE" && containerData) {
             currentFrame = figma.createFrame();
-            const position = await this.getNextRenderPosition(containerData.width || 375, containerData.height || 600);
+            const initialWidth = containerData.width || 375;
+            const minHeight = containerData.minHeight || 812;
+            currentFrame.resize(initialWidth, minHeight);
+            if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
+              currentFrame.layoutMode = containerData.layoutMode;
+              currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
+              currentFrame.counterAxisSizingMode = "FIXED";
+              if (containerData.minHeight) {
+                currentFrame.minHeight = containerData.minHeight;
+              }
+            }
+            const position = await this.getNextRenderPosition(initialWidth, minHeight);
             currentFrame.x = position.x;
             currentFrame.y = position.y;
             parentNode.appendChild(currentFrame);
@@ -2398,6 +2449,7 @@
             }
           }
           if (parentNode.type === "PAGE") {
+            await this.adjustRootFrameHeight(currentFrame, (containerData == null ? void 0 : containerData.minHeight) || 812);
             figma.currentPage.selection = [currentFrame];
             figma.viewport.scrollAndZoomIntoView([currentFrame]);
             figma.notify(`UI "${currentFrame.name}" generated!`, { timeout: 2500 });
@@ -4090,8 +4142,18 @@ ${llmErrors}`);
             });
             if (parentNode.type === "PAGE" && containerData) {
               currentFrame = figma.createFrame();
-              currentFrame.resize(containerData.width || 800, containerData.height || 600);
-              const position = await this.getNextRenderPosition(containerData.width || 800, containerData.height || 600);
+              const initialWidth = containerData.width || 375;
+              const minHeight = containerData.minHeight || 812;
+              currentFrame.resize(initialWidth, minHeight);
+              if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
+                currentFrame.layoutMode = containerData.layoutMode;
+                currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode || "AUTO";
+                currentFrame.counterAxisSizingMode = "FIXED";
+                if (containerData.minHeight) {
+                  currentFrame.minHeight = containerData.minHeight;
+                }
+              }
+              const position = await this.getNextRenderPosition(initialWidth, minHeight);
               currentFrame.x = position.x;
               currentFrame.y = position.y;
               parentNode.appendChild(currentFrame);
@@ -4442,6 +4504,7 @@ ${llmErrors}`);
               currentFrame.width = postProcessContainerData.width;
             }
             if (parentNode.type === "PAGE") {
+              await this.adjustRootFrameHeight(currentFrame, (containerData == null ? void 0 : containerData.minHeight) || 812);
               figma.currentPage.selection = [currentFrame];
               figma.viewport.scrollAndZoomIntoView([currentFrame]);
               const perfReport = ComponentPropertyEngine.getPerformanceReport();

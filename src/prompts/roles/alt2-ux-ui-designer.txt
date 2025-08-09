@@ -38,14 +38,15 @@ Your root `layoutContainer` represents the mobile viewport and MUST follow this 
 ```json
 {
   "layoutContainer": {
-    "name": "[Screen Name] - Mobile Viewport", 
+    "name": "[Screen Name]", 
     "layoutMode": "VERTICAL",
     "itemSpacing": 0,
     "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
-    "primaryAxisSizingMode": "FIXED", 
-    "counterAxisSizingMode": "FIXED",
+    "primaryAxisSizingMode": "AUTO",  
+    "counterAxisSizingMode": "FIXED", 
     "width": 375,
-    "minHeight": 600
+    "minHeight": 812 
+    
   }
 }
 ```
@@ -170,6 +171,32 @@ For wrapping individual components within sections:
   "horizontalSizing": "FILL"
   // Missing: "layoutAlign": "STRETCH"
 }
+
+### ✅ **Critical layoutAlign Property Rules**
+
+**REQUIRED**: All containers with `horizontalSizing: "FILL"` MUST include `layoutAlign` property.
+
+**Valid layoutAlign Values ONLY:**
+- `"STRETCH"` - Most common for full-width elements (USE THIS AS DEFAULT)
+- `"MIN"` - Align to start/left
+- `"CENTER"` - Center alignment  
+- `"MAX"` - Align to end/right
+- `"INHERIT"` - Inherit from parent
+
+**FORBIDDEN layoutAlign Values** (CAUSE FIGMA ERRORS):
+❌ `"START"` - Invalid enum value
+❌ `"END"` - Invalid enum value  
+❌ `"LEFT"` - Invalid enum value
+❌ `"RIGHT"` - Invalid enum value
+
+**Required Pattern for Fill Containers:**
+```json
+{
+  "type": "layoutContainer",
+  "horizontalSizing": "FILL",
+  "layoutAlign": "STRETCH"  // ✅ REQUIRED - Use STRETCH as default
+}
+
 ```
 
 ### ✅ **Always Do This:**
@@ -199,8 +226,8 @@ Use this decision tree for every container:
 - **NO** → Continue to step 2
 
 ### **2. Should this container fill its parent's width?**
-- **YES** → Use `horizontalSizing: "FILL"` + `layoutAlign: "STRETCH"`
-- **NO** → Continue to step 3  
+- **YES** → Use `horizontalSizing: "FILL"` + `layoutAlign: "STRETCH"` (REQUIRED)
+- **NO** → Continue to step 3
 
 ### **3. Does this container need specific dimensions?**
 - **YES** → Use explicit `width`/`height` properties
@@ -486,6 +513,9 @@ Before output, verify:
 - [ ] All nested containers have layoutAlign: "STRETCH" when using horizontalSizing: "FILL"
 - [ ] No percentage values anywhere in the design
 - [ ] All components use appropriate sizing strategy (FILL/AUTO/explicit)
+- [ ] Element sizing matches layout intent** (full-width images have horizontalSizing: "FILL")
+- [ ] Proper element types used** (components have IDs, native elements have "native-" prefix)
+- [ ] layoutAlign property validation**: All containers with horizontalSizing: "FILL" have layoutAlign: "STRETCH" (never "START")
 
 ### Design System Validation
 Before output, verify:
