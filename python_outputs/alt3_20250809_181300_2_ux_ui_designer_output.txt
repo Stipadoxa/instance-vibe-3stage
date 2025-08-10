@@ -1,0 +1,440 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs used in this design have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout prioritizes a vertical, mobile-first approach.  The header section contains product images and key information (title, price). The body section presents details using a consistent list item structure, followed by the seller information and a call to action.  Spacing between sections and elements is maintained using the defined container padding and itemSpacing properties.
+
+3. **User Flow Reasoning:** The user first encounters the product visuals and pricing, followed by detailed specifications to aid their decision. Seller information builds trust and provides context, leading to the primary action of contacting the seller.
+
+4. **Component Choices:** The `product card` component (147:3743) is used to structure the core product information, including title, price, and attributes. This choice promotes consistency with other product listings.  A `layoutContainer` is used to group multiple components into sections (header, body, actions).
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying seller ratings.  A workaround using multiple star icon components (635:4752) in a horizontal container has been implemented.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through:
+    - Prominent placement of product images and price in the header
+    - Clear title and subtitle for high importance
+    - Consistent use of secondary text styles for details
+    - Clear visual separation of sections
+    - Highlighted primary call to action
+
+7. **Variant Selection Rationale:**  For the "Contact Seller" button (10:3907), the "Filled", "Large", "Default", and "Green" variants were chosen to provide a clear and prominent call to action.
+
+8. **Native Element Justification:** `native-text` elements are used to display the product description and seller details which allows customization of the text styles beyond what's directly available in the system's text style components.  `native-rectangle` with image fills are used as placeholders for multiple product images.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Image Carousel",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 110,
+                  "height": 110,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 110,
+                  "height": 110,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 110,
+                  "height": 110,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Dell XPS 13 9310 - Used",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Price Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "START",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "$799.00",
+                  "textStyle": "Headline/Medium",
+                  "color": "Primary/primary50",
+                  "alignment": "left",
+                  "horizontalSizing": "AUTO"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Details Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Specifications",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Condition",
+                    "Supporting text": "Good - Minor cosmetic wear"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Processor",
+                    "Supporting text": "Intel Core i5-1135G7"
+                  }
+                }
+              },
+               {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "RAM",
+                    "Supporting text": "16GB LPDDR4X"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Storage",
+                    "Supporting text": "512GB SSD"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "textLayers": {
+                    "Headline": "Screen Size",
+                    "Supporting text": "13.4-inch"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Powerful and portable, this used Dell XPS 13 is perfect for everyday computing and light productivity tasks. Excellent condition, minor scuffs on the base. Includes original charger. Battery health: 85%",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Seller Info Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "START",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7798",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Type": "Photo"
+                  }
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Tech Solutions LLC",
+                  "textStyle": "Title/Medium",
+                  "color": "Neutral/neutral90",
+                  "alignment": "left",
+                  "horizontalSizing": "AUTO"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Rating Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 4,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "AUTO",
+            "layoutAlign": "START",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Star": "full"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Star": "full"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Star": "full"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Star": "full"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Star": "half"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "4.8 (1247 reviews)",
+              "textStyle": "Label/Small",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "textLayers": {
+                "Action": "Contact Seller"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

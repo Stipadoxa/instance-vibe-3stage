@@ -1,0 +1,116 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 400,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Auto-Layout Container With Width",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 12,
+      "paddingTop": 8,
+      "paddingBottom": 8,
+      "paddingLeft": 12,
+      "paddingRight": 12,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "width": 350,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "text",
+          "properties": {
+            "text": "Debug Test Label",
+            "fontSize": 16,
+            "fontWeight": 500
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Regular Container With Width",
+      "layoutMode": "NONE",
+      "width": 300,
+      "height": 100,
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 280,
+            "height": 80,
+            "fill": {
+              "type": "SOLID",
+              "color": {
+                "r": 0.2,
+                "g": 0.4,
+                "b": 0.8,
+                "a": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-rectangle",
+      "name": "Native Element With Width Property",
+      "properties": {
+        "width": 320,
+        "height": 60,
+        "fill": {
+          "type": "SOLID",
+          "color": {
+            "r": 0.8,
+            "g": 0.2,
+            "b": 0.2,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Mixed Sizing Modes Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "AUTO",
+      "width": 360,
+      "items": [
+        {
+          "type": "text",
+          "properties": {
+            "text": "Fixed width, auto height container",
+            "fontSize": 14
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 340,
+            "height": 40,
+            "fill": {
+              "type": "SOLID",
+              "color": {
+                "r": 0.3,
+                "g": 0.7,
+                "b": 0.3,
+                "a": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

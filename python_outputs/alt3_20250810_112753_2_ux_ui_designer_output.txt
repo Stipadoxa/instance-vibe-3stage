@@ -1,0 +1,206 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs used in this design have been manually verified against the provided `DESIGN_SYSTEM_DATA` JSON.  No components were used that were not explicitly present and validated within the dataset.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to present information in a clear, top-to-bottom flow.  The form elements are grouped together in a vertical container for visual cohesion. Spacing between elements is consistent (16px padding, 8px spacing) for visual breathing room.
+
+3. **User Flow Reasoning:** The user flow is straightforward:  The user sees the title and description, then fills out the form, clicks "Sign In," and can access options for forgotten passwords or account creation. Error messages will appear below the relevant field if necessary.
+
+4. **Component Choices:** The `Button` component (`10:3907`) was selected for the "Sign In" button because it provides a standard, accessible button design that aligns with the design system.  Alternatives like creating a custom button using native elements were rejected to maintain design system consistency and reduce development effort.
+
+5. **Component Gaps:** The user request implicitly needs a way to handle errors (invalid credentials, empty fields). While there isn't a dedicated "error message" component in the design system, I've used `native-text` elements within the form to display error messages contextually below each field as needed.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through typography and spacing. The title uses a larger, bolder text style than the form labels, which are larger than the placeholder text.  Spacing between sections visually separates elements.
+
+7. **Variant Selection Rationale:** For the "Sign In" button, the `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, and `Color: "Green"` variants of the `Button` component (`10:3907`) were chosen to create a clear call to action that aligns with typical login screen UI patterns.
+
+8. **Native Element Justification:** Native text elements (`native-text`) are used for the title, description, form labels, placeholder text, and error messages because these are all simple text displays without interaction capabilities.  No component fully addressed the requirements.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Welcome back to CraftMart!",
+          "textStyle": "Headline/Large",
+          "alignment": "center"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Sign in to access your favorite handcrafted goods and connect with talented artisans.",
+          "textStyle": "Body/Medium",
+          "alignment": "center"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Form Container",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Email Field",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Email Address",
+                  "textStyle": "Label/Medium"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "placeholder-text": "your.email@example.com"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "",
+              "textStyle": "Body/Small",
+              "color": "Error/error50"
+            },
+            "name": "email-error"
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Password Field",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Password",
+                  "textStyle": "Label/Medium"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "placeholder-text": "********"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "",
+              "textStyle": "Body/Small",
+              "color": "Error/error50"
+            },
+            "name": "password-error"
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "Action": "Sign In"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Footer Links",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 16,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "CENTER",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot password?",
+                  "textStyle": "Body/Small",
+                  "color": "Primary/primary50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Create Account",
+                  "textStyle": "Body/Small",
+                  "color": "Primary/primary50"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

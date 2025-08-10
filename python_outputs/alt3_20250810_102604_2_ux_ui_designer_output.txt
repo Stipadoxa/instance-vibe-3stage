@@ -1,0 +1,372 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in this design have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure for a clear top-to-bottom information flow.  The product images are in a horizontal, wrapping container to efficiently display multiple photos.  Key information (title, price, condition) is prominently displayed at the top, followed by detailed specifications in a vertically organized list. The seller profile and contact button are placed at the bottom for easy access.  Padding and spacing are consistent with mobile design best practices to ensure readability and visual breathing room.
+
+3. **User Flow Reasoning:** The user flow is designed to provide a concise and engaging product detail experience.  The key information is immediately visible, followed by details and a clear call to action.  Visual cues (images, rating) enhance engagement and trust.
+
+4. **Component Choices:** I chose the `product card` component (ID: `147:3743`) as the core building block because it efficiently displays key product attributes and includes support for multiple images and ratings. Using this component for each product improves consistency.  While there isn't a dedicated "seller profile" component, the `avatar` (ID: `24:10352`) combined with a `native-text` element provides a similar visual experience.
+
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying product specifications (processor, RAM, etc.) in a structured list.  I addressed this by combining the `list item` component (ID: `10:10214`) for each specification and using it within a `layoutContainer`.
+
+6. **Visual Hierarchy:** Visual hierarchy is established using a combination of size, position, and color. The product title and price are presented with the largest font sizes.  Other details are organized within the `product card`, using secondary text styles for a clear visual distinction.
+
+
+7. **Variant Selection Rationale:** Variants for the components were selected based on the context. For instance, the "Contact Seller" button uses a `Size: Medium`, `Type: Filled`, and `Color: Green` variant to highlight the primary action while maintaining design system consistency.  The `product card` component is selected in its `normal` type variant.
+
+8. **Native Element Justification:**  To represent the seller's star rating (since there is no `native-rating` element), I used multiple instances of the `icon/star` component (ID: `635:4752`) with appropriate variants to visually create a star rating representation.  Similarly, `native-rectangle` elements with `fill: {type: "IMAGE"}` are used as image placeholders for product and seller profile pictures.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "AUTO",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Dell XPS 13 9310 - Used",
+              "textStyle": "Headline/Large",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$850.00",
+              "textStyle": "Title/Large",
+              "alignment": "left",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Excellent - Minor cosmetic wear on the bottom edge. Fully functional.",
+              "textStyle": "Body/Medium",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Images",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 8,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 160,
+              "height": 120,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 160,
+              "height": 120,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 160,
+              "height": 120,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Specifications",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              },
+              "Overline": "Processor",
+              "Headline": "Intel Core i7-1165G7",
+              "Supporting text": null
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              },
+              "Overline": "RAM",
+              "Headline": "16GB LPDDR4X",
+              "Supporting text": null
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              },
+              "Overline": "Storage",
+              "Headline": "512GB SSD",
+              "Supporting text": null
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              },
+              "Overline": "Screen Size",
+              "Headline": "13.4-inch",
+              "Supporting text": null
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Profile",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 48,
+              "height": 48,
+              "cornerRadius": 24,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "John Smith\nMember since 2018",
+              "textStyle": "Body/Medium",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+          "type": "layoutContainer",
+          "name": "Rating",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 4,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "horizontalSizing": "AUTO",
+          "layoutAlign": "MIN",
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "635:4752",
+              "properties": {
+                "variants": {
+                  "Star": "full"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4752",
+              "properties": {
+                "variants": {
+                  "Star": "full"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4752",
+              "properties": {
+                "variants": {
+                  "Star": "full"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4752",
+              "properties": {
+                "variants": {
+                  "Star": "full"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4752",
+              "properties": {
+                "variants": {
+                  "Star": "half"
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "(125 reviews)",
+                "textStyle": "Caption/Small",
+                "alignment": "left"
+              }
+            }
+          ]
+        },
+      {
+        "type": "layoutContainer",
+        "name": "Description",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Excellent condition, barely used. Powerful performance for everyday tasks and more.",
+              "textStyle": "Body/Medium",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -10720,78 +10720,10 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
       throw error;
     }
   }
-  function startScreenshotMonitoring() {
-    console.log("\u{1F4F8} Starting screenshot monitoring for visual feedback pipeline");
-    setInterval(async () => {
-      try {
-        const response = await fetch("http://localhost:8002/api/screenshot-request");
-        if (response.ok) {
-          const data = await response.json();
-          if (data.has_request) {
-            console.log("\u{1F4F8} Found screenshot request:", data.request_data.run_id);
-            await processScreenshotRequest(data.request_data);
-          }
-        }
-      } catch (error) {
-        if (console.debug) {
-          console.debug("Screenshot monitoring: server not available");
-        }
-      }
-    }, 5e3);
-  }
-  async function processScreenshotRequest(requestData) {
-    try {
-      console.log("\u{1F4F8} Processing screenshot request:", requestData.run_id);
-      const layoutData = JSON.parse(requestData.json_content);
-      const generatedFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
-      if (generatedFrame) {
-        const screenshot = await generatedFrame.exportAsync({
-          format: "PNG",
-          constraint: { type: "SCALE", value: 1 }
-        });
-        const response = await fetch("http://localhost:8002/api/screenshot-ready", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            run_id: requestData.run_id,
-            screenshot: Array.from(screenshot)
-            // Convert Uint8Array to regular array
-          })
-        });
-        if (response.ok) {
-          console.log("\u2705 Screenshot sent to server for run_id:", requestData.run_id);
-          figma.ui.postMessage({
-            type: "screenshot-ready",
-            run_id: requestData.run_id,
-            frameId: generatedFrame.id
-          });
-        } else {
-          throw new Error("Failed to send screenshot to server");
-        }
-      } else {
-        console.error("\u274C Failed to render JSON for screenshot");
-        figma.ui.postMessage({
-          type: "screenshot-error",
-          run_id: requestData.run_id,
-          error: "Failed to render JSON"
-        });
-      }
-    } catch (error) {
-      console.error("\u274C Screenshot processing error:", error);
-      figma.ui.postMessage({
-        type: "screenshot-error",
-        run_id: requestData.run_id,
-        error: error.message
-      });
-    }
-  }
   async function main() {
     console.log("\u{1F680} AIDesigner plugin started");
     figma.showUI(__html__, { width: 400, height: 720 });
     await initializeSession();
-    startScreenshotMonitoring();
     figma.on("run", async (event) => {
       const { command, parameters } = event;
       switch (command) {
@@ -10807,7 +10739,7 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
       }
     });
     figma.ui.onmessage = async (msg) => {
-      var _a, _b, _c, _d;
+      var _a, _b, _c;
       console.log("\u{1F4E8} Message from UI:", msg.type);
       switch (msg.type) {
         case "test-migration":
@@ -10865,19 +10797,6 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
             console.error("Design feedback error:", errorMessage);
             figma.ui.postMessage({
               type: "design-feedback-error",
-              error: errorMessage
-            });
-          }
-          break;
-        case "process-screenshot-request":
-          try {
-            await processScreenshotRequest(msg.payload);
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            console.error("Screenshot request error:", errorMessage);
-            figma.ui.postMessage({
-              type: "screenshot-error",
-              run_id: (_a = msg.payload) == null ? void 0 : _a.run_id,
               error: errorMessage
             });
           }
@@ -11163,7 +11082,7 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
                 designSystemUsed: result.designSystemUsed,
                 componentsAvailable: result.componentsAvailable
               });
-              if ((_b = result.finalResult) == null ? void 0 : _b.generatedJSON) {
+              if ((_a = result.finalResult) == null ? void 0 : _a.generatedJSON) {
                 console.log("\u{1F3A8} Rendering UI from pipeline JSON...");
                 const newFrame = await FigmaRenderer.generateUIFromDataDynamic(result.finalResult.generatedJSON);
                 figma.ui.postMessage({
@@ -11182,7 +11101,7 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
                   type: "pipeline-success-no-render",
                   result: {
                     pipelineStats: result.aiUsageStats,
-                    content: (_c = result.finalResult) == null ? void 0 : _c.content,
+                    content: (_b = result.finalResult) == null ? void 0 : _b.content,
                     executionTime: result.executionTime,
                     stagesCompleted: result.stages.length
                   }
@@ -11314,7 +11233,7 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
                 return;
               }
             }
-            console.log("\u{1F527} JSON has items?", !!renderData.items, "Count:", (_d = renderData.items) == null ? void 0 : _d.length);
+            console.log("\u{1F527} JSON has items?", !!renderData.items, "Count:", (_c = renderData.items) == null ? void 0 : _c.length);
             console.log("\u{1F527} JSON layoutMode:", renderData.layoutMode);
             console.log("\u{1F527} JSON properties:", {
               itemSpacing: renderData.itemSpacing,
