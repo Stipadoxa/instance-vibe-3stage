@@ -10420,49 +10420,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
   init_component_scanner();
   init_json_migrator();
 
-  // src/core/simple-design-reviewer.ts
-  var SimpleDesignReviewer = class {
-    static async assessDesign(screenshot, userRequest) {
-      const prompt = `Analyze this UI design as a senior designer would:
-
-User Request: "${userRequest}"
-
-Provide a comprehensive but concise assessment covering:
-1. Visual hierarchy and layout
-2. Content clarity and organization  
-3. Visual design and aesthetics
-4. User experience and usability
-5. Mobile/accessibility considerations
-
-Format your response as JSON:
-{
-  "score": 7,
-  "keyIssues": [
-    "Button lacks visual prominence",
-    "Text contrast too low for accessibility",
-    "Inconsistent spacing between elements"
-  ],
-  "suggestions": [
-    "Make primary button larger with stronger color",
-    "Increase text contrast to meet WCAG AA standards", 
-    "Apply consistent 16px spacing throughout"
-  ],
-  "strengths": [
-    "Clean, organized layout",
-    "Good use of white space"
-  ]
-}
-
-Focus on the 3-5 most impactful issues and improvements. Be specific and actionable.`;
-      try {
-        const result = await GeminiService.analyzeImage(screenshot, prompt);
-        return JSON.parse(result);
-      } catch (error) {
-        console.error("Design analysis failed:", error);
-        throw new Error("Could not analyze design");
-      }
-    }
-  };
 
   // code.ts
   var validationEngine;
@@ -10703,23 +10660,6 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
       console.warn("\u26A0\uFE0F Could not initialize property engine:", error);
     }
   }
-  async function analyzeDesignFeedback(frameId, userRequest) {
-    try {
-      const frame = figma.getNodeById(frameId);
-      if (!frame) {
-        throw new Error("Frame not found");
-      }
-      const screenshot = await frame.exportAsync({
-        format: "PNG",
-        constraint: { type: "SCALE", value: 2 }
-      });
-      const feedback = await SimpleDesignReviewer.assessDesign(screenshot, userRequest);
-      return feedback;
-    } catch (error) {
-      console.error("Error analyzing design feedback:", error);
-      throw error;
-    }
-  }
   async function main() {
     console.log("\u{1F680} AIDesigner plugin started");
     figma.showUI(__html__, { width: 400, height: 720 });
@@ -10782,23 +10722,6 @@ Focus on the 3-5 most impactful issues and improvements. Be specific and actiona
             const errorMessage = e instanceof Error ? e.message : String(e);
             figma.notify("Modification error: " + errorMessage, { error: true });
             figma.ui.postMessage({ type: "ui-generation-error", error: errorMessage });
-          }
-          break;
-        case "analyze-design-feedback":
-          try {
-            const { frameId, userRequest } = msg.payload;
-            const feedback = await analyzeDesignFeedback(frameId, userRequest);
-            figma.ui.postMessage({
-              type: "design-feedback-result",
-              feedback
-            });
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            console.error("Design feedback error:", errorMessage);
-            figma.ui.postMessage({
-              type: "design-feedback-error",
-              error: errorMessage
-            });
           }
           break;
         // NEW: Standalone JSON validation

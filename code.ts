@@ -18,7 +18,6 @@ import { StaticPromptLoader } from './src/pipeline/StaticPromptLoader';
 import { ComponentPropertyEngine } from './src/core/component-property-engine';
 import { ComponentScanner } from './src/core/component-scanner';
 import { JSONMigrator } from './src/core/json-migrator';
-import { SimpleDesignReviewer } from './src/core/simple-design-reviewer';
 
 // Global validation engine instance
 let validationEngine: ValidationEngine;
@@ -398,32 +397,6 @@ async function initializePlugin() {
   }
 }
 
-/**
- * Analyze design feedback for a frame
- */
-async function analyzeDesignFeedback(frameId: string, userRequest: string) {
-  try {
-    // Find the frame
-    const frame = figma.getNodeById(frameId) as FrameNode;
-    if (!frame) {
-      throw new Error('Frame not found');
-    }
-
-    // Take screenshot of the frame
-    const screenshot = await frame.exportAsync({
-      format: 'PNG',
-      constraint: { type: 'SCALE', value: 2 }
-    });
-
-    // Analyze with SimpleDesignReviewer
-    const feedback = await SimpleDesignReviewer.assessDesign(screenshot, userRequest);
-    
-    return feedback;
-  } catch (error) {
-    console.error('Error analyzing design feedback:', error);
-    throw error;
-  }
-}
 
 
 
@@ -497,24 +470,6 @@ figma.ui.onmessage = async (msg: any) => {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("Modification error: " + errorMessage, { error: true });
                 figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
-            }
-            break;
-
-        case 'analyze-design-feedback':
-            try {
-                const { frameId, userRequest } = msg.payload;
-                const feedback = await analyzeDesignFeedback(frameId, userRequest);
-                figma.ui.postMessage({ 
-                    type: 'design-feedback-result', 
-                    feedback: feedback 
-                });
-            } catch (e: any) {
-                const errorMessage = e instanceof Error ? e.message : String(e);
-                console.error('Design feedback error:', errorMessage);
-                figma.ui.postMessage({ 
-                    type: 'design-feedback-error', 
-                    error: errorMessage 
-                });
             }
             break;
 

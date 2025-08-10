@@ -2053,9 +2053,6 @@ var AIDesignerUI = (() => {
         window.messageHandler.register("session-cleared", () => {
           this.startFresh();
         });
-        window.messageHandler.register("design-feedback-result", (msg) => {
-          this.handleDesignFeedbackResult(msg.feedback);
-        });
       }
     }
     /**
@@ -2697,77 +2694,6 @@ var AIDesignerUI = (() => {
       if (this.elements.userPrompt) {
         this.elements.userPrompt.value = "";
       }
-      const enableFeedback = (_a = document.getElementById("enableFeedback")) == null ? void 0 : _a.checked;
-      if (enableFeedback) {
-        await this.runDesignFeedback(frameId);
-      }
-    }
-    /**
-     * Run design feedback analysis
-     */
-    async runDesignFeedback(frameId) {
-      var _a;
-      try {
-        this.showStatus("\u{1F50D} Analyzing design...", "info");
-        import_message_handler2.MessageHandler.sendMessage({
-          type: "analyze-design-feedback",
-          payload: {
-            frameId,
-            userRequest: ((_a = this.elements.userPrompt) == null ? void 0 : _a.value) || "Generated UI"
-          }
-        });
-      } catch (error) {
-        console.error("Design feedback error:", error);
-        this.showStatus("Analysis failed", "error");
-      }
-    }
-    /**
-     * Display simple design feedback
-     */
-    displaySimpleFeedback(feedback) {
-      const panel = document.getElementById("feedback-panel");
-      if (!panel) return;
-      panel.style.display = "block";
-      panel.innerHTML = `
-            <div class="feedback-header">
-                <strong>Design Score: ${feedback.score}/10</strong>
-            </div>
-            
-            ${feedback.keyIssues && feedback.keyIssues.length > 0 ? `
-                <div class="feedback-section">
-                    <h4>Key Issues:</h4>
-                    <ul>
-                        ${feedback.keyIssues.map((issue) => `<li>${issue}</li>`).join("")}
-                    </ul>
-                </div>
-            ` : ""}
-            
-            ${feedback.suggestions && feedback.suggestions.length > 0 ? `
-                <div class="feedback-section">
-                    <h4>Suggestions:</h4>
-                    <ul>
-                        ${feedback.suggestions.map((suggestion) => `<li>${suggestion}</li>`).join("")}
-                    </ul>
-                </div>
-            ` : ""}
-            
-            ${feedback.strengths && feedback.strengths.length > 0 ? `
-                <div class="feedback-section">
-                    <h4>Strengths:</h4>
-                    <ul>
-                        ${feedback.strengths.map((strength) => `<li>\u2713 ${strength}</li>`).join("")}
-                    </ul>
-                </div>
-            ` : ""}
-        `;
-    }
-    /**
-     * Handle design feedback result from backend
-     */
-    handleDesignFeedbackResult(feedback) {
-      this.clearStatus();
-      this.displaySimpleFeedback(feedback);
-      this.showStatus(`Design Score: ${feedback.score}/10`, "success");
     }
     /**
      * Handle successful UI modification
