@@ -1813,6 +1813,30 @@ export class FigmaRenderer {
         console.warn('⚠️ Failed to set layoutPositioning:', e);
       }
     }
+    
+    // CRITICAL FIX: Apply sizing modes directly for horizontal containers
+    if (properties.layoutMode && (properties.primaryAxisSizingMode || properties.counterAxisSizingMode)) {
+      try {
+        // First set the layout mode if provided
+        if (properties.layoutMode !== frame.layoutMode) {
+          frame.layoutMode = properties.layoutMode;
+          console.log('✅ Set child layoutMode:', properties.layoutMode);
+        }
+        
+        // Then apply sizing modes in correct order
+        if (properties.primaryAxisSizingMode) {
+          frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
+          console.log('✅ Set child primaryAxisSizingMode:', properties.primaryAxisSizingMode);
+        }
+        
+        if (properties.counterAxisSizingMode) {
+          frame.counterAxisSizingMode = properties.counterAxisSizingMode;
+          console.log('✅ Set child counterAxisSizingMode:', properties.counterAxisSizingMode);
+        }
+      } catch (e) {
+        console.error('❌ Failed to apply sizing modes:', e);
+      }
+    }
   }
 
   /**
@@ -3196,6 +3220,7 @@ export class FigmaRenderer {
           });
           
           // CORRECT - only pass relevant child layout properties
+          // CRITICAL FIX: Include sizing modes for horizontal containers
           const childLayoutProps = {
             layoutAlign: processedItem.layoutAlign,
             horizontalSizing: processedItem.horizontalSizing,
@@ -3204,7 +3229,11 @@ export class FigmaRenderer {
             minWidth: processedItem.minWidth,
             maxWidth: processedItem.maxWidth,
             minHeight: processedItem.minHeight,
-            maxHeight: processedItem.maxHeight
+            maxHeight: processedItem.maxHeight,
+            // FIX: Pass sizing modes so horizontal containers can hug content
+            primaryAxisSizingMode: processedItem.primaryAxisSizingMode,
+            counterAxisSizingMode: processedItem.counterAxisSizingMode,
+            layoutMode: processedItem.layoutMode
           };
           
           // Remove undefined properties to avoid unnecessary processing
