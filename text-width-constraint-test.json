@@ -1,0 +1,28 @@
+{
+  "layoutContainer": {
+    "name": "Text Width Constraint Test",
+    "layoutMode": "VERTICAL", 
+    "width": 375,
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "content": "This is a very long text that should wrap within the 375px container width and not pierce the boundaries like it used to do before the fix was implemented",
+      "properties": {
+        "fontSize": 16
+      }
+    },
+    {
+      "type": "native-text", 
+      "content": "Short text",
+      "properties": {
+        "fontSize": 14
+      }
+    }
+  ]
+}

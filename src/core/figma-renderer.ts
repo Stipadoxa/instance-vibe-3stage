@@ -646,6 +646,49 @@ export class FigmaRenderer {
   }
 
   /**
+   * Detects if a container has width constraints that should constrain text
+   */
+  private static detectWidthConstraint(container: FrameNode): boolean {
+    console.log('🔍 Detecting width constraint for container:', {
+      type: container.type,
+      layoutMode: container.layoutMode,
+      width: container.width,
+      counterAxisSizingMode: container.counterAxisSizingMode
+    });
+    
+    // Case 1: Container is in vertical layout (width is constrained)
+    if (container.layoutMode === 'VERTICAL') {
+      console.log('✅ Width constraint detected: Container has VERTICAL layout');
+      return true;
+    }
+    
+    // Case 2: Container has reasonable fixed width (not infinite)
+    if (container.width && container.width < 1000) {
+      console.log('✅ Width constraint detected: Container has fixed width <1000px:', container.width);
+      return true;
+    }
+    
+    // Case 3: Container has explicit width sizing mode
+    if (container.counterAxisSizingMode === 'FIXED') {
+      console.log('✅ Width constraint detected: Container has FIXED counter-axis sizing');
+      return true;
+    }
+    
+    // Case 4: Check parent container constraints
+    const parent = container.parent;
+    if (parent && parent.type === 'FRAME') {
+      const parentFrame = parent as FrameNode;
+      if (parentFrame.layoutMode === 'VERTICAL' && parentFrame.width < 1000) {
+        console.log('✅ Width constraint detected: Parent has VERTICAL layout with width <1000px:', parentFrame.width);
+        return true;
+      }
+    }
+    
+    console.log('❌ No width constraint detected');
+    return false; // No width constraint detected
+  }
+
+  /**
    * Create native text element
    */
   static async createTextNode(textData: any, container: FrameNode): Promise<void> {
@@ -756,15 +799,24 @@ export class FigmaRenderer {
       }
     }
     
-    // Apply child layout properties
-    this.applyChildLayoutProperties(textNode, props);
+    // Smart text auto-resize behavior based on container context
+    const isInConstrainedContainer = this.detectWidthConstraint(container);
     
-    // Text auto-resize behavior
-    if (props.horizontalSizing === 'FILL') {
-      textNode.textAutoResize = 'HEIGHT';
+    if (isInConstrainedContainer) {
+      textNode.textAutoResize = 'HEIGHT';  // Width constrained, height flexible
+      
+      // CRITICAL: Set explicit width to constrain the text
+      const availableWidth = container.width - (container.paddingLeft || 0) - (container.paddingRight || 0);
+      textNode.resize(availableWidth, textNode.height);
+      
+      console.log('✅ Set textAutoResize to HEIGHT and width to', availableWidth, '(width constrained by parent)');
     } else {
-      textNode.textAutoResize = 'WIDTH_AND_HEIGHT';
+      textNode.textAutoResize = 'WIDTH_AND_HEIGHT';  // Free expansion
+      console.log('✅ Set textAutoResize to WIDTH_AND_HEIGHT (no width constraint)');
     }
+    
+    // Note: applyChildLayoutProperties will safely ignore text nodes (returns early for type 'TEXT')
+    this.applyChildLayoutProperties(textNode, props);
     
     container.appendChild(textNode);
     console.log('Native text created successfully');
