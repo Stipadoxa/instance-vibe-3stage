@@ -2215,7 +2215,7 @@
          * Main UI generation function - creates UI from structured JSON data
          */
         static async generateUIFromData(layoutData, parentNode) {
-          var _a, _b, _c, _d;
+          var _a, _b, _c, _d, _e, _f;
           let currentFrame;
           const containerData = layoutData.layoutContainer || layoutData;
           if (parentNode.type === "PAGE" && containerData) {
@@ -2275,22 +2275,42 @@
               } else {
                 currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
               }
-              if (containerData.layoutWrap !== void 0) {
-                currentFrame.layoutWrap = containerData.layoutWrap;
+              try {
+                if (containerData.layoutWrap !== void 0) {
+                  currentFrame.layoutWrap = containerData.layoutWrap;
+                }
+              } catch (e) {
+                console.warn("\u26A0\uFE0F Failed to set layoutWrap:", e.message);
               }
-              if (containerData.primaryAxisAlignItems) {
-                currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+              try {
+                if (containerData.primaryAxisAlignItems) {
+                  currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+                }
+              } catch (e) {
+                console.warn("\u26A0\uFE0F Failed to set primaryAxisAlignItems:", e.message);
               }
-              if (containerData.counterAxisAlignItems) {
-                currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+              try {
+                if (containerData.counterAxisAlignItems) {
+                  currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+                }
+              } catch (e) {
+                console.warn("\u26A0\uFE0F Failed to set counterAxisAlignItems:", e.message);
               }
-              if (containerData.primaryAxisSizingMode) {
-                currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+              const hasPrimarySetter = ((_a = Object.getOwnPropertyDescriptor(currentFrame, "primaryAxisSizingMode")) == null ? void 0 : _a.set) !== void 0;
+              const hasCounterSetter = ((_b = Object.getOwnPropertyDescriptor(currentFrame, "counterAxisSizingMode")) == null ? void 0 : _b.set) !== void 0;
+              if (hasPrimarySetter) {
+                if (containerData.primaryAxisSizingMode) {
+                  currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+                } else {
+                  currentFrame.primaryAxisSizingMode = "AUTO";
+                }
               } else {
-                currentFrame.primaryAxisSizingMode = "AUTO";
+                console.warn("\u26A0\uFE0F Skipping primaryAxisSizingMode - setter not available");
               }
-              if (containerData.counterAxisSizingMode) {
+              if (hasCounterSetter && containerData.counterAxisSizingMode) {
                 currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+              } else if (!hasCounterSetter) {
+                console.warn("\u26A0\uFE0F Skipping counterAxisSizingMode - setter not available");
               }
             }
             try {
@@ -2346,10 +2366,10 @@
               const nestedFrame = figma.createFrame();
               currentFrame.appendChild(nestedFrame);
               await this.generateUIFromData(item, nestedFrame);
-            } else if (((_a = item.type) == null ? void 0 : _a.startsWith("native-")) && (item.items || ((_b = item.properties) == null ? void 0 : _b.items))) {
+            } else if (((_c = item.type) == null ? void 0 : _c.startsWith("native-")) && (item.items || ((_d = item.properties) == null ? void 0 : _d.items))) {
               console.warn(`\u26A0\uFE0F Invalid structure: ${item.type} cannot have child items`);
               console.warn("\u{1F4E6} Auto-converting to layoutContainer to prevent crash");
-              const childItems = item.items || ((_c = item.properties) == null ? void 0 : _c.items) || [];
+              const childItems = item.items || ((_e = item.properties) == null ? void 0 : _e.items) || [];
               const safeContainer = {
                 type: "layoutContainer",
                 layoutMode: "VERTICAL",
@@ -2358,7 +2378,7 @@
                 items: childItems
               };
               if (item.type === "native-rectangle" && item.properties) {
-                if ((_d = item.properties.fill) == null ? void 0 : _d.color) {
+                if ((_f = item.properties.fill) == null ? void 0 : _f.color) {
                   safeContainer.backgroundColor = item.properties.fill.color;
                 }
                 if (item.properties.cornerRadius) {
@@ -3400,34 +3420,79 @@
          * Apply child layout properties for auto-layout items
          */
         static applyChildLayoutProperties(node, properties) {
-          if (!properties) return;
-          if (properties.layoutAlign) {
-            node.layoutAlign = properties.layoutAlign;
-          } else if (properties.horizontalSizing === "FILL") {
-            node.layoutAlign = "STRETCH";
+          if (!properties || !node) return;
+          console.log("\u{1F527} APPLYING CHILD LAYOUT PROPERTIES:", {
+            nodeType: node.type,
+            properties
+          });
+          if (node.type !== "FRAME" && node.type !== "COMPONENT" && node.type !== "INSTANCE") {
+            console.warn("\u26A0\uFE0F Node type does not support layout properties:", node.type);
+            return;
           }
-          if (properties.layoutGrow !== void 0) {
-            node.layoutGrow = properties.layoutGrow;
-          } else if (properties.horizontalSizing === "FILL") {
-            const parent = node.parent;
-            if (parent && "layoutMode" in parent && parent.layoutMode === "HORIZONTAL") {
-              node.layoutGrow = 1;
+          const frame = node;
+          if (properties.horizontalSizing === "FILL") {
+            const parent = frame.parent;
+            if (parent && "layoutMode" in parent) {
+              const parentFrame = parent;
+              if (parentFrame.layoutMode === "VERTICAL") {
+                try {
+                  frame.layoutAlign = properties.layoutAlign || "STRETCH";
+                  if (frame.layoutMode !== "NONE") {
+                    frame.counterAxisSizingMode = "FIXED";
+                    frame.primaryAxisSizingMode = "AUTO";
+                  }
+                  console.log("\u2705 Applied FILL for VERTICAL parent - set layoutAlign to STRETCH");
+                } catch (e) {
+                  console.error("\u274C Failed to apply FILL sizing:", e);
+                }
+              } else if (parentFrame.layoutMode === "HORIZONTAL") {
+                try {
+                  frame.layoutGrow = 1;
+                  frame.layoutAlign = properties.layoutAlign || "STRETCH";
+                  if (frame.layoutMode !== "NONE") {
+                    frame.primaryAxisSizingMode = "FIXED";
+                    frame.counterAxisSizingMode = "AUTO";
+                  }
+                  console.log("\u2705 Applied FILL for HORIZONTAL parent - set layoutGrow to 1");
+                } catch (e) {
+                  console.error("\u274C Failed to apply FILL sizing:", e);
+                }
+              }
+            }
+          } else if (properties.horizontalSizing === "HUG" || properties.horizontalSizing === "AUTO") {
+            try {
+              if (frame.layoutMode !== "NONE") {
+                frame.primaryAxisSizingMode = "AUTO";
+                frame.counterAxisSizingMode = "AUTO";
+              }
+              console.log("\u2705 Applied HUG/AUTO sizing");
+            } catch (e) {
+              console.error("\u274C Failed to apply HUG sizing:", e);
+            }
+          }
+          if (properties.layoutAlign && !properties.horizontalSizing) {
+            try {
+              frame.layoutAlign = properties.layoutAlign;
+              console.log("\u2705 Set layoutAlign:", properties.layoutAlign);
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set layoutAlign:", e);
+            }
+          }
+          if (properties.layoutGrow !== void 0 && properties.layoutGrow !== null) {
+            try {
+              frame.layoutGrow = properties.layoutGrow;
+              console.log("\u2705 Set layoutGrow:", properties.layoutGrow);
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set layoutGrow:", e);
             }
           }
           if (properties.layoutPositioning) {
-            node.layoutPositioning = properties.layoutPositioning;
-          }
-          if (properties.minWidth !== void 0 && "minWidth" in node) {
-            node.minWidth = properties.minWidth;
-          }
-          if (properties.maxWidth !== void 0 && "maxWidth" in node) {
-            node.maxWidth = properties.maxWidth;
-          }
-          if (properties.minHeight !== void 0 && "minHeight" in node) {
-            node.minHeight = properties.minHeight;
-          }
-          if (properties.maxHeight !== void 0 && "maxHeight" in node) {
-            node.maxHeight = properties.maxHeight;
+            try {
+              frame.layoutPositioning = properties.layoutPositioning;
+              console.log("\u2705 Set layoutPositioning:", properties.layoutPositioning);
+            } catch (e) {
+              console.warn("\u26A0\uFE0F Failed to set layoutPositioning:", e);
+            }
           }
         }
         /**
@@ -4116,9 +4181,16 @@ ${llmErrors}`);
          * Enhanced dynamic generation using systematic approach
          */
         static async generateUIFromDataSystematic(layoutData, parentNode, designSystemData) {
-          var _a, _b, _c, _d, _e, _f, _g;
+          var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E;
+          let lastBreadcrumb = "START";
+          const breadcrumb = (location) => {
+            lastBreadcrumb = location;
+            console.log(`\u{1F35E} ${location}`);
+          };
           try {
+            breadcrumb("INIT: Method start");
             if (designSystemData) {
+              breadcrumb("INIT: Setting design system data");
               this.setDesignSystemData(designSystemData);
             }
             console.log("\u{1F527} Starting generateUIFromDataSystematic with data:", {
@@ -4127,12 +4199,19 @@ ${llmErrors}`);
               parentType: parentNode.type,
               hasDesignSystemData: !!designSystemData
             });
+            console.log("\u{1F6A8} DEBUG TRACE: About to start main processing");
             const schemas = ComponentPropertyEngine.getAllSchemas();
             if (schemas.length === 0) {
               console.log("\u26A0\uFE0F No schemas - running systematic generation in basic mode");
             }
             let currentFrame;
             const containerData = layoutData.layoutContainer || layoutData;
+            console.log("\u{1F6A8} DEBUG TRACE: Container data extracted:", {
+              hasContainerData: !!containerData,
+              containerDataKeys: containerData ? Object.keys(containerData) : [],
+              hasWidth: !!(containerData && containerData.width),
+              parentNodeType: parentNode.type
+            });
             const debugData = {
               timestamp: (/* @__PURE__ */ new Date()).toISOString(),
               inputData: layoutData,
@@ -4162,12 +4241,19 @@ ${llmErrors}`);
               widthValue: containerData == null ? void 0 : containerData.width
             });
             if (parentNode.type === "PAGE" && containerData) {
+              breadcrumb("FRAME: Creating root frame for PAGE");
+              console.log("\u{1F6A8} DEBUG TRACE: Creating root frame for PAGE");
               currentFrame = figma.createFrame();
+              console.log("\u{1F6A8} DEBUG TRACE: Root frame created successfully");
               const initialWidth = containerData.width || 375;
               const minHeight = containerData.minHeight || 812;
+              breadcrumb("FRAME: Setting initial size with resize");
+              console.log("\u{1F6A8} DEBUG TRACE: About to call resize with:", { initialWidth, minHeight });
               currentFrame.resize(initialWidth, minHeight);
+              console.log("\u{1F6A8} DEBUG TRACE: Resize completed successfully");
               if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
                 try {
+                  breadcrumb("FRAME: Setting layoutMode to " + containerData.layoutMode);
                   currentFrame.layoutMode = containerData.layoutMode;
                   console.log("\u2705 Set layoutMode to:", containerData.layoutMode);
                 } catch (layoutModeError) {
@@ -4175,6 +4261,7 @@ ${llmErrors}`);
                   return currentFrame;
                 }
                 try {
+                  breadcrumb("FRAME: Setting primaryAxisSizingMode to AUTO");
                   currentFrame.primaryAxisSizingMode = "AUTO";
                   console.log("\u2705 Set primaryAxisSizingMode to AUTO");
                 } catch (sizingError) {
@@ -4200,7 +4287,14 @@ ${llmErrors}`);
               currentFrame.y = position.y;
               parentNode.appendChild(currentFrame);
             } else if (parentNode.type === "FRAME") {
+              console.log("\u{1F6A8} DEBUG TRACE: Using existing FRAME as container");
               currentFrame = parentNode;
+              console.log("\u{1F6A8} DEBUG TRACE: Current frame properties:", {
+                type: currentFrame.type,
+                layoutMode: currentFrame.layoutMode,
+                hasWidthProperty: "width" in currentFrame,
+                widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, "width")
+              });
             } else {
               figma.notify("Cannot add items without a parent frame.", { error: true });
               return figma.createFrame();
@@ -4211,6 +4305,7 @@ ${llmErrors}`);
               conditionPassed: !!(containerData && containerData !== layoutData)
             });
             if (containerData) {
+              breadcrumb("FRAME: Setting name to " + (containerData.name || "Generated Frame"));
               currentFrame.name = containerData.name || "Generated Frame";
               console.log("\u{1F527} Applying container properties:", {
                 name: containerData.name,
@@ -4221,6 +4316,7 @@ ${llmErrors}`);
                 hasWidth: !!containerData.width
               });
               try {
+                breadcrumb("FRAME: Setting secondary layoutMode to " + (containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE"));
                 currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
                 console.log("\u{1F527} Frame layoutMode set to:", currentFrame.layoutMode);
               } catch (e) {
@@ -4228,21 +4324,25 @@ ${llmErrors}`);
               }
               if (currentFrame.layoutMode !== "NONE") {
                 try {
+                  breadcrumb("FRAME: Setting paddingTop to " + (typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0));
                   currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
                 } catch (e) {
                   console.warn("\u26A0\uFE0F Failed to set paddingTop:", e.message);
                 }
                 try {
+                  breadcrumb("FRAME: Setting paddingBottom to " + (typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0));
                   currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
                 } catch (e) {
                   console.warn("\u26A0\uFE0F Failed to set paddingBottom:", e.message);
                 }
                 try {
+                  breadcrumb("FRAME: Setting paddingLeft to " + (typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0));
                   currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
                 } catch (e) {
                   console.warn("\u26A0\uFE0F Failed to set paddingLeft:", e.message);
                 }
                 try {
+                  breadcrumb("FRAME: Setting paddingRight to " + (typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0));
                   currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
                 } catch (e) {
                   console.warn("\u26A0\uFE0F Failed to set paddingRight:", e.message);
@@ -4285,8 +4385,14 @@ ${llmErrors}`);
                 if (!containerData.width || containerData.width === 0) {
                   try {
                     if (containerData.primaryAxisSizingMode) {
-                      currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-                      console.log("\u{1F50D} Set primaryAxisSizingMode early:", containerData.primaryAxisSizingMode);
+                      const hasPrimarySetter = ((_a = Object.getOwnPropertyDescriptor(currentFrame, "primaryAxisSizingMode")) == null ? void 0 : _a.set) !== void 0;
+                      if (hasPrimarySetter) {
+                        breadcrumb("FRAME: Setting early primaryAxisSizingMode to " + containerData.primaryAxisSizingMode);
+                        currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+                        console.log("\u{1F50D} Set primaryAxisSizingMode early:", containerData.primaryAxisSizingMode);
+                      } else {
+                        console.warn("\u26A0\uFE0F Skipping early primaryAxisSizingMode - setter not available");
+                      }
                     }
                   } catch (e) {
                     console.warn("\u26A0\uFE0F Failed to set primaryAxisSizingMode:", e.message);
@@ -4296,7 +4402,13 @@ ${llmErrors}`);
                 }
                 try {
                   if (containerData.counterAxisSizingMode) {
-                    currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+                    const hasCounterSetter = ((_b = Object.getOwnPropertyDescriptor(currentFrame, "counterAxisSizingMode")) == null ? void 0 : _b.set) !== void 0;
+                    if (hasCounterSetter) {
+                      breadcrumb("FRAME: Setting counterAxisSizingMode to " + containerData.counterAxisSizingMode);
+                      currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+                    } else {
+                      console.warn("\u26A0\uFE0F Skipping counterAxisSizingMode - setter not available");
+                    }
                   }
                 } catch (e) {
                   console.warn("\u26A0\uFE0F Failed to set counterAxisSizingMode:", e.message);
@@ -4331,32 +4443,87 @@ ${llmErrors}`);
                 console.warn("\u26A0\uFE0F Failed to set maxHeight:", e.message);
               }
               if (containerData.width) {
+                console.log("\u{1F6A8} WIDTH SETTING ENTRY POINT:", {
+                  layoutMode: currentFrame.layoutMode,
+                  widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, "width"),
+                  hasWidthSetter: ((_c = Object.getOwnPropertyDescriptor(currentFrame, "width")) == null ? void 0 : _c.set) !== void 0
+                });
                 try {
+                  const frameState = {
+                    width: containerData.width,
+                    currentWidth: currentFrame.width,
+                    layoutMode: currentFrame.layoutMode,
+                    primaryAxisSizing: currentFrame.primaryAxisSizingMode,
+                    counterAxisSizing: currentFrame.counterAxisSizingMode,
+                    frameType: currentFrame.type,
+                    parent: (_d = currentFrame.parent) == null ? void 0 : _d.type,
+                    hasLayoutMode: "layoutMode" in currentFrame,
+                    isAutoLayout: currentFrame.layoutMode !== "NONE"
+                  };
+                  console.log("COMPREHENSIVE WIDTH SET ATTEMPT:", frameState);
+                  console.log("FRAME PROPERTIES AVAILABLE:", Object.getOwnPropertyNames(currentFrame));
+                  console.log("ATTEMPTING WIDTH SET ON:", {
+                    nodeId: currentFrame.id,
+                    nodeName: currentFrame.name,
+                    canSetWidth: "width" in currentFrame
+                  });
                   if (currentFrame.layoutMode !== "NONE") {
-                    console.log("\u{1F50D} BEFORE width set:", {
-                      specified: containerData.width,
-                      current: currentFrame.width,
-                      layoutMode: currentFrame.layoutMode
-                    });
-                    currentFrame.primaryAxisSizingMode = "FIXED";
-                    currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
-                    const frameState = {
-                      primaryAxis: currentFrame.primaryAxisSizingMode,
-                      counterAxis: currentFrame.counterAxisSizingMode,
-                      layoutMode: currentFrame.layoutMode,
-                      currentWidth: currentFrame.width
-                    };
-                    console.log("\u{1F50D} FRAME STATE before width:", frameState);
-                    console.log("\u{1F4CB} FRAME STATE for file:", JSON.stringify(frameState, null, 2));
-                    currentFrame.width = containerData.width;
-                    console.log("\u{1F50D} AFTER width set:", currentFrame.width);
-                    console.log("\u{1F527} Set auto-layout frame width to:", containerData.width);
+                    console.log("\u{1F527} ATTEMPTING AUTO-LAYOUT WIDTH SET");
+                    const hasWidthSetter = ((_e = Object.getOwnPropertyDescriptor(currentFrame, "width")) == null ? void 0 : _e.set) !== void 0;
+                    if (!hasWidthSetter) {
+                      console.log("\u26A0\uFE0F WIDTH SETTER NOT AVAILABLE - Using resize workaround for auto-layout frame");
+                      breadcrumb("FRAME: Using resize workaround for width " + containerData.width);
+                      currentFrame.resize(containerData.width, currentFrame.height);
+                      try {
+                        const hasPrimarySetter = ((_f = Object.getOwnPropertyDescriptor(currentFrame, "primaryAxisSizingMode")) == null ? void 0 : _f.set) !== void 0;
+                        const hasCounterSetter = ((_g = Object.getOwnPropertyDescriptor(currentFrame, "counterAxisSizingMode")) == null ? void 0 : _g.set) !== void 0;
+                        console.log("\u{1F527} SIZING MODE SETTERS CHECK:", {
+                          hasPrimarySetter,
+                          hasCounterSetter,
+                          layoutMode: currentFrame.layoutMode
+                        });
+                        if (hasPrimarySetter) {
+                          breadcrumb("FRAME: Setting primaryAxisSizingMode to FIXED (resize workaround)");
+                          currentFrame.primaryAxisSizingMode = "FIXED";
+                        } else {
+                          console.warn("\u26A0\uFE0F primaryAxisSizingMode setter not available");
+                        }
+                        if (hasCounterSetter) {
+                          breadcrumb("FRAME: Setting counterAxisSizingMode to " + (containerData.counterAxisSizingMode || "FIXED") + " (resize workaround)");
+                          currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
+                        } else {
+                          console.warn("\u26A0\uFE0F counterAxisSizingMode setter not available");
+                        }
+                      } catch (e) {
+                        console.warn("\u26A0\uFE0F Could not set sizing modes:", e.message);
+                      }
+                      console.log("\u2705 Applied width via resize workaround:", containerData.width);
+                    } else {
+                      breadcrumb("FRAME: Setting width directly to " + containerData.width);
+                      currentFrame.width = containerData.width;
+                      console.log("\u2705 Set width directly:", containerData.width);
+                    }
                   } else {
+                    console.log("REGULAR FRAME RESIZE:", {
+                      currentHeight: currentFrame.height,
+                      targetWidth: containerData.width
+                    });
+                    breadcrumb("FRAME: Regular frame resize to width " + containerData.width);
                     currentFrame.resize(containerData.width, currentFrame.height);
-                    console.log("\u{1F527} Resized regular frame to width:", containerData.width);
+                    console.log("Regular frame resized successfully");
                   }
                 } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set width:", e.message);
+                  console.error("DETAILED WIDTH SET ERROR:", {
+                    message: e.message,
+                    stack: e.stack,
+                    containerWidth: containerData.width,
+                    frameState: {
+                      type: currentFrame.type,
+                      layoutMode: currentFrame.layoutMode,
+                      primaryAxis: currentFrame.primaryAxisSizingMode,
+                      counterAxis: currentFrame.counterAxisSizingMode
+                    }
+                  });
                 }
               } else {
                 try {
@@ -4373,7 +4540,7 @@ ${llmErrors}`);
             for (const item of items) {
               try {
                 const processedItem = __spreadValues({}, item);
-                if ((_a = processedItem.type) == null ? void 0 : _a.startsWith("native-")) {
+                if ((_h = processedItem.type) == null ? void 0 : _h.startsWith("native-")) {
                   const validatedType = this.validateNativeType(processedItem.type);
                   if (!validatedType) {
                     console.error(`\u274C Skipping invalid native element type: ${processedItem.type}`);
@@ -4383,7 +4550,7 @@ ${llmErrors}`);
                     processedItem.type = "layoutContainer";
                     processedItem.layoutMode = processedItem.layoutMode || "VERTICAL";
                     processedItem.itemSpacing = processedItem.itemSpacing || 8;
-                    if ((_b = processedItem.properties) == null ? void 0 : _b.items) {
+                    if ((_i = processedItem.properties) == null ? void 0 : _i.items) {
                       processedItem.items = processedItem.properties.items;
                       delete processedItem.properties.items;
                     }
@@ -4396,7 +4563,7 @@ ${llmErrors}`);
                   delete processedItem.componentId;
                   delete processedItem.id;
                 }
-                if ((_c = processedItem.properties) == null ? void 0 : _c.width) {
+                if ((_j = processedItem.properties) == null ? void 0 : _j.width) {
                   const sanitizedWidth = this.sanitizeWidth(processedItem.properties.width);
                   if (sanitizedWidth === null && processedItem.properties.width === "100%") {
                     processedItem.properties.horizontalSizing = "FILL";
@@ -4418,21 +4585,56 @@ ${llmErrors}`);
                 }
                 if (processedItem.type === "layoutContainer") {
                   console.log("\u{1F527} Creating nested layoutContainer:", processedItem.name, "layoutMode:", processedItem.layoutMode);
+                  breadcrumb("NESTED: Creating layoutContainer frame for " + (processedItem.name || "unnamed"));
                   const nestedFrame = figma.createFrame();
+                  breadcrumb("NESTED: Appending layoutContainer frame to parent");
                   currentFrame.appendChild(nestedFrame);
-                  this.applyChildLayoutProperties(nestedFrame, processedItem);
+                  console.log("\u{1F6A8} DEBUG LINE 3072: About to call applyChildLayoutProperties", {
+                    nestedFrameType: nestedFrame.type,
+                    itemType: processedItem.type,
+                    itemKeys: Object.keys(processedItem),
+                    itemHasProperties: "properties" in processedItem,
+                    itemDirectProperties: {
+                      layoutAlign: processedItem.layoutAlign,
+                      horizontalSizing: processedItem.horizontalSizing,
+                      layoutGrow: processedItem.layoutGrow,
+                      width: processedItem.width,
+                      layoutMode: processedItem.layoutMode
+                    }
+                  });
+                  const childLayoutProps = {
+                    layoutAlign: processedItem.layoutAlign,
+                    horizontalSizing: processedItem.horizontalSizing,
+                    layoutGrow: processedItem.layoutGrow,
+                    layoutPositioning: processedItem.layoutPositioning,
+                    minWidth: processedItem.minWidth,
+                    maxWidth: processedItem.maxWidth,
+                    minHeight: processedItem.minHeight,
+                    maxHeight: processedItem.maxHeight
+                  };
+                  Object.keys(childLayoutProps).forEach((key) => {
+                    if (childLayoutProps[key] === void 0) {
+                      delete childLayoutProps[key];
+                    }
+                  });
+                  breadcrumb("NESTED: Applying child layout properties to layoutContainer");
+                  this.applyChildLayoutProperties(nestedFrame, childLayoutProps);
+                  breadcrumb("NESTED: Recursive call to generateUIFromDataSystematic for layoutContainer");
                   await this.generateUIFromDataSystematic({
                     layoutContainer: processedItem,
                     items: processedItem.items
                   }, nestedFrame);
                 } else if (processedItem.type === "frame" && processedItem.layoutContainer) {
+                  breadcrumb("NESTED: Creating frame with layoutContainer");
                   const nestedFrame = figma.createFrame();
+                  breadcrumb("NESTED: Appending frame to parent");
                   currentFrame.appendChild(nestedFrame);
+                  breadcrumb("NESTED: Recursive call for frame type");
                   await this.generateUIFromDataSystematic(processedItem, nestedFrame);
-                } else if (((_d = processedItem.type) == null ? void 0 : _d.startsWith("native-")) && (processedItem.items || ((_e = processedItem.properties) == null ? void 0 : _e.items))) {
+                } else if (((_k = processedItem.type) == null ? void 0 : _k.startsWith("native-")) && (processedItem.items || ((_l = processedItem.properties) == null ? void 0 : _l.items))) {
                   console.warn(`\u26A0\uFE0F Invalid structure: ${processedItem.type} cannot have child items`);
                   console.warn("\u{1F4E6} Auto-converting to layoutContainer to prevent crash");
-                  const childItems = processedItem.items || ((_f = processedItem.properties) == null ? void 0 : _f.items) || [];
+                  const childItems = processedItem.items || ((_m = processedItem.properties) == null ? void 0 : _m.items) || [];
                   const safeContainer = {
                     type: "layoutContainer",
                     layoutMode: "VERTICAL",
@@ -4441,7 +4643,7 @@ ${llmErrors}`);
                     items: childItems
                   };
                   if (processedItem.type === "native-rectangle" && processedItem.properties) {
-                    if ((_g = processedItem.properties.fill) == null ? void 0 : _g.color) {
+                    if ((_n = processedItem.properties.fill) == null ? void 0 : _n.color) {
                       safeContainer.backgroundColor = processedItem.properties.fill.color;
                     }
                     if (processedItem.properties.cornerRadius) {
@@ -4465,9 +4667,41 @@ ${llmErrors}`);
                       cornerRadius: safeContainer.cornerRadius || "none"
                     }
                   });
+                  breadcrumb("NESTED: Creating defensive container frame for native element");
                   const nestedFrame = figma.createFrame();
+                  breadcrumb("NESTED: Appending defensive container to parent");
                   currentFrame.appendChild(nestedFrame);
-                  this.applyChildLayoutProperties(nestedFrame, safeContainer);
+                  console.log("\u{1F6A8} DEBUG LINE 3138: About to call applyChildLayoutProperties", {
+                    nestedFrameType: nestedFrame.type,
+                    itemType: safeContainer.type,
+                    itemKeys: Object.keys(safeContainer),
+                    itemHasProperties: "properties" in safeContainer,
+                    itemDirectProperties: {
+                      layoutAlign: safeContainer.layoutAlign,
+                      horizontalSizing: safeContainer.horizontalSizing,
+                      layoutGrow: safeContainer.layoutGrow,
+                      width: safeContainer.width,
+                      layoutMode: safeContainer.layoutMode
+                    }
+                  });
+                  const childLayoutProps2 = {
+                    layoutAlign: safeContainer.layoutAlign,
+                    horizontalSizing: safeContainer.horizontalSizing,
+                    layoutGrow: safeContainer.layoutGrow,
+                    layoutPositioning: safeContainer.layoutPositioning,
+                    minWidth: safeContainer.minWidth,
+                    maxWidth: safeContainer.maxWidth,
+                    minHeight: safeContainer.minHeight,
+                    maxHeight: safeContainer.maxHeight
+                  };
+                  Object.keys(childLayoutProps2).forEach((key) => {
+                    if (childLayoutProps2[key] === void 0) {
+                      delete childLayoutProps2[key];
+                    }
+                  });
+                  breadcrumb("NESTED: Applying child layout properties to defensive container");
+                  this.applyChildLayoutProperties(nestedFrame, childLayoutProps2);
+                  breadcrumb("NESTED: Recursive call for defensive container");
                   await this.generateUIFromDataSystematic({
                     layoutContainer: safeContainer,
                     items: safeContainer.items
@@ -4522,17 +4756,74 @@ ${llmErrors}`);
                     );
                   }
                   await this.createComponentInstanceSystematic(processedItem, currentFrame);
+                  const componentInstance = currentFrame.children[currentFrame.children.length - 1];
+                  if (componentInstance) {
+                    const childLayoutProps = {
+                      layoutAlign: processedItem.layoutAlign || ((_o = processedItem.properties) == null ? void 0 : _o.layoutAlign),
+                      horizontalSizing: processedItem.horizontalSizing || ((_p = processedItem.properties) == null ? void 0 : _p.horizontalSizing),
+                      layoutGrow: processedItem.layoutGrow || ((_q = processedItem.properties) == null ? void 0 : _q.layoutGrow),
+                      layoutPositioning: processedItem.layoutPositioning || ((_r = processedItem.properties) == null ? void 0 : _r.layoutPositioning),
+                      minWidth: processedItem.minWidth || ((_s = processedItem.properties) == null ? void 0 : _s.minWidth),
+                      maxWidth: processedItem.maxWidth || ((_t = processedItem.properties) == null ? void 0 : _t.maxWidth),
+                      minHeight: processedItem.minHeight || ((_u = processedItem.properties) == null ? void 0 : _u.minHeight),
+                      maxHeight: processedItem.maxHeight || ((_v = processedItem.properties) == null ? void 0 : _v.maxHeight)
+                    };
+                    Object.keys(childLayoutProps).forEach((key) => {
+                      if (childLayoutProps[key] === void 0) {
+                        delete childLayoutProps[key];
+                      }
+                    });
+                    if (Object.keys(childLayoutProps).length > 0) {
+                      console.log("\u2705 Applying child layout properties to component:", childLayoutProps);
+                      this.applyChildLayoutProperties(componentInstance, childLayoutProps);
+                    }
+                  }
                 } else {
                   await this.createComponentInstanceSystematic(processedItem, currentFrame);
+                  const createdInstance = currentFrame.children[currentFrame.children.length - 1];
+                  if (createdInstance) {
+                    const childLayoutProps = {
+                      layoutAlign: processedItem.layoutAlign || ((_w = processedItem.properties) == null ? void 0 : _w.layoutAlign),
+                      horizontalSizing: processedItem.horizontalSizing || ((_x = processedItem.properties) == null ? void 0 : _x.horizontalSizing),
+                      layoutGrow: processedItem.layoutGrow || ((_y = processedItem.properties) == null ? void 0 : _y.layoutGrow),
+                      layoutPositioning: processedItem.layoutPositioning || ((_z = processedItem.properties) == null ? void 0 : _z.layoutPositioning),
+                      minWidth: processedItem.minWidth || ((_A = processedItem.properties) == null ? void 0 : _A.minWidth),
+                      maxWidth: processedItem.maxWidth || ((_B = processedItem.properties) == null ? void 0 : _B.maxWidth),
+                      minHeight: processedItem.minHeight || ((_C = processedItem.properties) == null ? void 0 : _C.minHeight),
+                      maxHeight: processedItem.maxHeight || ((_D = processedItem.properties) == null ? void 0 : _D.maxHeight)
+                    };
+                    Object.keys(childLayoutProps).forEach((key) => {
+                      if (childLayoutProps[key] === void 0) {
+                        delete childLayoutProps[key];
+                      }
+                    });
+                    if (Object.keys(childLayoutProps).length > 0) {
+                      console.log("\u2705 Applying child layout properties to other type:", childLayoutProps);
+                      this.applyChildLayoutProperties(createdInstance, childLayoutProps);
+                    }
+                  }
                 }
               } catch (itemError) {
                 console.error(`\u274C Error rendering item:`, itemError);
                 console.log("Problematic item:", JSON.stringify(item, null, 2));
                 try {
+                  breadcrumb("ERROR: Creating error placeholder frame");
                   const errorFrame = figma.createFrame();
-                  errorFrame.name = `Error: ${itemError.message}`;
-                  errorFrame.fills = [{ type: "SOLID", color: { r: 1, g: 0.8, b: 0.8 } }];
-                  errorFrame.resize(200, 50);
+                  try {
+                    errorFrame.name = `Error: ${itemError.message}`;
+                  } catch (e) {
+                    console.warn("Could not set name on error frame:", e.message);
+                  }
+                  try {
+                    errorFrame.fills = [{ type: "SOLID", color: { r: 1, g: 0.8, b: 0.8 } }];
+                  } catch (e) {
+                    console.warn("Could not set fills on error frame:", e.message);
+                  }
+                  try {
+                    errorFrame.resize(200, 50);
+                  } catch (e) {
+                    console.warn("Could not resize error frame:", e.message);
+                  }
                   currentFrame.appendChild(errorFrame);
                 } catch (e) {
                   console.error("Could not create error placeholder:", e);
@@ -4543,7 +4834,19 @@ ${llmErrors}`);
             const postProcessContainerData = layoutData.layoutContainer || layoutData;
             if (postProcessContainerData && postProcessContainerData.width && currentFrame.layoutMode !== "NONE") {
               console.log("\u{1F527} Post-processing: Re-enforcing frame width to:", postProcessContainerData.width);
-              currentFrame.width = postProcessContainerData.width;
+              breadcrumb("POSTPROCESS: Re-enforcing frame width to " + postProcessContainerData.width);
+              const hasWidthSetter = ((_E = Object.getOwnPropertyDescriptor(currentFrame, "width")) == null ? void 0 : _E.set) !== void 0;
+              if (hasWidthSetter) {
+                currentFrame.width = postProcessContainerData.width;
+                console.log("\u2705 Re-enforced width via setter");
+              } else {
+                try {
+                  currentFrame.resize(postProcessContainerData.width, currentFrame.height);
+                  console.log("\u2705 Re-enforced width via resize fallback");
+                } catch (resizeError) {
+                  console.warn("\u26A0\uFE0F Could not re-enforce width:", resizeError.message);
+                }
+              }
             }
             if (parentNode.type === "PAGE" && currentFrame.layoutMode !== "NONE") {
               const minHeight = containerData.minHeight || 812;
@@ -4564,17 +4867,28 @@ ${llmErrors}`);
             }
             return currentFrame;
           } catch (error) {
+            console.error("\u274C BREADCRUMB LOCATION:", lastBreadcrumb);
             console.error("\u274C generateUIFromDataSystematic error:", error);
             console.error("\u274C Error details:", {
+              lastBreadcrumb,
               message: error.message,
               stack: error.stack,
               name: error.name,
               layoutData,
               parentNodeType: parentNode.type
             });
+            breadcrumb("FALLBACK: Creating fallback frame");
             const fallbackFrame = figma.createFrame();
-            fallbackFrame.name = "Error Frame";
-            fallbackFrame.resize(375, 100);
+            try {
+              fallbackFrame.name = "Error Frame";
+            } catch (e) {
+              console.warn("Could not set name on fallback frame:", e.message);
+            }
+            try {
+              fallbackFrame.resize(375, 100);
+            } catch (e) {
+              console.warn("Could not resize fallback frame:", e.message);
+            }
             if (parentNode.type === "PAGE") {
               parentNode.appendChild(fallbackFrame);
             }
