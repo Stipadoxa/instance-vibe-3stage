@@ -1,0 +1,241 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "component",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat",
+          "headline": "Used Laptops",
+          "subheadline": "Find your perfect pre-owned laptop"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Main Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "2020 Dell XPS 13 - Excellent Condition",
+              "textStyle": "Headline/Large",
+              "color": "primary-500"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$650",
+              "textStyle": "Headline/Medium",
+              "color": "primary-500"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Image Carousel",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Condition: Excellent (minor cosmetic scratches)",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "Star": "full"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "Star": "full"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "Star": "full"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "Star": "full"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4752",
+                "properties": {
+                  "Star": "full"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "(150 reviews)",
+              "textStyle": "Caption/Small",
+              "color": "neutral-50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "This 2020 Dell XPS 13 is in excellent condition and has been meticulously maintained. It features an Intel Core i5 processor, 16GB of RAM, and a 512GB SSD. Battery life is excellent, and it comes with the original charger. A few minor cosmetic scratches are present on the bottom case, but they are barely noticeable. Selling due to upgrade.",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "Platform": "Android+Web",
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green",
+                  "Action": "Contact Seller"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "Platform": "Android+Web",
+                  "Size": "Large",
+                  "Type": "Outlined",
+                  "State": "Default",
+                  "Color": "Green",
+                  "Action": "Add to Cart"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```
+
+**DESIGN RATIONALE:**
+
+1. **Component Verification:** All component IDs (appbar, button, bottom navigation, rating icons) are verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Strategy:** A mobile-first approach is used. The `layoutMode: "VERTICAL"` in the root container and nested containers establishes a clear top-to-bottom information flow.  Spacing is managed using `paddingTop`, `paddingBottom`, `paddingLeft`, `paddingRight`, and `itemSpacing` properties within the containers.
+
+3. **User Experience Logic:** The product information is presented in a logical order: title, price, images, condition, seller rating, description, and finally, primary actions (Contact Seller and Add to Cart). Secondary actions are not included in this initial design for simplicity but could be added to a later iteration.
+
+4. **Component Selection:** The `appbar` component provides the header navigation, while the `button` component is used for the primary actions.  `635:4752` (star rating) is used for the seller rating. The `bottom navigation` component is used for bottom navigation.
+
+5. **Gap Analysis:** The image carousel is created using `native-rectangle` components as placeholders.  This avoids the forbidden use of image components directly within containers.
+
+6. **Hierarchy Decisions:** The product title is the largest and most prominent element, followed by the price. The image carousel is visually prominent.  Subsequent information is presented in a descending hierarchy using text styles.
+
+
+7. **Variant Rationale:**  Variants for components were selected to match the visual design and functional requirements.  For example, the "Filled" button variant is appropriate for the primary call to action.
+
+8. **Native Element Justification:** `native-rectangle` is used for image placeholders because directly embedding image components into containers crashes the Figma renderer.  This approach fulfills the core functionality without violating API constraints.

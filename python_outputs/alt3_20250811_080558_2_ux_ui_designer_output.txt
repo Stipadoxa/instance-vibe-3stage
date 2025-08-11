@@ -1,0 +1,175 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 32,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "CraftMart",
+              "textStyle": "Headline/Large",
+              "color": "primary-500",
+              "alignment": "center"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Your marketplace for handcrafted goods",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50",
+              "alignment": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Form Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Type": "Filled",
+              "State": "enabled",
+              "label-text": "Email Address",
+              "placeholder-text": "your.email@example.com"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Type": "Filled",
+              "State": "enabled",
+              "label-text": "Password",
+              "placeholder-text": "********"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green",
+              "Action": "Sign In"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot Password?",
+                  "textStyle": "Body/Small",
+                  "color": "neutral-50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Footer Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Don't have an account?",
+                  "textStyle": "Body/Small",
+                  "color": "neutral-50",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Create Account",
+                  "textStyle": "Body/Small",
+                  "color": "primary-50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "DESIGN RATIONALE": {
+    "Component Verification": "All component IDs were verified against the provided DESIGN_SYSTEM_DATA and are valid.",
+    "Layout Strategy": "A mobile-first approach was used. The screen is divided into header, form, and footer sections using vertical layout containers.  Spacing is consistent and uses padding on inner containers to manage spacing from the viewport edges.",
+    "User Experience Logic": "The user is presented with a clear login form, and is provided with links to forgot password and signup flows.",
+    "Component Selection": "Components were selected from the Design System to maintain visual consistency. The 'Button', 'text input' components were specifically chosen to provide the interactive elements needed for the form.",
+    "Gap Analysis": "No components were missing from the Design System to fulfill the requirements.  Native text elements were used to add the title, description and footer text.",
+    "Hierarchy Decisions": "The title of the app is given the highest visual prominence using the largest headline style.  Form elements are clearly structured, and the footer links are less prominent.",
+    "Variant Rationale": "Variants for the input fields are 'Filled' and 'enabled'. The button uses 'Filled', 'Large', 'Default', 'Green' variants to meet visual and functional requirements. These variants were selected to provide a clear visual feedback to the user.",
+    "Native Element Justification": "Native text elements were used for the title and description in the header to leverage styling from the Design System's text styles. The forgot password and signup links are also using native text for simplicity and consistency."
+  }
+}
+```

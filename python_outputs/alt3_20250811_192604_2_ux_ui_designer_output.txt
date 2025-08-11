@@ -1,0 +1,242 @@
+```json
+{
+  "DECISION AUDIT TRAIL": {
+    "1. Screen Type Detected": "GENERAL based on screenPurpose keyword \"Allow users to select an available time slot for an appointment with a specific doctor.\"",
+    "2. Layout Pattern Applied": "Single Section as mandated by screen type",
+    "3. Component Mapping Results": [
+      {
+        "Content Analyzer Output": "primaryActionLabels",
+        "Component Type": "button",
+        "Component ID": "10:3907",
+        "Variants": {
+          "Type": "Primary",
+          "Size": "Medium"
+        }
+      },
+      {
+        "Content Analyzer Output": "actualHeading",
+        "Component Type": "native-text",
+        "Component ID": null,
+        "Properties": {
+          "content": "Dr. Evelyn Reed",
+          "textStyle": "Headline/Large",
+          "color": "Neutral/neutral90"
+        }
+      },
+      {
+        "Content Analyzer Output": "coreDataDisplayed",
+        "Component Type": "native-text",
+        "Component ID": null,
+        "Properties": {
+          "content": "Family Medicine | Available Times",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50"
+        }
+      },
+      {
+        "Content Analyzer Output": "actualUIContent.realData",
+        "Component Type": "list-item",
+        "Component ID": "10:10214",
+        "Variants": {
+          "Leading": "None",
+          "Trailing": "None"
+        },
+        "Items": [
+          {
+            "properties": {
+              "content": "Monday, October 23, 2:00 PM",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "properties": {
+              "content": "Monday, October 23, 3:00 PM",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "properties": {
+              "content": "Tuesday, October 24, 10:00 AM",
+              "textStyle": "Body/Medium",
+              "color": "Semantic/Error/error50"
+            }
+          },
+          {
+            "properties": {
+              "content": "Tuesday, October 24, 11:00 AM",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "properties": {
+              "content": "Wednesday, October 25, 9:00 AM",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          }
+        ]
+      },
+      {
+        "Content Analyzer Output": "actualUIContent.microcopyText",
+        "Component Type": "native-text",
+        "Component ID": null,
+        "Properties": {
+          "content": "Tap a time slot to select",
+          "textStyle": "Caption/Small",
+          "color": "Neutral/neutral600"
+        }
+      }
+    ],
+    "4. Variant Selection Applied": [
+      {
+        "Component": "button",
+        "Variants": {
+          "Type": "Primary",
+          "Size": "Medium"
+        },
+        "Reason": "Default action in the context of booking an appointment"
+      },
+      {
+        "Component": "list-item",
+        "Variants": {
+          "Leading": "None",
+          "Trailing": "None"
+        },
+        "Reason": "Simple list items displaying time slots"
+      }
+    ],
+    "5. Sizing Rules Applied": "Full-width for button, auto for text elements and list items",
+    "6. Native Element Usage": "Used for headings and body text due to lack of matching component in design system"
+  },
+  "DESIGN SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Allow users to select an available time slot for an appointment with a specific doctor. - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 812,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Content Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 32,
+          "paddingBottom": 32,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Dr. Evelyn Reed",
+                "textStyle": "Headline/Large",
+                "color": "Neutral/neutral90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Family Medicine | Available Times",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "name": "Time Slots",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 8,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "primaryAxisSizingMode": "AUTO",
+              "counterAxisSizingMode": "AUTO",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "list-item",
+                  "componentNodeId": "10:10214",
+                  "properties": {
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "content": "Monday, October 23, 2:00 PM"
+                  }
+                },
+                {
+                  "type": "list-item",
+                  "componentNodeId": "10:10214",
+                  "properties": {
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "content": "Monday, October 23, 3:00 PM"
+                  }
+                },
+                {
+                  "type": "list-item",
+                  "componentNodeId": "10:10214",
+                  "properties": {
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "content": "Tuesday, October 24, 10:00 AM"
+                  }
+                },
+                {
+                  "type": "list-item",
+                  "componentNodeId": "10:10214",
+                  "properties": {
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "content": "Tuesday, October 24, 11:00 AM"
+                  }
+                },
+                {
+                  "type": "list-item",
+                  "componentNodeId": "10:10214",
+                  "properties": {
+                    "Leading": "None",
+                    "Trailing": "None",
+                    "content": "Wednesday, October 25, 9:00 AM"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Tap a time slot to select",
+                "textStyle": "Caption/Small",
+                "color": "Neutral/neutral600"
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Type": "Primary",
+                "Size": "Medium",
+                "text": "Book Appointment"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```

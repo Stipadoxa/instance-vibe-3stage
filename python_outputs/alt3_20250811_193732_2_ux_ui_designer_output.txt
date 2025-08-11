@@ -1,0 +1,178 @@
+```json
+{
+  "DECISION_AUDIT_TRAIL": {
+    "1": {
+      "Screen Type Detected": "GENERAL",
+      "keyword": "schedule"
+    },
+    "2": {
+      "Layout Pattern Applied": "Vertical List"
+    },
+    "3": {
+      "Component Mapping Results": [
+        {
+          "content": "Upcoming Workouts",
+          "component": "native-text",
+          "variant": "textStyle: \"Headline/Large\""
+        },
+        {
+          "content": [
+            "Monday, October 23rd, 7:00 AM - Yoga (60 min) - Studio A",
+            "Tuesday, October 24th, 6:00 PM - HIIT (45 min) - Home",
+            "Thursday, October 26th, 12:00 PM - Strength Training (30 min) - Gym B"
+          ],
+          "component": "list-item",
+          "variant": "{\"Leading\": \"None\", \"Trailing\": \"Icon\"}"
+        },
+        {
+          "content": "View Workout Details",
+          "component": "button",
+          "variant": "{\"Type\": \"Primary\", \"Size\": \"Medium\"}"
+        },
+        {
+          "content": "Mark as Complete",
+          "component": "button",
+          "variant": "{\"Type\": \"Primary\", \"Size\": \"Medium\"}"
+        },
+        {
+          "content": "Reschedule Workout",
+          "component": "button",
+          "variant": "{\"Type\": \"Secondary\", \"Size\": \"Medium\"}"
+        },
+        {
+          "content": "Cancel Workout",
+          "component": "button",
+          "variant": "{\"Type\": \"Secondary\", \"Size\": \"Medium\"}"
+        },
+        {
+          "content": "Tap for workout details",
+          "component": "native-text",
+          "variant": "textStyle: \"Caption/Small\", color: \"neutral-600\""
+        },
+        {
+          "content": "Mark this workout as complete when finished",
+          "component": "native-text",
+          "variant": "textStyle: \"Caption/Small\", color: \"neutral-600\""
+        },
+        {
+          "content": "No workouts scheduled. Add a workout to your plan.",
+          "component": "native-text",
+          "variant": "textStyle: \"Body/Medium\", color: \"neutral-500\""
+        }
+      ]
+    },
+    "4": {
+      "Variant Selection Applied": [
+        {
+          "component": "button",
+          "variants": "{\"Type\": \"Primary\", \"Size\": \"Medium\"}",
+          "reason": "Default action"
+        },
+        {
+          "component": "button",
+          "variants": "{\"Type\": \"Secondary\", \"Size\": \"Medium\"}",
+          "reason": "Secondary actions"
+        },
+        {
+          "component": "list-item",
+          "variants": "{\"Leading\": \"None\", \"Trailing\": \"Icon\"}",
+          "reason": "Navigation context implied by workout list"
+        }
+
+      ]
+    },
+    "5": {
+      "Sizing Rules Applied": {
+        "button": "\"horizontalSizing\": \"FILL\"",
+        "list-item": "\"horizontalSizing\": \"FILL\"",
+        "native-text": "No sizing properties"
+      }
+    },
+    "6": {
+      "Native Element Usage": "Used for headings and body text due to lack of suitable components in design system for specific styling needs"
+    }
+  },
+  "DESIGN_SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Display the user's upcoming workout schedule - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 812,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "List Container",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Upcoming Workouts",
+                "textStyle": "Headline/Large",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "list-item",
+              "properties": {
+                "componentNodeId": "10:10214",
+                "variants": "{\"Leading\": \"None\", \"Trailing\": \"Icon\"}",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Monday, October 23rd, 7:00 AM - Yoga (60 min) - Studio A",
+                      "textStyle": "Body/Medium",
+                      "color": "neutral-90"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Tuesday, October 24th, 6:00 PM - HIIT (45 min) - Home",
+                      "textStyle": "Body/Medium",
+                      "color": "neutral-90"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Thursday, October 26th, 12:00 PM - Strength Training (30 min) - Gym B",
+                      "textStyle": "Body/Medium",
+                      "color": "neutral-90"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "No workouts scheduled. Add a workout to your plan.",
+                "textStyle": "Body/Medium",
+                "color": "neutral-500"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```

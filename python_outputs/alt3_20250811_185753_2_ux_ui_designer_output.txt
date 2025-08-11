@@ -1,0 +1,215 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 32,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:5620",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Mode": "Light",
+              "Type": "Default",
+              "Elevation": "flat",
+              "headline": "Used Laptop Listing: [Laptop Model Name]",
+              "subheadline": "[Short description]"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Product Images",
+            "layoutMode": "HORIZONTAL",
+            "layoutWrap": "WRAP",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 160,
+                  "height": 120,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 160,
+                  "height": 120,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 160,
+                  "height": 120,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Price and Condition",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "MIN",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "$450",
+                  "textStyle": "Headline/Medium",
+                  "color": "primary-500"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:7805",
+                "properties": {
+                  "Type": "Single Digit",
+                  "Active": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Condition: Good",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Information",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "MIN",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "24:10352",
+                "properties": {
+                   "Photo": "Yes"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Seller Name - 4.7 stars (120 reviews)",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              }
+            ]
+          },
+           {
+            "type": "layoutContainer",
+            "name": "Description",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "[Laptop Description]",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green",
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "designRationale": {
+    "componentVerification": "All component IDs were verified against the provided DESIGN_SYSTEM_DATA.",
+    "layoutStrategy": "A mobile-first approach was used.  The layout is divided into sections (Header, Content) using layoutContainers to enable responsive behavior and maintain a clear hierarchy.  Consistent padding and spacing (16px default) ensure readability.",
+    "userExperienceLogic": "The user flow is linear, starting with a clear product title and images, progressing to key information, seller details, description, and ending with a primary call to action (Contact Seller).",
+    "componentSelection": "Components were chosen based on their suitability for the respective content and functionality.  For example, the 'appbar' component was used for the header, and the 'Button' component for the Contact Seller button. The 'product card' component was considered but lacked the necessary flexibility for image handling and the layout required, therefore native rectangle elements were used.",
+    "gapAnalysis": "The design system lacked a suitable component for the image gallery and some layout flexibility, necessitating the use of native-rectangle components for image placeholders. The specific layout needs and constraints of images in a flexible grid were beyond the provided components.",
+    "hierarchyDecisions": "Visual hierarchy is established using typography from the design system. Headings are prominent, body text is clear, and labels are secondary.  Sections are visually separated with spacing.",
+    "variantRationale": "Variants for components were selected to match the content and design needs. For instance, the Filled button variant was chosen for the Contact Seller button.",
+    "nativeElementJustification": "Native rectangle components were used for product images to create an image gallery that is flexible and can adjust to different screen sizes and image counts."
+  }
+}
+```

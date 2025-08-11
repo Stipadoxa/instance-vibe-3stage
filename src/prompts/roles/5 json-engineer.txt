@@ -163,12 +163,10 @@ Build the final JSON using this exact structure:
 - Native elements (native-text): ✅ ALWAYS add textStyle
 
 ### Rule 4: Layout Alignment
-All nested containers and text elements:
+All nested containers:
 ```json
 {
-  "layoutAlign": "STRETCH", // ✅ Prevents 1px width bugs
-  "horizontalSizing": "FILL" // ✅ For text elements
-}
+  "layoutAlign": "STRETCH", 
 ```
 
 ### Rule 5: Variant Completeness

@@ -1,0 +1,19 @@
+{
+  "pipeline": "alternative_3_stage",
+  "stage": 1,
+  "stage_name": "User Request Analyzer",
+  "timestamp": "20250811_192608",
+  "content": "```json\n{\n  \"userRequest\": \"Design a mobile app screen for booking an appointment with a doctor.  It should show the doctor's name, specialty, available times, and a button to book.\",\n  \"domainAnalysis\": {\n    \"primaryDomain\": \"Appointment & Calendar\",\n    \"platform\": \"mobile\",\n    \"context\": \"Healthcare appointment booking\"\n  },\n  \"contentSpecification\": {\n    \"screenPurpose\": \"Allow users to select an available time slot for an appointment with a specific doctor.\",\n    \"primaryContent\": {\n      \"actualHeading\": \"Dr. Evelyn Reed\",\n      \"coreDataDisplayed\": \"Family Medicine | Available Times\",\n      \"primaryActionLabels\": [\"Book Appointment\"]\n    },\n    \"supportingContent\": {\n      \"topNavigationLabels\": [\"Back to Search\", \"Filters\"],\n      \"bottomNavigationLabels\": [\"Home\", \"Search\", \"Calendar\", \"Profile\"],\n      \"secondaryActionLabels\": [\"View Doctor Profile\"],\n      \"statusMessages\": [\"Appointments available next week\"],\n      \"contextualLabels\": [\"Time Slots\", \"Duration\"]\n    },\n    \"actualUIContent\": {\n      \"realData\": [\n        {\"time\": \"Monday, October 23, 2:00 PM\", \"available\": true},\n        {\"time\": \"Monday, October 23, 3:00 PM\", \"available\": true},\n        {\"time\": \"Tuesday, October 24, 10:00 AM\", \"available\": false},\n        {\"time\": \"Tuesday, October 24, 11:00 AM\", \"available\": true},\n        {\"time\": \"Wednesday, October 25, 9:00 AM\", \"available\": true}\n      ],\n      \"microcopyText\": [\"Tap a time slot to select\", \"30-minute appointment duration\"],\n      \"emptyStateText\": \"No appointments available for this doctor at the moment.\",\n      \"notificationText\": [\"Appointment booked successfully!\", \"Something went wrong. Please try again later.\"]\n    }\n  }\n}\n```\n",
+  "metadata": {
+    "stage": "User Request Analyzer",
+    "ai_used": true,
+    "prompt_used": true,
+    "prompt_length": 12380,
+    "execution_time": 3.7839951515197754,
+    "token_usage": {
+      "prompt_tokens": 1126.0,
+      "completion_tokens": 139.0,
+      "total_tokens": 1265.0
+    }
+  }
+}

@@ -2053,6 +2053,9 @@ var AIDesignerUI = (() => {
         window.messageHandler.register("session-cleared", () => {
           this.startFresh();
         });
+        window.messageHandler.register("design-feedback-result", (msg) => {
+          this.handleDesignFeedbackResult(msg.feedback);
+        });
       }
     }
     /**
@@ -2688,7 +2691,6 @@ var AIDesignerUI = (() => {
      * Handle successful UI generation
      */
     async handleUIGeneratedSuccess(generatedJSON, frameId) {
-      var _a;
       this.clearStatus();
       this.enterIterationMode(generatedJSON, frameId);
       if (this.elements.userPrompt) {
