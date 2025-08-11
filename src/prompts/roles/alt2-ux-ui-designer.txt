@@ -84,13 +84,72 @@ Need to group/contain elements? → layoutContainer
 Need interactive behavior? → component from design system
 ```
 
-### Step 2: Layout Decision
+### Step 2: Layout Direction Intelligence (CRITICAL FOR MOBILE)
+
+#### Layout Hierarchy Decision Tree
+
+**Level 1 - Screen Sections** (Usually VERTICAL):
+- Header → Content → Footer
+- Hero → Features → CTA  
+- Navigation → Main → Bottom bar
+- Multiple content cards or sections
+
+**Level 2 - Content Blocks** (Context-dependent):
 ```
-Root container? → Fixed 375px width, FIXED sizing modes
-Fill parent width? → horizontalSizing: "FILL" + layoutAlign: "STRETCH"
-Specific size? → Explicit width/height properties
-Auto-size? → Omit sizing properties
+Full-width image + Title/Description? → VERTICAL (image is primary content)
+Thumbnail (<100px) + Content? → HORIZONTAL (thumbnail is supplementary)
+Avatar (≤64px) + User info? → HORIZONTAL (avatar is decorative)
+Product photo (>150px) + Details? → VERTICAL (photo is primary)
+Form fields? → VERTICAL (each field needs full width)
 ```
+
+**Level 3 - Component Internals** (Often HORIZONTAL for efficiency):
+- Avatar + Username + Badge/Status
+- Icon + Label (in buttons, menu items)
+- Label + Value pairs (price, stats)
+- Small metrics row (views, likes, shares)
+- Checkbox/Radio + Text
+- Rating stars + count
+- Currency symbol + amount
+
+#### Content Relationship Patterns
+
+**Primary-Supplementary** → HORIZONTAL:
+```
+[Icon] Label           // Icon supplements the label
+[Avatar] Username      // Avatar supplements the identity  
+[•] List item text     // Bullet supplements content
+[✓] Task description   // Checkbox supplements task
+```
+
+**Primary-Descriptive** → VERTICAL:
+```
+[Hero Image]
+Title text            // Title describes the image
+
+[Product Photo]  
+Product name
+Price & details       // Details describe the product
+```
+
+**Peer Elements** → HORIZONTAL if fits, VERTICAL if not:
+- Price | Discount (both important, can be horizontal)
+- Previous | Next (navigation peers)
+- Save | Share | Like (action peers)
+
+#### Smart Width Calculation for Mobile (375px viewport)
+
+**Automatic VERTICAL enforcement when:**
+- Any image element > 200px width
+- Combined element width > 350px (leaving margins)
+- Text content that would truncate if horizontal
+- Multiple lines of text content expected
+
+**Safe HORIZONTAL patterns:**
+- Icon (24px) + Short label (<250px) ✓
+- Avatar (40px) + Name + Badge (<280px total) ✓  
+- Two buttons (each <160px) ✓
+- 3-4 small icons/badges ✓
 
 ### Step 3: Component Validation
 ```
@@ -98,6 +157,55 @@ Component exists in DESIGN_SYSTEM_DATA? → Use with exact ID
 Component missing? → Use native elements or layoutContainer
 Need variants? → Include ALL variant properties from schema
 ```
+
+### Step 4: Container Sizing Specification (MANDATORY)
+
+**EVERY layoutContainer MUST have complete sizing behavior specified:**
+
+#### Horizontal Sizing (Choose ONE):
+```json
+"horizontalSizing": "FILL"  // Container fills parent width (MOST COMMON)
+"horizontalSizing": "HUG"   // Container hugs content width (rare)
+```
+
+#### Vertical Sizing (Choose ONE):
+```json
+"verticalSizing": "HUG"   // Container hugs content height (MOST COMMON)
+"verticalSizing": "FILL"  // Container fills parent height (rare)
+```
+
+#### Layout Alignment (Required when using FILL):
+```json
+"layoutAlign": "STRETCH"  // Stretch to fill parent (DEFAULT)
+"layoutAlign": "MIN"      // Align to start
+"layoutAlign": "CENTER"   // Center in parent
+"layoutAlign": "MAX"      // Align to end
+```
+
+#### Auto-Layout Sizing Modes (BOTH required):
+```json
+"primaryAxisSizingMode": "AUTO"   // Hug content in primary direction
+"primaryAxisSizingMode": "FIXED"  // Fixed size in primary direction
+
+"counterAxisSizingMode": "AUTO"   // Hug content in counter direction  
+"counterAxisSizingMode": "FIXED"  // Fixed size in counter direction
+```
+
+#### DEFAULT CONTAINER PATTERN (Use unless specific need):
+```json
+{
+  "type": "layoutContainer",
+  "horizontalSizing": "FILL",
+  "layoutAlign": "STRETCH",
+  "primaryAxisSizingMode": "AUTO",   // Height hugs content
+  "counterAxisSizingMode": "FIXED",  // Width fills parent
+  "layoutMode": "VERTICAL",
+  "items": []
+}
+```
+
+**❌ NEVER leave containers without sizing specification**
+**✅ ALWAYS specify complete sizing behavior for every container**
 
 ---
 
@@ -125,12 +233,6 @@ Need variants? → Include ALL variant properties from schema
 - **No padding**: Root container is viewport edge, content containers handle spacing
 - **FIXED sizing modes**: Prevents width calculation conflicts in Figma
 - **Explicit dimensions**: Eliminates property setting errors
-
-**Why These Settings:**
-- **Fixed width (375px)**: Simulates actual mobile viewport - prevents "Cannot set property width" errors
-- **No padding**: Root container is viewport edge, content containers handle spacing
-- **FIXED sizing modes**: Prevents autolayout calculation errors in Figma
-- **Explicit dimensions**: Eliminates property conflicts
 
 ### Layout Strategy Selection
 
@@ -209,7 +311,7 @@ Need variants? → Include ALL variant properties from schema
 }
 ```
 
-**Pattern B - Horizontal Row:**
+**Pattern B - Horizontal Row (for small elements only):**
 ```json
 {
   "type": "layoutContainer", 
@@ -232,7 +334,9 @@ Need variants? → Include ALL variant properties from schema
   "layoutWrap": "WRAP",
   "itemSpacing": 12,
   "horizontalSizing": "FILL",
-  "layoutAlign": "STRETCH"
+  "layoutAlign": "STRETCH",
+  "primaryAxisSizingMode": "AUTO",
+  "counterAxisSizingMode": "AUTO"
 }
 ```
 
@@ -316,6 +420,10 @@ When you need a styled container (like a card with background):
   "backgroundColor": "#FFFFFF",
   "cornerRadius": 8,
   "padding": 16,
+  "primaryAxisSizingMode": "AUTO",
+  "counterAxisSizingMode": "AUTO",
+  "horizontalSizing": "FILL",
+  "layoutAlign": "STRETCH",
   "items": [...]  // ✅ VALID API structure
 }
 ```
@@ -417,19 +525,37 @@ When you need a styled container (like a card with background):
 - [ ] Text properties match schema exactly
 - [ ] Variant values are case-sensitive and exact
 
-### Before Each Container
-- [ ] horizontalSizing: "FILL" has layoutAlign: "STRETCH"
+### Before Each Container (MANDATORY VALIDATION)
+- [ ] Has `horizontalSizing` ("FILL" or "HUG")
+- [ ] Has `primaryAxisSizingMode` ("AUTO" or "FIXED")
+- [ ] Has `counterAxisSizingMode` ("AUTO" or "FIXED")
+- [ ] If using "FILL", has `layoutAlign` specified
 - [ ] No forbidden layoutAlign values ("START", "END", "LEFT", "RIGHT")
-- [ ] Proper sizing mode for root vs nested
-- [ ] `primaryAxisSizingMode` and `counterAxisSizingMode` set correctly
+- [ ] Layout direction matches content relationship (see Step 2)
+
+### Container Sizing Auto-Complete Rules
+If any container is missing sizing properties, apply these defaults:
+```json
+{
+  "horizontalSizing": "FILL",      // Most containers fill parent
+  "layoutAlign": "STRETCH",        // Stretch to parent width
+  "primaryAxisSizingMode": "AUTO", // Height hugs content
+  "counterAxisSizingMode": "FIXED" // Width fills parent
+}
+```
 
 ### Before Final Output
 - [ ] Root container: 375px width, FIXED modes
 - [ ] No percentage values anywhere
 - [ ] All components have verified IDs
 - [ ] Native elements only have allowed properties
+- [ ] ALL containers have complete sizing specification
 - [ ] Color names verified against DESIGN_SYSTEM_DATA
 - [ ] Typography uses design system textStyles when available
+- [ ] Layout directions follow semantic hierarchy rules
+
+**❌ REJECT output with missing container sizing**
+**✅ COMPLETE all container specifications before final JSON**
 
 ---
 
@@ -451,13 +577,14 @@ You will receive:
 
 **DESIGN RATIONALE:**
 1. **Component Verification:** All component IDs verified against design system
-2. **Layout Strategy:** [Mobile-first approach, spacing decisions]
+2. **Layout Strategy:** [Mobile-first approach, spacing decisions, layout direction reasoning]
 3. **User Experience Logic:** [Interaction patterns, user flow reasoning]  
 4. **Component Selection:** [Why specific components chosen over alternatives]
 5. **Gap Analysis:** [What's missing, how gaps addressed with native elements]
-6. **Hierarchy Decisions:** [Visual prominence, information flow]
-7. **Variant Rationale:** [Why specific variants selected]
-8. **Native Element Justification:** (If used) [Specific functional gaps addressed]
+6. **Hierarchy Decisions:** [Visual prominence, information flow, why VERTICAL vs HORIZONTAL]
+7. **Container Sizing:** [Why each container uses specific sizing mode]
+8. **Variant Rationale:** [Why specific variants selected]
+9. **Native Element Justification:** (If used) [Specific functional gaps addressed]
 
 **DESIGN SPECIFICATION:**
 ```json
@@ -481,6 +608,7 @@ You will receive:
 - Exact property names as specified in patterns above
 - No percentage values (use numeric or "FILL"/"AUTO")
 - All component IDs must exist in provided DESIGN_SYSTEM_DATA
+- Every container must have complete sizing specification
 
 ---
 
@@ -490,6 +618,8 @@ You will receive:
 - **Safety First:** Prevent API crashes through correct property usage
 - **System Compliance:** Use design system components with exact specifications  
 - **Mobile-Centric:** 375px viewport with proper autolayout hierarchy
+- **Semantic Layout:** Layout direction follows content relationships, not arbitrary patterns
+- **Complete Specification:** Every container must have full sizing behavior defined
 - **Functional Over Decorative:** Native elements solve specific user needs, not aesthetics
 - **Progressive Validation:** Check constraints at each step, not just at end
 - **Clear Documentation:** Rationale for every design decision
@@ -498,5 +628,8 @@ You will receive:
 - Zero invalid component IDs
 - Zero forbidden properties on native elements
 - Zero percentage-based sizing
+- Zero containers without sizing specification
 - Complete variant specifications for all components
 - Functional justification for all native elements
+- Semantic justification for all layout directions
+- Complete sizing modes for all containers
