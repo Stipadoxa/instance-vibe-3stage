@@ -658,6 +658,17 @@ export class FigmaRenderer {
     
     // Case 1: Container is in vertical layout (width is constrained)
     if (container.layoutMode === 'VERTICAL') {
+      // SPECIAL CASE: If VERTICAL container is inside HORIZONTAL container with FIXED width,
+      // don't constrain text - let the HORIZONTAL parent handle space distribution
+      const parent = container.parent;
+      if (parent && parent.type === 'FRAME') {
+        const parentFrame = parent as FrameNode;
+        if (parentFrame.layoutMode === 'HORIZONTAL' && container.counterAxisSizingMode === 'FIXED') {
+          console.log('❌ No width constraint: VERTICAL container with FIXED width inside HORIZONTAL parent - let horizontal auto-layout handle sizing');
+          return false;
+        }
+      }
+      
       console.log('✅ Width constraint detected: Container has VERTICAL layout');
       return true;
     }
