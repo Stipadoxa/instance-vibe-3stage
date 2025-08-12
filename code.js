@@ -2600,6 +2600,43 @@
           }
         }
         /**
+         * Detects if a container has width constraints that should constrain text
+         */
+        static detectWidthConstraint(container) {
+          console.log("\u{1F50D} Detecting width constraint for container:", {
+            type: container.type,
+            layoutMode: container.layoutMode,
+            width: container.width,
+            counterAxisSizingMode: container.counterAxisSizingMode
+          });
+          if (container.layoutMode === "VERTICAL") {
+            console.log("\u2705 Width constraint detected: Container has VERTICAL layout");
+            return true;
+          }
+          if (container.layoutMode === "HORIZONTAL") {
+            console.log("\u274C No width constraint: Container has HORIZONTAL layout - let auto-layout handle sizing");
+            return false;
+          }
+          if (container.width && container.width < 1e3) {
+            console.log("\u2705 Width constraint detected: Container has fixed width <1000px:", container.width);
+            return true;
+          }
+          if (container.counterAxisSizingMode === "FIXED") {
+            console.log("\u2705 Width constraint detected: Container has FIXED counter-axis sizing");
+            return true;
+          }
+          const parent = container.parent;
+          if (parent && parent.type === "FRAME") {
+            const parentFrame = parent;
+            if (parentFrame.layoutMode === "VERTICAL" && parentFrame.width < 1e3) {
+              console.log("\u2705 Width constraint detected: Parent has VERTICAL layout with width <1000px:", parentFrame.width);
+              return true;
+            }
+          }
+          console.log("\u274C No width constraint detected");
+          return false;
+        }
+        /**
          * Create native text element
          */
         static async createTextNode(textData, container) {
@@ -2679,12 +2716,17 @@
               console.error(`\u274C Error applying text style "${styleName}":`, error);
             }
           }
-          this.applyChildLayoutProperties(textNode, props);
-          if (props.horizontalSizing === "FILL") {
+          const isInConstrainedContainer = this.detectWidthConstraint(container);
+          if (isInConstrainedContainer) {
             textNode.textAutoResize = "HEIGHT";
+            const availableWidth = container.width - (container.paddingLeft || 0) - (container.paddingRight || 0);
+            textNode.resize(availableWidth, textNode.height);
+            console.log("\u2705 Set textAutoResize to HEIGHT and width to", availableWidth, "(width constrained by parent)");
           } else {
             textNode.textAutoResize = "WIDTH_AND_HEIGHT";
+            console.log("\u2705 Set textAutoResize to WIDTH_AND_HEIGHT (no width constraint)");
           }
+          this.applyChildLayoutProperties(textNode, props);
           container.appendChild(textNode);
           console.log("Native text created successfully");
         }
@@ -3448,12 +3490,12 @@
               } else if (parentFrame.layoutMode === "HORIZONTAL") {
                 try {
                   frame.layoutGrow = 1;
-                  frame.layoutAlign = properties.layoutAlign || "STRETCH";
+                  frame.layoutAlign = "STRETCH";
                   if (frame.layoutMode !== "NONE") {
                     frame.primaryAxisSizingMode = "FIXED";
                     frame.counterAxisSizingMode = "AUTO";
                   }
-                  console.log("\u2705 Applied FILL for HORIZONTAL parent - set layoutGrow to 1");
+                  console.log("\u2705 Applied FILL for HORIZONTAL parent - set layoutGrow to 1 and layoutAlign to STRETCH");
                 } catch (e) {
                   console.error("\u274C Failed to apply FILL sizing:", e);
                 }
@@ -3492,6 +3534,24 @@
               console.log("\u2705 Set layoutPositioning:", properties.layoutPositioning);
             } catch (e) {
               console.warn("\u26A0\uFE0F Failed to set layoutPositioning:", e);
+            }
+          }
+          if (properties.layoutMode && (properties.primaryAxisSizingMode || properties.counterAxisSizingMode)) {
+            try {
+              if (properties.layoutMode !== frame.layoutMode) {
+                frame.layoutMode = properties.layoutMode;
+                console.log("\u2705 Set child layoutMode:", properties.layoutMode);
+              }
+              if (properties.primaryAxisSizingMode) {
+                frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
+                console.log("\u2705 Set child primaryAxisSizingMode:", properties.primaryAxisSizingMode);
+              }
+              if (properties.counterAxisSizingMode) {
+                frame.counterAxisSizingMode = properties.counterAxisSizingMode;
+                console.log("\u2705 Set child counterAxisSizingMode:", properties.counterAxisSizingMode);
+              }
+            } catch (e) {
+              console.error("\u274C Failed to apply sizing modes:", e);
             }
           }
         }
@@ -4610,7 +4670,11 @@ ${llmErrors}`);
                     minWidth: processedItem.minWidth,
                     maxWidth: processedItem.maxWidth,
                     minHeight: processedItem.minHeight,
-                    maxHeight: processedItem.maxHeight
+                    maxHeight: processedItem.maxHeight,
+                    // FIX: Pass sizing modes so horizontal containers can hug content
+                    primaryAxisSizingMode: processedItem.primaryAxisSizingMode,
+                    counterAxisSizingMode: processedItem.counterAxisSizingMode,
+                    layoutMode: processedItem.layoutMode
                   };
                   Object.keys(childLayoutProps).forEach((key) => {
                     if (childLayoutProps[key] === void 0) {
@@ -10419,9 +10483,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
   init_component_property_engine();
   init_component_scanner();
   init_json_migrator();
-
-
-  // code.ts
   var validationEngine;
   async function initializeAIPipeline() {
     try {

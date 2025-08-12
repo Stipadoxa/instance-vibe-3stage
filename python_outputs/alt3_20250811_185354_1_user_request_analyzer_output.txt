@@ -1,0 +1,95 @@
+## Input: "Design a user profile page for a social media platform, showing the user's posts, and a follow/unfollow button."
+
+## Output:
+
+```json
+{
+  "userRequest": "Design a user profile page for a social media platform, showing the user's posts, and a follow/unfollow button.",
+  "analysisResults": {
+    "domainContext": "Social/Community",
+    "screenType": "User Profile Page",
+    "primaryGoal": "Allow users to view and interact with a specific user's content and profile information.",
+    "requirements": {
+      "essential": [
+        {
+          "element": "Display of user's posts (chronological or other order)",
+          "reasoning": "Explicitly requested by the user."
+        },
+        {
+          "element": "Follow/Unfollow button (with appropriate visual feedback)",
+          "reasoning": "Explicitly requested by the user."
+        }
+      ],
+      "expected": [
+        {
+          "element": "User profile picture and name prominently displayed",
+          "reasoning": "Standard social media profile structure."
+        },
+        {
+          "element": "Follower count and following count",
+          "reasoning": "Standard social media metric for user's popularity."
+        },
+        {
+          "element": "Bio section for users to describe themselves",
+          "reasoning": "Allows for self-expression and context."
+        },
+        {
+          "element": "Option to view posts, and optionally filter (photos, videos, etc.)",
+          "reasoning": "Users expect to filter or sort through content."
+        },
+        {
+          "element": "Engagement metrics (likes, comments, shares) on each post",
+          "reasoning": "Provides social proof and interaction feedback."
+        },
+        {
+          "element": "Time stamps on posts",
+          "reasoning": "Contextual information for post timeline."
+        },
+        {
+          "element": "Mutual connections indicator (if applicable)",
+          "reasoning": "Strengthening social connections."
+        },
+        {
+          "element": "Privacy controls for the profile (e.g., who can see posts)",
+          "reasoning": "User data privacy and safety."
+        },
+        {
+          "element": "Option to report user profile (if needed)",
+          "reasoning": "Ensuring platform safety and community moderation."
+        }
+      ],
+      "valuable": [
+        {
+          "element": "Highlighted posts (e.g., most liked)",
+          "reasoning": "Content discovery and highlighting important content."
+        },
+        {
+          "element": "User activity status (e.g., last active time)",
+          "reasoning": "Provides a sense of presence."
+        },
+        {
+          "element": "Option to message the user directly",
+          "reasoning": "Improved user interaction."
+        },
+        {
+          "element": "Integration with other social media features (e.g., sharing posts)",
+          "reasoning": "Enhanced social sharing and discoverability."
+        }
+      ]
+    },
+    "contentSuggestions": {
+      "dynamicContent": [
+        "User name: JohnDoe123",
+        "Bio: \"Software Engineer and passionate photographer\"",
+        "Posts: array of post objects (image/video URL, caption, timestamp)"
+      ],
+      "interactionStates": [
+        "Post loading states (skeleton screens, infinite scroll)",
+        "Follow/Unfollow button state changes (visual feedback)",
+        "Error handling for loading content or follow button failure"
+      ]
+    },
+    "constraints": "Mobile-first design, adhering to platform style guidelines"
+  }
+}
+```

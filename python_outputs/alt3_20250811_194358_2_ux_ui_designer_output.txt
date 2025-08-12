@@ -1,0 +1,372 @@
+```json
+{
+  "DECISION_AUDIT_TRAIL": {
+    "1": {
+      "Screen Type Detected": "GENERAL",
+      "keyword": "display comprehensive details"
+    },
+    "2": {
+      "Layout Pattern Applied": "Single Section"
+    },
+    "3": {
+      "Component Mapping Results": [
+        {
+          "content": "2020 Dell XPS 13 - Used Laptop - Excellent Condition",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Headline/Large"
+          }
+        },
+        {
+          "content": "$650",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Headline/Medium",
+            "color": "primary-500"
+          }
+        },
+        {
+          "content": "Excellent (minor cosmetic wear)",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "content": "Intel Core i7-1065G7 Processor, 16GB RAM, 512GB SSD, 13.3\" Display",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "content": "Contact Seller",
+          "component": "button",
+          "variants": {
+            "Type": "Primary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Add to Cart",
+          "component": "button",
+          "variants": {
+            "Type": "Primary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Report Listing",
+          "component": "button",
+          "variants": {
+            "Type": "Secondary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Save Listing",
+          "component": "button",
+          "variants": {
+            "Type": "Secondary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Seller Rating: ⭐⭐⭐⭐⭐ (5/5 stars) from 120 ratings, Listing Posted: 3 days ago",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "content": "Seller's Description of the Laptop",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "content": "Shipping information",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "content": "Click to enlarge",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Caption/Small",
+            "color": "neutral-600"
+          }
+        },
+        {
+          "content": "Price is negotiable",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Caption/Small",
+            "color": "neutral-600"
+          }
+        },
+        {
+          "content": "See seller's feedback",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Caption/Small",
+            "color": "neutral-600"
+          }
+        },
+        {
+          "content": "Images are currently loading.",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium",
+            "color": "neutral-500"
+          }
+        },
+        {
+          "content": "Seller has not provided a description yet.",
+          "component": "native-text",
+          "variants": {
+            "textStyle": "Body/Medium",
+            "color": "neutral-500"
+          }
+        },
+        {
+          "content": "[Carousel of 5-7 high-quality photos showing different angles of the laptop, including ports and screen]",
+          "component": "native-rectangle",
+          "variants": {
+            "fill": "IMAGE",
+            "cornerRadius": 8
+          }
+        },
+        {
+          "content": "[Seller Profile (with seller's username/ID and a small profile picture)]",
+          "component": "native-circle",
+          "variants": {
+            "width": 64,
+            "height": 64,
+            "fill": "IMAGE"
+          }
+        }
+      ]
+    },
+    "4": {
+      "Variant Selection Applied": [
+        {
+          "component": "button",
+          "variants": {
+            "Type": "Primary",
+            "Size": "Medium"
+          },
+          "reason": "Default action"
+        },
+        {
+          "component": "button",
+          "variants": {
+            "Type": "Secondary",
+            "Size": "Medium"
+          },
+          "reason": "Secondary Actions"
+        }
+      ]
+    },
+    "5": {
+      "Sizing Rules Applied": {
+        "button": "FILL",
+        "native-text": "AUTO",
+        "native-rectangle": {
+          "width": 375,
+          "height": 200
+        },
+        "native-circle": {
+          "width": 64,
+          "height": 64
+        }
+      }
+    },
+    "6": {
+      "Native Element Usage": "native-text, native-rectangle, native-circle - used because no suitable components are found in the design system for images, profile pictures, and headings"
+    }
+  },
+  "DESIGN_SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Product Details - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 812,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Content Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 32,
+          "paddingBottom": 32,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "2020 Dell XPS 13 - Used Laptop - Excellent Condition",
+                "textStyle": "Headline/Large",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 375,
+                "height": 200,
+                "fill": {
+                  "type": "IMAGE"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "$650",
+                "textStyle": "Headline/Medium",
+                "color": "primary-500"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Excellent (minor cosmetic wear)",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Intel Core i7-1065G7 Processor, 16GB RAM, 512GB SSD, 13.3\" Display",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "text": "Contact Seller",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Primary",
+                  "Size": "Medium"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "text": "Add to Cart",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Primary",
+                  "Size": "Medium"
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Seller Rating: ⭐⭐⭐⭐⭐ (5/5 stars) from 120 ratings, Listing Posted: 3 days ago",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 64,
+                "height": 64,
+                "fill": {
+                  "type": "IMAGE"
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Seller's Description of the Laptop",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Shipping information",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Click to enlarge",
+                "textStyle": "Caption/Small",
+                "color": "neutral-600"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Price is negotiable",
+                "textStyle": "Caption/Small",
+                "color": "neutral-600"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "See seller's feedback",
+                "textStyle": "Caption/Small",
+                "color": "neutral-600"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "text": "Report Listing",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "text": "Save Listing",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium"
+                }
+              }
+            }
+
+          ]
+        }
+      ]
+    }
+  }
+}
+```

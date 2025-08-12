@@ -1,0 +1,252 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Image Carousel Section",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 160,
+              "height": 160,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL",
+                "image": "macbook-pro-1.jpg"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 160,
+              "height": 160,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL",
+                "image": "macbook-pro-2.jpg"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 160,
+              "height": 160,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL",
+                "image": "macbook-pro-3.jpg"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Details Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "MacBook Pro 13-inch, 2020 - Space Gray",
+              "textStyle": "Headline/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$850.00",
+              "textStyle": "Title/Large",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Specifications List",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Condition": ["2-line"],
+                    "Leading": ["None"],
+                    "Trailing": ["None"],
+                    "Show overline": ["False"],
+                    "Show supporting text": ["True"]
+                  },
+                  "Overline": "",
+                  "Headline": "Condition",
+                  "Supporting text": "Excellent - Minor cosmetic wear on the bottom edge."
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Condition": ["1-line"],
+                    "Leading": ["None"],
+                    "Trailing": ["None"],
+                    "Show overline": ["False"],
+                    "Show supporting text": ["False"]
+                  },
+                  "Overline": "",
+                  "Headline": "Processor",
+                  "Supporting text": "Apple M1 Chip"
+                }
+              }
+
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Info Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:7773",
+            "properties": {
+              "variants": {
+                "Photo": ["Yes"]
+              },
+              "image": "placeholder-profile-image.jpg"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "David Lee\nSeller\nMember since 2018. 4.9/5 rating (127 reviews)",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Description Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Used MacBook Pro 13-inch from 2020 in excellent condition. Powerful performance for everyday tasks and creative projects. Runs smoothly and quietly.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "MAX",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "variants": {
+                "Platform": ["Android+Web"],
+                "Size": ["Large"],
+                "Type": ["Filled"],
+                "State": ["Default"],
+                "Color": ["Green"]
+              },
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**DESIGN RATIONALE:**
+
+1. **Component Verification:** All component IDs (`10:10214`, `10:7773`, `10:3907`) were verified to exist in `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Strategy:** A mobile-first approach was used, employing a vertical layout for the main sections (Image Carousel, Product Details, Seller Info, Description, Actions).  Horizontal layouts are used for image carousels and action buttons to take advantage of available width. Consistent padding (16px) is applied for visual breathing room.
+
+3. **User Experience Logic:** The user flow is designed to present key product information (images, title, price) first, followed by details, seller information, description, and finally, clear call-to-action buttons.
+
+4. **Component Selection:**  The `10:10214` List Item component is used to display product specifications in a structured manner. The `10:7773` avatar component displays the seller's profile picture. The `10:3907` Button component provides a clear call to action.  The `product card` component was not used due to its complexity and not being precisely what is needed, choosing to construct this from native and simpler components instead.
+
+5. **Gap Analysis:** The image carousel and certain text elements were not directly addressable with existing components. Native rectangles were used for image display, and native text components for titles, price, and descriptions to provide the necessary flexibility and control.
+
+
+6. **Hierarchy Decisions:**  Visual hierarchy is established using typography sizes (Headline/Large for the title, Title/Large for price, Body/Medium for descriptions) and spacing.  Important information (title, price) is placed prominently at the top.
+
+7. **Variant Rationale:** Variants for the list item component were selected to ensure appropriate display for single and multiline content.  The avatar component's photo variant is enabled to display the seller's image.  The button's variant is set for a filled green button to align with the call-to-action's importance.
+
+8. **Native Element Justification:** `native-rectangle` components are used for image placeholders as the Design System doesn't offer a suitable image component, offering flexibility in image display and preventing API crashes.  `native-text` is used for titles, price, and descriptions for flexibility in styling and to avoid relying on potentially problematic components.

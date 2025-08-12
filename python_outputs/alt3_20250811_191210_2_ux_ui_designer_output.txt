@@ -1,0 +1,249 @@
+{
+  "DECISION_AUDIT_TRAIL": {
+    "1. Screen Type Detected": "GENERAL based on screenPurpose keyword \"Provide detailed information\"",
+    "2. Layout Pattern Applied": "Single Section as mandated by screen type",
+    "3. Component Mapping Results": [
+      {
+        "Content Analyzer Output": "primaryActionLabels",
+        "Component Type": "button",
+        "Variants": {
+          "Type": "Primary",
+          "Size": "Medium"
+        }
+      },
+      {
+        "Content Analyzer Output": "navigationLabels",
+        "Component Type": "list-item",
+        "Variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        }
+      },
+      {
+        "Content Analyzer Output": "actualHeading",
+        "Component Type": "native-text",
+        "Variants": {
+          "textStyle": "Headline/Large"
+        }
+      },
+      {
+        "Content Analyzer Output": "coreDataDisplayed",
+        "Component Type": "native-text",
+        "Variants": {
+          "textStyle": "Body/Medium"
+        }
+      },
+      {
+        "Content Analyzer Output": "realData",
+        "Component Type": "native-text",
+        "Variants": {
+          "textStyle": "Headline/Medium",
+          "color": "primary-500"
+        }
+      },
+      {
+        "Content Analyzer Output": "actualUIContent.realData",
+        "Component Type": "native-text",
+        "Variants": {
+          "textStyle": "Body/Medium"
+        }
+      },
+      {
+        "Content Analyzer Output": "microcopyText",
+        "Component Type": "native-text",
+        "Variants": {
+          "textStyle": "Caption/Small",
+          "color": "neutral-600"
+        }
+      },
+      {
+        "Content Analyzer Output": "actualUIContent.realData[0]",
+        "Component Type": "native-rectangle",
+        "Variants": {
+          "fill": "IMAGE",
+          "cornerRadius": 8
+        }
+      },
+      {
+        "Content Analyzer Output": "actualUIContent.realData[1]",
+        "Component Type": "native-rectangle",
+        "Variants": {
+          "fill": "IMAGE",
+          "cornerRadius": 8
+        }
+      },
+      {
+        "Content Analyzer Output": "actualUIContent.realData[2]",
+        "Component Type": "native-rectangle",
+        "Variants": {
+          "fill": "IMAGE",
+          "cornerRadius": 8
+        }
+      }
+    ],
+    "4. Variant Selection Applied": [
+      {
+        "Component": "button",
+        "Variants": {
+          "Type": "Primary",
+          "Size": "Medium"
+        },
+        "Reason": "Default action for primaryActionLabels"
+      },
+      {
+        "Component": "list-item",
+        "Variants": {
+          "Leading": "None",
+          "Trailing": "Icon"
+        },
+        "Reason": "Navigation context for navigationLabels"
+      }
+    ],
+    "5. Sizing Rules Applied": "Full-width for interactive components, auto for text elements",
+    "6. Native Element Usage": "Used for headings, body text and images as no suitable components found in design system"
+  },
+  "DESIGN_SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Provide detailed information - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 812,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Content Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 32,
+          "paddingBottom": 32,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "2020 MacBook Pro 13-inch",
+                "textStyle": "Headline/Large",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "$800, Good Condition, 4.8★ (15 reviews)",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 375,
+                "height": 200,
+                "fill": {
+                  "type": "IMAGE",
+                  "src": "macbook-pro-image1.jpg"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 375,
+                "height": 200,
+                "fill": {
+                  "type": "IMAGE",
+                  "src": "macbook-pro-image2.jpg"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 375,
+                "height": 200,
+                "fill": {
+                  "type": "IMAGE",
+                  "src": "macbook-pro-image3.jpg"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Processor: Apple M1 Chip",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "RAM: 16GB",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+             {
+              "type": "native-text",
+              "properties": {
+                "content": "Storage: 512GB SSD",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Condition Details: Minor scratches on the casing, fully functional.",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Seller: John Doe, 4.8★ (15 Reviews)",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Description: Used MacBook Pro 13-inch in good condition.  Excellent performance.  Includes charger. Minor cosmetic wear.",
+                "textStyle": "Body/Medium",
+                "color": "neutral-50"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "text": "Contact Seller",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Primary",
+                  "Size": "Medium"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

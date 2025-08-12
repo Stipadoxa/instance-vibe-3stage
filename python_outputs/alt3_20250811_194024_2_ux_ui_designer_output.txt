@@ -1,0 +1,353 @@
+```json
+{
+  "DECISION_AUDIT_TRAIL": {
+    "1": {
+      "Screen Type Detected": "GENERAL",
+      "keyword": "display detailed information"
+    },
+    "2": {
+      "Layout Pattern Applied": "Single Section"
+    },
+    "3": {
+      "Component Mapping Results": [
+        {
+          "content": "Dell Latitude E6430 - Used Laptop - Excellent Condition",
+          "component": "native-text",
+          "textStyle": "Headline/Large"
+        },
+        {
+          "content": "$275",
+          "component": "native-text",
+          "textStyle": "Headline/Medium",
+          "color": "primary-500"
+        },
+        {
+          "content": "Excellent (minor cosmetic scratches on the casing)",
+          "component": "native-text",
+          "textStyle": "Body/Medium"
+        },
+        {
+          "content": "Carousel of 5-7 high-quality photos showing different angles of the laptop, keyboard, ports, etc.",
+          "component": "native-rectangle",
+          "fill": "IMAGE",
+          "cornerRadius": 8
+        },
+        {
+          "content": "John Doe",
+          "component": "native-circle",
+          "width": 64,
+          "height": 64,
+          "fill": "IMAGE"
+        },
+        {
+          "content": "5-star rating, 123 sales",
+          "component": "native-text",
+          "textStyle": "Body/Medium"
+        },
+        {
+          "content": "Well-maintained Dell Latitude E6430.  Intel Core i5 processor, 8GB RAM, 256GB SSD.  Battery life is good (approx 4 hours).  Includes charger.  Perfect for students or office work.",
+          "component": "native-text",
+          "textStyle": "Body/Medium"
+        },
+        {
+          "content": "Contact Seller",
+          "component": "button",
+          "variants": {
+            "Type": "Primary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Add to Cart",
+          "component": "button",
+          "variants": {
+            "Type": "Primary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Report Listing",
+          "component": "button",
+          "variants": {
+            "Type": "Secondary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Ask a Question",
+          "component": "button",
+          "variants": {
+            "Type": "Secondary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "View Seller Profile",
+          "component": "button",
+          "variants": {
+            "Type": "Secondary",
+            "Size": "Medium"
+          }
+        },
+        {
+          "content": "Listed 3 days ago",
+          "component": "native-text",
+          "textStyle": "Body/Medium"
+        },
+        {
+          "content": "Shipping: Buyer pays shipping costs",
+          "component": "native-text",
+          "textStyle": "Body/Medium"
+        },
+        {
+          "content": "Specifications section detailing CPU, RAM, Storage, OS, etc. (with clear and concise terminology)",
+          "component": "native-text",
+          "textStyle": "Body/Medium"
+        },
+        {
+          "content": "Contact seller for additional information or to arrange a local pickup.",
+          "component": "native-text",
+          "textStyle": "Caption/Small",
+          "color": "neutral-600"
+        },
+        {
+          "content": "Buyer is responsible for shipping charges.",
+          "component": "native-text",
+          "textStyle": "Caption/Small",
+          "color": "neutral-600"
+        }
+      ]
+    },
+    "4": {
+      "Variant Selection Applied": {
+        "button": [
+          {
+            "variants": {
+              "Type": "Primary",
+              "Size": "Medium"
+            },
+            "reason": "Default action"
+          },
+          {
+            "variants": {
+              "Type": "Secondary",
+              "Size": "Medium"
+            },
+            "reason": "Secondary Actions"
+          }
+        ]
+      }
+    },
+    "5": {
+      "Sizing Rules Applied": {
+        "button": "horizontalSizing: FILL",
+        "input": "horizontalSizing: FILL",
+        "native-text": "No sizing properties",
+        "native-rectangle": "width: 375, height: 200"
+      }
+    },
+    "6": {
+      "Native Element Usage": "native-text, native-rectangle, native-circle"
+    }
+  },
+  "DESIGN_SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Product Details - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 812,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Content Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 32,
+          "paddingBottom": 32,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Dell Latitude E6430 - Used Laptop - Excellent Condition",
+                "textStyle": "Headline/Large",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "$275",
+                "textStyle": "Headline/Medium",
+                "color": "primary-500"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Excellent (minor cosmetic scratches on the casing)",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 375,
+                "height": 200,
+                "fill": {
+                  "type": "IMAGE",
+                  "opacity": 1
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 64,
+                "height": 64,
+                "fill": {
+                  "type": "IMAGE",
+                  "opacity": 1
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "5-star rating, 123 sales",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Well-maintained Dell Latitude E6430.  Intel Core i5 processor, 8GB RAM, 256GB SSD.  Battery life is good (approx 4 hours).  Includes charger.  Perfect for students or office work.",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Primary",
+                  "Size": "Medium"
+                },
+                "text": "Contact Seller"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Primary",
+                  "Size": "Medium"
+                },
+                "text": "Add to Cart"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium"
+                },
+                "text": "Report Listing"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium"
+                },
+                "text": "Ask a Question"
+              }
+            },
+            {
+              "type": "button",
+              "properties": {
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Type": "Secondary",
+                  "Size": "Medium"
+                },
+                "text": "View Seller Profile"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Listed 3 days ago",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Shipping: Buyer pays shipping costs",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Specifications section detailing CPU, RAM, Storage, OS, etc. (with clear and concise terminology)",
+                "textStyle": "Body/Medium",
+                "color": "neutral-90"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Contact seller for additional information or to arrange a local pickup.",
+                "textStyle": "Caption/Small",
+                "color": "neutral-600"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Buyer is responsible for shipping charges.",
+                "textStyle": "Caption/Small",
+                "color": "neutral-600"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```

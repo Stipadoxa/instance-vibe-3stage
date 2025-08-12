@@ -1,0 +1,161 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs referenced below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to organize the content logically.  The top section contains branding and a welcome message; the middle section houses the login form; and the bottom section provides links to create an account and reset a password.  Consistent spacing (16px padding and 8px between elements) is applied for visual clarity and a clean aesthetic.
+
+3. **User Flow Reasoning:** The user flow prioritizes ease of login.  The email and password fields are presented prominently, followed by a clearly labeled "Sign In" button.  Secondary actions (create account, forgot password) are presented below to maintain a clear visual hierarchy.
+
+4. **Component Choices:**  The `button` component (`10:3907`) was chosen for the "Sign In" button due to its readily available styling options and established design system integration.  The `input` component (`10:8492`) was selected for the email and password fields because it provides the necessary input functionality with built-in placeholder text.
+
+5. **Component Gaps:** The user request requires a visually appealing logo.  While the design system does not directly supply logo components, the `native-rectangle` is used as a placeholder for the logo, with styling that can easily be replaced with an actual logo asset.
+
+6. **Visual Hierarchy:** Visual hierarchy is established using typography, spacing, and color. The headline is in `Headline/Large` style, and the primary action (Sign In button) is visually prominent through its color and size.  Secondary actions use a smaller text size and are visually distinct from the primary call-to-action.
+
+7. **Variant Selection Rationale:** For the button, the variants `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, and `Color: "Green"` were chosen to provide a clear and visually appealing call-to-action button. The `input` component will use `Type: "Filled"` and `State: "Enabled"` variants.
+
+8. **Native Element Justification:**  The logo is represented by a `native-rectangle` component to act as an image placeholder and provide a visual representation of the application's logo.  `native-text` elements are used for the title, description, labels, and links to leverage the design system's text styles for consistency.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Branding Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 32, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 50,
+              "fill": {
+                "type": "SOLID",
+                "color": {
+                  "r": 0.8196078538894653,
+                  "g": 0.8745098114013672,
+                  "b": 0.8980392217636108
+                }
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "CraftMart",
+              "textStyle": "Headline/Large",
+              "color": "#304049",
+              "alignment": "center"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Discover Unique, Handcrafted Goods",
+              "textStyle": "Body/Medium",
+              "color": "#6c8ea0",
+              "alignment": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Form Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "label-text": "Email Address",
+              "placeholder-text": "your.email@example.com",
+              "State": "Enabled",
+              "Type": "Filled"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "label-text": "Password",
+              "placeholder-text": "********",
+              "State": "Enabled",
+              "Type": "Filled"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Action": "Sign In",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Footer Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 32, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Forgot Password?",
+              "textStyle": "Body/Small",
+              "color": "#6c8ea0",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Create Account",
+              "textStyle": "Body/Small",
+              "color": "#00b53f",
+              "alignment": "right"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

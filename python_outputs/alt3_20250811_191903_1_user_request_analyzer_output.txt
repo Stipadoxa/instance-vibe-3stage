@@ -1,0 +1,40 @@
+```json
+{
+  "userRequest": "Design a mobile app screen for booking a hair appointment, showing available times for a specific stylist, and allowing users to select a date and time.",
+  "domainAnalysis": {
+    "primaryDomain": "Appointment & Calendar",
+    "platform": "mobile",
+    "context": "Personal appointment booking"
+  },
+  "contentSpecification": {
+    "screenPurpose": "Allow users to select a date and time for a hair appointment with a specific stylist.",
+    "primaryContent": {
+      "actualHeading": "Book with Sarah",
+      "coreDataDisplayed": "Choose a date and time below.",
+      "primaryActionLabels": ["Book Appointment"]
+    },
+    "supportingContent": {
+      "topNavigationLabels": ["Back", "Sarah's Profile"],
+      "bottomNavigationLabels": ["Home", "Appointments", "Profile", "Settings"],
+      "secondaryActionLabels": ["Change Stylist"],
+      "statusMessages": ["Appointments available", "No appointments available on this day"],
+      "contextualLabels": ["Available slots", "Unavailable slots"]
+    },
+    "actualUIContent": {
+      "realData": [
+        {
+          "date": "October 26, 2024",
+          "times": ["10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM"]
+        },
+        {
+          "date": "October 27, 2024",
+          "times": ["10:00 AM", "2:00 PM", "3:00 PM"]
+        }
+      ],
+      "microcopyText": ["Select a date", "Select a time", "Appointment Duration: 60 mins"],
+      "emptyStateText": "No available appointments for Sarah on the selected date.",
+      "notificationText": ["Appointment booked successfully!", "An error occurred. Please try again later."]
+    }
+  }
+}
+```

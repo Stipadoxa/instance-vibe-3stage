@@ -662,7 +662,14 @@ export class FigmaRenderer {
       return true;
     }
     
-    // Case 2: Container has reasonable fixed width (not infinite)
+    // CRITICAL FIX: Do NOT constrain text in horizontal layouts!
+    // Let Figma's auto-layout handle space distribution between elements
+    if (container.layoutMode === 'HORIZONTAL') {
+      console.log('❌ No width constraint: Container has HORIZONTAL layout - let auto-layout handle sizing');
+      return false;
+    }
+    
+    // Case 2: Container has reasonable fixed width (not infinite) AND not horizontal
     if (container.width && container.width < 1000) {
       console.log('✅ Width constraint detected: Container has fixed width <1000px:', container.width);
       return true;
@@ -674,7 +681,7 @@ export class FigmaRenderer {
       return true;
     }
     
-    // Case 4: Check parent container constraints
+    // Case 4: Check parent container constraints (only for vertical parents)
     const parent = container.parent;
     if (parent && parent.type === 'FRAME') {
       const parentFrame = parent as FrameNode;
@@ -1758,14 +1765,15 @@ export class FigmaRenderer {
           // In horizontal layout, FILL means grow to fill available space
           try {
             frame.layoutGrow = 1;
-            frame.layoutAlign = properties.layoutAlign || 'STRETCH';
+            frame.layoutAlign = 'STRETCH';  // Force STRETCH for FILL, ignore layoutAlign
             
             if (frame.layoutMode !== 'NONE') {
-              frame.primaryAxisSizingMode = 'FIXED';
-              frame.counterAxisSizingMode = 'AUTO';
+              // FIXED: For horizontal containers, primary axis (width) should be FIXED to allow growth
+              frame.primaryAxisSizingMode = 'FIXED';  // Width grows with layoutGrow
+              frame.counterAxisSizingMode = 'AUTO';   // Height hugs content
             }
             
-            console.log('✅ Applied FILL for HORIZONTAL parent - set layoutGrow to 1');
+            console.log('✅ Applied FILL for HORIZONTAL parent - set layoutGrow to 1 and layoutAlign to STRETCH');
           } catch (e) {
             console.error('❌ Failed to apply FILL sizing:', e);
           }
