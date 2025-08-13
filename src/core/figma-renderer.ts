@@ -248,7 +248,9 @@ export class FigmaRenderer {
         if (hasPrimarySetter) {
           if (containerData.primaryAxisSizingMode) {
             currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-          } else {
+          } else if (currentFrame.primaryAxisSizingMode === 'FIXED') {
+            // CRITICAL FIX: Don't override sizing modes that were already set by applyChildLayoutProperties
+            // Only set default if frame still has FIXED (default from createFrame())
             currentFrame.primaryAxisSizingMode = "AUTO";
           }
         } else {
@@ -319,10 +321,69 @@ export class FigmaRenderer {
         const nestedFrame = figma.createFrame();
         currentFrame.appendChild(nestedFrame);
         
+        console.log('🔍 DEBUG: Created nested frame with default sizing modes:', {
+          primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+          counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+          layoutMode: nestedFrame.layoutMode
+        });
+        
         // Apply child layout properties
         this.applyChildLayoutProperties(nestedFrame, item);
         
+        // CRITICAL FIX: Reset height for horizontal AUTO containers (alternative code path)
+        if (nestedFrame.layoutMode === 'HORIZONTAL' && nestedFrame.primaryAxisSizingMode === 'AUTO') {
+          console.log('🔧 HORIZONTAL AUTO CONTAINER (ALT PATH): Forcing height reset from default 100px');
+          
+          // Direct approach: Force height to hug by resetting the frame height
+          try {
+            console.log('📏 Current height before fix:', nestedFrame.height);
+            
+            const children = nestedFrame.children;
+            if (children.length > 0) {
+              // Calculate the maximum height of child elements
+              let maxChildHeight = 0;
+              for (const child of children) {
+                if ('height' in child) {
+                  maxChildHeight = Math.max(maxChildHeight, (child as any).height);
+                }
+              }
+              
+              console.log('📏 Calculated max child height:', maxChildHeight);
+              
+              if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
+                // Apply padding if it exists
+                const paddingTop = (nestedFrame as any).paddingTop || 0;
+                const paddingBottom = (nestedFrame as any).paddingBottom || 0;
+                const targetHeight = maxChildHeight + paddingTop + paddingBottom;
+                
+                console.log('📏 Setting frame height to:', targetHeight);
+                nestedFrame.resize(nestedFrame.width, targetHeight);
+              }
+            }
+            
+            console.log('📏 Final height after fix:', nestedFrame.height);
+            console.log('✅ Height reset complete - should now hug content');
+          } catch (error) {
+            console.error('❌ Height reset failed:', error);
+          }
+        }
+        
+        console.log('🔍 DEBUG: After applyChildLayoutProperties:', {
+          primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+          counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+          layoutMode: nestedFrame.layoutMode,
+          height: nestedFrame.height
+        });
+        
         await this.generateUIFromData({ layoutContainer: item, items: item.items }, nestedFrame);
+        
+        console.log('🔍 DEBUG: Final nested frame properties:', {
+          primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+          counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+          layoutMode: nestedFrame.layoutMode,
+          height: nestedFrame.height,
+          name: nestedFrame.name
+        });
         
       } else if (item.type === 'frame' && item.layoutContainer) {
         const nestedFrame = figma.createFrame();
@@ -1734,9 +1795,17 @@ export class FigmaRenderer {
   static applyChildLayoutProperties(node: SceneNode, properties: any): void {
     if (!properties || !node) return;
     
-    console.log('🔧 APPLYING CHILD LAYOUT PROPERTIES:', {
+    console.log('🔥 CODE DEPLOYMENT TEST - APPLYING CHILD LAYOUT PROPERTIES:', {
       nodeType: node.type,
-      properties: properties
+      properties: properties,
+      DEPLOYMENT_TEST: 'August 12 - If you see this, code is deployed'
+    });
+    
+    console.log('🔥🔥🔥 BEFORE SIZING MODE LOGIC:', {
+      primaryAxisSizingMode: (node as any).primaryAxisSizingMode,
+      counterAxisSizingMode: (node as any).counterAxisSizingMode,
+      layoutMode: (node as any).layoutMode,
+      height: (node as any).height
     });
     
     // Check if node is a frame that supports auto-layout
@@ -1833,16 +1902,20 @@ export class FigmaRenderer {
       }
     }
     
-    // CRITICAL FIX: Apply sizing modes directly for horizontal containers
-    if (properties.layoutMode && (properties.primaryAxisSizingMode || properties.counterAxisSizingMode)) {
+    // CRITICAL FIX: Apply sizing modes directly for containers
+    // Apply layout mode first if provided
+    if (properties.layoutMode && properties.layoutMode !== frame.layoutMode) {
       try {
-        // First set the layout mode if provided
-        if (properties.layoutMode !== frame.layoutMode) {
-          frame.layoutMode = properties.layoutMode;
-          console.log('✅ Set child layoutMode:', properties.layoutMode);
-        }
-        
-        // Then apply sizing modes in correct order
+        frame.layoutMode = properties.layoutMode;
+        console.log('✅ Set child layoutMode:', properties.layoutMode);
+      } catch (e) {
+        console.error('❌ Failed to set layoutMode:', e);
+      }
+    }
+    
+    // Apply sizing modes regardless of layoutMode (they should work independently)
+    if (properties.primaryAxisSizingMode || properties.counterAxisSizingMode) {
+      try {
         if (properties.primaryAxisSizingMode) {
           frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
           console.log('✅ Set child primaryAxisSizingMode:', properties.primaryAxisSizingMode);
@@ -1856,6 +1929,13 @@ export class FigmaRenderer {
         console.error('❌ Failed to apply sizing modes:', e);
       }
     }
+    
+    console.log('🔥🔥🔥 AFTER ALL LOGIC:', {
+      primaryAxisSizingMode: (node as any).primaryAxisSizingMode,
+      counterAxisSizingMode: (node as any).counterAxisSizingMode,
+      layoutMode: (node as any).layoutMode,
+      height: (node as any).height
+    });
   }
 
   /**
@@ -3155,6 +3235,8 @@ export class FigmaRenderer {
     
     for (const item of items) {
       try {
+        console.log('🔥 PROCESSING ITEM:', item.type, item.name || 'unnamed', 'layoutMode:', item.layoutMode);
+        
         // Pre-process item to fix common issues
         const processedItem = {...item};
         
@@ -3217,11 +3299,20 @@ export class FigmaRenderer {
         
         // Process based on type
         if (processedItem.type === 'layoutContainer') {
-          console.log('🔧 Creating nested layoutContainer:', processedItem.name, 'layoutMode:', processedItem.layoutMode);
+          console.log('🔥 CREATING NESTED LAYOUT CONTAINER:', processedItem.name, 'layoutMode:', processedItem.layoutMode);
+          console.log('🚀 DEPLOYMENT CHECK AUG 12 2025 - CODE IS DEPLOYED AND RUNNING');
           breadcrumb('NESTED: Creating layoutContainer frame for ' + (processedItem.name || 'unnamed'));
           const nestedFrame = figma.createFrame();
           breadcrumb('NESTED: Appending layoutContainer frame to parent');
           currentFrame.appendChild(nestedFrame);
+          
+          console.log('🔍 DEBUG: Created nested frame with defaults:', {
+            name: processedItem.name,
+            layoutMode: processedItem.layoutMode,
+            primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+            counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+            height: nestedFrame.height
+          });
           
           // Apply child layout properties
           console.log('🚨 DEBUG LINE 3072: About to call applyChildLayoutProperties', {
@@ -3265,11 +3356,68 @@ export class FigmaRenderer {
           breadcrumb('NESTED: Applying child layout properties to layoutContainer');
           this.applyChildLayoutProperties(nestedFrame, childLayoutProps);
           
+          // CRITICAL FIX: Reset height for horizontal AUTO containers
+          if (nestedFrame.layoutMode === 'HORIZONTAL' && nestedFrame.primaryAxisSizingMode === 'AUTO') {
+            console.log('🔧 HORIZONTAL AUTO CONTAINER: Forcing height reset from default 100px');
+            
+            // Direct approach: Force height to hug by resetting the frame height
+            try {
+              // Method 1: Try to force height recalculation by changing the height property
+              console.log('📏 Current height before fix:', nestedFrame.height);
+              
+              // For horizontal containers with AUTO primary axis, the height should adapt to content
+              // Force the frame to recalculate its height based on children
+              const children = nestedFrame.children;
+              if (children.length > 0) {
+                // Calculate the maximum height of child elements
+                let maxChildHeight = 0;
+                for (const child of children) {
+                  if ('height' in child) {
+                    maxChildHeight = Math.max(maxChildHeight, (child as any).height);
+                  }
+                }
+                
+                console.log('📏 Calculated max child height:', maxChildHeight);
+                
+                if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
+                  // Apply padding if it exists
+                  const paddingTop = (nestedFrame as any).paddingTop || 0;
+                  const paddingBottom = (nestedFrame as any).paddingBottom || 0;
+                  const targetHeight = maxChildHeight + paddingTop + paddingBottom;
+                  
+                  console.log('📏 Setting frame height to:', targetHeight);
+                  nestedFrame.resize(nestedFrame.width, targetHeight);
+                }
+              }
+              
+              console.log('📏 Final height after fix:', nestedFrame.height);
+              console.log('✅ Height reset complete - should now hug content');
+            } catch (error) {
+              console.error('❌ Height reset failed:', error);
+            }
+          }
+          
+          console.log('🔍 DEBUG: After applyChildLayoutProperties:', {
+            name: processedItem.name,
+            layoutMode: nestedFrame.layoutMode,
+            primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+            counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+            height: nestedFrame.height
+          });
+          
           breadcrumb('NESTED: Recursive call to generateUIFromDataSystematic for layoutContainer');
           await this.generateUIFromDataSystematic({
             layoutContainer: processedItem,
             items: processedItem.items
           }, nestedFrame);
+          
+          console.log('🔍 DEBUG: Final frame properties:', {
+            name: nestedFrame.name,
+            layoutMode: nestedFrame.layoutMode,
+            primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+            counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+            height: nestedFrame.height
+          });
           
         } else if (processedItem.type === 'frame' && processedItem.layoutContainer) {
           breadcrumb('NESTED: Creating frame with layoutContainer');
