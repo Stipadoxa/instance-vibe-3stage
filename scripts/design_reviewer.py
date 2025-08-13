@@ -125,33 +125,23 @@ Focus on fixing real problems visible in the image rather than redesigning worki
                 context['designer_output'] = designer_output_file.read_text(encoding='utf-8')
                 print(f"📊 Stage 2 designer output завантажено: {len(context['designer_output'])} символів")
             
-            # Stage 3: JSON Engineer (поточний результат для CURRENT_JSON)
-            json_engineer_file = self.python_outputs_path / f"alt3_{timestamp}_3_json_engineer.json"
-            if json_engineer_file.exists():
-                with open(json_engineer_file, 'r', encoding='utf-8') as f:
-                    json_data = json.load(f)
-                    # Витягти JSON з generatedJSON якщо доступний, інакше використати content
-                    if 'generatedJSON' in json_data:
-                        context['current_json'] = json_data['generatedJSON']
-                    elif 'content' in json_data:
-                        # Спробувати парсити JSON з content
-                        try:
-                            json_content = json_data['content']
-                            if isinstance(json_content, str):
-                                # Витягти JSON з markdown блоків якщо потрібно
-                                if '```json' in json_content:
-                                    json_start = json_content.find('```json') + 7
-                                    json_end = json_content.find('```', json_start)
-                                    json_content = json_content[json_start:json_end].strip()
-                                context['current_json'] = json.loads(json_content)
-                            else:
-                                context['current_json'] = json_content
-                        except json.JSONDecodeError:
+            # Figma-ready JSON (валідований та готовий для використання)
+            figma_ready_file = self.base_path / "figma-ready" / f"figma_ready_{timestamp}.json"
+            if figma_ready_file.exists():
+                with open(figma_ready_file, 'r', encoding='utf-8') as f:
+                    context['current_json'] = json.load(f)
+                print(f"📊 Figma-ready JSON завантажено: {figma_ready_file.name}")
+            else:
+                # Fallback: Stage 3 якщо figma-ready не існує
+                json_engineer_file = self.python_outputs_path / f"alt3_{timestamp}_3_json_engineer.json"
+                if json_engineer_file.exists():
+                    with open(json_engineer_file, 'r', encoding='utf-8') as f:
+                        json_data = json.load(f)
+                        if 'generatedJSON' in json_data:
+                            context['current_json'] = json_data['generatedJSON']
+                        else:
                             context['current_json'] = json_data
-                    else:
-                        context['current_json'] = json_data
-                    
-                print(f"📊 Stage 3 JSON Engineer результат завантажено")
+                    print(f"⚠️ Fallback: використано Stage 3 JSON замість figma-ready")
             
             print(f"✅ Завантажено контекст: analyzer={bool(context.get('analyzer_output'))}, designer={bool(context.get('designer_output'))}, json={bool(context.get('current_json'))}")
             
