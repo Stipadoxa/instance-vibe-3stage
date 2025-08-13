@@ -121,7 +121,10 @@ def print_results(result: dict, verbose: bool = False):
         print(f"   {message}")
         
         if verbose and result.get("raw_json_path"):
-            print(f"📁 Покращений JSON: {result['raw_json_path']}")
+            print(f"📁 Raw Reviewer JSON: {result['raw_json_path']}")
+        
+        if result.get("figma_ready_path"):
+            print(f"🎯 Ready for Figma: {result['figma_ready_path']}")
             
     elif status == "error":
         print("❌ ПОМИЛКА:")

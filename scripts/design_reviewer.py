@@ -3,10 +3,10 @@
 Design Reviewer Module for UXPal
 Gemini-based visual analysis and JSON improvement system
 
-Гібридна імплементація що поєднує:
+Оптимізована імплементація що поєднує:
 - Gemini Vision API для аналізу скріншотів
-- Інтеграцію з існуючим pipeline (python_outputs structure)
-- Умовне проходження JSON Engineer при потребі
+- Інтеграцію з існуючим pipeline (python_outputs structure)  
+- Пряме збереження покращеного JSON (без JSON Engineer для збереження layout)
 """
 
 import os
@@ -112,22 +112,46 @@ Focus on fixing real problems visible in the image rather than redesigning worki
         
         # Завантажити файли етапів pipeline
         try:
-            # Stage 1: User Request Analyzer
+            # Stage 1: User Request Analyzer - ПОВНИЙ output для ANALYZER_OUTPUT
             analyzer_output_file = self.python_outputs_path / f"alt3_{timestamp}_1_user_request_analyzer_output.txt"
             if analyzer_output_file.exists():
                 context['analyzer_output'] = analyzer_output_file.read_text(encoding='utf-8')
                 context['user_request'] = self.extract_user_request_from_analyzer(context['analyzer_output'])
+                print(f"📊 Stage 1 analyzer output завантажено: {len(context['analyzer_output'])} символів")
             
-            # Stage 2: UX/UI Designer  
+            # Stage 2: UX/UI Designer - ПОВНИЙ output для DESIGNER_OUTPUT
             designer_output_file = self.python_outputs_path / f"alt3_{timestamp}_2_ux_ui_designer_output.txt"
             if designer_output_file.exists():
                 context['designer_output'] = designer_output_file.read_text(encoding='utf-8')
+                print(f"📊 Stage 2 designer output завантажено: {len(context['designer_output'])} символів")
             
-            # Stage 3: JSON Engineer (поточний результат)
+            # Stage 3: JSON Engineer (поточний результат для CURRENT_JSON)
             json_engineer_file = self.python_outputs_path / f"alt3_{timestamp}_3_json_engineer.json"
             if json_engineer_file.exists():
                 with open(json_engineer_file, 'r', encoding='utf-8') as f:
-                    context['current_json'] = json.load(f)
+                    json_data = json.load(f)
+                    # Витягти JSON з generatedJSON якщо доступний, інакше використати content
+                    if 'generatedJSON' in json_data:
+                        context['current_json'] = json_data['generatedJSON']
+                    elif 'content' in json_data:
+                        # Спробувати парсити JSON з content
+                        try:
+                            json_content = json_data['content']
+                            if isinstance(json_content, str):
+                                # Витягти JSON з markdown блоків якщо потрібно
+                                if '```json' in json_content:
+                                    json_start = json_content.find('```json') + 7
+                                    json_end = json_content.find('```', json_start)
+                                    json_content = json_content[json_start:json_end].strip()
+                                context['current_json'] = json.loads(json_content)
+                            else:
+                                context['current_json'] = json_content
+                        except json.JSONDecodeError:
+                            context['current_json'] = json_data
+                    else:
+                        context['current_json'] = json_data
+                    
+                print(f"📊 Stage 3 JSON Engineer результат завантажено")
             
             print(f"✅ Завантажено контекст: analyzer={bool(context.get('analyzer_output'))}, designer={bool(context.get('designer_output'))}, json={bool(context.get('current_json'))}")
             
@@ -214,13 +238,29 @@ Focus on fixing real problems visible in the image rather than redesigning worki
             print("⚠️ Design system data не знайдено для reviewer")
             design_system_data = "UXPal Design System - file not found"
         
-        # Безпечна заміна змінних
+        # Підготувати всі 4 компоненти згідно з новою структурою prompt
         review_prompt = reviewer_prompt_template
-        review_prompt = review_prompt.replace('{{USER_REQUEST}}', context.get('user_request', 'Не знайдено'))
-        review_prompt = review_prompt.replace('{{ANALYZER_OUTPUT}}', context.get('analyzer_output', 'Не знайдено')[:2000])
-        review_prompt = review_prompt.replace('{{DESIGNER_OUTPUT}}', context.get('designer_output', 'Не знайдено')[:2000])
+        
+        # ANALYZER_OUTPUT - Product Requirements (повний output Stage 1)
+        analyzer_output = context.get('analyzer_output', 'Product requirements not found')
+        review_prompt = review_prompt.replace('{{ANALYZER_OUTPUT}}', analyzer_output)
+        
+        # DESIGN_SYSTEM_DATA - Design System (повний design system)
         review_prompt = review_prompt.replace('{{DESIGN_SYSTEM_DATA}}', design_system_data)
-        review_prompt = review_prompt.replace('{{INTERFACE_IMAGE}}', '[Скріншот дизайну]')
+        
+        # DESIGNER_OUTPUT - Current JSON (Stage 3 JSON результат)
+        current_json = context.get('current_json', {})
+        current_json_str = json.dumps(current_json, indent=2, ensure_ascii=False)
+        review_prompt = review_prompt.replace('{{DESIGNER_OUTPUT}}', current_json_str)
+        
+        # INTERFACE_IMAGE - буде передано як зображення через Gemini API
+        review_prompt = review_prompt.replace('{{INTERFACE_IMAGE}}', 'See attached screenshot image')
+        
+        print(f"📋 Підготовлено prompt з повним контекстом:")
+        print(f"   - ANALYZER_OUTPUT: {len(analyzer_output)} символів")
+        print(f"   - DESIGN_SYSTEM_DATA: {len(design_system_data)} символів")
+        print(f"   - DESIGNER_OUTPUT: {len(current_json_str)} символів")
+        print(f"   - INTERFACE_IMAGE: передається як зображення")
         
         # 4. Викликати Gemini Vision для аналізу
         try:
@@ -283,23 +323,15 @@ Focus on fixing real problems visible in the image rather than redesigning worki
                 
                 print(f"💾 Raw JSON від reviewer збережено: {raw_json_path}")
                 
-                # Запустити JSON Engineer для фінальної обробки
-                final_json = self.run_json_engineer(improved_json, context, timestamp)
-                if final_json:
-                    return {
-                        "status": "improved",
-                        "message": "Знайдено покращення, JSON оновлено та фінально оброблено JSON Engineer",
-                        "report_path": str(review_report_path),
-                        "raw_json_path": str(raw_json_path),
-                        "final_json_path": final_json.get("final_json_path"),
-                        "figma_ready_path": final_json.get("figma_ready_path")
-                    }
+                # НОВИЙ ПІДХІД: Зберегти reviewer JSON безпосередньо до figma-ready
+                figma_ready_path = self.save_direct_to_figma_ready(improved_json, timestamp)
                 
                 return {
-                    "status": "improved", 
-                    "message": "Знайдено покращення, JSON оновлено",
+                    "status": "improved",
+                    "message": "Знайдено покращення, JSON оновлено та готовий для Figma (без JSON Engineer)",
                     "report_path": str(review_report_path),
-                    "raw_json_path": str(raw_json_path)
+                    "raw_json_path": str(raw_json_path),
+                    "figma_ready_path": str(figma_ready_path)
                 }
             else:
                 return {
@@ -366,141 +398,29 @@ Focus on fixing real problems visible in the image rather than redesigning worki
             print(f"⚠️ Помилка витягування JSON: {e}")
             return None
     
-    def run_json_engineer(self, improved_json: Dict, context: Dict, timestamp: str) -> Optional[Dict]:
+    def save_direct_to_figma_ready(self, improved_json: Dict, timestamp: str) -> Path:
         """
-        Викликати JSON Engineer напряму з Gemini API (БЕЗ subprocess)
-        """
-        print("🔧 Запуск JSON Engineer для фінальної обробки...")
+        Зберегти покращений JSON від reviewer безпосередньо до figma-ready
         
-        try:
-            # 1. Завантажити design-reviewer-json-engineer prompt
-            design_reviewer_prompt_path = self.base_path / "src/prompts/roles/5 design-reviewer-json-engineer.txt"
-            if not design_reviewer_prompt_path.exists():
-                print(f"❌ Design reviewer JSON Engineer prompt не знайдено: {design_reviewer_prompt_path}")
-                return None
-            
-            with open(design_reviewer_prompt_path, 'r', encoding='utf-8') as f:
-                prompt_template = f.read()
-            
-            # 2. Підготувати input у форматі, що очікує prompt
-            reviewer_improvements = f"REVIEWER IMPROVEMENTS:\n\n{json.dumps(improved_json, indent=2, ensure_ascii=False)}\n\n---RATIONALE-SEPARATOR---\n\nDesign improvements made by Gemini Vision reviewer based on visual analysis."
-            
-            # 3. Підставити reviewer output в prompt template
-            if "{{REVIEWER_OUTPUT}}" in prompt_template:
-                formatted_prompt = prompt_template.replace("{{REVIEWER_OUTPUT}}", reviewer_improvements)
-            else:
-                # Якщо template placeholder не знайдено, додати в кінець
-                formatted_prompt = prompt_template + f"\n\n## Previous Stage Output (Stage 4: Design Reviewer):\n{reviewer_improvements}"
-            
-            # 4. Завантажити design system data для JSON Engineer
-            design_system_path = self.base_path / "design-system" / "design-system-raw-data-2025-08-03T10-46-26.json"
-            design_system_data = ""
-            if design_system_path.exists():
-                with open(design_system_path, 'r', encoding='utf-8') as f:
-                    design_system_data = f.read()
-                print(f"📊 Loaded design system data: {len(design_system_data)} characters")
-            
-            # Підставити design system data
-            if "{{DESIGN_SYSTEM_DATA}}" in formatted_prompt:
-                formatted_prompt = formatted_prompt.replace("{{DESIGN_SYSTEM_DATA}}", design_system_data)
-            
-            # Підставити user request analyzer output якщо є
-            if context.get('user_request') and "{{USER_REQUEST_ANALYZER_OUTPUT}}" in formatted_prompt:
-                formatted_prompt = formatted_prompt.replace("{{USER_REQUEST_ANALYZER_OUTPUT}}", context['user_request'])
-            
-            print(f"🤖 Відправка до JSON Engineer Gemini API (prompt length: {len(formatted_prompt)})...")
-            
-            # 5. Викликати Gemini API
-            response = self.model.generate_content(formatted_prompt)
-            
-            if not response or not response.text:
-                print("❌ JSON Engineer не повернув відповідь")
-                return None
-                
-            print("✅ Отримано відповідь від JSON Engineer")
-            
-            # 6. Спробувати витягти JSON з відповіді
-            try:
-                # Якщо відповідь містить ```json блок
-                if "```json" in response.text:
-                    json_start = response.text.find("```json") + 7
-                    json_end = response.text.find("```", json_start)
-                    json_content = response.text[json_start:json_end].strip()
-                else:
-                    # Спробувати знайти JSON об'єкт
-                    json_start = response.text.find("{")
-                    if json_start == -1:
-                        raise ValueError("JSON не знайдено у відповіді")
-                    json_content = response.text[json_start:].strip()
-                    # Знайти останню закриваючу дужку
-                    brace_count = 0
-                    json_end = json_start
-                    for i, char in enumerate(json_content):
-                        if char == '{':
-                            brace_count += 1
-                        elif char == '}':
-                            brace_count -= 1
-                            if brace_count == 0:
-                                json_end = i + 1
-                                break
-                    json_content = json_content[:json_end]
-                
-                # Парсинг JSON
-                final_json = json.loads(json_content)
-                
-                # 7. Створити результат у форматі, що очікується pipeline
-                stage_result = {
-                    "content": response.text,
-                    "generatedJSON": final_json,
-                    "metadata": {
-                        "stage": "Stage 5: JSON Engineer",
-                        "timestamp": int(datetime.now().timestamp()),
-                        "promptUsed": True,
-                        "inputStage": "Stage 4: Design Reviewer",
-                        "promptLength": len(formatted_prompt),
-                        "designSystemUsed": bool(design_system_data),
-                        "componentsAvailable": len(design_system_data) // 1000,  # Rough estimate
-                        "aiUsed": True,
-                        "jsonGenerated": True,
-                        "jsonValid": True
-                    }
-                }
-                
-                # 8. Зберегти результати
-                stage5_result_path = self.python_outputs_path / f"alt3_{timestamp}_5_json_engineer.json"
-                with open(stage5_result_path, 'w', encoding='utf-8') as f:
-                    json.dump(stage_result, f, indent=2, ensure_ascii=False)
-                
-                print(f"💾 Stage 5 результат збережено: {stage5_result_path}")
-                
-                # 9. Зберегти фінальний JSON у figma-ready
-                figma_ready_dir = self.base_path / "figma-ready"
-                figma_ready_dir.mkdir(exist_ok=True)
-                
-                figma_ready_path = figma_ready_dir / "final_design.json"
-                with open(figma_ready_path, 'w', encoding='utf-8') as f:
-                    json.dump(final_json, f, indent=2, ensure_ascii=False)
-                
-                print(f"📁 JSON збережено у figma-ready: {figma_ready_path}")
-                
-                return {
-                    "success": True,
-                    "stage5_path": str(stage5_result_path),
-                    "figma_ready_path": str(figma_ready_path),
-                    "json_generated": True
-                }
-                
-            except json.JSONDecodeError as e:
-                print(f"❌ Помилка парсингу JSON від JSON Engineer: {e}")
-                print(f"Raw response: {response.text[:500]}...")
-                return None
-            except Exception as e:
-                print(f"❌ Помилка обробки відповіді JSON Engineer: {e}")
-                return None
-                
-        except Exception as e:
-            print(f"❌ Помилка виконання JSON Engineer: {e}")
-            return None
+        ПЕРЕВАГИ ПРЯМОГО ЗБЕРЕЖЕННЯ:
+        - Зберігає робочу autolayout структуру
+        - Уникає проблем з primaryAxisSizingMode/counterAxisSizingMode
+        - Швидший workflow (без Stage 5)
+        - Design Reviewer дотримується інструкції "не змінювати структуру"
+        """
+        print("📁 Зберігання reviewer JSON безпосередньо до figma-ready...")
+        
+        # Створити figma-ready папку якщо не існує
+        figma_ready_dir = self.base_path / "figma-ready"
+        figma_ready_dir.mkdir(exist_ok=True)
+        
+        # Зберегти як final_design.json (стандартна назва)
+        figma_ready_path = figma_ready_dir / "final_design.json"
+        with open(figma_ready_path, 'w', encoding='utf-8') as f:
+            json.dump(improved_json, f, indent=2, ensure_ascii=False)
+        
+        print(f"✅ Reviewer JSON збережено напряму: {figma_ready_path}")
+        return figma_ready_path
 
 
 def main():
