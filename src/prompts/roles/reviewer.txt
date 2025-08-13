@@ -99,3 +99,42 @@ Your review succeeds when:
 **Render Compatibility**: JSON follows existing schema and will render correctly
 
 Focus on **fixing real problems** visible in the image rather than redesigning working solutions.
+
+## 📋 DESIGN SYSTEM USAGE
+
+### Component Selection Strategy
+**When fixing components in the JSON:**
+1. **Validate Existence**: Confirm componentNodeId exists in DESIGN_SYSTEM_DATA
+2. **Use Real IDs**: Replace generic component types with actual componentNodeId from design system
+3. **Check Variants**: Ensure all required variants are properly set
+4. **Review Text Properties**: Use exact textLayers names from component schema
+
+### 🛡️ **COMPONENT ID CORRECTION STRATEGY**
+
+**When you see invalid or generic component references:**
+
+**❌ WRONG - Generic types:**
+```json
+{
+  "type": "text",
+  "variant": "headline/large",
+  "text": "Product Name"
+}
+```
+
+**✅ CORRECT - Real componentNodeId:**
+```json
+{
+  "type": "component", 
+  "componentNodeId": "10:5620",  // REAL ID from DESIGN_SYSTEM_DATA
+  "properties": {
+    "headline": "Product Name"
+  },
+  "variants": {
+    "Size": "Large",
+    "State": "Default"
+  }
+}
+```
+
+**CRITICAL**: Always use actual componentNodeId values from DESIGN_SYSTEM_DATA, never invent component IDs.
