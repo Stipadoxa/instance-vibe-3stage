@@ -1008,7 +1008,7 @@ export class FigmaRenderer {
         textAutoResize: 'HEIGHT',
         strategy: parentLayout === 'VERTICAL_IN_HORIZONTAL' ? 'nested' : 'direct'
       });
-    } else if (isInConstrainedContainer) {
+    } else if (isInConstrainedContainer && !useFlexFill) {
       textNode.textAutoResize = 'HEIGHT';  // Width constrained, height flexible
       
       // Priority 1: Use metadata from JSON Engineer
