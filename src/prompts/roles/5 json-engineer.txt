@@ -40,6 +40,25 @@ Never output these non-existent types:
 - ❌ `"type": "native-scroll"` → Not supported
 - ❌ Any other "native-" prefix not in the supported list
 
+## CRITICAL TEXT WIDTH HANDLING - TOP PRIORITY RULE
+
+### MANDATORY: Every native-text MUST have these exact properties:
+```json
+{
+  "type": "native-text",
+  "properties": { "content": "Text content here" },
+  "_useFlexFill": true,
+  "_parentLayout": "VERTICAL"  // or "HORIZONTAL" based on parent
+}
+```
+
+**NEVER include these in native-text:**
+- `"_constraintWidth": 343` ❌ DELETE if present
+- Any width calculations ❌ DELETE if present  
+- Any explicit width values ❌ DELETE if present
+
+**This is THE MOST IMPORTANT RULE for native-text elements.**
+
 ## CRITICAL CONTAINER SIZING RULES - PREVENTS NARROW RENDERING BUG
 
 ### ⚠️ THE PROBLEM TO AVOID
@@ -170,7 +189,7 @@ def fix_container_sizing_recursive(container, parentWidth=375, parentLayoutMode=
 # - Uses parent chain width calculation for precise constraints
 ```
 
-### Algorithm 2: Native Element Property Removal
+### Algorithm 2: Native Element Property Removal & Text Flex-Fill Enforcement
 ```python
 FORBIDDEN_NATIVE_PROPS = [
     "horizontalSizing", "layoutAlign", "layoutGrow", 
@@ -180,9 +199,22 @@ FORBIDDEN_NATIVE_PROPS = [
 
 for each element in designer_output:
     if element["type"].startswith("native-"):
+        # Remove forbidden properties
         for prop in FORBIDDEN_NATIVE_PROPS:
             if prop in element:
-                delete element[prop]  # Remove crashes
+                delete element[prop]
+        
+        # SPECIAL HANDLING FOR native-text
+        if element["type"] == "native-text":
+            # FORCE flex-fill metadata
+            element["_useFlexFill"] = true
+            element["_parentLayout"] = parent_container["layoutMode"]
+            
+            # DELETE any width constraints if present
+            if "_constraintWidth" in element:
+                delete element["_constraintWidth"]
+            if "width" in element or element.properties:
+                delete element["width"] or element.properties["width"]
         
         # Native rectangles/circles need explicit dimensions
         if element["type"] in ["native-rectangle", "native-circle"]:
@@ -394,8 +426,7 @@ Every native element MUST:
 {
   "type": "native-[text|rectangle|circle]",
   "properties": {
-    // ONLY these properties allowed, NO layout properties
-    // For native-text (ENHANCED):
+    // For native-text (UPDATED - FLEX-FILL ONLY):
     "content": "string",
     "textStyle": "string", 
     "fontSize": number,
@@ -404,9 +435,13 @@ Every native element MUST:
     "alignment": "string"
   },
   
-  // NEW: Width constraint metadata (automatically added for native-text)
-  "_constraintWidth": 343,     // CALCULATED number (e.g., 375 - 32 = 343), NOT expressions
-  "_parentLayout": "VERTICAL",  // Parent layout mode: "VERTICAL" or "HORIZONTAL"
+  // MANDATORY for ALL native-text (NO EXCEPTIONS):
+  "_useFlexFill": true,           // ALWAYS true for text
+  "_parentLayout": "VERTICAL",     // or "HORIZONTAL" from parent
+  
+  // NEVER ADD THESE TO native-text:
+  // ❌ "_constraintWidth": number  // DELETE if present
+  // ❌ "width": number              // DELETE if present
   
   // For native-rectangle/circle properties:
   "properties": {
@@ -474,6 +509,11 @@ When designer specifies image fills:
 
 ### Pre-Output Validation Checklist
 Execute these checks and fixes:
+
+✅ EVERY native-text has "_useFlexFill": true (NO EXCEPTIONS)
+✅ EVERY native-text has "_parentLayout" matching its container
+✅ NO native-text has "_constraintWidth" property
+✅ NO native-text has "width" in properties
 
 1. **Container Sizing System Check (RECURSIVE)**
    ```python
