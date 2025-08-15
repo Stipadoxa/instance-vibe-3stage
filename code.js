@@ -2646,48 +2646,53 @@
         }
         /**
          * Detects if a container has width constraints that should constrain text
+         * NEW LOGIC: Uses effective width calculation from parent chain
          */
         static detectWidthConstraint(container) {
-          console.log("\u{1F50D} Detecting width constraint for container:", {
+          console.log("\u{1F50D} NEW: Detecting width constraint for container:", {
             type: container.type,
             layoutMode: container.layoutMode,
             width: container.width,
-            counterAxisSizingMode: container.counterAxisSizingMode
+            name: container.name
           });
-          if (container.layoutMode === "VERTICAL") {
-            const parent2 = container.parent;
-            if (parent2 && parent2.type === "FRAME") {
-              const parentFrame = parent2;
-              if (parentFrame.layoutMode === "HORIZONTAL" && container.counterAxisSizingMode === "FIXED") {
-                console.log("\u274C No width constraint: VERTICAL container with FIXED width inside HORIZONTAL parent - let horizontal auto-layout handle sizing");
-                return false;
-              }
-            }
-            console.log("\u2705 Width constraint detected: Container has VERTICAL layout");
+          const effectiveWidth = this.calculateEffectiveWidth(container);
+          if (effectiveWidth && effectiveWidth <= 450) {
+            console.log("\u2705 Width constraint detected: Effective width =", effectiveWidth);
             return true;
           }
-          if (container.layoutMode === "HORIZONTAL") {
-            console.log("\u274C No width constraint: Container has HORIZONTAL layout - let auto-layout handle sizing");
-            return false;
-          }
-          if (container.width && container.width < 1e3) {
-            console.log("\u2705 Width constraint detected: Container has fixed width <1000px:", container.width);
-            return true;
-          }
-          if (container.counterAxisSizingMode === "FIXED") {
-            console.log("\u2705 Width constraint detected: Container has FIXED counter-axis sizing");
-            return true;
-          }
-          const parent = container.parent;
-          if (parent && parent.type === "FRAME") {
-            const parentFrame = parent;
-            if (parentFrame.layoutMode === "VERTICAL" && parentFrame.width < 1e3) {
-              console.log("\u2705 Width constraint detected: Parent has VERTICAL layout with width <1000px:", parentFrame.width);
-              return true;
-            }
-          }
-          console.log("\u274C No width constraint detected");
+          console.log("\u274C No width constraint: Effective width =", effectiveWidth || "null");
           return false;
+        }
+        /**
+         * Calculate effective width constraint from parent chain
+         * Walks up the layout hierarchy to find actual width limits
+         */
+        static calculateEffectiveWidth(container) {
+          console.log("\u{1F9EE} Calculating effective width for:", container.name);
+          let current = container;
+          let level = 0;
+          while (current && level < 10) {
+            console.log(`  Level ${level}: ${current.name} (${current.layoutMode})`);
+            if (current.primaryAxisSizingMode === "FIXED" && current.counterAxisSizingMode === "FIXED" && current.width > 0) {
+              const rootWidth = current.width;
+              console.log(`  \u2705 Found root width: ${rootWidth}px`);
+              return rootWidth;
+            }
+            if (current.layoutMode === "VERTICAL" && current.width > 0) {
+              const constrainedWidth = current.width - (current.paddingLeft || 0) - (current.paddingRight || 0);
+              console.log(`  \u2705 Found VERTICAL constraint: ${constrainedWidth}px`);
+              return Math.max(constrainedWidth, 100);
+            }
+            const parent = current.parent;
+            if (parent && parent.type === "FRAME") {
+              current = parent;
+              level++;
+            } else {
+              break;
+            }
+          }
+          console.log("  \u274C No effective width found in parent chain");
+          return null;
         }
         /**
          * Create native text element
@@ -2772,12 +2777,19 @@
           const isInConstrainedContainer = this.detectWidthConstraint(container);
           if (isInConstrainedContainer) {
             textNode.textAutoResize = "HEIGHT";
-            const availableWidth = container.width - (container.paddingLeft || 0) - (container.paddingRight || 0);
+            const effectiveWidth = this.calculateEffectiveWidth(container);
+            const availableWidth = effectiveWidth ? Math.max(effectiveWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 100) : container.width - ((container.paddingLeft || 0) + (container.paddingRight || 0));
             textNode.resize(availableWidth, textNode.height);
-            console.log("\u2705 Set textAutoResize to HEIGHT and width to", availableWidth, "(width constrained by parent)");
+            console.log(
+              "\u2705 NEW: Set textAutoResize to HEIGHT and width to",
+              availableWidth,
+              "(effective width:",
+              effectiveWidth,
+              ")"
+            );
           } else {
             textNode.textAutoResize = "WIDTH_AND_HEIGHT";
-            console.log("\u2705 Set textAutoResize to WIDTH_AND_HEIGHT (no width constraint)");
+            console.log("\u2705 Set textAutoResize to WIDTH_AND_HEIGHT (no effective width constraint)");
           }
           this.applyChildLayoutProperties(textNode, props);
           container.appendChild(textNode);

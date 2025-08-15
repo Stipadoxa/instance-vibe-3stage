@@ -339,19 +339,73 @@ When using colors in native elements or background properties, reference EXACT c
 - **paddingLeft/Right: 16**: Standard horizontal content padding
 - **paddingLeft/Right: 0**: When horizontal spacing handled by parent
 
-**Root Container Specifications (CRITICAL):**
+### Mobile App Architecture Pattern (CRITICAL - ALWAYS FOLLOW):
+
+**Three-Container Architecture for Mobile Apps:**
+Every mobile app screen MUST have exactly this structure:
+
 ```json
 {
-  "type": "layoutContainer",
+  "type": "layoutContainer",  // ROOT CONTAINER
   "layoutMode": "VERTICAL",
-  "itemSpacing": 0,
-  "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+  "itemSpacing": 0,           // CRITICAL: No spacing between nav bars and content
+  "paddingTop": 0,            // CRITICAL: Zero padding so top nav touches edges
+  "paddingBottom": 0,         // CRITICAL: Zero padding so bottom nav touches edges
+  "paddingLeft": 0,           // CRITICAL: Zero padding for edge-to-edge
+  "paddingRight": 0,          // CRITICAL: Zero padding for edge-to-edge
   "primaryAxisSizingMode": "FIXED",
-  "counterAxisSizingMode": "FIXED", 
+  "counterAxisSizingMode": "FIXED",
   "width": 375,
-  "minHeight": 812
+  "minHeight": 812,
+  "items": [
+    {
+      // TOP NAVIGATION - Always first child
+      "type": "component" or "layoutContainer",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      // NO padding overrides - component should touch all edges
+    },
+    {
+      // CONTENT CONTAINER - Always middle child
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,        // Content padding INSIDE this container
+      "paddingBottom": 16,     // Content padding INSIDE this container  
+      "paddingLeft": 16,       // Content padding INSIDE this container
+      "paddingRight": 16,      // Content padding INSIDE this container
+      "horizontalSizing": "FILL",           // CRITICAL: Full width
+      "layoutAlign": "STRETCH",             // CRITICAL: Stretch to parent width
+      "primaryAxisSizingMode": "AUTO",     // Height grows with content
+      "layoutGrow": 1,         // CRITICAL: Takes all available space
+      "items": [
+        // All screen content goes here with proper spacing
+      ]
+    },
+    {
+      // BOTTOM NAVIGATION - Always last child
+      "type": "component" or "layoutContainer", 
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      // NO padding overrides - component should touch all edges
+    }
+  ]
 }
-```
+
+CRITICAL RULES:
+
+NEVER add padding to the root container - it must be 0 on all sides
+NEVER add itemSpacing to the root container - navigation bars must touch container edges
+ALWAYS use three separate containers: top nav, content, bottom nav
+Content padding goes INSIDE the middle container, not on the root
+Navigation components must have horizontalSizing: "FILL" and layoutAlign: "STRETCH"
+Middle content container must have layoutGrow: 1 to push bottom nav to bottom
+
+Visual Result:
+
+Top navigation bar spans full width (0-375px) and touches top edge
+Bottom navigation bar spans full width (0-375px) and touches bottom edge
+Content has proper padding (16px sides, 20px top/bottom) but INSIDE its container
+When content is short, bottom nav still sticks to bottom due to layoutGrow: 1
 
 **Standard Content Container Pattern:**
 ```json
@@ -815,6 +869,16 @@ Content Type → Text Style:
 - [ ] Every textStyle name exists in the provided text styles list
 - [ ] Every color reference uses exact names from color styles
 - [ ] All variant values match the variantDetails exactly (case-sensitive)
+
+**Mobile App Structure Verification:**
+- [ ] Root container has exactly 3 children: top nav, content container, bottom nav
+- [ ] Root container has ALL padding values set to 0
+- [ ] Root container has itemSpacing set to 0
+- [ ] Top navigation has horizontalSizing: "FILL" and layoutAlign: "STRETCH"
+- [ ] Bottom navigation has horizontalSizing: "FILL" and layoutAlign: "STRETCH"
+- [ ] Middle content container has layoutGrow: 1
+- [ ] Content padding is INSIDE the middle container, not on root
+- [ ] No padding overrides on navigation components
 
 **No Abstract References:**
 - [ ] No text contains "placeholder", "example", "sample", or "TBD"

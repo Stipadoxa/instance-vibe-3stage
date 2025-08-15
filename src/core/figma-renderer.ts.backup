@@ -708,71 +708,63 @@ export class FigmaRenderer {
 
   /**
    * Detects if a container has width constraints that should constrain text
-   * NEW LOGIC: Uses effective width calculation from parent chain
    */
   private static detectWidthConstraint(container: FrameNode): boolean {
-    console.log('🔍 NEW: Detecting width constraint for container:', {
+    console.log('🔍 Detecting width constraint for container:', {
       type: container.type,
       layoutMode: container.layoutMode,
       width: container.width,
-      name: container.name
+      counterAxisSizingMode: container.counterAxisSizingMode
     });
     
-    // Calculate effective width from parent chain
-    const effectiveWidth = this.calculateEffectiveWidth(container);
-    
-    if (effectiveWidth && effectiveWidth <= 450) { // Mobile + tablet constraint
-      console.log('✅ Width constraint detected: Effective width =', effectiveWidth);
+    // Case 1: Container is in vertical layout (width is constrained)
+    if (container.layoutMode === 'VERTICAL') {
+      // SPECIAL CASE: If VERTICAL container is inside HORIZONTAL container with FIXED width,
+      // don't constrain text - let the HORIZONTAL parent handle space distribution
+      const parent = container.parent;
+      if (parent && parent.type === 'FRAME') {
+        const parentFrame = parent as FrameNode;
+        if (parentFrame.layoutMode === 'HORIZONTAL' && container.counterAxisSizingMode === 'FIXED') {
+          console.log('❌ No width constraint: VERTICAL container with FIXED width inside HORIZONTAL parent - let horizontal auto-layout handle sizing');
+          return false;
+        }
+      }
+      
+      console.log('✅ Width constraint detected: Container has VERTICAL layout');
       return true;
     }
     
-    console.log('❌ No width constraint: Effective width =', effectiveWidth || 'null');
-    return false;
-  }
-
-  /**
-   * Calculate effective width constraint from parent chain
-   * Walks up the layout hierarchy to find actual width limits
-   */
-  private static calculateEffectiveWidth(container: FrameNode): number | null {
-    console.log('🧮 Calculating effective width for:', container.name);
+    // CRITICAL FIX: Do NOT constrain text in horizontal layouts!
+    // Let Figma's auto-layout handle space distribution between elements
+    if (container.layoutMode === 'HORIZONTAL') {
+      console.log('❌ No width constraint: Container has HORIZONTAL layout - let auto-layout handle sizing');
+      return false;
+    }
     
-    let current: FrameNode | null = container;
-    let level = 0;
+    // Case 2: Container has reasonable fixed width (not infinite) AND not horizontal
+    if (container.width && container.width < 1000) {
+      console.log('✅ Width constraint detected: Container has fixed width <1000px:', container.width);
+      return true;
+    }
     
-    while (current && level < 10) { // Prevent infinite loops
-      console.log(`  Level ${level}: ${current.name} (${current.layoutMode})`);
-      
-      // Case 1: Root container with explicit fixed width
-      if (current.primaryAxisSizingMode === 'FIXED' && 
-          current.counterAxisSizingMode === 'FIXED' && 
-          current.width > 0) {
-        const rootWidth = current.width;
-        console.log(`  ✅ Found root width: ${rootWidth}px`);
-        return rootWidth;
-      }
-      
-      // Case 2: VERTICAL layout parent constrains child width
-      if (current.layoutMode === 'VERTICAL' && current.width > 0) {
-        const constrainedWidth = current.width - 
-          (current.paddingLeft || 0) - 
-          (current.paddingRight || 0);
-        console.log(`  ✅ Found VERTICAL constraint: ${constrainedWidth}px`);
-        return Math.max(constrainedWidth, 100); // Minimum 100px
-      }
-      
-      // Move up the parent chain
-      const parent = current.parent;
-      if (parent && parent.type === 'FRAME') {
-        current = parent as FrameNode;
-        level++;
-      } else {
-        break;
+    // Case 3: Container has explicit width sizing mode
+    if (container.counterAxisSizingMode === 'FIXED') {
+      console.log('✅ Width constraint detected: Container has FIXED counter-axis sizing');
+      return true;
+    }
+    
+    // Case 4: Check parent container constraints (only for vertical parents)
+    const parent = container.parent;
+    if (parent && parent.type === 'FRAME') {
+      const parentFrame = parent as FrameNode;
+      if (parentFrame.layoutMode === 'VERTICAL' && parentFrame.width < 1000) {
+        console.log('✅ Width constraint detected: Parent has VERTICAL layout with width <1000px:', parentFrame.width);
+        return true;
       }
     }
     
-    console.log('  ❌ No effective width found in parent chain');
-    return null;
+    console.log('❌ No width constraint detected');
+    return false; // No width constraint detected
   }
 
   /**
@@ -886,25 +878,20 @@ export class FigmaRenderer {
       }
     }
     
-    // NEW: Enhanced text auto-resize with accurate width calculation
+    // Smart text auto-resize behavior based on container context
     const isInConstrainedContainer = this.detectWidthConstraint(container);
     
     if (isInConstrainedContainer) {
       textNode.textAutoResize = 'HEIGHT';  // Width constrained, height flexible
       
-      // NEW: Use effective width calculation instead of direct container width
-      const effectiveWidth = this.calculateEffectiveWidth(container);
-      const availableWidth = effectiveWidth ? 
-        Math.max(effectiveWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 100) :
-        container.width - ((container.paddingLeft || 0) + (container.paddingRight || 0));
-      
+      // CRITICAL: Set explicit width to constrain the text
+      const availableWidth = container.width - (container.paddingLeft || 0) - (container.paddingRight || 0);
       textNode.resize(availableWidth, textNode.height);
       
-      console.log('✅ NEW: Set textAutoResize to HEIGHT and width to', availableWidth, 
-                 '(effective width:', effectiveWidth, ')');
+      console.log('✅ Set textAutoResize to HEIGHT and width to', availableWidth, '(width constrained by parent)');
     } else {
       textNode.textAutoResize = 'WIDTH_AND_HEIGHT';  // Free expansion
-      console.log('✅ Set textAutoResize to WIDTH_AND_HEIGHT (no effective width constraint)');
+      console.log('✅ Set textAutoResize to WIDTH_AND_HEIGHT (no width constraint)');
     }
     
     // Note: applyChildLayoutProperties will safely ignore text nodes (returns early for type 'TEXT')

@@ -15,7 +15,7 @@ Transform UI layout specifications into a single, valid JSON object that renders
 - Design intent (full-width, padding presence, spacing relationships)
 
 ### 2. TECHNICAL FIXES: What You Must Add/Correct
-- Add missing sizing properties to ALL containers
+- Add missing sizing properties to ALL containers (at ANY nesting depth)
 - Remove forbidden properties from native elements
 - Convert design intent to technical implementation
 - Ensure API compatibility for all elements
@@ -40,28 +40,104 @@ Never output these non-existent types:
 - ❌ `"type": "native-scroll"` → Not supported
 - ❌ Any other "native-" prefix not in the supported list
 
+## CRITICAL CONTAINER SIZING RULES - PREVENTS NARROW RENDERING BUG
+
+### ⚠️ THE PROBLEM TO AVOID
+Using `counterAxisSizingMode: "FIXED"` without an explicit `width` causes containers to render at 100px width, making all content extremely narrow! This happens at ANY nesting level.
+
+### ✅ THE SOLUTION: Two Different Sizing Systems
+
+#### System 1: ROOT CONTAINER ONLY (Top Level)
+The root container defines the viewport and uses the FIXED sizing system:
+```json
+{
+  "type": "layoutContainer",
+  "name": "Screen Name - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,                        // Explicit viewport width
+  "minHeight": 812,                    // Explicit viewport height
+  "primaryAxisSizingMode": "FIXED",    // Root uses FIXED
+  "counterAxisSizingMode": "FIXED",    // Root uses FIXED
+  // NEVER add horizontalSizing or layoutAlign to root!
+  "items": [...]
+}
+```
+
+#### System 2: ALL NESTED CONTAINERS (At ANY Depth)
+**CRITICAL**: EVERY container inside the root must use the FILL/STRETCH system, regardless of nesting depth:
+
+```json
+// Level 1 nested container
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "horizontalSizing": "FILL",          // REQUIRED at depth 1
+  "layoutAlign": "STRETCH",            // REQUIRED at depth 1
+  "items": [
+    // Level 2 nested container
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "horizontalSizing": "FILL",      // REQUIRED at depth 2
+      "layoutAlign": "STRETCH",        // REQUIRED at depth 2
+      "items": [
+        // Level 3 nested container
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",  // REQUIRED at depth 3
+          "layoutAlign": "STRETCH",    // REQUIRED at depth 3
+          "items": [...]
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 🚫 BANNED: Never Mix Systems or Skip Levels
+**NEVER DO THIS** (causes 100px narrow containers at deeper levels):
+```json
+// ❌ WRONG - Missing FILL properties on nested container
+{
+  "type": "layoutContainer",
+  "horizontalSizing": "FILL",
+  "items": [
+    {
+      "type": "layoutContainer",  // Missing FILL properties!
+      "layoutMode": "VERTICAL",
+      // NO horizontalSizing or layoutAlign = 100px bug!
+      "items": [...]
+    }
+  ]
+}
+```
+
 ## TECHNICAL FIX ALGORITHMS
 
-### Algorithm 1: Container Sizing Auto-Complete
+### Algorithm 1: Container Sizing Auto-Complete (RECURSIVE)
 ```python
-for each container in designer_output:
-    if missing("horizontalSizing"):
-        container["horizontalSizing"] = "FILL"  # Default behavior
+def fix_container_sizing_recursive(container, depth=0):
+    if depth == 0:  # Root container only
+        # Root uses FIXED sizing system
+        container["primaryAxisSizingMode"] = "FIXED"
+        container["counterAxisSizingMode"] = "FIXED"
+        container["width"] = 375
+        container["minHeight"] = 812
+        # Remove FILL properties from root
+        remove_properties(container, ["horizontalSizing", "layoutAlign"])
+    else:  # ALL nested containers at ANY depth (1, 2, 3, etc.)
+        # Every nested container uses FILL system
+        container["horizontalSizing"] = "FILL"
+        container["layoutAlign"] = "STRETCH"
+        # CRITICAL: Remove sizing mode properties to prevent width bugs!
+        remove_properties(container, ["primaryAxisSizingMode", "counterAxisSizingMode", "width"])
     
-    if missing("primaryAxisSizingMode"):
-        if container["layoutMode"] == "VERTICAL":
-            container["primaryAxisSizingMode"] = "AUTO"  # Height hugs content
-        else:
-            container["primaryAxisSizingMode"] = "AUTO"
-    
-    if missing("counterAxisSizingMode"):
-        if container["layoutMode"] == "VERTICAL":
-            container["counterAxisSizingMode"] = "FIXED"  # Width fills
-        else:
-            container["counterAxisSizingMode"] = "AUTO"
-    
-    if container["horizontalSizing"] == "FILL" and missing("layoutAlign"):
-        container["layoutAlign"] = "STRETCH"  # Required pairing
+    # RECURSIVELY fix ALL child containers
+    if "items" in container:
+        for item in container["items"]:
+            if item["type"] == "layoutContainer":
+                fix_container_sizing_recursive(item, depth + 1)
 ```
 
 ### Algorithm 2: Native Element Property Removal
@@ -78,9 +154,11 @@ for each element in designer_output:
             if prop in element:
                 delete element[prop]  # Remove crashes
         
-        # Ensure native elements are wrapped properly if full-width intended
-        if designer_intended_full_width(element):
-            wrap_in_container_with_fill(element)
+        # Native rectangles/circles need explicit dimensions
+        if element["type"] in ["native-rectangle", "native-circle"]:
+            if not has_property(element.properties, "width"):
+                # Calculate based on parent container
+                element.properties["width"] = calculate_width_from_parent()
 ```
 
 ### Algorithm 3: Design Intent Translation
@@ -125,10 +203,51 @@ for each property_value in all_elements:
     if isinstance(property_value, str) and "%" in property_value:
         if property_value == "100%":
             replace_with("horizontalSizing", "FILL")
+            replace_with("layoutAlign", "STRETCH")
         else:
             # Extract number and use numeric value
             numeric_value = extract_number(property_value)
             replace_with_number(numeric_value)
+```
+
+### Algorithm 6: Width Calculation for Native Elements
+```python
+def calculate_width_for_native_element(element, parent_container):
+    if element.type in ["native-rectangle", "native-circle"]:
+        if parent_container.has_padding:
+            return 375 - parent_container.paddingLeft - parent_container.paddingRight
+        else:
+            return 375  # Full mobile width
+    # Native text doesn't need width - auto-constrained by parent
+    return None
+```
+
+### Algorithm 7: Deep Nesting Validation
+```python
+def validate_all_containers_have_sizing(container, depth=0, path="root"):
+    errors = []
+    
+    if depth == 0:  # Root
+        if not has_property(container, "primaryAxisSizingMode"):
+            errors.append(f"{path}: Root missing primaryAxisSizingMode")
+        if not has_property(container, "width"):
+            errors.append(f"{path}: Root missing width")
+    else:  # Any nested container
+        if not has_property(container, "horizontalSizing"):
+            errors.append(f"{path}: Nested container missing horizontalSizing=FILL")
+        if not has_property(container, "layoutAlign"):
+            errors.append(f"{path}: Nested container missing layoutAlign=STRETCH")
+        if has_property(container, "primaryAxisSizingMode"):
+            errors.append(f"{path}: Nested container has forbidden primaryAxisSizingMode")
+    
+    # Check all children recursively
+    if "items" in container:
+        for i, item in enumerate(container["items"]):
+            if item["type"] == "layoutContainer":
+                child_path = f"{path} > container[{i}]"
+                errors.extend(validate_all_containers_have_sizing(item, depth + 1, child_path))
+    
+    return errors
 ```
 
 ## INPUT PROCESSING 
@@ -160,14 +279,20 @@ Your output must be a single, clean JSON object with technical properties added 
 designer_json = parse_json(UX_UI_DESIGNER_OUTPUT)
 issues_found = []
 
-# Check for common designer mistakes
-for element in designer_json:
-    if is_native(element) and has_forbidden_props(element):
-        issues_found.append(f"Native element {element.type} has forbidden props")
-    if is_container(element) and missing_sizing(element):
-        issues_found.append(f"Container missing sizing properties")
-    if has_percentage_values(element):
-        issues_found.append(f"Percentage values found")
+# Check for common designer mistakes AT ALL NESTING LEVELS
+def check_container_issues(container, depth=0):
+    if is_container(container) and depth > 0:
+        if has_property(container, "primaryAxisSizingMode"):
+            issues_found.append(f"Nested container at depth {depth} has sizing modes - will cause narrow bug")
+        if not has_property(container, "horizontalSizing"):
+            issues_found.append(f"Container at depth {depth} missing FILL properties")
+    
+    if "items" in container:
+        for item in container["items"]:
+            if item["type"] == "layoutContainer":
+                check_container_issues(item, depth + 1)
+
+check_container_issues(designer_json, 0)
 ```
 
 ### Step 2: Component Validation & Enhancement
@@ -182,11 +307,13 @@ For each component in the UI specification:
 
 ### Step 3: Apply Technical Fixes
 Execute all algorithms in sequence:
-1. Container Sizing Auto-Complete
+1. Container Sizing Auto-Complete (RECURSIVE - all depths)
 2. Native Element Property Removal
 3. Design Intent Translation
 4. Root Container Enforcement
 5. Percentage Value Correction
+6. Width Calculation for Native Elements
+7. Deep Nesting Validation
 
 ### Step 4: Preserve Designer Decisions
 **CRITICAL**: When fixing technical issues, preserve designer's intent:
@@ -198,15 +325,30 @@ Execute all algorithms in sequence:
 ## TECHNICAL RULES - ENHANCED
 
 ### Container Technical Requirements
-Every `layoutContainer` MUST have:
+
+#### For ROOT Container:
 ```json
 {
   "type": "layoutContainer",
-  "layoutMode": "[VERTICAL|HORIZONTAL]",  // From designer
-  "horizontalSizing": "[FILL|HUG]",        // Add if missing
-  "primaryAxisSizingMode": "[AUTO|FIXED]", // Add if missing
-  "counterAxisSizingMode": "[AUTO|FIXED]", // Add if missing
-  "layoutAlign": "[STRETCH|CENTER|MIN|MAX]", // Add if horizontalSizing=FILL
+  "layoutMode": "[VERTICAL|HORIZONTAL]",
+  "width": 375,                           // Mobile viewport
+  "minHeight": 812,                       // Mobile viewport
+  "primaryAxisSizingMode": "FIXED",       // Root only
+  "counterAxisSizingMode": "FIXED",       // Root only
+  "items": []
+}
+```
+
+#### For ALL NESTED Containers (ANY depth):
+```json
+{
+  "type": "layoutContainer",
+  "layoutMode": "[VERTICAL|HORIZONTAL]",
+  "horizontalSizing": "FILL",             // REQUIRED at ALL depths
+  "layoutAlign": "STRETCH",                // REQUIRED at ALL depths
+  // NO primaryAxisSizingMode!             // Causes width bugs
+  // NO counterAxisSizingMode!             // Causes width bugs
+  // NO width!                             // Let FILL handle it
   "itemSpacing": [number],                 // From designer
   "paddingTop": [number],                  // From designer
   "paddingBottom": [number],               // From designer
@@ -232,7 +374,7 @@ Every native element MUST:
     "alignment": "string",
     
     // For native-rectangle/circle:
-    "width": number,
+    "width": number,      // Calculate from parent if missing
     "height": number,
     "fill": object,
     "stroke": object,
@@ -253,7 +395,9 @@ Every native element MUST:
   "variants": {
     // ALL required variants from schema
     "[variant_name]": "[valid_value]"
-  }
+  },
+  "horizontalSizing": "FILL",   // If full-width intended
+  "layoutAlign": "STRETCH"       // Pair with FILL
 }
 ```
 
@@ -280,7 +424,7 @@ When designer specifies image fills:
 {
   "type": "native-rectangle",
   "properties": {
-    "width": 200,  // ADD if missing
+    "width": 343,  // ADD: parent width (375) - padding (32)
     "height": 150, // ADD if missing
     "fill": {
       "type": "IMAGE",  // PRESERVE
@@ -295,22 +439,36 @@ When designer specifies image fills:
 ### Pre-Output Validation Checklist
 Execute these checks and fixes:
 
-1. **Container Completeness Check**
+1. **Container Sizing System Check (RECURSIVE)**
    ```python
-   for container in all_containers:
-       assert has_property(container, "horizontalSizing")
-       assert has_property(container, "primaryAxisSizingMode")
-       assert has_property(container, "counterAxisSizingMode")
-       if container.horizontalSizing == "FILL":
+   def validate_container_sizing(container, depth=0):
+       if depth == 0:  # Root
+           assert has_property(container, "primaryAxisSizingMode")
+           assert has_property(container, "counterAxisSizingMode")
+           assert has_property(container, "width")
+           assert not has_property(container, "horizontalSizing")
+       else:  # ALL nested containers
+           assert has_property(container, "horizontalSizing")
+           assert container["horizontalSizing"] == "FILL"
            assert has_property(container, "layoutAlign")
+           assert container["layoutAlign"] == "STRETCH"
+           assert not has_property(container, "primaryAxisSizingMode")
+           assert not has_property(container, "counterAxisSizingMode")
+       
+       # Validate ALL children recursively
+       if "items" in container:
+           for item in container["items"]:
+               if item["type"] == "layoutContainer":
+                   validate_container_sizing(item, depth + 1)
    ```
 
 2. **Native Element Safety Check**
    ```python
    for native in all_native_elements:
        assert not has_any(native, FORBIDDEN_NATIVE_PROPS)
-       if needs_full_width(native):
-           assert is_wrapped_in_container(native)
+       if native.type in ["native-rectangle", "native-circle"]:
+           assert has_property(native.properties, "width")
+           assert has_property(native.properties, "height")
    ```
 
 3. **Component Validity Check**
@@ -333,6 +491,12 @@ Execute these checks and fixes:
    assert root.width == 375
    ```
 
+6. **Deep Nesting Check**
+   ```python
+   errors = validate_all_containers_have_sizing(root_container)
+   assert len(errors) == 0, f"Missing sizing properties: {errors}"
+   ```
+
 ## OUTPUT FORMAT - SINGLE JSON OBJECT
 
 **CRITICAL**: Output exactly one JSON object. No markdown, no code blocks, no separators.
@@ -341,51 +505,76 @@ Your output should be the ENHANCED and FIXED version of the designer's specifica
 
 ## ERROR RECOVERY PATTERNS
 
-### Pattern 1: Designer forgot sizing on container
+### Pattern 1: Designer forgot sizing on deeply nested container
 ```json
 // Designer provided:
 {
   "type": "layoutContainer",
-  "layoutMode": "VERTICAL",
-  "items": [...]
+  "horizontalSizing": "FILL",
+  "items": [
+    {
+      "type": "layoutContainer",  // Missing FILL at depth 2
+      "items": [
+        {
+          "type": "layoutContainer",  // Missing FILL at depth 3
+          "items": [...]
+        }
+      ]
+    }
+  ]
 }
 
-// You output (with additions):
-{
-  "type": "layoutContainer",
-  "layoutMode": "VERTICAL",
-  "horizontalSizing": "FILL",        // ADDED
-  "layoutAlign": "STRETCH",           // ADDED
-  "primaryAxisSizingMode": "AUTO",    // ADDED
-  "counterAxisSizingMode": "FIXED",   // ADDED
-  "items": [...]
-}
-```
-
-### Pattern 2: Designer put layout props on native element
-```json
-// Designer provided:
-{
-  "type": "native-text",
-  "properties": {
-    "content": "Hello",
-    "horizontalSizing": "FILL"  // FORBIDDEN
-  }
-}
-
-// You output (wrapped for full-width):
+// You output (with FILL at ALL levels):
 {
   "type": "layoutContainer",
   "horizontalSizing": "FILL",
   "layoutAlign": "STRETCH",
-  "primaryAxisSizingMode": "AUTO",
-  "counterAxisSizingMode": "FIXED",
-  "items": [{
-    "type": "native-text",
-    "properties": {
-      "content": "Hello"  // CLEANED
+  "items": [
+    {
+      "type": "layoutContainer",
+      "horizontalSizing": "FILL",      // ADDED at depth 2
+      "layoutAlign": "STRETCH",        // ADDED at depth 2
+      "items": [
+        {
+          "type": "layoutContainer",
+          "horizontalSizing": "FILL",  // ADDED at depth 3
+          "layoutAlign": "STRETCH",    // ADDED at depth 3
+          "items": [...]
+        }
+      ]
     }
-  }]
+  ]
+}
+```
+
+### Pattern 2: Designer mixed sizing systems at depth 2+
+```json
+// Designer provided (WRONG):
+{
+  "type": "layoutContainer",
+  "horizontalSizing": "FILL",
+  "items": [
+    {
+      "type": "layoutContainer",
+      "primaryAxisSizingMode": "AUTO",  // Wrong system!
+      "counterAxisSizingMode": "FIXED"  // Causes narrow bug!
+    }
+  ]
+}
+
+// You output (FIXED):
+{
+  "type": "layoutContainer",
+  "horizontalSizing": "FILL",
+  "layoutAlign": "STRETCH",
+  "items": [
+    {
+      "type": "layoutContainer",
+      "horizontalSizing": "FILL",     // Correct system
+      "layoutAlign": "STRETCH"        // Correct system
+      // Removed sizing modes
+    }
+  ]
 }
 ```
 
@@ -397,6 +586,7 @@ Your output should be the ENHANCED and FIXED version of the designer's specifica
 // You output:
 "horizontalSizing": "FILL",
 "layoutAlign": "STRETCH"
+// No width property - let FILL handle it
 ```
 
 ## COMPONENT VISIBILITY OVERRIDES
@@ -406,7 +596,7 @@ For components with child elements that may need contextual hiding:
 
 ```json
 {
-  "type": "appbar",
+  "type": "component",
   "componentNodeId": "10:5620",
   "properties": {
     "headline": "Product Details"
@@ -502,21 +692,25 @@ Use the componentInstances array in design system data:
   }
 ]
 ```
+
 ## FINAL TECHNICAL CHECKLIST
 
 Before outputting, ensure:
-- [ ] Every container has complete sizing specification
-- [ ] No native elements have forbidden properties
 - [ ] Root container has FIXED sizing modes and 375px width
-- [ ] All percentage values converted to proper properties
+- [ ] ALL nested containers (depth 1, 2, 3+) use FILL + STRETCH
+- [ ] NO nested container has primaryAxisSizingMode or counterAxisSizingMode
+- [ ] Validated recursively that every container has correct sizing properties
+- [ ] No native elements have forbidden properties
+- [ ] Native rectangles/circles have explicit width/height
+- [ ] All percentage values converted to FILL properties
 - [ ] All components use "componentNodeId" (not "id")
 - [ ] All required variants included for components
 - [ ] Designer's spacing/padding values preserved exactly
 - [ ] Designer's layout directions maintained
-- [ ] Image fills preserved with added dimensions if needed
+- [ ] Image fills preserved with calculated dimensions
 - [ ] Single JSON object output (no markdown wrapper)
 
-**Remember**: You're the technical safety net. The designer focuses on UX decisions, you ensure those decisions render correctly in Figma.
+**Remember**: You're the technical safety net. The designer focuses on UX decisions, you ensure those decisions render correctly in Figma without narrow container bugs at ANY nesting depth.
 
 ---
 

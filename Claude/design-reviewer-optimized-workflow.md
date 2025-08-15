@@ -117,7 +117,7 @@ class DesignReviewer:
         # Loads all 4 input components:
         # - analyzer_output (Stage 1 full text)
         # - designer_output (Stage 2 full text) 
-        # - current_json (Stage 3 parsed JSON)
+        # - current_json (figma-ready VALIDATED JSON) ✅ FIXED
         # - design_system_data (287KB design system)
         
     def review_design(self, timestamp: str, screenshot_filename: str) -> Dict
@@ -176,10 +176,11 @@ python3 scripts/run_review.py 20250813_133507  # Auto-find screenshot
 - **Content:** Complete design system (287KB+)
 - **Purpose:** Real componentNodeIds and component properties
 
-### **3. DESIGNER_OUTPUT (Current Implementation)**
-- **Source:** `alt3_{timestamp}_3_json_engineer.json` → generatedJSON
-- **Content:** Actual JSON structure from Stage 3
-- **Purpose:** Current implementation to be reviewed/improved
+### **3. DESIGNER_OUTPUT (Current Implementation)** ✅ **FIXED**
+- **Source:** `figma-ready/figma_ready_{timestamp}.json` (PRIMARY)
+- **Fallback:** `alt3_{timestamp}_3_json_engineer.json` → generatedJSON
+- **Content:** VALIDATED JSON that actually works in Figma
+- **Purpose:** Real working implementation to be reviewed for UX improvements
 
 ### **4. INTERFACE_IMAGE (Visual Evidence)**
 - **Source:** User-provided screenshot via Gemini Vision API
@@ -276,10 +277,11 @@ python3 scripts/run_review.py 20250813_133507  # Auto-find screenshot
 
 ### **Key Points to Remember:**
 1. **Always use direct save approach** - don't re-introduce JSON Engineer
-2. **Design Reviewer is conservative** - only fixes UX issues, preserves structure
-3. **All 4 input components required** - missing any reduces effectiveness
-4. **Screenshots are manual** - user provides, system analyzes
-5. **Final JSON is production ready** - no further processing needed
+2. **Use figma-ready JSON as input** - NOT raw Stage 3 JSON (critical fix 2025-08-13)
+3. **Design Reviewer is conservative** - only fixes UX issues, preserves structure
+4. **All 4 input components required** - missing any reduces effectiveness
+5. **Screenshots are manual** - user provides, system analyzes
+6. **Final JSON is production ready** - no further processing needed
 
 ### **When to Modify:**
 - ✅ Improve review prompt accuracy
@@ -287,6 +289,16 @@ python3 scripts/run_review.py 20250813_133507  # Auto-find screenshot
 - ✅ Enhance context loading
 - ❌ Don't add automatic sizing mode generation
 - ❌ Don't bypass direct save for "optimization"
+- ❌ **NEVER revert to Stage 3 JSON as primary input** (use figma-ready!)
+
+### **Critical Data Source Rule:**
+```python
+# ✅ ALWAYS CORRECT:
+figma_ready_json = load_validated_json(f"figma-ready/figma_ready_{timestamp}.json")
+
+# ❌ NEVER DO THIS AS PRIMARY:
+stage3_json = load_raw_json(f"python_outputs/alt3_{timestamp}_3_json_engineer.json")
+```
 
 ### **Debugging Approach:**
 1. Check all 4 inputs loaded correctly
@@ -296,4 +308,61 @@ python3 scripts/run_review.py 20250813_133507  # Auto-find screenshot
 
 ---
 
-**This workflow is optimized for preserving working layouts while improving UX quality. The direct save approach prevents layout breaking while maintaining all quality improvements.**
+## 🚨 **CRITICAL UPDATE: Input Data Source Fix (2025-08-13)**
+
+### **Major Issue Discovered and Fixed:**
+
+**PROBLEM IDENTIFIED:**
+```python
+# ❌ WRONG (Previous Implementation):
+current_json = load_from("python_outputs/alt3_{timestamp}_3_json_engineer.json")
+# This was loading RAW JSON with potential validation errors
+```
+
+**ROOT CAUSE:**
+- Design Reviewer was analyzing Stage 3 "raw" JSON that hadn't been validated
+- Found problems that JSON Engineer had already fixed in figma-ready version
+- Wasted time on technical issues instead of focusing on UX improvements
+- Created false positive problem reports
+
+**SOLUTION IMPLEMENTED:**
+```python
+# ✅ CORRECT (Current Implementation):
+figma_ready_file = "figma-ready/figma_ready_{timestamp}.json"
+current_json = load_from(figma_ready_file)  # VALIDATED JSON
+# Fallback to Stage 3 only if figma-ready doesn't exist
+```
+
+### **Impact of Fix:**
+- **✅ Analyzes REAL working JSON** that passes all validations
+- **✅ Focuses on UX problems** instead of technical implementation bugs  
+- **✅ Prevents duplicate work** between reviewer and JSON Engineer
+- **✅ Higher quality feedback** targeting actual user experience issues
+
+### **Technical Changes Made:**
+1. **Modified `load_pipeline_context()`** to prioritize figma-ready JSON
+2. **Added fallback logic** for backward compatibility  
+3. **Fixed reviewer prompt format** with proper ```json markdown blocks
+4. **Enhanced error handling** for missing files
+
+### **Example of Improved Analysis Quality:**
+
+**BEFORE FIX (analyzing raw Stage 3):**
+```
+❌ Found: "Missing componentNodeId validation"
+❌ Found: "Invalid text style properties" 
+❌ Found: "Autolayout sizing conflicts"
+→ These were already fixed by JSON Engineer!
+```
+
+**AFTER FIX (analyzing figma-ready JSON):**
+```
+✅ Found: "Price text style should be Headline/Large for better prominence"
+✅ Found: "Seller rating text truncated - needs textWrapping: true"
+✅ Found: "Report Listing button color should be Secondary/secondary50"
+→ Real UX improvements that enhance user experience!
+```
+
+---
+
+**This workflow is optimized for preserving working layouts while improving UX quality. The direct save approach prevents layout breaking while maintaining all quality improvements. The input data source fix ensures reviewer analyzes validated, working implementations rather than intermediate pipeline artifacts.**
