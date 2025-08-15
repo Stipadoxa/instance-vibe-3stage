@@ -792,6 +792,18 @@ export class FigmaRenderer {
     
     // Extract and apply properties from the properties object
     const props = textData.properties || textData;
+
+    // NEW: Extract width constraint metadata from JSON Engineer
+    const constraintWidth = (textData as any)._constraintWidth || null;
+    const parentLayout = (textData as any)._parentLayout || null;
+    const useFlexFill = (textData as any)._useFlexFill || false;
+
+    console.log('📐 Text metadata:', {
+      constraintWidth,
+      parentLayout,
+      useFlexFill,
+      content: props.content?.substring(0, 30) + '...'
+    });
     
     // Font size
     const fontSize = props.fontSize || props.size || props.textSize || 16;
@@ -840,8 +852,12 @@ export class FigmaRenderer {
             console.error(`❌ Error applying color "${props.color}":`, error);
             // Continue without color if there's an error
           }
+        } else if (typeof props.color === 'object' && 'r' in props.color) {
+          // Handle RGB object - remove alpha channel if present
+          const { r, g, b } = props.color;
+          textNode.fills = [{ type: 'SOLID', color: { r, g, b } }];
         } else {
-          // Handle RGB object (existing behavior)
+          // Handle other cases
           textNode.fills = [{ type: 'SOLID', color: props.color }];
         }
       }
@@ -886,25 +902,53 @@ export class FigmaRenderer {
       }
     }
     
-    // NEW: Enhanced text auto-resize with accurate width calculation
+    // FINAL: Enhanced text auto-resize with flex-fill support
     const isInConstrainedContainer = this.detectWidthConstraint(container);
     
-    if (isInConstrainedContainer) {
+    if (useFlexFill) {
+      // HORIZONTAL containers or VERTICAL-in-HORIZONTAL: Use flex-fill
+      textNode.textAutoResize = 'HEIGHT';  // Height flexible, width managed by auto-layout
+      // Don't set explicit width - let container's auto-layout distribute space
+      
+      console.log('✅ FINAL: Applied flex-fill (auto-layout managed width)', {
+        parentLayout,
+        textAutoResize: 'HEIGHT',
+        strategy: parentLayout === 'VERTICAL_IN_HORIZONTAL' ? 'nested' : 'direct'
+      });
+    } else if (isInConstrainedContainer) {
       textNode.textAutoResize = 'HEIGHT';  // Width constrained, height flexible
       
-      // NEW: Use effective width calculation instead of direct container width
-      const effectiveWidth = this.calculateEffectiveWidth(container);
-      const availableWidth = effectiveWidth ? 
-        Math.max(effectiveWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 100) :
-        container.width - ((container.paddingLeft || 0) + (container.paddingRight || 0));
+      // Priority 1: Use metadata from JSON Engineer
+      // Priority 2: Calculate effective width 
+      // Priority 3: Fallback to container width
+      let targetWidth = constraintWidth;
+      
+      if (!targetWidth) {
+        const effectiveWidth = this.calculateEffectiveWidth(container);
+        targetWidth = effectiveWidth;
+      }
+      
+      if (!targetWidth) {
+        targetWidth = container.width;
+      }
+      
+      // Account for container padding
+      const availableWidth = Math.max(
+        targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 
+        100  // Minimum 100px
+      );
       
       textNode.resize(availableWidth, textNode.height);
       
-      console.log('✅ NEW: Set textAutoResize to HEIGHT and width to', availableWidth, 
-                 '(effective width:', effectiveWidth, ')');
+      console.log('✅ FINAL: Applied width constraint', {
+        source: constraintWidth ? 'metadata' : 'calculated',
+        targetWidth,
+        availableWidth,
+        containerPadding: (container.paddingLeft || 0) + (container.paddingRight || 0)
+      });
     } else {
       textNode.textAutoResize = 'WIDTH_AND_HEIGHT';  // Free expansion
-      console.log('✅ Set textAutoResize to WIDTH_AND_HEIGHT (no effective width constraint)');
+      console.log('✅ FINAL: Applied free expansion (no width constraint detected)');
     }
     
     // Note: applyChildLayoutProperties will safely ignore text nodes (returns early for type 'TEXT')
@@ -947,8 +991,9 @@ export class FigmaRenderer {
             }
           }
         } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
-          // Already an RGB object
-          rect.fills = [{ type: 'SOLID', color: fillColor }];
+          // Already an RGB object - remove alpha channel if present
+          const { r, g, b } = fillColor;
+          rect.fills = [{ type: 'SOLID', color: { r, g, b } }];
         } else if (fillColor && typeof fillColor === 'object' && fillColor.type === 'IMAGE') {
           // Handle image fill
           await this.applyImageFill(rect, fillColor);
@@ -1094,8 +1139,9 @@ export class FigmaRenderer {
             }
           }
         } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
-          // Already an RGB object
-          ellipse.fills = [{ type: 'SOLID', color: fillColor }];
+          // Already an RGB object - remove alpha channel if present
+          const { r, g, b } = fillColor;
+          ellipse.fills = [{ type: 'SOLID', color: { r, g, b } }];
         } else if (fillColor && typeof fillColor === 'object' && fillColor.type === 'IMAGE') {
           // Handle image fill
           await this.applyImageFill(ellipse, fillColor);

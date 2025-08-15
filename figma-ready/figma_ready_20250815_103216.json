@@ -1,0 +1,239 @@
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "2015 MacBook Pro 13-inch - Excellent Condition"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "iconSwaps": {
+        "leading-icon": "back"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 100,
+                "height": 100,
+                "cornerRadius": 8,
+                "fill": {
+                  "type": "SOLID",
+                  "color": {
+                    "r": 0.9,
+                    "g": 0.9,
+                    "b": 0.9,
+                    "a": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 8,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "$450",
+                    "textStyle": "Title/Large",
+                    "color": {
+                      "r": 0,
+                      "g": 0.8,
+                      "b": 0,
+                      "a": 1
+                    }
+                  },
+                  "_constraintWidth": 269,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Excellent - Minor scratches on the casing, fully functional.",
+                    "textStyle": "Body/Medium"
+                  },
+                  "_constraintWidth": 269,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "properties": {}
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe (5.0 stars, 12 reviews)",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 269,
+              "_parentLayout": "HORIZONTAL"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used 2015 MacBook Pro 13-inch. Comes with original charger. Battery life excellent. Upgraded to 16GB RAM. Minor cosmetic scratches on the casing (see photos).",
+            "textStyle": "Body/Large"
+          },
+          "_constraintWidth": 269,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Specifications:",
+            "textStyle": "Title/Medium"
+          },
+          "_constraintWidth": 269,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 4,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Processor: 2.7 GHz Intel Core i5",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 269,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "RAM: 16GB",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 269,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Storage: 512GB SSD",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 269,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Operating System: macOS Monterey",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 269,
+              "_parentLayout": "VERTICAL"
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "View Seller Profile"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Outlined",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Last updated: 1 hour ago",
+            "textStyle": "Caption/Small"
+          },
+          "_constraintWidth": 269,
+          "_parentLayout": "VERTICAL"
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": [
+          "Home",
+          "Search",
+          "Messages",
+          "Profile"
+        ]
+      },
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}

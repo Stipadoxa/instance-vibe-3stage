@@ -2698,13 +2698,22 @@
          * Create native text element
          */
         static async createTextNode(textData, container) {
-          var _a;
+          var _a, _b;
           console.log("Creating native text:", textData);
           const textNode = figma.createText();
           await figma.loadFontAsync({ family: "Inter", style: "Regular" });
           const textContent = textData.text || textData.content || ((_a = textData.properties) == null ? void 0 : _a.content) || textData.characters || "Text";
           textNode.characters = textContent;
           const props = textData.properties || textData;
+          const constraintWidth = textData._constraintWidth || null;
+          const parentLayout = textData._parentLayout || null;
+          const useFlexFill = textData._useFlexFill || false;
+          console.log("\u{1F4D0} Text metadata:", {
+            constraintWidth,
+            parentLayout,
+            useFlexFill,
+            content: ((_b = props.content) == null ? void 0 : _b.substring(0, 30)) + "..."
+          });
           const fontSize = props.fontSize || props.size || props.textSize || 16;
           textNode.fontSize = fontSize;
           if (props.fontWeight === "bold" || props.weight === "bold" || props.style === "bold") {
@@ -2740,6 +2749,9 @@
                 } catch (error) {
                   console.error(`\u274C Error applying color "${props.color}":`, error);
                 }
+              } else if (typeof props.color === "object" && "r" in props.color) {
+                const { r, g, b } = props.color;
+                textNode.fills = [{ type: "SOLID", color: { r, g, b } }];
               } else {
                 textNode.fills = [{ type: "SOLID", color: props.color }];
               }
@@ -2775,21 +2787,38 @@
             }
           }
           const isInConstrainedContainer = this.detectWidthConstraint(container);
-          if (isInConstrainedContainer) {
+          if (useFlexFill) {
             textNode.textAutoResize = "HEIGHT";
-            const effectiveWidth = this.calculateEffectiveWidth(container);
-            const availableWidth = effectiveWidth ? Math.max(effectiveWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 100) : container.width - ((container.paddingLeft || 0) + (container.paddingRight || 0));
-            textNode.resize(availableWidth, textNode.height);
-            console.log(
-              "\u2705 NEW: Set textAutoResize to HEIGHT and width to",
-              availableWidth,
-              "(effective width:",
-              effectiveWidth,
-              ")"
+            console.log("\u2705 FINAL: Applied flex-fill (auto-layout managed width)", {
+              parentLayout,
+              textAutoResize: "HEIGHT",
+              strategy: parentLayout === "VERTICAL_IN_HORIZONTAL" ? "nested" : "direct"
+            });
+          } else if (isInConstrainedContainer) {
+            textNode.textAutoResize = "HEIGHT";
+            let targetWidth = constraintWidth;
+            if (!targetWidth) {
+              const effectiveWidth = this.calculateEffectiveWidth(container);
+              targetWidth = effectiveWidth;
+            }
+            if (!targetWidth) {
+              targetWidth = container.width;
+            }
+            const availableWidth = Math.max(
+              targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)),
+              100
+              // Minimum 100px
             );
+            textNode.resize(availableWidth, textNode.height);
+            console.log("\u2705 FINAL: Applied width constraint", {
+              source: constraintWidth ? "metadata" : "calculated",
+              targetWidth,
+              availableWidth,
+              containerPadding: (container.paddingLeft || 0) + (container.paddingRight || 0)
+            });
           } else {
             textNode.textAutoResize = "WIDTH_AND_HEIGHT";
-            console.log("\u2705 Set textAutoResize to WIDTH_AND_HEIGHT (no effective width constraint)");
+            console.log("\u2705 FINAL: Applied free expansion (no width constraint detected)");
           }
           this.applyChildLayoutProperties(textNode, props);
           container.appendChild(textNode);
@@ -2819,7 +2848,8 @@
                   }
                 }
               } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
-                rect.fills = [{ type: "SOLID", color: fillColor }];
+                const { r, g, b } = fillColor;
+                rect.fills = [{ type: "SOLID", color: { r, g, b } }];
               } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
                 await this.applyImageFill(rect, fillColor);
               }
@@ -3003,7 +3033,8 @@
                   }
                 }
               } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
-                ellipse.fills = [{ type: "SOLID", color: fillColor }];
+                const { r, g, b } = fillColor;
+                ellipse.fills = [{ type: "SOLID", color: { r, g, b } }];
               } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
                 await this.applyImageFill(ellipse, fillColor);
               }

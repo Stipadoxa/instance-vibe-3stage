@@ -115,9 +115,9 @@ The root container defines the viewport and uses the FIXED sizing system:
 
 ## TECHNICAL FIX ALGORITHMS
 
-### Algorithm 1: Container Sizing Auto-Complete (RECURSIVE WITH WIDTH PROPAGATION)
+### Algorithm 1: Container Sizing Auto-Complete (RECURSIVE)
 ```python
-def fix_container_sizing_recursive(container, parentWidth=375, parentLayoutMode="VERTICAL", depth=0):
+def fix_container_sizing_recursive(container, depth=0):
     if depth == 0:  # Root container only
         # Root uses FIXED sizing system
         container["primaryAxisSizingMode"] = "FIXED"
@@ -126,48 +126,18 @@ def fix_container_sizing_recursive(container, parentWidth=375, parentLayoutMode=
         container["minHeight"] = 812
         # Remove FILL properties from root
         remove_properties(container, ["horizontalSizing", "layoutAlign"])
-        # NEW: Initialize width tracking
-        currentWidth = 375
     else:  # ALL nested containers at ANY depth (1, 2, 3, etc.)
         # Every nested container uses FILL system
         container["horizontalSizing"] = "FILL"
         container["layoutAlign"] = "STRETCH"
         # CRITICAL: Remove sizing mode properties to prevent width bugs!
         remove_properties(container, ["primaryAxisSizingMode", "counterAxisSizingMode", "width"])
-        
-        # NEW: Add computed width metadata for text constraint calculation
-        if container["layoutMode"] == "VERTICAL":
-            container["_effectiveWidth"] = parentWidth  # Metadata for renderer
-        
-        # Calculate available width for children (account for padding)
-        paddingLeft = container.get("paddingLeft", 0)
-        paddingRight = container.get("paddingRight", 0) 
-        currentWidth = max(parentWidth - paddingLeft - paddingRight, 100)  # Minimum 100px
-        
-        # NEW: Log width propagation for debugging
-        print(f"Level {depth}: {container.get('name', 'unnamed')} - parentWidth: {parentWidth}, effectiveWidth: {currentWidth}")
     
-    # NEW: Recursively process children with width information
-    for item in container.get("items", []):
-        if item.get("type") == "layoutContainer":
-            fix_container_sizing_recursive(item, currentWidth, container.get("layoutMode", "VERTICAL"), depth + 1)
-        elif item.get("type") == "native-text":
-            # SIMPLIFIED: Always use flex-fill, never set explicit widths on text
-            item["_useFlexFill"] = True
-            item["_parentLayout"] = container.get("layoutMode", "VERTICAL")
-            # Let Figma's auto-layout handle all width distribution
-```
-
-### Algorithm 1.5: Flex-Fill Text Strategy
-```python
-# HORIZONTAL containers: Text elements use Figma's native FILL behavior
-# - Fixed-width siblings (avatars, buttons, icons) take their space first
-# - Text elements automatically fill remaining space using auto-layout
-# - No manual width calculations needed - Figma handles distribution perfectly
-
-# VERTICAL containers: Text elements use calculated constraint widths
-# - Prevents text overflow beyond viewport boundaries  
-# - Uses parent chain width calculation for precise constraints
+    # RECURSIVELY fix ALL child containers
+    if "items" in container:
+        for item in container["items"]:
+            if item["type"] == "layoutContainer":
+                fix_container_sizing_recursive(item, depth + 1)
 ```
 
 ### Algorithm 2: Native Element Property Removal
@@ -395,21 +365,15 @@ Every native element MUST:
   "type": "native-[text|rectangle|circle]",
   "properties": {
     // ONLY these properties allowed, NO layout properties
-    // For native-text (ENHANCED):
+    // For native-text:
     "content": "string",
-    "textStyle": "string", 
+    "textStyle": "string",
     "fontSize": number,
     "fontWeight": "string",
     "color": "string",
-    "alignment": "string"
-  },
-  
-  // NEW: Width constraint metadata (automatically added for native-text)
-  "_constraintWidth": 343,     // CALCULATED number (e.g., 375 - 32 = 343), NOT expressions
-  "_parentLayout": "VERTICAL",  // Parent layout mode: "VERTICAL" or "HORIZONTAL"
-  
-  // For native-rectangle/circle properties:
-  "properties": {
+    "alignment": "string",
+    
+    // For native-rectangle/circle:
     "width": number,      // Calculate from parent if missing
     "height": number,
     "fill": object,
@@ -531,19 +495,6 @@ Execute these checks and fixes:
    ```python
    errors = validate_all_containers_have_sizing(root_container)
    assert len(errors) == 0, f"Missing sizing properties: {errors}"
-   ```
-
-7. **Width Metadata Validation**
-   ```python
-   def validate_width_metadata(container, parentWidth=375):
-       for item in container.get("items", []):
-           if item["type"] == "native-text":
-               if parentWidth <= 450:  # Should have constraint
-                   assert "_constraintWidth" in item, f"Missing _constraintWidth for text: {item['properties']['content'][:20]}"
-           elif item["type"] == "layoutContainer":
-               validate_width_metadata(item, item.get("_effectiveWidth", parentWidth))
-   
-   validate_width_metadata(root_container)
    ```
 
 ## OUTPUT FORMAT - SINGLE JSON OBJECT
