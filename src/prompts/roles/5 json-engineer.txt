@@ -312,6 +312,52 @@ def validate_all_containers_have_sizing(container, depth=0, path="root"):
     return errors
 ```
 
+### Algorithm 8: Effective Width Metadata Addition (NEW - FOR TEXT CONSTRAINT DETECTION)
+```python
+def add_effective_width_metadata(container, parentWidth=375, depth=0):
+    """
+    Add _effectiveWidth metadata to containers and text elements for enhanced width constraint detection.
+    This helps the Figma renderer determine proper text wrapping without complex parent chain traversal.
+    """
+    
+    if depth == 0:  # Root container
+        # Root containers have their explicit width as effective width
+        if container.get("width") and container["width"] > 0:
+            container["_effectiveWidth"] = container["width"]
+            current_width = container["width"]
+        else:
+            current_width = 375  # Default mobile width
+            container["_effectiveWidth"] = current_width
+    else:  # Nested containers
+        # Calculate effective width accounting for parent constraints and padding
+        padding_left = container.get("paddingLeft", 0)
+        padding_right = container.get("paddingRight", 0)
+        effective_width = max(parentWidth - padding_left - padding_right, 100)  # Minimum 100px
+        
+        # Add metadata for containers that can constrain child text elements
+        if container.get("layoutMode") == "VERTICAL":
+            container["_effectiveWidth"] = effective_width
+        
+        current_width = effective_width
+    
+    # Process all child items
+    if "items" in container:
+        for item in container["items"]:
+            if item["type"] == "layoutContainer":
+                # Recursively process child containers
+                add_effective_width_metadata(item, current_width, depth + 1)
+            elif item["type"] == "native-text":
+                # Add width metadata to text elements for constraint detection
+                # Only add if the effective width indicates a constrained environment
+                if current_width <= 450:  # Threshold for width constraints (mobile + small tablet)
+                    item["_effectiveWidth"] = current_width
+                    # Log for debugging
+                    print(f"Added _effectiveWidth: {current_width} to text: {item.get('properties', {}).get('content', 'unknown')[:30]}")
+
+# Usage: Apply this algorithm after all other container fixes
+add_effective_width_metadata(root_container)
+```
+
 ## INPUT PROCESSING 
 
 You will receive:
@@ -376,6 +422,7 @@ Execute all algorithms in sequence:
 5. Percentage Value Correction
 6. Width Calculation for Native Elements
 7. Deep Nesting Validation
+8. Effective Width Metadata Addition (NEW - for enhanced text constraint detection)
 
 ### Step 4: Preserve Designer Decisions
 **CRITICAL**: When fixing technical issues, preserve designer's intent:
@@ -797,6 +844,7 @@ Before outputting, ensure:
 - [ ] Designer's spacing/padding values preserved exactly
 - [ ] Designer's layout directions maintained
 - [ ] Image fills preserved with calculated dimensions
+- [ ] _effectiveWidth metadata added to containers and constrained text elements (NEW)
 - [ ] Single JSON object output (no markdown wrapper)
 
 **Remember**: You're the technical safety net. The designer focuses on UX decisions, you ensure those decisions render correctly in Figma without narrow container bugs at ANY nesting depth.

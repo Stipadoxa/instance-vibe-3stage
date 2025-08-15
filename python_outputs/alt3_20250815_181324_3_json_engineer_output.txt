@@ -1,3 +1,4 @@
+```json
 {
   "type": "layoutContainer",
   "name": "Product Detail - Mobile",
@@ -42,30 +43,40 @@
       "layoutAlign": "STRETCH",
       "items": [
         {
-          "type": "component",
-          "componentNodeId": "10:7816",
-          "variants": {
-            "Type": "2+ images"
-          },
-          "properties": {
-            "imageUrls": [
-              "image1.jpg",
-              "image2.jpg",
-              "image3.jpg",
-              "image4.jpg"
-            ]
-          },
-          "horizontalSizing": "FILL",
-          "layoutAlign": "STRETCH"
-        },
-        {
-          "type": "component",
-          "componentNodeId": "147:3806",
-          "properties": {
-            "price": "$650"
-          },
-          "horizontalSizing": "HUG",
-          "layoutAlign": "MIN"
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 300,
+                "height": 200,
+                "cornerRadius": 8,
+                "fill": {
+                  "type": "SOLID",
+                  "color": {
+                    "r": 1,
+                    "g": 1,
+                    "b": 1,
+                    "a": 1
+                  }
+                }
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "$650",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary80"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "HORIZONTAL"
+            }
+          ],
+          "itemSpacing": 16
         },
         {
           "type": "native-text",
@@ -86,14 +97,21 @@
               "layoutMode": "HORIZONTAL",
               "items": [
                 {
-                  "type": "component",
-                  "componentNodeId": "24:10352",
+                  "type": "native-rectangle",
                   "properties": {
-                    "image": "seller_profile.jpg",
-                    "initials": "JD"
-                  },
-                  "horizontalSizing": "HUG",
-                  "layoutAlign": "CENTER"
+                    "width": 40,
+                    "height": 40,
+                    "cornerRadius": 20,
+                    "fill": {
+                      "type": "SOLID",
+                      "color": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1,
+                        "a": 1
+                      }
+                    }
+                  }
                 },
                 {
                   "type": "native-text",
@@ -128,63 +146,70 @@
           "_parentLayout": "VERTICAL"
         },
         {
-          "type": "native-text",
-          "properties": {
-            "content": "Specifications:",
-            "textStyle": "Title/Medium"
-          },
-          "_useFlexFill": true,
-          "_parentLayout": "VERTICAL"
-        },
-        {
           "type": "layoutContainer",
           "layoutMode": "VERTICAL",
-          "itemSpacing": 4,
+          "itemSpacing": 8,
           "items": [
             {
               "type": "native-text",
               "properties": {
-                "content": "Processor: 2.3GHz Intel Core i5",
-                "textStyle": "Body/Medium"
+                "content": "Specifications:",
+                "textStyle": "Title/Medium"
               },
               "_useFlexFill": true,
               "_parentLayout": "VERTICAL"
             },
             {
-              "type": "native-text",
-              "properties": {
-                "content": "RAM: 8GB",
-                "textStyle": "Body/Medium"
-              },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
-            },
-            {
-              "type": "native-text",
-              "properties": {
-                "content": "Storage: 256GB SSD",
-                "textStyle": "Body/Medium"
-              },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
-            },
-            {
-              "type": "native-text",
-              "properties": {
-                "content": "Battery Health: 90%",
-                "textStyle": "Body/Medium"
-              },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
-            },
-            {
-              "type": "native-text",
-              "properties": {
-                "content": "Operating System: macOS Monterey",
-                "textStyle": "Body/Medium"
-              },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 4,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Processor: 2.3GHz Intel Core i5",
+                    "textStyle": "Body/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "RAM: 8GB",
+                    "textStyle": "Body/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Storage: 256GB SSD",
+                    "textStyle": "Body/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Battery Health: 90%",
+                    "textStyle": "Body/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Operating System: macOS Monterey",
+                    "textStyle": "Body/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
             }
           ]
         },
@@ -242,3 +267,4 @@
     }
   ]
 }
+```

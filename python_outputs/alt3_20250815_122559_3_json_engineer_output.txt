@@ -1,6 +1,7 @@
+```json
 {
   "type": "layoutContainer",
-  "name": "Product Detail - Mobile",
+  "name": "Used Laptop Listing Details - Mobile",
   "layoutMode": "VERTICAL",
   "width": 375,
   "minHeight": 812,
@@ -16,7 +17,7 @@
       "type": "component",
       "componentNodeId": "10:5620",
       "properties": {
-        "headline": "2018 MacBook Pro 13-inch - Space Gray - Excellent Condition"
+        "headline": "2015 MacBook Pro 13\" - Excellent Condition"
       },
       "variants": {
         "Mode": "Light",
@@ -24,8 +25,7 @@
         "Elevation": "flat"
       },
       "iconSwaps": {
-        "leading-icon": "arrow-left",
-        "trailing-icon": "share"
+        "leading-icon": "left-arrow"
       },
       "horizontalSizing": "FILL",
       "layoutAlign": "STRETCH"
@@ -33,45 +33,96 @@
     {
       "type": "layoutContainer",
       "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
       "paddingTop": 16,
       "paddingBottom": 16,
       "paddingLeft": 16,
       "paddingRight": 16,
-      "itemSpacing": 16,
       "horizontalSizing": "FILL",
       "layoutAlign": "STRETCH",
       "items": [
         {
-          "type": "component",
-          "componentNodeId": "10:7816",
-          "variants": {
-            "Type": "2+ images"
-          },
-          "properties": {
-            "imageUrls": [
-              "image1.jpg",
-              "image2.jpg",
-              "image3.jpg",
-              "image4.jpg"
-            ]
-          },
-          "horizontalSizing": "FILL",
-          "layoutAlign": "STRETCH"
-        },
-        {
-          "type": "component",
-          "componentNodeId": "147:3806",
-          "properties": {
-            "price": "$650"
-          },
-          "horizontalSizing": "HUG",
-          "layoutAlign": "MIN"
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 327,
+                "height": 200,
+                "backgroundColor": "White/white100",
+                "cornerRadius": 8
+              }
+            }
+          ]
         },
         {
           "type": "native-text",
           "properties": {
-            "content": "Condition: Excellent (Minor scratches on the bottom casing)",
+            "content": "$450",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition: Excellent (Minor scuffs on the bottom casing)",
             "textStyle": "Body/Medium"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "properties": {
+                "imageUrl": "[Image of seller's profile picture]"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 4,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Smith",
+                    "textStyle": "Title/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "⭐⭐⭐⭐⭐ (123 reviews)",
+                    "textStyle": "Body/Small"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used 2015 MacBook Pro 13-inch. Excellent condition with minor scuffs on the bottom. Runs smoothly and quickly. Includes original charger. Battery health at 85%. Specs: 8GB RAM, 256GB SSD, Intel Core i5.",
+            "textStyle": "Body/Large"
           },
           "_useFlexFill": true,
           "_parentLayout": "VERTICAL"
@@ -82,69 +133,18 @@
           "itemSpacing": 8,
           "items": [
             {
-              "type": "layoutContainer",
-              "layoutMode": "HORIZONTAL",
-              "items": [
-                {
-                  "type": "component",
-                  "componentNodeId": "24:10352",
-                  "properties": {
-                    "image": "seller_profile.jpg",
-                    "initials": "JD"
-                  },
-                  "horizontalSizing": "HUG",
-                  "layoutAlign": "CENTER"
-                },
-                {
-                  "type": "native-text",
-                  "properties": {
-                    "content": "John Doe",
-                    "textStyle": "Title/Medium"
-                  },
-                  "_useFlexFill": true,
-                  "_parentLayout": "HORIZONTAL"
-                }
-              ],
-              "itemSpacing": 8
+              "type": "native-text",
+              "properties": {
+                "content": "Specifications:",
+                "textStyle": "Title/Medium"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
             },
             {
               "type": "native-text",
               "properties": {
-                "content": "⭐⭐⭐⭐ (4.8 stars) (123 reviews)",
-                "textStyle": "Body/Small"
-              },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
-            }
-          ]
-        },
-        {
-          "type": "native-text",
-          "properties": {
-            "content": "Lightly used 2018 MacBook Pro 13-inch in Space Gray. Excellent condition with minor scratches on the bottom casing, barely noticeable. Includes original charger. Specs: 2.3GHz Intel Core i5, 8GB RAM, 256GB SSD. Battery health is 90%.",
-            "textStyle": "Body/Large"
-          },
-          "_useFlexFill": true,
-          "_parentLayout": "VERTICAL"
-        },
-        {
-          "type": "native-text",
-          "properties": {
-            "content": "Specifications:",
-            "textStyle": "Title/Medium"
-          },
-          "_useFlexFill": true,
-          "_parentLayout": "VERTICAL"
-        },
-        {
-          "type": "layoutContainer",
-          "layoutMode": "VERTICAL",
-          "itemSpacing": 4,
-          "items": [
-            {
-              "type": "native-text",
-              "properties": {
-                "content": "Processor: 2.3GHz Intel Core i5",
+                "content": "Processor: Intel Core i5",
                 "textStyle": "Body/Medium"
               },
               "_useFlexFill": true,
@@ -171,15 +171,6 @@
             {
               "type": "native-text",
               "properties": {
-                "content": "Battery Health: 90%",
-                "textStyle": "Body/Medium"
-              },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
-            },
-            {
-              "type": "native-text",
-              "properties": {
                 "content": "Operating System: macOS Monterey",
                 "textStyle": "Body/Medium"
               },
@@ -187,15 +178,6 @@
               "_parentLayout": "VERTICAL"
             }
           ]
-        },
-        {
-          "type": "native-text",
-          "properties": {
-            "content": "Last updated: 2 hours ago",
-            "textStyle": "Caption/Small"
-          },
-          "_useFlexFill": true,
-          "_parentLayout": "VERTICAL"
         },
         {
           "type": "component",
@@ -217,7 +199,7 @@
           "type": "component",
           "componentNodeId": "10:3907",
           "properties": {
-            "Action": "Report Listing"
+            "Action": "Share Listing"
           },
           "variants": {
             "Platform": "Android+Web",
@@ -228,6 +210,15 @@
           },
           "horizontalSizing": "FILL",
           "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Listed 3 days ago",
+            "textStyle": "Caption/Small"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
         }
       ]
     },
@@ -237,8 +228,21 @@
       "variants": {
         "Device": "Mobile"
       },
+      "textLayers": [
+        "Home",
+        "Search",
+        "Messages",
+        "Profile"
+      ],
+      "iconSwaps": {
+        "home": "home",
+        "search": "search",
+        "messages": "messages",
+        "profile": "profile"
+      },
       "horizontalSizing": "FILL",
       "layoutAlign": "STRETCH"
     }
   ]
 }
+```

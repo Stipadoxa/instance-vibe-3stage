@@ -2649,14 +2649,14 @@
          * NEW LOGIC: Uses effective width calculation from parent chain
          */
         static detectWidthConstraint(container) {
-          console.log("\u{1F50D} NEW: Detecting width constraint for container:", {
+          console.log("\u{1F50D} Detecting width constraint for container:", {
             type: container.type,
             layoutMode: container.layoutMode,
             width: container.width,
             name: container.name
           });
           const effectiveWidth = this.calculateEffectiveWidth(container);
-          if (effectiveWidth && effectiveWidth <= 450) {
+          if (effectiveWidth && effectiveWidth <= 375) {
             console.log("\u2705 Width constraint detected: Effective width =", effectiveWidth);
             return true;
           }
@@ -2664,25 +2664,25 @@
           return false;
         }
         /**
-         * Calculate effective width constraint from parent chain
-         * Walks up the layout hierarchy to find actual width limits
+         * Debug helper to log the full parent chain for width analysis
+         * Useful for troubleshooting width constraint detection issues
          */
-        static calculateEffectiveWidth(container) {
-          console.log("\u{1F9EE} Calculating effective width for:", container.name);
+        static debugParentChain(container) {
+          console.log("\u{1F50D} DEBUG: Parent chain analysis for:", container.name);
           let current = container;
           let level = 0;
           while (current && level < 10) {
-            console.log(`  Level ${level}: ${current.name} (${current.layoutMode})`);
-            if (current.primaryAxisSizingMode === "FIXED" && current.counterAxisSizingMode === "FIXED" && current.width > 0) {
-              const rootWidth = current.width;
-              console.log(`  \u2705 Found root width: ${rootWidth}px`);
-              return rootWidth;
-            }
-            if (current.layoutMode === "VERTICAL" && current.width > 0) {
-              const constrainedWidth = current.width - (current.paddingLeft || 0) - (current.paddingRight || 0);
-              console.log(`  \u2705 Found VERTICAL constraint: ${constrainedWidth}px`);
-              return Math.max(constrainedWidth, 100);
-            }
+            console.log(`Level ${level}:`, {
+              name: current.name,
+              type: current.type,
+              layoutMode: current.layoutMode || "none",
+              width: current.width,
+              horizontalSizing: current.horizontalSizing || "not-set",
+              primaryAxisSizingMode: current.primaryAxisSizingMode || "not-set",
+              counterAxisSizingMode: current.counterAxisSizingMode || "not-set",
+              hasEffectiveWidth: !!current._effectiveWidth,
+              effectiveWidth: current._effectiveWidth || "none"
+            });
             const parent = current.parent;
             if (parent && parent.type === "FRAME") {
               current = parent;
@@ -2691,7 +2691,59 @@
               break;
             }
           }
-          console.log("  \u274C No effective width found in parent chain");
+        }
+        /**
+         * Calculate effective width constraint from parent chain
+         * Enhanced to handle FILL containers and metadata from JSON Engineer
+         * Walks up the layout hierarchy to find actual width limits
+         */
+        static calculateEffectiveWidth(container) {
+          console.log("\u{1F9EE} Calculating effective width for:", container.name);
+          let current = container;
+          let level = 0;
+          while (current && level < 10) {
+            console.log(`  Level ${level}: ${current.name} (${current.layoutMode || "no-layout"})`);
+            if (current.primaryAxisSizingMode === "FIXED" && current.counterAxisSizingMode === "FIXED" && current.width > 0) {
+              const rootWidth = current.width;
+              console.log(`  \u2705 Case 1 - Found root width: ${rootWidth}px`);
+              return rootWidth;
+            }
+            if (current.width > 0) {
+              const constrainedWidth = current.width - (current.paddingLeft || 0) - (current.paddingRight || 0);
+              console.log(`  \u2705 Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
+              return Math.max(constrainedWidth, 100);
+            }
+            if (current._effectiveWidth) {
+              const metadataWidth = current._effectiveWidth;
+              console.log(`  \u2705 Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
+              return metadataWidth;
+            }
+            const parent = current.parent;
+            if (parent && parent.type === "FRAME") {
+              const parentFrame = parent;
+              if (parentFrame.layoutMode === "VERTICAL" && current.layoutMode !== void 0) {
+                console.log(`  \u{1F50D} Case 4 - Checking FILL in VERTICAL parent`);
+                console.log(`    Parent: ${parentFrame.name}, layout: VERTICAL`);
+                console.log(`    Current horizontalSizing: ${current.horizontalSizing || "not-set"}`);
+                const parentWidth = this.calculateEffectiveWidth(parentFrame);
+                if (parentWidth) {
+                  const availableWidth = parentWidth - (parentFrame.paddingLeft || 0) - (parentFrame.paddingRight || 0);
+                  console.log(`  \u2705 Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
+                  return Math.max(availableWidth, 100);
+                }
+              }
+              if (parentFrame.layoutMode === "HORIZONTAL" && parentFrame.width > 0) {
+                const parentWidth = parentFrame.width - (parentFrame.paddingLeft || 0) - (parentFrame.paddingRight || 0);
+                console.log(`  \u2705 Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
+                return Math.max(parentWidth, 100);
+              }
+              current = parentFrame;
+              level++;
+            } else {
+              break;
+            }
+          }
+          console.log("  \u274C No effective width found in parent chain (reached top or max depth)");
           return null;
         }
         /**
@@ -2787,6 +2839,16 @@
             }
           }
           const isInConstrainedContainer = this.detectWidthConstraint(container);
+          if (useFlexFill) {
+            console.log("\u{1F4DD} Text flex-fill decision:", {
+              content: textContent.substring(0, 30) + "...",
+              useFlexFill,
+              parentLayout,
+              isInConstrainedContainer,
+              containerName: container.name,
+              effectiveWidth: this.calculateEffectiveWidth(container)
+            });
+          }
           if (useFlexFill) {
             textNode.textAutoResize = "HEIGHT";
             console.log("\u2705 FINAL: Applied flex-fill (auto-layout managed width)", {

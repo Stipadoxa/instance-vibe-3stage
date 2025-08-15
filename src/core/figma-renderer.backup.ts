@@ -711,7 +711,7 @@ export class FigmaRenderer {
    * NEW LOGIC: Uses effective width calculation from parent chain
    */
   private static detectWidthConstraint(container: FrameNode): boolean {
-    console.log('🔍 Detecting width constraint for container:', {
+    console.log('🔍 NEW: Detecting width constraint for container:', {
       type: container.type,
       layoutMode: container.layoutMode,
       width: container.width,
@@ -721,8 +721,7 @@ export class FigmaRenderer {
     // Calculate effective width from parent chain
     const effectiveWidth = this.calculateEffectiveWidth(container);
     
-    // Keep 375px threshold as requested
-    if (effectiveWidth && effectiveWidth <= 375) {
+    if (effectiveWidth && effectiveWidth <= 450) { // Mobile + tablet constraint
       console.log('✅ Width constraint detected: Effective width =', effectiveWidth);
       return true;
     }
@@ -732,40 +731,7 @@ export class FigmaRenderer {
   }
 
   /**
-   * Debug helper to log the full parent chain for width analysis
-   * Useful for troubleshooting width constraint detection issues
-   */
-  private static debugParentChain(container: FrameNode): void {
-    console.log('🔍 DEBUG: Parent chain analysis for:', container.name);
-    let current: FrameNode | null = container;
-    let level = 0;
-    
-    while (current && level < 10) {
-      console.log(`Level ${level}:`, {
-        name: current.name,
-        type: current.type,
-        layoutMode: current.layoutMode || 'none',
-        width: current.width,
-        horizontalSizing: (current as any).horizontalSizing || 'not-set',
-        primaryAxisSizingMode: current.primaryAxisSizingMode || 'not-set',
-        counterAxisSizingMode: current.counterAxisSizingMode || 'not-set',
-        hasEffectiveWidth: !!(current as any)._effectiveWidth,
-        effectiveWidth: (current as any)._effectiveWidth || 'none'
-      });
-      
-      const parent = current.parent;
-      if (parent && parent.type === 'FRAME') {
-        current = parent as FrameNode;
-        level++;
-      } else {
-        break;
-      }
-    }
-  }
-
-  /**
    * Calculate effective width constraint from parent chain
-   * Enhanced to handle FILL containers and metadata from JSON Engineer
    * Walks up the layout hierarchy to find actual width limits
    */
   private static calculateEffectiveWidth(container: FrameNode): number | null {
@@ -775,81 +741,37 @@ export class FigmaRenderer {
     let level = 0;
     
     while (current && level < 10) { // Prevent infinite loops
-      console.log(`  Level ${level}: ${current.name} (${current.layoutMode || 'no-layout'})`);
+      console.log(`  Level ${level}: ${current.name} (${current.layoutMode})`);
       
       // Case 1: Root container with explicit fixed width
       if (current.primaryAxisSizingMode === 'FIXED' && 
           current.counterAxisSizingMode === 'FIXED' && 
           current.width > 0) {
         const rootWidth = current.width;
-        console.log(`  ✅ Case 1 - Found root width: ${rootWidth}px`);
+        console.log(`  ✅ Found root width: ${rootWidth}px`);
         return rootWidth;
       }
       
-      // Case 2: Container with actual width (any container that has width set)
-      if (current.width > 0) {
+      // Case 2: VERTICAL layout parent constrains child width
+      if (current.layoutMode === 'VERTICAL' && current.width > 0) {
         const constrainedWidth = current.width - 
           (current.paddingLeft || 0) - 
           (current.paddingRight || 0);
-        console.log(`  ✅ Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
+        console.log(`  ✅ Found VERTICAL constraint: ${constrainedWidth}px`);
         return Math.max(constrainedWidth, 100); // Minimum 100px
       }
       
-      // Case 3: NEW - Check for _effectiveWidth metadata from JSON Engineer
-      // This metadata is added during JSON processing to help with width calculation
-      if ((current as any)._effectiveWidth) {
-        const metadataWidth = (current as any)._effectiveWidth;
-        console.log(`  ✅ Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
-        return metadataWidth;
-      }
-      
-      // Case 4: NEW - FILL container inside VERTICAL parent
-      // This is the critical fix for adaptive layouts
+      // Move up the parent chain
       const parent = current.parent;
       if (parent && parent.type === 'FRAME') {
-        const parentFrame = parent as FrameNode;
-        
-        // Check if this container is FILL inside a VERTICAL parent
-        if (parentFrame.layoutMode === 'VERTICAL' && 
-            current.layoutMode !== undefined) { // Current has layout (is a container)
-          
-          console.log(`  🔍 Case 4 - Checking FILL in VERTICAL parent`);
-          console.log(`    Parent: ${parentFrame.name}, layout: VERTICAL`);
-          console.log(`    Current horizontalSizing: ${(current as any).horizontalSizing || 'not-set'}`);
-          
-          // If parent is VERTICAL, this container should inherit parent's width
-          // Try to get parent's effective width recursively
-          const parentWidth = this.calculateEffectiveWidth(parentFrame);
-          if (parentWidth) {
-            // Account for parent's padding when calculating available width
-            const availableWidth = parentWidth - 
-              (parentFrame.paddingLeft || 0) - 
-              (parentFrame.paddingRight || 0);
-            console.log(`  ✅ Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
-            return Math.max(availableWidth, 100);
-          }
-        }
-        
-        // Case 5: NEW - Check if parent has any width constraint we can use
-        if (parentFrame.layoutMode === 'HORIZONTAL' && parentFrame.width > 0) {
-          // HORIZONTAL parent with fixed width also constrains children
-          const parentWidth = parentFrame.width - 
-            (parentFrame.paddingLeft || 0) - 
-            (parentFrame.paddingRight || 0);
-          console.log(`  ✅ Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
-          return Math.max(parentWidth, 100);
-        }
-        
-        // Move up the parent chain for next iteration
-        current = parentFrame;
+        current = parent as FrameNode;
         level++;
       } else {
-        // No more parents to check
         break;
       }
     }
     
-    console.log('  ❌ No effective width found in parent chain (reached top or max depth)');
+    console.log('  ❌ No effective width found in parent chain');
     return null;
   }
 
@@ -982,21 +904,6 @@ export class FigmaRenderer {
     
     // FINAL: Enhanced text auto-resize with flex-fill support
     const isInConstrainedContainer = this.detectWidthConstraint(container);
-
-    // Debug: Log decision factors
-    if (useFlexFill) {
-      console.log('📝 Text flex-fill decision:', {
-        content: textContent.substring(0, 30) + '...',
-        useFlexFill,
-        parentLayout,
-        isInConstrainedContainer,
-        containerName: container.name,
-        effectiveWidth: this.calculateEffectiveWidth(container)
-      });
-      
-      // Uncomment for detailed debugging:
-      // this.debugParentChain(container);
-    }
     
     if (useFlexFill) {
       // HORIZONTAL containers or VERTICAL-in-HORIZONTAL: Use flex-fill
