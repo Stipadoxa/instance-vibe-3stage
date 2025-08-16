@@ -2856,7 +2856,7 @@
               textAutoResize: "HEIGHT",
               strategy: parentLayout === "VERTICAL_IN_HORIZONTAL" ? "nested" : "direct"
             });
-          } else if (isInConstrainedContainer) {
+          } else if (isInConstrainedContainer && !useFlexFill) {
             textNode.textAutoResize = "HEIGHT";
             let targetWidth = constraintWidth;
             if (!targetWidth) {
