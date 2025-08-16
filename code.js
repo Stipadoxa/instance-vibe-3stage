@@ -50,6 +50,7 @@
          * NEW: Scan Figma Variables (Design Tokens) from the local file
          */
         static async scanFigmaVariables() {
+          var _a;
           console.log("\u{1F527} Scanning Figma Variables (Design Tokens)...");
           try {
             if (!figma.variables) {
@@ -75,8 +76,23 @@
             for (const collection of collections) {
               console.log(`\u{1F4E6} Processing collection: "${collection.name}" (ID: ${collection.id})`);
               try {
-                const variables = await figma.variables.getVariablesByCollectionAsync(collection.id);
-                console.log(`  Found ${variables.length} variables in "${collection.name}"`);
+                if (!collection.variableIds || collection.variableIds.length === 0) {
+                  console.log(`  No variables found in collection "${collection.name}"`);
+                  continue;
+                }
+                console.log(`  Found ${collection.variableIds.length} variable IDs in "${collection.name}"`);
+                const variables = [];
+                for (const variableId of collection.variableIds) {
+                  try {
+                    const variable = await figma.variables.getVariableByIdAsync(variableId);
+                    if (variable) {
+                      variables.push(variable);
+                    }
+                  } catch (varErr) {
+                    console.warn(`    Failed to get variable ${variableId}:`, varErr);
+                  }
+                }
+                console.log(`  Successfully loaded ${variables.length} variables from "${collection.name}"`);
                 console.log(`  Collection modes:`, Object.keys(collection.modes || {}));
                 for (const variable of variables) {
                   try {
@@ -110,7 +126,12 @@
                   }
                 }
               } catch (collectionError) {
-                console.warn(`\u26A0\uFE0F Failed to process collection "${collection.name}":`, collectionError);
+                console.warn(`\u26A0\uFE0F Failed to process collection "${collection.name}": ${collectionError.message}`);
+                console.warn(`\u26A0\uFE0F Error type: ${typeof collectionError}, Stack:`, collectionError.stack);
+                if ((_a = collectionError.message) == null ? void 0 : _a.includes("not a function")) {
+                  console.warn(`\u26A0\uFE0F This appears to be a Figma API version issue`);
+                  console.warn(`\u26A0\uFE0F getVariablesByCollectionAsync may not be available in this Figma version`);
+                }
               }
             }
             const colorTokens = tokens.filter((t) => t.type === "COLOR");
@@ -278,7 +299,7 @@
          * Convert Figma PaintStyle to our ColorStyle interface
          */
         static async convertPaintStyleToColorStyle(paintStyle) {
-          const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
+          const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0], paintStyle.id);
           const { category, variant } = this.parseColorStyleName(paintStyle.name);
           return {
             id: paintStyle.id,
@@ -386,16 +407,43 @@
             console.log("\n\u{1F3A8} Phase 2: Scanning Color Styles...");
             try {
               colorStyles = await this.scanFigmaColorStyles();
+              if (colorStyles && Object.keys(colorStyles).length > 0) {
+                this.paintStyleMap.clear();
+                Object.values(colorStyles).forEach((categoryStyles) => {
+                  if (Array.isArray(categoryStyles)) {
+                    categoryStyles.forEach((style) => {
+                      this.paintStyleMap.set(style.id, style.name);
+                    });
+                  }
+                });
+                console.log(`\u2705 Built color style lookup map with ${this.paintStyleMap.size} entries`);
+                const firstEntries = Array.from(this.paintStyleMap.entries()).slice(0, 3);
+                console.log("\u{1F50D} First color style IDs in map:", firstEntries);
+              } else {
+                console.warn("\u26A0\uFE0F No color styles available for lookup map");
+                this.paintStyleMap.clear();
+              }
             } catch (error) {
               console.warn("\u26A0\uFE0F Color Styles scanning failed, continuing without color styles:", error);
               colorStyles = void 0;
+              this.paintStyleMap.clear();
             }
             console.log("\n\u{1F4DD} Phase 3: Scanning Text Styles...");
             try {
               textStyles = await this.scanFigmaTextStyles();
+              if (textStyles && textStyles.length > 0) {
+                this.textStyleMap.clear();
+                textStyles.forEach((style) => {
+                  this.textStyleMap.set(style.id, style.name);
+                });
+                console.log(`\u2705 Built text style lookup map with ${this.textStyleMap.size} entries`);
+                const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
+                console.log("\u{1F50D} First text style IDs in map:", firstEntries);
+              }
             } catch (error) {
               console.warn("\u26A0\uFE0F Text Styles scanning failed, continuing without text styles:", error);
               textStyles = void 0;
+              this.textStyleMap.clear();
             }
             console.log("\n\u{1F9E9} Phase 4: Scanning Components...");
             for (const page of figma.root.children) {
@@ -450,6 +498,18 @@
             console.log(`   \u{1F3A8} Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
             console.log(`   \u{1F4DD} Text Styles: ${textStyles ? textStyles.length : 0}`);
             console.log(`   \u{1F4C4} File Key: ${scanSession.fileKey || "Unknown"}`);
+            if (textStyles && textStyles.length > 0) {
+              this.textStyleMap.clear();
+              textStyles.forEach((style) => {
+                this.textStyleMap.set(style.id, style.name);
+              });
+              console.log(`\u2705 Built text style lookup map with ${this.textStyleMap.size} entries`);
+              const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
+              console.log("\u{1F50D} First text style IDs in map:", firstEntries);
+            } else {
+              console.warn("\u26A0\uFE0F No text styles available for lookup map");
+              this.textStyleMap.clear();
+            }
             return scanSession;
           } catch (e) {
             console.error("\u274C Critical error in scanDesignSystem:", e);
@@ -561,7 +621,7 @@
           const suggestedType = this.guessComponentType(name.toLowerCase());
           const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
           const textLayers = this.findTextLayers(comp);
-          const textHierarchy = this.analyzeTextHierarchy(comp);
+          const textHierarchy = await this.analyzeTextHierarchy(comp);
           const componentInstances = await this.findComponentInstances(comp);
           const vectorNodes = this.findVectorNodes(comp);
           const imageNodes = this.findImageNodes(comp);
@@ -754,7 +814,7 @@
         /**
          * Analyzes text nodes by fontSize/fontWeight and classifies by visual prominence
          */
-        static analyzeTextHierarchy(comp) {
+        static async analyzeTextHierarchy(comp) {
           const textHierarchy = [];
           try {
             const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
@@ -776,7 +836,7 @@
                 }
               });
               const uniqueSizes = [...new Set(fontSizes)].sort((a, b) => b - a);
-              textNodeData.forEach(({ node, fontSize, fontWeight }) => {
+              for (const { node, fontSize, fontWeight } of textNodeData) {
                 let classification = "tertiary";
                 if (uniqueSizes.length >= 3) {
                   if (fontSize >= uniqueSizes[0]) classification = "primary";
@@ -803,14 +863,57 @@
                 let textColor;
                 try {
                   if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                    const fillStyleId = "fillStyleId" in node ? node.fillStyleId : void 0;
+                    const styleId = fillStyleId && fillStyleId !== figma.mixed ? fillStyleId : void 0;
                     const firstFill = node.fills[0];
                     if (firstFill.visible !== false) {
-                      textColor = this.convertPaintToColorInfo(firstFill) || void 0;
+                      textColor = this.convertPaintToColorInfo(firstFill, styleId) || void 0;
                     }
                   }
                 } catch (e) {
                   console.warn(`Could not extract text color for "${node.name}"`);
                 }
+                let textStyleId;
+                let textStyleName;
+                let boundTextStyleId;
+                try {
+                  textStyleId = node.textStyleId || void 0;
+                  boundTextStyleId = node.boundTextStyleId || void 0;
+                  if (textStyleId) {
+                    textStyleName = this.textStyleMap.get(textStyleId);
+                    if (!textStyleName) {
+                      const baseId = textStyleId.split(",")[0];
+                      const mapFormatId = baseId + ",";
+                      textStyleName = this.textStyleMap.get(mapFormatId);
+                      if (textStyleName) {
+                        console.log(`\u2705 Found text style using map format: "${textStyleName}"`);
+                      } else {
+                        textStyleName = this.textStyleMap.get(baseId);
+                        if (textStyleName) {
+                          console.log(`\u2705 Found text style using base ID: "${textStyleName}"`);
+                        } else {
+                          for (const [mapId, styleName] of this.textStyleMap) {
+                            if (mapId.includes(baseId.replace("S:", ""))) {
+                              textStyleName = styleName;
+                              console.log(`\u2705 Found text style using hash match: "${textStyleName}"`);
+                              break;
+                            }
+                          }
+                        }
+                      }
+                      if (!textStyleName) {
+                        if (!this.loggedMissingIds) this.loggedMissingIds = /* @__PURE__ */ new Set();
+                        if (!this.loggedMissingIds.has(textStyleId)) {
+                          console.warn(`Text style ID not found: ${textStyleId.substring(0, 20)}...`);
+                          this.loggedMissingIds.add(textStyleId);
+                        }
+                      }
+                    }
+                  }
+                } catch (e) {
+                  console.warn(`Could not extract text style references for "${node.name}"`, e);
+                }
+                const usesDesignSystemStyle = !!(textStyleId || boundTextStyleId);
                 textHierarchy.push({
                   nodeName: node.name,
                   nodeId: node.id,
@@ -819,10 +922,15 @@
                   classification,
                   visible: node.visible,
                   characters,
-                  textColor
-                  // NEW: Include text color information
+                  textColor,
+                  // Include text color information
+                  // NEW: Include Design System references
+                  textStyleId,
+                  textStyleName,
+                  boundTextStyleId,
+                  usesDesignSystemStyle
                 });
-              });
+              }
             }
           } catch (e) {
             console.error(`Error analyzing text hierarchy in "${comp.name}":`, e);
@@ -1295,9 +1403,11 @@
           const colorInfos = [];
           try {
             if ("fills" in node && node.fills && Array.isArray(node.fills)) {
+              const fillStyleId = "fillStyleId" in node ? node.fillStyleId : void 0;
+              const styleId = fillStyleId && fillStyleId !== figma.mixed ? fillStyleId : void 0;
               for (const fill of node.fills) {
                 if (fill.visible !== false) {
-                  const colorInfo = this.convertPaintToColorInfo(fill);
+                  const colorInfo = this.convertPaintToColorInfo(fill, styleId);
                   if (colorInfo) {
                     colorInfos.push(colorInfo);
                   }
@@ -1316,9 +1426,11 @@
           const colorInfos = [];
           try {
             if ("strokes" in node && node.strokes && Array.isArray(node.strokes)) {
+              const strokeStyleId = "strokeStyleId" in node ? node.strokeStyleId : void 0;
+              const styleId = strokeStyleId && strokeStyleId !== figma.mixed ? strokeStyleId : void 0;
               for (const stroke of node.strokes) {
                 if (stroke.visible !== false) {
-                  const colorInfo = this.convertPaintToColorInfo(stroke);
+                  const colorInfo = this.convertPaintToColorInfo(stroke, styleId);
                   if (colorInfo) {
                     colorInfos.push(colorInfo);
                   }
@@ -1332,34 +1444,78 @@
         }
         /**
          * Convert Figma Paint to ColorInfo
+         * @param paint Paint object from Figma API
+         * @param styleId Optional fillStyleId or strokeStyleId from the node
          */
-        static convertPaintToColorInfo(paint) {
+        static convertPaintToColorInfo(paint, styleId) {
           try {
             if (paint.type === "SOLID" && paint.color) {
+              let paintStyleName;
+              if (styleId) {
+                paintStyleName = this.paintStyleMap.get(styleId);
+                if (!paintStyleName) {
+                  const baseId = styleId.split(",")[0];
+                  const mapFormatId = baseId + ",";
+                  paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
+                }
+              }
               return {
                 type: "SOLID",
                 color: this.rgbToHex(paint.color),
-                opacity: paint.opacity || 1
+                opacity: paint.opacity || 1,
+                // NEW: Design System color style references
+                paintStyleId: styleId || void 0,
+                paintStyleName,
+                boundVariables: paint.boundVariables || void 0,
+                usesDesignSystemColor: !!(styleId || paint.boundVariables && Object.keys(paint.boundVariables).length > 0)
               };
             }
             if (paint.type === "GRADIENT_LINEAR" && paint.gradientStops) {
+              let paintStyleName;
+              if (styleId) {
+                paintStyleName = this.paintStyleMap.get(styleId);
+                if (!paintStyleName) {
+                  const baseId = styleId.split(",")[0];
+                  const mapFormatId = baseId + ",";
+                  paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
+                }
+              }
               return {
                 type: "GRADIENT_LINEAR",
                 gradientStops: paint.gradientStops.map((stop) => ({
                   color: this.rgbToHex(stop.color),
                   position: stop.position
                 })),
-                opacity: paint.opacity || 1
+                opacity: paint.opacity || 1,
+                // NEW: Design System color style references
+                paintStyleId: styleId || void 0,
+                paintStyleName,
+                boundVariables: paint.boundVariables || void 0,
+                usesDesignSystemColor: !!(styleId || paint.boundVariables && Object.keys(paint.boundVariables).length > 0)
               };
             }
             if ((paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") && paint.gradientStops) {
+              let paintStyleName;
+              if (paint.paintStyleId) {
+                paintStyleName = this.paintStyleMap.get(paint.paintStyleId);
+                if (!paintStyleName) {
+                  const baseId = paint.paintStyleId.split(",")[0];
+                  const mapFormatId = baseId + ",";
+                  paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
+                }
+              }
               return {
                 type: paint.type,
                 gradientStops: paint.gradientStops.map((stop) => ({
                   color: this.rgbToHex(stop.color),
                   position: stop.position
                 })),
-                opacity: paint.opacity || 1
+                opacity: paint.opacity || 1,
+                // NEW: Design System color style references
+                paintStyleId: styleId || void 0,
+                paintStyleName,
+                boundVariables: paint.boundVariables || void 0,
+                usesDesignSystemColor: !!(styleId || paint.boundVariables && Object.keys(paint.boundVariables).length > 0)
               };
             }
             if (paint.type === "IMAGE") {
@@ -1393,7 +1549,8 @@
               if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
                 for (const fill of textNode.fills) {
                   if (fill.visible !== false && fill.type === "SOLID") {
-                    return this.convertPaintToColorInfo(fill);
+                    const styleId = textNode.fillStyleId && typeof textNode.fillStyleId === "string" ? textNode.fillStyleId : void 0;
+                    return this.convertPaintToColorInfo(fill, styleId);
                   }
                 }
               }
@@ -1420,7 +1577,8 @@
               if ("fills" in rect && rect.fills && Array.isArray(rect.fills)) {
                 for (const fill of rect.fills) {
                   if (fill.visible !== false) {
-                    const colorInfo = this.convertPaintToColorInfo(fill);
+                    const styleId = "fillStyleId" in rect && rect.fillStyleId && typeof rect.fillStyleId === "string" ? rect.fillStyleId : void 0;
+                    const colorInfo = this.convertPaintToColorInfo(fill, styleId);
                     if (colorInfo && colorInfo.type === "SOLID") {
                       return colorInfo;
                     }
@@ -1434,6 +1592,11 @@
           return null;
         }
       };
+      // Static cache for text style lookups (id -> name mapping)
+      ComponentScanner.textStyleMap = /* @__PURE__ */ new Map();
+      ComponentScanner.loggedMissingIds = /* @__PURE__ */ new Set();
+      // Static cache for color style lookups (id -> name mapping)
+      ComponentScanner.paintStyleMap = /* @__PURE__ */ new Map();
     }
   });
 
@@ -10875,14 +11038,24 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       await DesignSystemScannerService.saveScanSession(scanSession);
       await ComponentPropertyEngine.initialize();
       const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+      const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+      const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
       figma.ui.postMessage({
         type: "scan-results",
         components: scanSession.components,
         colorStyles: scanSession.colorStyles,
+        textStyles: scanSession.textStyles,
+        // NEW: Include text styles
+        designTokens: scanSession.designTokens,
+        // NEW: Include design tokens
         scanTime: scanSession.scanTime,
-        colorStylesCount
+        colorStylesCount,
+        textStylesCount,
+        // NEW: Include text styles count
+        designTokensCount
+        // NEW: Include design tokens count
       });
-      figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
+      figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles and initialized systematic engine!`);
       if (scanSession.components.length > 0) {
         const sampleComponent = scanSession.components.find((c) => c.suggestedType === "tab") || scanSession.components[0];
         ComponentPropertyEngine.debugSchema(sampleComponent.id);
@@ -11162,14 +11335,24 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
             const scanSession = await DesignSystemScannerService.scanDesignSystem();
             await DesignSystemScannerService.saveScanSession(scanSession);
             const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+            const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+            const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
             figma.ui.postMessage({
               type: "scan-results",
               components: scanSession.components,
               colorStyles: scanSession.colorStyles,
+              textStyles: scanSession.textStyles,
+              // NEW: Include text styles
+              designTokens: scanSession.designTokens,
+              // NEW: Include design tokens
               scanTime: scanSession.scanTime,
-              colorStylesCount
+              colorStylesCount,
+              textStylesCount,
+              // NEW: Include text styles count
+              designTokensCount
+              // NEW: Include design tokens count
             });
-            figma.notify(`\u2705 Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3e3 });
+            figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles!`, { timeout: 3e3 });
           } catch (error) {
             console.error("Scan failed:", error);
             const errorMessage = error instanceof Error ? error.message : String(error);
