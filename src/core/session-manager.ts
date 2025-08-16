@@ -28,6 +28,12 @@ export interface TextHierarchy {
   visible: boolean;
   characters?: string;
   textColor?: ColorInfo;
+  
+  // NEW: Design System text style references
+  textStyleId?: string;           // Text style ID from Design System for fast rendering
+  textStyleName?: string;         // Style name for JSON Engineer lookup and fallback
+  boundTextStyleId?: string;      // Bound variable for text style
+  usesDesignSystemStyle?: boolean; // Flag indicating Design System usage
 }
 
 export interface ComponentInstance {

@@ -67,6 +67,10 @@ export interface ScanSession {
 
 export class ComponentScanner {
   
+  // Static cache for text style lookups (id -> name mapping)
+  private static textStyleMap: Map<string, string> = new Map();
+  private static loggedMissingIds: Set<string> = new Set();
+  
   /**
    * NEW: Scan Figma Variables (Design Tokens) from the local file
    */
@@ -518,9 +522,23 @@ export class ComponentScanner {
       console.log("\n📝 Phase 3: Scanning Text Styles...");
       try {
         textStyles = await this.scanFigmaTextStyles();
+        
+        // NEW: Build text style lookup map for fast ID->name resolution
+        if (textStyles && textStyles.length > 0) {
+          this.textStyleMap.clear();
+          textStyles.forEach(style => {
+            this.textStyleMap.set(style.id, style.name);
+          });
+          console.log(`✅ Built text style lookup map with ${this.textStyleMap.size} entries`);
+          
+          // DEBUG: Log first few entries to understand ID format
+          const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
+          console.log('🔍 First text style IDs in map:', firstEntries);
+        }
       } catch (error) {
         console.warn("⚠️ Text Styles scanning failed, continuing without text styles:", error);
         textStyles = undefined;
+        this.textStyleMap.clear();
       }
       
       // Fourth, scan components
@@ -578,6 +596,22 @@ export class ComponentScanner {
       console.log(`   🎨 Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
       console.log(`   📝 Text Styles: ${textStyles ? textStyles.length : 0}`);
       console.log(`   📄 File Key: ${scanSession.fileKey || 'Unknown'}`);
+      
+      // NEW: Build text style lookup map for component analysis (done at the end to ensure textStyles are available)
+      if (textStyles && textStyles.length > 0) {
+        this.textStyleMap.clear();
+        textStyles.forEach(style => {
+          this.textStyleMap.set(style.id, style.name);
+        });
+        console.log(`✅ Built text style lookup map with ${this.textStyleMap.size} entries`);
+        
+        // DEBUG: Log first few entries to understand ID format
+        const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
+        console.log('🔍 First text style IDs in map:', firstEntries);
+      } else {
+        console.warn('⚠️ No text styles available for lookup map');
+        this.textStyleMap.clear();
+      }
       
       return scanSession;
     } catch (e) {
@@ -729,7 +763,7 @@ export class ComponentScanner {
       const suggestedType = this.guessComponentType(name.toLowerCase());
       const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
       const textLayers = this.findTextLayers(comp);
-      const textHierarchy = this.analyzeTextHierarchy(comp);
+      const textHierarchy = await this.analyzeTextHierarchy(comp);
       const componentInstances = await this.findComponentInstances(comp);
       const vectorNodes = this.findVectorNodes(comp);
       const imageNodes = this.findImageNodes(comp);
@@ -909,7 +943,7 @@ export class ComponentScanner {
   /**
    * Analyzes text nodes by fontSize/fontWeight and classifies by visual prominence
    */
-  static analyzeTextHierarchy(comp: ComponentNode | ComponentSetNode): TextHierarchy[] {
+  static async analyzeTextHierarchy(comp: ComponentNode | ComponentSetNode): Promise<TextHierarchy[]> {
     const textHierarchy: TextHierarchy[] = [];
     try {
       const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
@@ -937,7 +971,7 @@ export class ComponentScanner {
         // Sort font sizes to determine hierarchy thresholds
         const uniqueSizes = [...new Set(fontSizes)].sort((a, b) => b - a);
         
-        textNodeData.forEach(({node, fontSize, fontWeight}) => {
+        for (const {node, fontSize, fontWeight} of textNodeData) {
           let classification: 'primary' | 'secondary' | 'tertiary' = 'tertiary';
           
           if (uniqueSizes.length >= 3) {
@@ -977,6 +1011,61 @@ export class ComponentScanner {
           } catch (e) {
             console.warn(`Could not extract text color for "${node.name}"`);
           }
+
+          // NEW: Extract Design System text style references
+          let textStyleId: string | undefined;
+          let textStyleName: string | undefined;
+          let boundTextStyleId: string | undefined;
+          
+          try {
+            // Get text style ID if available
+            textStyleId = node.textStyleId || undefined;
+            boundTextStyleId = node.boundTextStyleId || undefined;
+            
+            // Resolve style name using pre-built lookup map (fast and reliable)
+            if (textStyleId) {
+              textStyleName = this.textStyleMap.get(textStyleId);
+              if (!textStyleName) {
+                // Try multiple ID format variations
+                const baseId = textStyleId.split(',')[0];
+                const mapFormatId = baseId + ',';
+                
+                // Try exact Map format first (most likely)
+                textStyleName = this.textStyleMap.get(mapFormatId);
+                if (textStyleName) {
+                  console.log(`✅ Found text style using map format: "${textStyleName}"`);
+                } else {
+                  // Try base ID without comma
+                  textStyleName = this.textStyleMap.get(baseId);
+                  if (textStyleName) {
+                    console.log(`✅ Found text style using base ID: "${textStyleName}"`);
+                  } else {
+                    // Try finding by hash substring match
+                    for (const [mapId, styleName] of this.textStyleMap) {
+                      if (mapId.includes(baseId.replace('S:', ''))) {
+                        textStyleName = styleName;
+                        console.log(`✅ Found text style using hash match: "${textStyleName}"`);
+                        break;
+                      }
+                    }
+                  }
+                }
+                
+                if (!textStyleName) {
+                  // Reduce spam - only log once per unique ID
+                  if (!this.loggedMissingIds) this.loggedMissingIds = new Set();
+                  if (!this.loggedMissingIds.has(textStyleId)) {
+                    console.warn(`Text style ID not found: ${textStyleId.substring(0, 20)}...`);
+                    this.loggedMissingIds.add(textStyleId);
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.warn(`Could not extract text style references for "${node.name}"`, e);
+          }
+
+          const usesDesignSystemStyle = !!(textStyleId || boundTextStyleId);
           
           textHierarchy.push({
             nodeName: node.name,
@@ -986,9 +1075,15 @@ export class ComponentScanner {
             classification,
             visible: node.visible,
             characters,
-            textColor // NEW: Include text color information
+            textColor, // Include text color information
+            
+            // NEW: Include Design System references
+            textStyleId,
+            textStyleName,
+            boundTextStyleId,
+            usesDesignSystemStyle
           });
-        });
+        }
       }
     } catch (e) {
       console.error(`Error analyzing text hierarchy in "${comp.name}":`, e);

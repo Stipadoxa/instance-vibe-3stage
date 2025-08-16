@@ -311,17 +311,23 @@ async function handleScanCommand() {
     await ComponentPropertyEngine.initialize();
     
     const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+    const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+    const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
     
-    // Send scan results to UI (same as manual scan)
+    // Send scan results to UI (same as manual scan) - NOW INCLUDES textStyles and designTokens
     figma.ui.postMessage({ 
       type: 'scan-results', 
       components: scanSession.components,
       colorStyles: scanSession.colorStyles,
+      textStyles: scanSession.textStyles, // NEW: Include text styles
+      designTokens: scanSession.designTokens, // NEW: Include design tokens
       scanTime: scanSession.scanTime,
-      colorStylesCount: colorStylesCount
+      colorStylesCount: colorStylesCount,
+      textStylesCount: textStylesCount, // NEW: Include text styles count
+      designTokensCount: designTokensCount // NEW: Include design tokens count
     });
     
-    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
+    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles and initialized systematic engine!`);
     
     // Optional: Show debug info for a sample component
     if (scanSession.components.length > 0) {
@@ -650,17 +656,23 @@ figma.ui.onmessage = async (msg: any) => {
                 await DesignSystemScannerService.saveScanSession(scanSession);
                 
                 const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+                const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+                const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
                 
-                // Send scan results to UI (what the UI expects)
+                // Send scan results to UI (what the UI expects) - NOW INCLUDES textStyles and designTokens
                 figma.ui.postMessage({ 
                     type: 'scan-results', 
                     components: scanSession.components,
                     colorStyles: scanSession.colorStyles,
+                    textStyles: scanSession.textStyles, // NEW: Include text styles
+                    designTokens: scanSession.designTokens, // NEW: Include design tokens
                     scanTime: scanSession.scanTime,
-                    colorStylesCount: colorStylesCount
+                    colorStylesCount: colorStylesCount,
+                    textStylesCount: textStylesCount, // NEW: Include text styles count
+                    designTokensCount: designTokensCount // NEW: Include design tokens count
                 });
                 
-                figma.notify(`✅ Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3000 });
+                figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles!`, { timeout: 3000 });
             } catch (error) {
                 console.error("Scan failed:", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
