@@ -1394,6 +1394,7 @@ console.log('Platform switched to:', platform);
         let currentTab = 'design-system';
         let scanResults = [];
         let colorStyles = null; // Store color styles from scan
+        let textStyles = null; // Store text styles from scan
         let currentFilter = 'all';
         let searchQuery = '';
         let lastGeneratedJSON = null;
@@ -1862,7 +1863,7 @@ function isValidImageSelected() {
 
         function exportRawScanData() {
             if (!scanResults || scanResults.length === 0) {
-                showStatusMessage('❌ No scan data available to export', 'error');
+                console.log('❌ No scan data available to export');
                 return;
             }
 
@@ -1894,11 +1895,13 @@ function isValidImageSelected() {
                         exportedAt: new Date().toISOString(),
                         componentCount: scanResults.length,
                         colorStylesCount: colorStylesCount,
-                        exportVersion: '1.1',
+                        textStylesCount: textStyles ? textStyles.length : 0,
+                        exportVersion: '2.0',
                         source: 'Figma Design System Scanner'
                     },
                     components: scanResults,
-                    colorStyles: colorStyles
+                    colorStyles: colorStyles,
+                    textStyles: textStyles
                 };
 
                 // Generate filename with timestamp
@@ -1911,11 +1914,11 @@ function isValidImageSelected() {
                 const exportMessage = colorStyles ? 
                     `✅ Raw data exported successfully (${scanResults.length} components, ${colorStylesCount} color styles)` :
                     `✅ Raw data exported successfully (${scanResults.length} components)`;
-                showStatusMessage(exportMessage, 'success');
+                console.log(exportMessage);
                 console.log(`📤 Exported ${scanResults.length} components and ${colorStylesCount} color styles to ${filename}`);
             } catch (error) {
                 console.error('Export failed:', error);
-                showStatusMessage('❌ Export failed. Please try again.', 'error');
+                console.log('❌ Export failed. Please try again.');
             }
         }
 
@@ -2690,6 +2693,8 @@ function isValidImageSelected() {
                     
                     // Store both components and colorStyles
                     colorStyles = msg.colorStyles || null;
+                    textStyles = msg.textStyles || null;
+                    textStyles = msg.textStyles || null;
                     
                     // Debug logging
                     console.log('🎨 Received colorStyles:', colorStyles);
@@ -2719,6 +2724,7 @@ function isValidImageSelected() {
                     console.log('✅ Design system loaded from storage');
                     // Store colorStyles if available in saved data
                     colorStyles = msg.colorStyles || null;
+                    textStyles = msg.textStyles || null;
                     displaySavedScan(msg.components, msg.scanTime);
                     break;
 
@@ -2850,6 +2856,7 @@ function isValidImageSelected() {
                         scanResults = msg.scanData;
                         // Store colorStyles if available in session data
                         colorStyles = msg.colorStyles || null;
+                    textStyles = msg.textStyles || null;
                         displaySavedScan(msg.scanData);
                     }
                     
