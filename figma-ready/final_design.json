@@ -1,31 +1,38 @@
 {
   "type": "layoutContainer",
-  "name": "Product Detail - Mobile",
+  "name": "Used Laptop Detail - Mobile",
   "layoutMode": "VERTICAL",
   "width": 375,
   "minHeight": 812,
   "primaryAxisSizingMode": "FIXED",
   "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 0,
   "paddingTop": 0,
   "paddingBottom": 0,
   "paddingLeft": 0,
   "paddingRight": 0,
-  "itemSpacing": 0,
   "items": [
     {
       "type": "component",
       "componentNodeId": "10:5620",
       "properties": {
-        "headline": "2018 MacBook Pro 13-inch - Space Gray - Excellent Condition"
+        "headline": "Product Details"
       },
       "variants": {
         "Mode": "Light",
         "Type": "Default",
         "Elevation": "flat"
       },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5625": false,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
       "iconSwaps": {
-        "leading-icon": "arrow-left",
-        "trailing-icon": "share"
+        "leading-icon": "settings"
       },
       "horizontalSizing": "FILL",
       "layoutAlign": "STRETCH"
@@ -33,85 +40,75 @@
     {
       "type": "layoutContainer",
       "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
       "paddingTop": 16,
       "paddingBottom": 16,
       "paddingLeft": 16,
       "paddingRight": 16,
-      "itemSpacing": 16,
       "horizontalSizing": "FILL",
       "layoutAlign": "STRETCH",
       "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2015 MacBook Pro - 13-inch - Space Gray - Excellent Condition",
+            "textStyle": "Headline/primary",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
         {
           "type": "component",
           "componentNodeId": "10:7816",
           "variants": {
             "Type": "2+ images"
           },
-          "properties": {
-            "imageUrls": [
-              "image1.jpg",
-              "image2.jpg",
-              "image3.jpg",
-              "image4.jpg"
-            ]
-          },
           "horizontalSizing": "FILL",
           "layoutAlign": "STRETCH"
         },
         {
-          "type": "component",
-          "componentNodeId": "147:3806",
+          "type": "native-text",
           "properties": {
-            "price": "$650"
+            "content": "$450",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
           },
-          "horizontalSizing": "HUG",
-          "layoutAlign": "MIN"
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
         },
         {
           "type": "native-text",
           "properties": {
-            "content": "Condition: Excellent (Minor scratches on the bottom casing)",
-            "textStyle": "Body/Medium"
+            "content": "Condition: Excellent (Minor scratches on the bottom case)",
+            "textStyle": "Body/MediumBold",
+            "color": "Neutral/neutral80"
           },
           "_useFlexFill": true,
           "_parentLayout": "VERTICAL"
         },
         {
           "type": "layoutContainer",
-          "layoutMode": "VERTICAL",
+          "layoutMode": "HORIZONTAL",
           "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
           "items": [
             {
-              "type": "layoutContainer",
-              "layoutMode": "HORIZONTAL",
-              "items": [
-                {
-                  "type": "component",
-                  "componentNodeId": "24:10352",
-                  "properties": {
-                    "image": "seller_profile.jpg",
-                    "initials": "JD"
-                  },
-                  "horizontalSizing": "HUG",
-                  "layoutAlign": "CENTER"
-                },
-                {
-                  "type": "native-text",
-                  "properties": {
-                    "content": "John Doe",
-                    "textStyle": "Title/Medium"
-                  },
-                  "_useFlexFill": true,
-                  "_parentLayout": "HORIZONTAL"
-                }
-              ],
-              "itemSpacing": 8
+              "type": "component",
+              "componentNodeId": "10:7773",
+              "properties": {},
+              "variants": {
+                "Type": "Photo"
+              },
+              "layoutAlign": "STRETCH"
             },
             {
               "type": "native-text",
               "properties": {
-                "content": "⭐⭐⭐⭐ (4.8 stars) (123 reviews)",
-                "textStyle": "Body/Small"
+                "content": "John Smith (4.8 stars, 123 reviews)",
+                "textStyle": "Body/MediumBold",
+                "color": "Neutral/neutral90"
               },
               "_useFlexFill": true,
               "_parentLayout": "VERTICAL"
@@ -121,8 +118,9 @@
         {
           "type": "native-text",
           "properties": {
-            "content": "Lightly used 2018 MacBook Pro 13-inch in Space Gray. Excellent condition with minor scratches on the bottom casing, barely noticeable. Includes original charger. Specs: 2.3GHz Intel Core i5, 8GB RAM, 256GB SSD. Battery health is 90%.",
-            "textStyle": "Body/Large"
+            "content": "Lightly used 2015 MacBook Pro 13-inch in Space Gray. Excellent condition with minor scratches on the bottom case. Includes original charger. Runs macOS Ventura smoothly. Battery health at 85%.",
+            "textStyle": "Body/MediumBold",
+            "color": "Neutral/neutral50"
           },
           "_useFlexFill": true,
           "_parentLayout": "VERTICAL"
@@ -131,7 +129,8 @@
           "type": "native-text",
           "properties": {
             "content": "Specifications:",
-            "textStyle": "Title/Medium"
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral80"
           },
           "_useFlexFill": true,
           "_parentLayout": "VERTICAL"
@@ -140,51 +139,72 @@
           "type": "layoutContainer",
           "layoutMode": "VERTICAL",
           "itemSpacing": 4,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
           "items": [
             {
-              "type": "native-text",
+              "type": "component",
+              "componentNodeId": "10:10214",
               "properties": {
-                "content": "Processor: 2.3GHz Intel Core i5",
-                "textStyle": "Body/Medium"
+                "Headline": "Processor",
+                "Supporting text": "2.7 GHz Intel Core i5"
               },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
             },
             {
-              "type": "native-text",
+              "type": "component",
+              "componentNodeId": "10:10214",
               "properties": {
-                "content": "RAM: 8GB",
-                "textStyle": "Body/Medium"
+                "Headline": "RAM",
+                "Supporting text": "8GB"
               },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
             },
             {
-              "type": "native-text",
+              "type": "component",
+              "componentNodeId": "10:10214",
               "properties": {
-                "content": "Storage: 256GB SSD",
-                "textStyle": "Body/Medium"
+                "Headline": "Storage",
+                "Supporting text": "256GB SSD"
               },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
             },
             {
-              "type": "native-text",
+              "type": "component",
+              "componentNodeId": "10:10214",
               "properties": {
-                "content": "Battery Health: 90%",
-                "textStyle": "Body/Medium"
+                "Headline": "Operating System",
+                "Supporting text": "macOS Ventura"
               },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
-            },
-            {
-              "type": "native-text",
-              "properties": {
-                "content": "Operating System: macOS Monterey",
-                "textStyle": "Body/Medium"
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
               },
-              "_useFlexFill": true,
-              "_parentLayout": "VERTICAL"
+              "layoutAlign": "STRETCH"
             }
           ]
         },
@@ -192,7 +212,8 @@
           "type": "native-text",
           "properties": {
             "content": "Last updated: 2 hours ago",
-            "textStyle": "Caption/Small"
+            "textStyle": "Caption/Small",
+            "color": "Neutral/neutral30"
           },
           "_useFlexFill": true,
           "_parentLayout": "VERTICAL"
@@ -214,20 +235,15 @@
           "layoutAlign": "STRETCH"
         },
         {
-          "type": "component",
-          "componentNodeId": "10:3907",
+          "type": "native-text",
           "properties": {
-            "Action": "Report Listing"
+            "content": "View Seller Profile",
+            "textStyle": "Body/MediumBold",
+            "color": "Primary/primary50",
+            "underline": true
           },
-          "variants": {
-            "Platform": "Android+Web",
-            "Size": "Medium",
-            "Type": "Outlined",
-            "State": "Default",
-            "Color": "Green"
-          },
-          "horizontalSizing": "FILL",
-          "layoutAlign": "STRETCH"
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
         }
       ]
     },
@@ -236,6 +252,20 @@
       "componentNodeId": "10:4724",
       "variants": {
         "Device": "Mobile"
+      },
+      "textLayers": {
+        "✈ Label": [
+          "Home",
+          "Search",
+          "Messages",
+          "Profile"
+        ]
+      },
+      "iconSwaps": {
+        "0": "home",
+        "1": "search",
+        "2": "message",
+        "3": "person"
       },
       "horizontalSizing": "FILL",
       "layoutAlign": "STRETCH"

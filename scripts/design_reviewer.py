@@ -17,6 +17,20 @@ from datetime import datetime
 from typing import Dict, Optional, Tuple, List
 import google.generativeai as genai
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, try to load .env manually
+    env_path = Path(__file__).parent.parent / '.env'
+    if env_path.exists():
+        with open(env_path) as f:
+            for line in f:
+                if line.strip() and not line.startswith('#') and '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    os.environ[key] = value
+
 
 class DesignReviewer:
     """
@@ -217,8 +231,8 @@ Focus on fixing real problems visible in the image rather than redesigning worki
         # 3. Підготувати reviewer prompt з контекстом
         reviewer_prompt_template = self.load_reviewer_prompt()
         
-        # Завантажити design system data
-        design_system_path = self.base_path / "design-system" / "design-system-raw-data-2025-08-03T10-46-26.json"
+        # Завантажити design system data - використовуємо найновіший файл
+        design_system_path = self.base_path / "design-system" / "design-system-raw-data-2025-08-16T14-11-15.json"
         design_system_data = ""
         if design_system_path.exists():
             with open(design_system_path, 'r', encoding='utf-8') as f:
