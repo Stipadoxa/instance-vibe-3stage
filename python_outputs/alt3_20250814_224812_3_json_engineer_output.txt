@@ -1,0 +1,246 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Detail - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "2015 MacBook Pro 13-inch - Excellent Condition",
+        "subheadline": "Posted: 2 hours ago"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "iconSwaps": {
+        "leading-icon": "arrow",
+        "trailing-icon": null
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "backgroundColor": "White/white100"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "properties": {
+            "imageUrls": [
+              "imageUrl1",
+              "imageUrl2",
+              "imageUrl3",
+              "imageUrl4"
+            ]
+          },
+          "variants": {
+            "Type": "2+ images"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Price: $450",
+            "textStyle": "Title/Medium",
+            "fontSize": 16,
+            "fontWeight": "500",
+            "color": "Neutral/neutral90",
+            "alignment": "LEFT"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition Details: Excellent. Minor scratches on the casing. Fully functional. Original box included.",
+            "textStyle": "Body/Medium",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "color": "Neutral/neutral50",
+            "alignment": "LEFT"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 8,
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "10:7798",
+                  "properties": {},
+                  "variants": {
+                    "Type": "Photo"
+                  },
+                  "imageUrl": "johnDoeAvatarUrl",
+                  "horizontalSizing": "HUG",
+                  "layoutAlign": "MIN"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Doe",
+                    "textStyle": "Title/Medium",
+                    "fontSize": 16,
+                    "fontWeight": "500",
+                    "color": "Neutral/neutral90",
+                    "alignment": "LEFT"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Seller Rating: ⭐⭐⭐⭐⭐ (5/5 stars) from 12 reviews",
+                "textStyle": "Body/Medium",
+                "fontSize": 14,
+                "fontWeight": "400",
+                "color": "Neutral/neutral50",
+                "alignment": "LEFT"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Joined: October 2020",
+                "textStyle": "Caption/Small",
+                "fontSize": 12,
+                "fontWeight": "400",
+                "color": "Neutral/neutral50",
+                "alignment": "LEFT"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used MacBook Pro 13-inch from 2015. Excellent condition with minor cosmetic wear. Runs smoothly and includes the original box and charger. Specs: 8GB RAM, 256GB SSD, Intel Core i5.",
+            "textStyle": "Body/Medium",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "color": "Neutral/neutral50",
+            "alignment": "LEFT"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Specifications:",
+                "textStyle": "Title/Medium",
+                "fontSize": 16,
+                "fontWeight": "500",
+                "color": "Neutral/neutral90",
+                "alignment": "LEFT"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "* Processor: Intel Core i5\n* RAM: 8GB\n* Storage: 256GB SSD\n* Operating System: macOS Monterey\n* Battery Health: 85%",
+                "textStyle": "Body/Medium",
+                "fontSize": 14,
+                "fontWeight": "400",
+                "color": "Neutral/neutral50",
+                "alignment": "LEFT"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Contact Seller"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Report Listing"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "✏️ Label": [
+          "Home",
+          "Search",
+          "Messages",
+          "Profile"
+        ]
+      },
+      "variants": {
+        "Device": "Mobile"
+      },
+      "iconSwaps": {
+        "0": "home",
+        "1": "search",
+        "2": "chat",
+        "3": "person"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "backgroundColor": "White/white100"
+    }
+  ]
+}
+```

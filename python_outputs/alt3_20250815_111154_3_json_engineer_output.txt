@@ -1,0 +1,103 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "SellerListRow - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 12,
+      "paddingBottom": 12,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 50,
+            "height": 50,
+            "cornerRadius": 25,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL",
+              "url": "[Seller Avatar URL]",
+              "fallbackUrl": "[Default Avatar URL]"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 4,
+          "paddingLeft": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Jane's Handmade Crafts",
+                "textStyle": "Title/Medium",
+                "fontSize": 16,
+                "fontWeight": "500",
+                "color": "Neutral/neutral90",
+                "alignment": "LEFT"
+              },
+              "_constraintWidth": 275,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "⭐⭐⭐⭐ (123)",
+                "textStyle": "Body/Medium",
+                "fontSize": 14,
+                "fontWeight": "400",
+                "color": "Primary/primary50",
+                "alignment": "LEFT"
+              },
+              "_constraintWidth": 275,
+              "_parentLayout": "VERTICAL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "layoutGrow": 1,
+      "items": []
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "properties": {
+        "I10:4726;10:4683;10:4629": "Home",
+        "I10:4726;10:4684;10:4605": "Browse",
+        "I10:4726;10:4685;10:4613": "Cart",
+        "I10:4726;10:4687;10:4589": "Profile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

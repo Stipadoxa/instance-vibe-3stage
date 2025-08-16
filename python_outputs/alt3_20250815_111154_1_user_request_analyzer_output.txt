@@ -1,0 +1,46 @@
+## STAGE 1: UNDERSTAND THE REQUEST
+
+1. **Domain**: E-commerce (specifically, a marketplace showing sellers).
+2. **Platform**: Unclear, but will default to mobile in Stage 3.
+3. **User Goal**: To display a concise summary of a seller's information (avatar and rating) within a list or feed of sellers.
+
+
+## STAGE 2: GENERATE CORE CONTENT
+
+**Main Screen Purpose**: To present a list of sellers, allowing users to quickly identify and select sellers based on their avatar and rating.  This is likely part of a larger product listing or search results page.
+
+
+**Required Information & Actions**:
+
+* **Heading**:  (Not applicable at the row level; this is a single row within a larger list)
+
+* **Key Information Blocks**:
+    * **Avatar Image:** A square profile picture of the seller (e.g., 50x50 pixels).  If no image is available, display a default placeholder image (a generic icon or initials). Example:  `[Display Seller Avatar]`
+    * **Seller Name:** The seller's display name. Example: `Jane's Handmade Crafts`
+    * **Seller Rating:** A star rating (e.g., 4.8 out of 5 stars)  alongside the number of ratings in parentheses. Example: `⭐⭐⭐⭐ (123)`
+
+* **Primary & Secondary Actions**:
+    * **Primary:** Tap/Click on the entire row to navigate to the seller's full profile page.
+    *(No secondary action is explicitly required at the row level.  Additional actions may exist on the seller's profile page.)*
+
+* **Required Status Indicators**: None explicitly required at the row level.
+
+
+## STAGE 3: ADD NAVIGATION (Mobile App Default)
+
+**Top Navigation**: (Not applicable for a single row within a larger list view)
+
+**Bottom Navigation**:  Assuming this seller row is part of a larger product browsing experience:
+
+* **Home:**  Icon: House icon
+* **Browse:** Icon: List icon
+* **Cart:** Icon: Shopping cart icon
+* **Profile:** Icon: Person icon
+
+
+**Example of a complete seller row (for implementation):**
+
+```
+[50x50px Avatar Image]  |  Jane's Handmade Crafts  ⭐⭐⭐⭐ (123)
+```
+(The vertical bar "|" represents the visual separation between the avatar and text; the actual implementation would use appropriate layout techniques.)

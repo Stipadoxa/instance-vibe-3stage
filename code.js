@@ -2301,7 +2301,7 @@
               if (hasPrimarySetter) {
                 if (containerData.primaryAxisSizingMode) {
                   currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-                } else {
+                } else if (currentFrame.primaryAxisSizingMode === "FIXED") {
                   currentFrame.primaryAxisSizingMode = "AUTO";
                 }
               } else {
@@ -2360,8 +2360,53 @@
             if (item.type === "layoutContainer") {
               const nestedFrame = figma.createFrame();
               currentFrame.appendChild(nestedFrame);
+              console.log("\u{1F50D} DEBUG: Created nested frame with default sizing modes:", {
+                primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+                counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+                layoutMode: nestedFrame.layoutMode
+              });
               this.applyChildLayoutProperties(nestedFrame, item);
+              if (nestedFrame.layoutMode === "HORIZONTAL" && nestedFrame.primaryAxisSizingMode === "AUTO") {
+                console.log("\u{1F527} HORIZONTAL AUTO CONTAINER (ALT PATH): Forcing height reset from default 100px");
+                try {
+                  console.log("\u{1F4CF} Current height before fix:", nestedFrame.height);
+                  const children = nestedFrame.children;
+                  if (children.length > 0) {
+                    let maxChildHeight = 0;
+                    for (const child of children) {
+                      if ("height" in child) {
+                        maxChildHeight = Math.max(maxChildHeight, child.height);
+                      }
+                    }
+                    console.log("\u{1F4CF} Calculated max child height:", maxChildHeight);
+                    if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
+                      const paddingTop = nestedFrame.paddingTop || 0;
+                      const paddingBottom = nestedFrame.paddingBottom || 0;
+                      const targetHeight = maxChildHeight + paddingTop + paddingBottom;
+                      console.log("\u{1F4CF} Setting frame height to:", targetHeight);
+                      nestedFrame.resize(nestedFrame.width, targetHeight);
+                    }
+                  }
+                  console.log("\u{1F4CF} Final height after fix:", nestedFrame.height);
+                  console.log("\u2705 Height reset complete - should now hug content");
+                } catch (error) {
+                  console.error("\u274C Height reset failed:", error);
+                }
+              }
+              console.log("\u{1F50D} DEBUG: After applyChildLayoutProperties:", {
+                primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+                counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+                layoutMode: nestedFrame.layoutMode,
+                height: nestedFrame.height
+              });
               await this.generateUIFromData({ layoutContainer: item, items: item.items }, nestedFrame);
+              console.log("\u{1F50D} DEBUG: Final nested frame properties:", {
+                primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+                counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+                layoutMode: nestedFrame.layoutMode,
+                height: nestedFrame.height,
+                name: nestedFrame.name
+              });
             } else if (item.type === "frame" && item.layoutContainer) {
               const nestedFrame = figma.createFrame();
               currentFrame.appendChild(nestedFrame);
@@ -2601,52 +2646,126 @@
         }
         /**
          * Detects if a container has width constraints that should constrain text
+         * NEW LOGIC: Uses effective width calculation from parent chain
          */
         static detectWidthConstraint(container) {
           console.log("\u{1F50D} Detecting width constraint for container:", {
             type: container.type,
             layoutMode: container.layoutMode,
             width: container.width,
-            counterAxisSizingMode: container.counterAxisSizingMode
+            name: container.name
           });
-          if (container.layoutMode === "VERTICAL") {
-            console.log("\u2705 Width constraint detected: Container has VERTICAL layout");
+          const effectiveWidth = this.calculateEffectiveWidth(container);
+          if (effectiveWidth && effectiveWidth <= 375) {
+            console.log("\u2705 Width constraint detected: Effective width =", effectiveWidth);
             return true;
           }
-          if (container.layoutMode === "HORIZONTAL") {
-            console.log("\u274C No width constraint: Container has HORIZONTAL layout - let auto-layout handle sizing");
-            return false;
-          }
-          if (container.width && container.width < 1e3) {
-            console.log("\u2705 Width constraint detected: Container has fixed width <1000px:", container.width);
-            return true;
-          }
-          if (container.counterAxisSizingMode === "FIXED") {
-            console.log("\u2705 Width constraint detected: Container has FIXED counter-axis sizing");
-            return true;
-          }
-          const parent = container.parent;
-          if (parent && parent.type === "FRAME") {
-            const parentFrame = parent;
-            if (parentFrame.layoutMode === "VERTICAL" && parentFrame.width < 1e3) {
-              console.log("\u2705 Width constraint detected: Parent has VERTICAL layout with width <1000px:", parentFrame.width);
-              return true;
+          console.log("\u274C No width constraint: Effective width =", effectiveWidth || "null");
+          return false;
+        }
+        /**
+         * Debug helper to log the full parent chain for width analysis
+         * Useful for troubleshooting width constraint detection issues
+         */
+        static debugParentChain(container) {
+          console.log("\u{1F50D} DEBUG: Parent chain analysis for:", container.name);
+          let current = container;
+          let level = 0;
+          while (current && level < 10) {
+            console.log(`Level ${level}:`, {
+              name: current.name,
+              type: current.type,
+              layoutMode: current.layoutMode || "none",
+              width: current.width,
+              horizontalSizing: current.horizontalSizing || "not-set",
+              primaryAxisSizingMode: current.primaryAxisSizingMode || "not-set",
+              counterAxisSizingMode: current.counterAxisSizingMode || "not-set",
+              hasEffectiveWidth: !!current._effectiveWidth,
+              effectiveWidth: current._effectiveWidth || "none"
+            });
+            const parent = current.parent;
+            if (parent && parent.type === "FRAME") {
+              current = parent;
+              level++;
+            } else {
+              break;
             }
           }
-          console.log("\u274C No width constraint detected");
-          return false;
+        }
+        /**
+         * Calculate effective width constraint from parent chain
+         * Enhanced to handle FILL containers and metadata from JSON Engineer
+         * Walks up the layout hierarchy to find actual width limits
+         */
+        static calculateEffectiveWidth(container) {
+          console.log("\u{1F9EE} Calculating effective width for:", container.name);
+          let current = container;
+          let level = 0;
+          while (current && level < 10) {
+            console.log(`  Level ${level}: ${current.name} (${current.layoutMode || "no-layout"})`);
+            if (current.primaryAxisSizingMode === "FIXED" && current.counterAxisSizingMode === "FIXED" && current.width > 0) {
+              const rootWidth = current.width;
+              console.log(`  \u2705 Case 1 - Found root width: ${rootWidth}px`);
+              return rootWidth;
+            }
+            if (current.width > 0) {
+              const constrainedWidth = current.width - (current.paddingLeft || 0) - (current.paddingRight || 0);
+              console.log(`  \u2705 Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
+              return Math.max(constrainedWidth, 100);
+            }
+            if (current._effectiveWidth) {
+              const metadataWidth = current._effectiveWidth;
+              console.log(`  \u2705 Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
+              return metadataWidth;
+            }
+            const parent = current.parent;
+            if (parent && parent.type === "FRAME") {
+              const parentFrame = parent;
+              if (parentFrame.layoutMode === "VERTICAL" && current.layoutMode !== void 0) {
+                console.log(`  \u{1F50D} Case 4 - Checking FILL in VERTICAL parent`);
+                console.log(`    Parent: ${parentFrame.name}, layout: VERTICAL`);
+                console.log(`    Current horizontalSizing: ${current.horizontalSizing || "not-set"}`);
+                const parentWidth = this.calculateEffectiveWidth(parentFrame);
+                if (parentWidth) {
+                  const availableWidth = parentWidth - (parentFrame.paddingLeft || 0) - (parentFrame.paddingRight || 0);
+                  console.log(`  \u2705 Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
+                  return Math.max(availableWidth, 100);
+                }
+              }
+              if (parentFrame.layoutMode === "HORIZONTAL" && parentFrame.width > 0) {
+                const parentWidth = parentFrame.width - (parentFrame.paddingLeft || 0) - (parentFrame.paddingRight || 0);
+                console.log(`  \u2705 Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
+                return Math.max(parentWidth, 100);
+              }
+              current = parentFrame;
+              level++;
+            } else {
+              break;
+            }
+          }
+          console.log("  \u274C No effective width found in parent chain (reached top or max depth)");
+          return null;
         }
         /**
          * Create native text element
          */
         static async createTextNode(textData, container) {
-          var _a;
+          var _a, _b;
           console.log("Creating native text:", textData);
           const textNode = figma.createText();
           await figma.loadFontAsync({ family: "Inter", style: "Regular" });
           const textContent = textData.text || textData.content || ((_a = textData.properties) == null ? void 0 : _a.content) || textData.characters || "Text";
           textNode.characters = textContent;
           const props = textData.properties || textData;
+          const constraintWidth = textData._constraintWidth || null;
+          const parentLayout = textData._parentLayout || null;
+          const useFlexFill = textData._useFlexFill || false;
+          console.log("\u{1F4D0} Text metadata:", {
+            constraintWidth,
+            parentLayout,
+            useFlexFill,
+            content: ((_b = props.content) == null ? void 0 : _b.substring(0, 30)) + "..."
+          });
           const fontSize = props.fontSize || props.size || props.textSize || 16;
           textNode.fontSize = fontSize;
           if (props.fontWeight === "bold" || props.weight === "bold" || props.style === "bold") {
@@ -2682,6 +2801,9 @@
                 } catch (error) {
                   console.error(`\u274C Error applying color "${props.color}":`, error);
                 }
+              } else if (typeof props.color === "object" && "r" in props.color) {
+                const { r, g, b } = props.color;
+                textNode.fills = [{ type: "SOLID", color: { r, g, b } }];
               } else {
                 textNode.fills = [{ type: "SOLID", color: props.color }];
               }
@@ -2717,14 +2839,48 @@
             }
           }
           const isInConstrainedContainer = this.detectWidthConstraint(container);
-          if (isInConstrainedContainer) {
+          if (useFlexFill) {
+            console.log("\u{1F4DD} Text flex-fill decision:", {
+              content: textContent.substring(0, 30) + "...",
+              useFlexFill,
+              parentLayout,
+              isInConstrainedContainer,
+              containerName: container.name,
+              effectiveWidth: this.calculateEffectiveWidth(container)
+            });
+          }
+          if (useFlexFill) {
             textNode.textAutoResize = "HEIGHT";
-            const availableWidth = container.width - (container.paddingLeft || 0) - (container.paddingRight || 0);
+            console.log("\u2705 FINAL: Applied flex-fill (auto-layout managed width)", {
+              parentLayout,
+              textAutoResize: "HEIGHT",
+              strategy: parentLayout === "VERTICAL_IN_HORIZONTAL" ? "nested" : "direct"
+            });
+          } else if (isInConstrainedContainer && !useFlexFill) {
+            textNode.textAutoResize = "HEIGHT";
+            let targetWidth = constraintWidth;
+            if (!targetWidth) {
+              const effectiveWidth = this.calculateEffectiveWidth(container);
+              targetWidth = effectiveWidth;
+            }
+            if (!targetWidth) {
+              targetWidth = container.width;
+            }
+            const availableWidth = Math.max(
+              targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)),
+              100
+              // Minimum 100px
+            );
             textNode.resize(availableWidth, textNode.height);
-            console.log("\u2705 Set textAutoResize to HEIGHT and width to", availableWidth, "(width constrained by parent)");
+            console.log("\u2705 FINAL: Applied width constraint", {
+              source: constraintWidth ? "metadata" : "calculated",
+              targetWidth,
+              availableWidth,
+              containerPadding: (container.paddingLeft || 0) + (container.paddingRight || 0)
+            });
           } else {
             textNode.textAutoResize = "WIDTH_AND_HEIGHT";
-            console.log("\u2705 Set textAutoResize to WIDTH_AND_HEIGHT (no width constraint)");
+            console.log("\u2705 FINAL: Applied free expansion (no width constraint detected)");
           }
           this.applyChildLayoutProperties(textNode, props);
           container.appendChild(textNode);
@@ -2754,7 +2910,8 @@
                   }
                 }
               } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
-                rect.fills = [{ type: "SOLID", color: fillColor }];
+                const { r, g, b } = fillColor;
+                rect.fills = [{ type: "SOLID", color: { r, g, b } }];
               } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
                 await this.applyImageFill(rect, fillColor);
               }
@@ -2938,7 +3095,8 @@
                   }
                 }
               } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
-                ellipse.fills = [{ type: "SOLID", color: fillColor }];
+                const { r, g, b } = fillColor;
+                ellipse.fills = [{ type: "SOLID", color: { r, g, b } }];
               } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
                 await this.applyImageFill(ellipse, fillColor);
               }
@@ -3463,9 +3621,16 @@
          */
         static applyChildLayoutProperties(node, properties) {
           if (!properties || !node) return;
-          console.log("\u{1F527} APPLYING CHILD LAYOUT PROPERTIES:", {
+          console.log("\u{1F525} CODE DEPLOYMENT TEST - APPLYING CHILD LAYOUT PROPERTIES:", {
             nodeType: node.type,
-            properties
+            properties,
+            DEPLOYMENT_TEST: "August 12 - If you see this, code is deployed"
+          });
+          console.log("\u{1F525}\u{1F525}\u{1F525} BEFORE SIZING MODE LOGIC:", {
+            primaryAxisSizingMode: node.primaryAxisSizingMode,
+            counterAxisSizingMode: node.counterAxisSizingMode,
+            layoutMode: node.layoutMode,
+            height: node.height
           });
           if (node.type !== "FRAME" && node.type !== "COMPONENT" && node.type !== "INSTANCE") {
             console.warn("\u26A0\uFE0F Node type does not support layout properties:", node.type);
@@ -3536,12 +3701,16 @@
               console.warn("\u26A0\uFE0F Failed to set layoutPositioning:", e);
             }
           }
-          if (properties.layoutMode && (properties.primaryAxisSizingMode || properties.counterAxisSizingMode)) {
+          if (properties.layoutMode && properties.layoutMode !== frame.layoutMode) {
             try {
-              if (properties.layoutMode !== frame.layoutMode) {
-                frame.layoutMode = properties.layoutMode;
-                console.log("\u2705 Set child layoutMode:", properties.layoutMode);
-              }
+              frame.layoutMode = properties.layoutMode;
+              console.log("\u2705 Set child layoutMode:", properties.layoutMode);
+            } catch (e) {
+              console.error("\u274C Failed to set layoutMode:", e);
+            }
+          }
+          if (properties.primaryAxisSizingMode || properties.counterAxisSizingMode) {
+            try {
               if (properties.primaryAxisSizingMode) {
                 frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
                 console.log("\u2705 Set child primaryAxisSizingMode:", properties.primaryAxisSizingMode);
@@ -3554,6 +3723,12 @@
               console.error("\u274C Failed to apply sizing modes:", e);
             }
           }
+          console.log("\u{1F525}\u{1F525}\u{1F525} AFTER ALL LOGIC:", {
+            primaryAxisSizingMode: node.primaryAxisSizingMode,
+            counterAxisSizingMode: node.counterAxisSizingMode,
+            layoutMode: node.layoutMode,
+            height: node.height
+          });
         }
         /**
          * Enhanced systematic component creation with modern API
@@ -4599,6 +4774,7 @@ ${llmErrors}`);
             if (!items || !Array.isArray(items)) return currentFrame;
             for (const item of items) {
               try {
+                console.log("\u{1F525} PROCESSING ITEM:", item.type, item.name || "unnamed", "layoutMode:", item.layoutMode);
                 const processedItem = __spreadValues({}, item);
                 if ((_h = processedItem.type) == null ? void 0 : _h.startsWith("native-")) {
                   const validatedType = this.validateNativeType(processedItem.type);
@@ -4644,11 +4820,19 @@ ${llmErrors}`);
                   }
                 }
                 if (processedItem.type === "layoutContainer") {
-                  console.log("\u{1F527} Creating nested layoutContainer:", processedItem.name, "layoutMode:", processedItem.layoutMode);
+                  console.log("\u{1F525} CREATING NESTED LAYOUT CONTAINER:", processedItem.name, "layoutMode:", processedItem.layoutMode);
+                  console.log("\u{1F680} DEPLOYMENT CHECK AUG 12 2025 - CODE IS DEPLOYED AND RUNNING");
                   breadcrumb("NESTED: Creating layoutContainer frame for " + (processedItem.name || "unnamed"));
                   const nestedFrame = figma.createFrame();
                   breadcrumb("NESTED: Appending layoutContainer frame to parent");
                   currentFrame.appendChild(nestedFrame);
+                  console.log("\u{1F50D} DEBUG: Created nested frame with defaults:", {
+                    name: processedItem.name,
+                    layoutMode: processedItem.layoutMode,
+                    primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+                    counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+                    height: nestedFrame.height
+                  });
                   console.log("\u{1F6A8} DEBUG LINE 3072: About to call applyChildLayoutProperties", {
                     nestedFrameType: nestedFrame.type,
                     itemType: processedItem.type,
@@ -4683,11 +4867,52 @@ ${llmErrors}`);
                   });
                   breadcrumb("NESTED: Applying child layout properties to layoutContainer");
                   this.applyChildLayoutProperties(nestedFrame, childLayoutProps);
+                  if (nestedFrame.layoutMode === "HORIZONTAL" && nestedFrame.primaryAxisSizingMode === "AUTO") {
+                    console.log("\u{1F527} HORIZONTAL AUTO CONTAINER: Forcing height reset from default 100px");
+                    try {
+                      console.log("\u{1F4CF} Current height before fix:", nestedFrame.height);
+                      const children = nestedFrame.children;
+                      if (children.length > 0) {
+                        let maxChildHeight = 0;
+                        for (const child of children) {
+                          if ("height" in child) {
+                            maxChildHeight = Math.max(maxChildHeight, child.height);
+                          }
+                        }
+                        console.log("\u{1F4CF} Calculated max child height:", maxChildHeight);
+                        if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
+                          const paddingTop = nestedFrame.paddingTop || 0;
+                          const paddingBottom = nestedFrame.paddingBottom || 0;
+                          const targetHeight = maxChildHeight + paddingTop + paddingBottom;
+                          console.log("\u{1F4CF} Setting frame height to:", targetHeight);
+                          nestedFrame.resize(nestedFrame.width, targetHeight);
+                        }
+                      }
+                      console.log("\u{1F4CF} Final height after fix:", nestedFrame.height);
+                      console.log("\u2705 Height reset complete - should now hug content");
+                    } catch (error) {
+                      console.error("\u274C Height reset failed:", error);
+                    }
+                  }
+                  console.log("\u{1F50D} DEBUG: After applyChildLayoutProperties:", {
+                    name: processedItem.name,
+                    layoutMode: nestedFrame.layoutMode,
+                    primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+                    counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+                    height: nestedFrame.height
+                  });
                   breadcrumb("NESTED: Recursive call to generateUIFromDataSystematic for layoutContainer");
                   await this.generateUIFromDataSystematic({
                     layoutContainer: processedItem,
                     items: processedItem.items
                   }, nestedFrame);
+                  console.log("\u{1F50D} DEBUG: Final frame properties:", {
+                    name: nestedFrame.name,
+                    layoutMode: nestedFrame.layoutMode,
+                    primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+                    counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+                    height: nestedFrame.height
+                  });
                 } else if (processedItem.type === "frame" && processedItem.layoutContainer) {
                   breadcrumb("NESTED: Creating frame with layoutContainer");
                   const nestedFrame = figma.createFrame();

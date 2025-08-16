@@ -32,6 +32,15 @@ import glob
 sys.path.append(os.path.abspath('src'))
 # JSONMigrator is TypeScript, skip for now
 
+# Import QA module
+from scripts.design_qa import DesignQA
+
+# QA Configuration
+QA_CONFIG = {
+    'enabled': True,  # Set to False to skip QA
+    'max_iterations': 3,  # Configurable iteration count
+}
+
 # Load environment variables from .env file
 def load_env():
     env_file = Path(".env")
@@ -338,12 +347,12 @@ class Alternative3StagePipeline:
         else:
             print("📋 Running Alternative 3-Stage Pipeline in placeholder mode (no API key)")
     
-    def load_alt_prompt(self, stage_num: int) -> str:
+    def load_alt_prompt(self, stage_num: int, design_reviewer_mode: bool = False) -> str:
         """Load prompt file for alternative pipeline stage"""
         alt_prompt_files = {
             1: "src/prompts/roles/alt1-user-request-analyzer.txt",
             2: "src/prompts/roles/alt2-ux-ui-designer.txt",
-            3: "src/prompts/roles/5 json-engineer.txt",  # Reuse existing JSON Engineer
+            3: "src/prompts/roles/5 design-reviewer-json-engineer.txt" if design_reviewer_mode else "src/prompts/roles/5 json-engineer.txt",  # JSON Engineer or Design Reviewer JSON Engineer
             4: "src/prompts/roles/visual-improvement-analyzer.txt",  # Visual UX Designer
             5: "src/prompts/roles/5 json-engineer.txt"   # JSON Engineer (second pass)
         }
@@ -663,7 +672,7 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
         
         print(f"📄 Alt AI output saved to: {filepath}")
     
-    async def run_alt_stage(self, stage_num: int, input_data: str, run_id: str, visual_refs: List[str] = None, screenshot_path: str = None) -> StageResult:
+    async def run_alt_stage(self, stage_num: int, input_data: str, run_id: str, visual_refs: List[str] = None, screenshot_path: str = None, design_reviewer_mode: bool = False) -> StageResult:
         """Run a single alternative pipeline stage"""
         alt_stage_names = {
             1: "User Request Analyzer",
@@ -681,7 +690,7 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
         start_time = time.time()
         
         # Load prompt and format it based on stage
-        prompt_template = self.load_alt_prompt(stage_num)
+        prompt_template = self.load_alt_prompt(stage_num, design_reviewer_mode)
         
         # Add visual reference context for stages 1 and 2
         if visual_refs and stage_num in [1, 2]:
@@ -758,6 +767,78 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             results[f"stage_{stage_num}"] = result
             current_input = result.content
             
+            # Add QA validation after Stage 2 (UX/UI Designer)
+            if QA_CONFIG['enabled'] and stage_num == 2:
+                print(f"\n{'='*50}")
+                print(f"Stage 2.5: Design QA Validation")
+                print(f"{'='*50}")
+                
+                # Initialize QA
+                qa = DesignQA(self.api_key)
+                
+                # Get designer output from Stage 2 (raw string with rationale)
+                designer_output = result.content
+                
+                # Run QA loop - it will extract JSON internally
+                try:
+                    validated_json, qa_history = qa.run_qa_loop(
+                        designer_output, 
+                        max_iterations=QA_CONFIG['max_iterations']
+                    )
+                    
+                    # QA succeeded - use validated output
+                    qa_succeeded = True
+                    
+                except Exception as e:
+                    print(f"⚠️ QA validation failed: {e}")
+                    print("⏭️ Proceeding with original designer output")
+                    validated_json = None
+                    qa_history = []
+                    qa_succeeded = False
+                
+                # Handle QA results (success or failure)
+                if qa_succeeded and validated_json is not None:
+                    # Save QA outputs
+                    qa_output = {
+                        'stage': 'Design QA',
+                        'timestamp': run_id,
+                        'validated_json': validated_json,
+                        'history': qa_history,
+                        'iterations_used': len(qa_history)
+                    }
+                    
+                    # Save to file
+                    qa_file = self.output_dir / f"alt3_{run_id}_2_5_qa_validated.json"
+                    with open(qa_file, 'w') as f:
+                        json.dump(qa_output, f, indent=2)
+                    
+                    # Save detailed change log for retrospective analysis
+                    change_log_file = self.output_dir / f"alt3_{run_id}_2_5_qa_change_log.json"
+                    qa.save_change_log(qa_history, change_log_file)
+                    
+                    # CRITICAL: Format the validated JSON for JSON Engineer
+                    # JSON Engineer expects designer format with separator
+                    formatted_for_engineer = f"""# QA VALIDATED DESIGN
+
+Design has been validated and corrected through {len(qa_history)} QA iteration(s).
+
+Issues fixed:
+{chr(10).join(['- ' + issue for h in qa_history for issue in h.get('issues', [])])}
+
+---RATIONALE-SEPARATOR---
+
+{json.dumps(validated_json, indent=2)}
+"""
+                    
+                    # Update the current input for next stage
+                    current_input = formatted_for_engineer
+                    
+                    print(f"✅ QA Validation complete: {len(qa_history)} iteration(s) used")
+                else:
+                    # QA failed, continue with original designer output
+                    print(f"⚠️ QA Validation skipped: {len(qa_history)} iteration(s) attempted")
+                    # current_input remains unchanged (original designer output)
+            
         # Apply JSON migration
         final_json_str = results["stage_3"].content
         
@@ -830,6 +911,78 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             result = await self.run_alt_stage(stage_num, current_input, run_id, visual_refs)
             results[f"stage_{stage_num}"] = result
             current_input = result.content
+            
+            # Add QA validation after Stage 2 (UX/UI Designer) 
+            if QA_CONFIG['enabled'] and stage_num == 2:
+                print(f"\n{'='*50}")
+                print(f"Stage 2.5: Design QA Validation")
+                print(f"{'='*50}")
+                
+                # Initialize QA
+                qa = DesignQA(self.api_key)
+                
+                # Get designer output from Stage 2 (raw string with rationale)
+                designer_output = result.content
+                
+                # Run QA loop - it will extract JSON internally
+                try:
+                    validated_json, qa_history = qa.run_qa_loop(
+                        designer_output, 
+                        max_iterations=QA_CONFIG['max_iterations']
+                    )
+                    
+                    # QA succeeded - use validated output
+                    qa_succeeded = True
+                    
+                except Exception as e:
+                    print(f"⚠️ QA validation failed: {e}")
+                    print("⏭️ Proceeding with original designer output")
+                    validated_json = None
+                    qa_history = []
+                    qa_succeeded = False
+                
+                # Handle QA results (success or failure)
+                if qa_succeeded and validated_json is not None:
+                    # Save QA outputs
+                    qa_output = {
+                        'stage': 'Design QA',
+                        'timestamp': run_id,
+                        'validated_json': validated_json,
+                        'history': qa_history,
+                        'iterations_used': len(qa_history)
+                    }
+                    
+                    # Save to file
+                    qa_file = self.output_dir / f"alt3_{run_id}_2_5_qa_validated.json"
+                    with open(qa_file, 'w') as f:
+                        json.dump(qa_output, f, indent=2)
+                    
+                    # Save detailed change log for retrospective analysis
+                    change_log_file = self.output_dir / f"alt3_{run_id}_2_5_qa_change_log.json"
+                    qa.save_change_log(qa_history, change_log_file)
+                    
+                    # CRITICAL: Format the validated JSON for JSON Engineer
+                    # JSON Engineer expects designer format with separator
+                    formatted_for_engineer = f"""# QA VALIDATED DESIGN
+
+Design has been validated and corrected through {len(qa_history)} QA iteration(s).
+
+Issues fixed:
+{chr(10).join(['- ' + issue for h in qa_history for issue in h.get('issues', [])])}
+
+---RATIONALE-SEPARATOR---
+
+{json.dumps(validated_json, indent=2)}
+"""
+                    
+                    # Update the current input for next stage
+                    current_input = formatted_for_engineer
+                    
+                    print(f"✅ QA Validation complete: {len(qa_history)} iteration(s) used")
+                else:
+                    # QA failed, continue with original designer output
+                    print(f"⚠️ QA Validation skipped: {len(qa_history)} iteration(s) attempted")
+                    # current_input remains unchanged (original designer output)
         
         # Extract and save initial JSON
         initial_json_str = results["stage_3"].content
@@ -1060,6 +1213,12 @@ def main():
     parser.add_argument("--original-prompt", help="Original prompt for modification pipeline")
     parser.add_argument("--modification", help="Modification request for existing UI")
     parser.add_argument("--port", type=int, default=8000, help="Port for HTTP server (default: 8000)")
+    parser.add_argument("--start-stage", type=int, help="Start stage number (for selective pipeline runs)")
+    parser.add_argument("--end-stage", type=int, help="End stage number (for selective pipeline runs)")
+    parser.add_argument("--input-file", help="Input file path for custom pipeline stages")
+    parser.add_argument("--timestamp", help="Custom timestamp for consistent file naming")
+    parser.add_argument("--design-reviewer-mode", action='store_true', 
+                       help='Use design-reviewer-json-engineer prompt instead of standard json-engineer')
     
     args = parser.parse_args()
     
@@ -1115,6 +1274,42 @@ def main():
             print(f"📸 Found {len(visual_refs)} visual references: {[os.path.basename(ref) for ref in visual_refs]}")
             
         asyncio.run(alt_runner.run_all_alt_stages_with_visual(initial_input, visual_refs))
+    
+    elif args.stage == "alt3" and (args.start_stage or args.end_stage or args.input_file or args.timestamp):
+        # Special handling for selective alt3 pipeline runs (for design reviewer)
+        async def run_selective_alt3():
+            alt_runner = Alternative3StagePipeline(api_key)
+            
+            # Load input from file if specified
+            if args.input_file and os.path.exists(args.input_file):
+                with open(args.input_file, 'r', encoding='utf-8') as f:
+                    input_data = json.load(f)
+                    initial_input = input_data.get('content', '')
+                print(f"📁 Loaded input from: {args.input_file}")
+            else:
+                initial_input = args.input or "create a login page for a SaaS app"
+            
+            # Use custom timestamp if provided
+            run_id = args.timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Run specific stage range
+            start_stage = args.start_stage or 1
+            end_stage = args.end_stage or 3
+            
+            # Run stages
+            current_input = initial_input
+            for stage_num in range(start_stage, end_stage + 1):
+                result = await alt_runner.run_alt_stage(
+                    stage_num, 
+                    current_input, 
+                    run_id, 
+                    design_reviewer_mode=args.design_reviewer_mode if stage_num == 3 else False
+                )
+                current_input = result.content
+                
+            print(f"✅ Selective Alt3 pipeline completed: stages {start_stage}-{end_stage}")
+        
+        asyncio.run(run_selective_alt3())
     
     elif args.stage.startswith("alt3-"):
         # Single stage from alternative 3-stage pipeline

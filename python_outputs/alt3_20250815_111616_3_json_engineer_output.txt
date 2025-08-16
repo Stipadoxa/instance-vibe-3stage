@@ -1,0 +1,115 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Listing Page - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Listing",
+        "subheadline": "Browse all products"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "leading-icon": "arrow-dropdown"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Seller Profile Row - Mobile",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-image",
+              "properties": {
+                "imageUrl": "https://example.com/seller_avatar.jpg",
+                "placeholderImageUrl": "path/to/placeholder.jpg",
+                "width": 50,
+                "height": 50,
+                "cornerRadius": 8
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 4,
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "EcoFriendlyGoods",
+                    "textStyle": "Title/Medium",
+                    "color": "Neutral/neutral90"
+                  },
+                  "_constraintWidth": 275,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "4.8 ⭐",
+                    "textStyle": "Body/Medium",
+                    "color": "Primary/primary50"
+                  },
+                  "_constraintWidth": 275,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

@@ -1,0 +1,70 @@
+```json
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "horizontalSizing": "FILL",
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "width": 375,
+  "minHeight": 812,
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "itemSpacing": 8,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Product Title",
+            "textStyle": "headline1",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "color": "#000000",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "button1",
+          "properties": {
+            "label": "Add to Cart"
+          },
+          "variants": {
+            "size": "medium",
+            "color": "primary"
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": 343,
+        "height": 200,
+        "fill": {
+          "type": "IMAGE",
+          "scaleMode": "FILL"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Product Description",
+        "textStyle": "body1",
+        "fontSize": 16,
+        "fontWeight": "normal",
+        "color": "#666666",
+        "alignment": "left"
+      }
+    }
+  ]
+}
+```

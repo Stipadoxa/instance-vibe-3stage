@@ -1,0 +1,292 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5632": true,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "leading-icon": "arrow",
+        "trailing-icon": "share"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2015 MacBook Pro 13\" - Space Gray - Excellent Condition",
+            "textStyle": "Headline/Large"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "2+ images"
+          },
+          "properties": {
+            "imageUrl": [
+              "image1.jpg",
+              "image2.jpg",
+              "image3.jpg",
+              "image4.jpg"
+            ]
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$450",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Excellent (Minor scratches on the bottom casing)",
+            "textStyle": "Body/Medium"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "properties": {
+                "imageUrl": "seller_profile.jpg"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Doe",
+                    "textStyle": "Title/Medium"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "⭐⭐⭐⭐⭐ (150 Reviews)",
+                    "textStyle": "Body/Small"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used 2015 MacBook Pro 13\" in Space Gray. Excellent condition with minor cosmetic scratches on the bottom. Runs smoothly, battery health at 85%. Includes original charger. Perfect for students or professionals.",
+            "textStyle": "Body/Medium"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 4,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Specifications:",
+                "textStyle": "Title/Medium"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Processor: 2.7 GHz Intel Core i5",
+                "textStyle": "Body/Small"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "RAM: 8GB",
+                "textStyle": "Body/Small"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Storage: 256GB SSD",
+                "textStyle": "Body/Small"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Operating System: macOS Monterey",
+                "textStyle": "Body/Small"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Report Listing"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Add to Favorites"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Updated 2 hours ago",
+            "textStyle": "Caption/Small",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "textLayers": {
+        "✏️ Label": [
+          "Home",
+          "Search",
+          "Messages",
+          "Profile"
+        ]
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

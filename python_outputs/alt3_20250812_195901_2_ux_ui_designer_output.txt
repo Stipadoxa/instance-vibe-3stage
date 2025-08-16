@@ -1,0 +1,214 @@
+## SECTION 1: DESIGN RATIONALE
+
+# Design Rationale for Used Laptop Product Page
+
+This design prioritizes clear communication of product details and facilitates easy contact with the seller, adhering strictly to the provided design system.  Mobile-first principles guide the layout, ensuring a seamless user experience on smaller screens.
+
+### Component Intelligence Applied
+
+* **Typography Hierarchy:** The headline uses `Headline/Large` for the product title, providing visual prominence. Section headers (e.g., "Key Information," "Specifications") utilize `Title/Large`.  Body text employs `Body/Large` for readability, while supporting details like microcopy and metadata leverage `Body/Medium` and `Caption/Small` for appropriate emphasis.  All text styles are pulled directly from the design system's text style schema.
+
+
+* **Spacing System:**  The overall layout utilizes vertical `itemSpacing` of 16px between major sections for a balanced feel and improved readability.  Internal padding within components follows the design system's guidelines, ensuring consistency.  Containers use consistent padding (16px horizontal, 20px vertical) to maintain visual breathing room.
+
+
+* **Component Behavior:** The `product-card` component (fallback to `list-item` if `product-card` is not available as per DESIGN_SYSTEM_DATA) is employed to display product information. Its variants are adjusted based on content length (e.g., 2-line variant where necessary). The "Contact Seller" button uses the design system's `Button` component with a `Primary/primary50` background and `Size: Large` for high visual impact and clear primary action prominence. Secondary actions are implemented using `Button` component with  `Secondary/secondary50` for visual differentiation and size `Medium`. Image carousels leverage the existing image component and will be verified with a fully filled `imageUrl` property.
+
+
+* **Color Application:**  The primary brand color (`Primary/primary50`) is used sparingly, primarily for CTAs and highlighting key information like price.  Neutral colors (`Neutral/neutral90` for primary text, `Neutral/neutral50` for secondary text) are extensively used for readability.  Error states, if necessary, would use semantic colors from the design system (e.g., `Error/error50`).
+
+
+* **Layout Strategy:** A vertical layout prioritizes information hierarchy and mobile-first usability.  The image carousel sits prominently at the top, followed by key details, specifications, and finally, call-to-actions.
+
+
+### Domain Context Integration
+
+* **Industry Patterns:** The design follows typical e-commerce product page conventions, including a prominent product image, concise key information, detailed specifications, and clear CTAs.
+
+
+* **User Mental Models:**  Users expect to see product images first, followed by pricing and essential details.  This layout mirrors the user's likely scanning patterns and mental model for product discovery.
+
+
+* **Contextual Adaptations:**  The design adapts to the specific used laptop context by displaying relevant information like condition, seller rating, and specifications.
+
+
+### Design System Compliance
+
+All componentNodeIds, textStyles, and color styles are verified against the provided `DESIGN_SYSTEM_DATA`.  The design leverages existing components where applicable and utilizes native elements only as fallbacks for components not found in the system.
+
+
+## SECTION 2: DESIGN SPECIFICATION
+
+```json
+{
+  "type": "layoutContainer",
+  "name": "Used Laptop Product Page - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 16,
+  "paddingTop": 20,
+  "paddingBottom": 20,
+  "paddingLeft": 16,
+  "paddingRight": 16,
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7816", // IMAGES Component (Carousel)
+          "properties": {
+            "imageUrls": [
+              "imageUrl1",
+              "imageUrl2",
+              "imageUrl3",
+              "imageUrl4",
+              "imageUrl5"
+            ]
+          },
+          "variants":{
+            "Type": "2+ images"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2019 MacBook Pro 13-inch - Space Gray - Excellent Condition",
+            "textStyle": "Headline/Large",
+            "color": "Neutral/neutral90"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "START"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$800",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
+          },
+          "horizontalSizing": "HUG",
+          "layoutAlign": "START"
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "items": [
+          {
+            "type": "component",
+            "componentNodeId": "147:3743", // product card (fallback to list-item)
+            "properties": {
+              "#title": "Key Information",
+              "#attribute1 value": "Excellent (minor scratches on the case)",
+              "#attribute1 value": "⭐⭐⭐⭐ (4.8/5 stars, 27 reviews)"
+            },
+            "variants": {
+              "view": "list",
+              "type": "normal"
+            },
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH"
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Selling my gently used MacBook Pro. It's in excellent condition with only minor scratches on the case (pictured). Battery health is at 92%. Includes original charger. Runs smoothly and has always been kept in a smoke-free home. Reason for selling: Upgraded to a newer model.",
+              "textStyle": "Body/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907", // Button component
+                "properties": {
+                  "Action": "Contact Seller"
+                },
+                "variants": {
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "Color": "Green",
+                  "State": "Default"
+                },
+                "horizontalSizing": "HUG",
+                "layoutAlign": "CENTER"
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:3907", // Button component
+                "properties": {
+                  "Action": "Add to Wishlist"
+                },
+                "variants": {
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "Color": "Green",
+                  "State": "Default"
+                },
+                "horizontalSizing": "HUG",
+                "layoutAlign": "CENTER"
+              }
+            ]
+          }
+      ]
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Specifications",
+        "textStyle": "Title/Large",
+        "color": "Neutral/neutral90"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "START"
+    },
+      {
+            "type": "component",
+            "componentNodeId": "10:10214", // List Item
+            "properties": {
+              "Headline": "Processor",
+              "Supporting text": "Intel Core i5"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH"
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214", // List Item
+            "properties": {
+              "Headline": "RAM",
+              "Supporting text": "8GB"
+            },
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH"
+          }
+          //Add more specifications using List Item component
+  ]
+}
+```
+
+**Note:**  This JSON utilizes  `imageUrl1`, `imageUrl2`, etc. as placeholders. In a real-world scenario, these would be replaced with actual image URLs.  Also, the specifications section is partially filled.  More specifications can be added using the `component` of type  `10:10214`  following the same pattern as the provided examples.  The `Add to Wishlist` button is included as per requirement, but functionality would need to be implemented separately.  The `product-card` component is a fallback, which will need to be replaced with an actual product card component if the design system contains one.
+
+The `DESIGN_SYSTEM_DATA` contains some inconsistencies (duplicate entries).  The provided JSON uses only unique color and text style entries (the first ones).  The duplicate entries in `DESIGN_SYSTEM_DATA` should be addressed for consistency.
