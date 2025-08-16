@@ -32,6 +32,15 @@ import glob
 sys.path.append(os.path.abspath('src'))
 # JSONMigrator is TypeScript, skip for now
 
+# Import QA module
+from scripts.design_qa import DesignQA
+
+# QA Configuration
+QA_CONFIG = {
+    'enabled': True,  # Set to False to skip QA
+    'max_iterations': 3,  # Configurable iteration count
+}
+
 # Load environment variables from .env file
 def load_env():
     env_file = Path(".env")
@@ -758,6 +767,78 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             results[f"stage_{stage_num}"] = result
             current_input = result.content
             
+            # Add QA validation after Stage 2 (UX/UI Designer)
+            if QA_CONFIG['enabled'] and stage_num == 2:
+                print(f"\n{'='*50}")
+                print(f"Stage 2.5: Design QA Validation")
+                print(f"{'='*50}")
+                
+                # Initialize QA
+                qa = DesignQA(self.api_key)
+                
+                # Get designer output from Stage 2 (raw string with rationale)
+                designer_output = result.content
+                
+                # Run QA loop - it will extract JSON internally
+                try:
+                    validated_json, qa_history = qa.run_qa_loop(
+                        designer_output, 
+                        max_iterations=QA_CONFIG['max_iterations']
+                    )
+                    
+                    # QA succeeded - use validated output
+                    qa_succeeded = True
+                    
+                except Exception as e:
+                    print(f"⚠️ QA validation failed: {e}")
+                    print("⏭️ Proceeding with original designer output")
+                    validated_json = None
+                    qa_history = []
+                    qa_succeeded = False
+                
+                # Handle QA results (success or failure)
+                if qa_succeeded and validated_json is not None:
+                    # Save QA outputs
+                    qa_output = {
+                        'stage': 'Design QA',
+                        'timestamp': run_id,
+                        'validated_json': validated_json,
+                        'history': qa_history,
+                        'iterations_used': len(qa_history)
+                    }
+                    
+                    # Save to file
+                    qa_file = self.output_dir / f"alt3_{run_id}_2_5_qa_validated.json"
+                    with open(qa_file, 'w') as f:
+                        json.dump(qa_output, f, indent=2)
+                    
+                    # Save detailed change log for retrospective analysis
+                    change_log_file = self.output_dir / f"alt3_{run_id}_2_5_qa_change_log.json"
+                    qa.save_change_log(qa_history, change_log_file)
+                    
+                    # CRITICAL: Format the validated JSON for JSON Engineer
+                    # JSON Engineer expects designer format with separator
+                    formatted_for_engineer = f"""# QA VALIDATED DESIGN
+
+Design has been validated and corrected through {len(qa_history)} QA iteration(s).
+
+Issues fixed:
+{chr(10).join(['- ' + issue for h in qa_history for issue in h.get('issues', [])])}
+
+---RATIONALE-SEPARATOR---
+
+{json.dumps(validated_json, indent=2)}
+"""
+                    
+                    # Update the current input for next stage
+                    current_input = formatted_for_engineer
+                    
+                    print(f"✅ QA Validation complete: {len(qa_history)} iteration(s) used")
+                else:
+                    # QA failed, continue with original designer output
+                    print(f"⚠️ QA Validation skipped: {len(qa_history)} iteration(s) attempted")
+                    # current_input remains unchanged (original designer output)
+            
         # Apply JSON migration
         final_json_str = results["stage_3"].content
         
@@ -830,6 +911,78 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             result = await self.run_alt_stage(stage_num, current_input, run_id, visual_refs)
             results[f"stage_{stage_num}"] = result
             current_input = result.content
+            
+            # Add QA validation after Stage 2 (UX/UI Designer) 
+            if QA_CONFIG['enabled'] and stage_num == 2:
+                print(f"\n{'='*50}")
+                print(f"Stage 2.5: Design QA Validation")
+                print(f"{'='*50}")
+                
+                # Initialize QA
+                qa = DesignQA(self.api_key)
+                
+                # Get designer output from Stage 2 (raw string with rationale)
+                designer_output = result.content
+                
+                # Run QA loop - it will extract JSON internally
+                try:
+                    validated_json, qa_history = qa.run_qa_loop(
+                        designer_output, 
+                        max_iterations=QA_CONFIG['max_iterations']
+                    )
+                    
+                    # QA succeeded - use validated output
+                    qa_succeeded = True
+                    
+                except Exception as e:
+                    print(f"⚠️ QA validation failed: {e}")
+                    print("⏭️ Proceeding with original designer output")
+                    validated_json = None
+                    qa_history = []
+                    qa_succeeded = False
+                
+                # Handle QA results (success or failure)
+                if qa_succeeded and validated_json is not None:
+                    # Save QA outputs
+                    qa_output = {
+                        'stage': 'Design QA',
+                        'timestamp': run_id,
+                        'validated_json': validated_json,
+                        'history': qa_history,
+                        'iterations_used': len(qa_history)
+                    }
+                    
+                    # Save to file
+                    qa_file = self.output_dir / f"alt3_{run_id}_2_5_qa_validated.json"
+                    with open(qa_file, 'w') as f:
+                        json.dump(qa_output, f, indent=2)
+                    
+                    # Save detailed change log for retrospective analysis
+                    change_log_file = self.output_dir / f"alt3_{run_id}_2_5_qa_change_log.json"
+                    qa.save_change_log(qa_history, change_log_file)
+                    
+                    # CRITICAL: Format the validated JSON for JSON Engineer
+                    # JSON Engineer expects designer format with separator
+                    formatted_for_engineer = f"""# QA VALIDATED DESIGN
+
+Design has been validated and corrected through {len(qa_history)} QA iteration(s).
+
+Issues fixed:
+{chr(10).join(['- ' + issue for h in qa_history for issue in h.get('issues', [])])}
+
+---RATIONALE-SEPARATOR---
+
+{json.dumps(validated_json, indent=2)}
+"""
+                    
+                    # Update the current input for next stage
+                    current_input = formatted_for_engineer
+                    
+                    print(f"✅ QA Validation complete: {len(qa_history)} iteration(s) used")
+                else:
+                    # QA failed, continue with original designer output
+                    print(f"⚠️ QA Validation skipped: {len(qa_history)} iteration(s) attempted")
+                    # current_input remains unchanged (original designer output)
         
         # Extract and save initial JSON
         initial_json_str = results["stage_3"].content
