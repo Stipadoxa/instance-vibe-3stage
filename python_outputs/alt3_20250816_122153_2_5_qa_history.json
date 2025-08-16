@@ -1,0 +1,46 @@
+[
+  {
+    "iteration": 1,
+    "issues": [
+      "itemSpacing: 0 in root container",
+      "layoutGrow missing in root container",
+      "width property in root container",
+      "minHeight property in root container",
+      "primaryAxisSizingMode and counterAxisSizingMode in root container",
+      "paddingTop, paddingBottom, paddingLeft, paddingRight properties in root container",
+      "missing componentNodeId in button",
+      "id instead of componentNodeId",
+      "incorrect variant value in button",
+      "invalid textStyle in button",
+      "missing visibilityOverrides for empty text layer"
+    ],
+    "changes": [
+      "Added layoutGrow to root container",
+      "Changed itemSpacing in root container",
+      "Removed width and minHeight from root container",
+      "Removed primaryAxisSizingMode and counterAxisSizingMode from root container",
+      "Added layoutSizingHorizontal to native-text components",
+      "Added missing componentNodeId to buttons",
+      "Corrected componentNodeId format",
+      "Corrected variant values for buttons",
+      "Corrected textStyle values for buttons",
+      "Added layoutSizingHorizontal: \"FILL\" to native-text components"
+    ],
+    "change_log": [
+      "[CHANGE_TYPE] Property \"itemSpacing\": \"0\" \u2192 \"16\" (Reason: Root container should have itemSpacing of 16)",
+      "[ADDITION] Added property \"layoutGrow\": \"1\" (Reason: Root container should fill available space)",
+      "[REMOVAL] Removed property \"width\": \"375\" (Reason: Width should be inherited from parent)",
+      "[REMOVAL] Removed property \"minHeight\": \"812\" (Reason: minHeight should be inherited from parent)",
+      "[REMOVAL] Removed property \"primaryAxisSizingMode\": \"FIXED\" (Reason: Not required for root layout)",
+      "[REMOVAL] Removed property \"counterAxisSizingMode\": \"FIXED\" (Reason: Not required for root layout)",
+      "[ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to multiple native-text components (Reason: Native text should fill container width)",
+      "[COMPONENT] Component \"10:3907\" variant \"Size\": \"Large\" \u2192 \"Large\" (Reason: Corrected id and ensured all variants are present)",
+      "[COMPONENT] Component \"10:3907\" variant \"Size\": \"Medium\" \u2192 \"Medium\" (Reason: Corrected id and ensured all variants are present)",
+      "[COMPONENT] Component \"10:3907\" variant \"Type\": \"Filled\" \u2192 \"Filled\" (Reason: Corrected id and ensured all variants are present)",
+      "[COMPONENT] Component \"10:3907\" variant \"Type\": \"Outlined\" \u2192 \"Outlined\" (Reason: Corrected id and ensured all variants are present)",
+      "[COMPONENT] Component \"10:3907\" variant \"State\": \"Default\" \u2192 \"Default\" (Reason: Corrected id and ensured all variants are present)",
+      "[COMPONENT] Component \"10:3907\" variant \"Color\": \"Green\" \u2192 \"Green\" (Reason: Corrected id and ensured all variants are present)",
+      "[COMPONENT] Component \"10:3907\" variant \"Platform\": \"Android+Web\" \u2192 \"Android+Web\" (Reason: Corrected id and ensured all variants are present)"
+    ]
+  }
+]

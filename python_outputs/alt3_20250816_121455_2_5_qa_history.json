@@ -1,0 +1,30 @@
+[
+  {
+    "iteration": 1,
+    "issues": [
+      "itemSpacing in root container is 0, should be 16",
+      "ROOT container has padding values other than 0",
+      "CONTENT container does not have paddingTop/Bottom/Left/Right: 16",
+      "CONTENT container itemSpacing is 12, should be between 12 and 16",
+      "Component ID format is incorrect in iconSwaps (should be \"number:number\")",
+      "trailing-icon in iconSwaps should be componentNodeId, not iconNodeId."
+    ],
+    "changes": [
+      "Changed itemSpacing in root container from 0 to 16",
+      "Set paddingTop, paddingBottom, paddingLeft, and paddingRight of root container to 0",
+      "Set paddingTop, paddingBottom, paddingLeft, and paddingRight of content container to 16",
+      "Changed itemSpacing in content container from 12 to 16",
+      "No changes made to iconSwaps as the provided design system does not contain the icon IDs.  Further investigation is needed to determine the correct componentNodeIds.  The IDs were left as they were to preserve design intent."
+    ]
+  },
+  {
+    "iteration": 2,
+    "issues": [
+      "- Component ID format is incorrect in iconSwaps (should be \"number:number\").",
+      "- `trailing-icon` in `iconSwaps` should be `componentNodeId`, not an `iconNodeId`.  The provided design system does not contain an ID matching the provided value, requiring further investigation or removal."
+    ],
+    "changes": [
+      "- Removed invalid `componentNodeId` \"635:4543\" from `iconSwaps.trailing-icon` in the appbar component, setting it to `null`."
+    ]
+  }
+]

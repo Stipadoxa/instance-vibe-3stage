@@ -3,7 +3,6 @@
   var __defProp = Object.defineProperty;
   var __defProps = Object.defineProperties;
   var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __propIsEnum = Object.prototype.propertyIsEnumerable;
@@ -20,6202 +19,18 @@
     return a;
   };
   var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-  var __objRest = (source2, exclude) => {
+  var __objRest = (source, exclude) => {
     var target = {};
-    for (var prop in source2)
-      if (__hasOwnProp.call(source2, prop) && exclude.indexOf(prop) < 0)
-        target[prop] = source2[prop];
-    if (source2 != null && __getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(source2)) {
-        if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source2, prop))
-          target[prop] = source2[prop];
+    for (var prop in source)
+      if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+        target[prop] = source[prop];
+    if (source != null && __getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(source)) {
+        if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+          target[prop] = source[prop];
       }
     return target;
   };
-  var __esm = (fn, res) => function __init() {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  };
-  var __export = (target, all) => {
-    for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
-  };
-
-  // src/core/component-scanner.ts
-  var ComponentScanner;
-  var init_component_scanner = __esm({
-    "src/core/component-scanner.ts"() {
-      "use strict";
-      ComponentScanner = class {
-        /**
-         * NEW: Scan Figma Variables (Design Tokens) from the local file
-         */
-        static async scanFigmaVariables() {
-          console.log("\u{1F527} Scanning Figma Variables (Design Tokens)...");
-          try {
-            if (!figma.variables) {
-              console.warn("\u274C figma.variables API not available in this Figma version");
-              return [];
-            }
-            console.log("\u2705 figma.variables API is available");
-            const collections = await figma.variables.getLocalVariableCollectionsAsync();
-            console.log(`\u2705 Found ${collections.length} variable collections`);
-            if (collections.length === 0) {
-              console.warn("\u26A0\uFE0F No variable collections found. Possible reasons:");
-              console.warn("  1. File has no Variables/Design Tokens defined");
-              console.warn("  2. Variables are in a different library/file");
-              console.warn("  3. Variables API permissions issue");
-              try {
-                console.log("\u{1F50D} Checking for non-local variables...");
-              } catch (e) {
-                console.log("\u{1F4DD} Non-local variable check not available");
-              }
-              return [];
-            }
-            const tokens = [];
-            for (const collection of collections) {
-              console.log(`\u{1F4E6} Processing collection: "${collection.name}" (ID: ${collection.id})`);
-              try {
-                const variables = await figma.variables.getVariablesByCollectionAsync(collection.id);
-                console.log(`  Found ${variables.length} variables in "${collection.name}"`);
-                console.log(`  Collection modes:`, Object.keys(collection.modes || {}));
-                for (const variable of variables) {
-                  try {
-                    console.log(`    Processing variable: "${variable.name}" (Type: ${variable.resolvedType})`);
-                    const modes = Object.keys(variable.valuesByMode);
-                    console.log(`      Available modes: [${modes.join(", ")}]`);
-                    if (modes.length === 0) {
-                      console.warn(`      \u26A0\uFE0F Variable "${variable.name}" has no modes`);
-                      continue;
-                    }
-                    const firstMode = modes[0];
-                    const value = variable.valuesByMode[firstMode];
-                    console.log(`      Using mode "${firstMode}" with value:`, value);
-                    const token = {
-                      id: variable.id,
-                      name: variable.name,
-                      type: variable.resolvedType,
-                      value,
-                      collection: collection.name,
-                      mode: firstMode,
-                      description: variable.description || void 0
-                    };
-                    tokens.push(token);
-                    if (variable.resolvedType === "COLOR") {
-                      console.log(`\u{1F3A8} Color token: "${variable.name}" = ${JSON.stringify(value)}`);
-                    } else {
-                      console.log(`\u{1F527} ${variable.resolvedType} token: "${variable.name}"`);
-                    }
-                  } catch (varError) {
-                    console.warn(`\u26A0\uFE0F Failed to process variable "${variable.name}":`, varError);
-                  }
-                }
-              } catch (collectionError) {
-                console.warn(`\u26A0\uFE0F Failed to process collection "${collection.name}":`, collectionError);
-              }
-            }
-            const colorTokens = tokens.filter((t) => t.type === "COLOR");
-            const otherTokens = tokens.filter((t) => t.type !== "COLOR");
-            console.log(`\u{1F527} Design Tokens Summary:`);
-            console.log(`   Color Tokens: ${colorTokens.length}`);
-            console.log(`   Other Tokens: ${otherTokens.length}`);
-            console.log(`   Total: ${tokens.length} tokens`);
-            if (tokens.length === 0) {
-              console.log("\u{1F914} Debug suggestions:");
-              console.log("  1. Check if this file has Variables in the right panel");
-              console.log("  2. Try creating a simple color variable as a test");
-              console.log("  3. Check if Variables are published from a library");
-            }
-            return tokens;
-          } catch (error) {
-            console.warn("\u26A0\uFE0F Failed to scan design tokens:", error);
-            console.warn("  This could be due to:");
-            console.warn("  - Variables API not available in this Figma version");
-            console.warn("  - Plugin permissions");
-            console.warn("  - File access restrictions");
-            return [];
-          }
-        }
-        /**
-         * NEW: Fallback - Create design tokens from color styles for testing
-         * This allows testing the token system even when Variables API doesn't work
-         */
-        static async createDesignTokensFromColorStyles() {
-          console.log("\u{1F504} Creating fallback design tokens from color styles...");
-          try {
-            const colorStyleCollection = await this.scanFigmaColorStyles();
-            const tokens = [];
-            Object.entries(colorStyleCollection).forEach(([category, styles]) => {
-              styles.forEach((style) => {
-                const tokenName = style.name.toLowerCase().replace(/[\/\s]+/g, "-").replace(/[^a-z0-9\-]/g, "");
-                let rgbValue = { r: 0, g: 0, b: 0 };
-                if (style.colorInfo.type === "SOLID" && style.colorInfo.color) {
-                  const hex = style.colorInfo.color.replace("#", "");
-                  rgbValue = {
-                    r: parseInt(hex.substr(0, 2), 16) / 255,
-                    g: parseInt(hex.substr(2, 2), 16) / 255,
-                    b: parseInt(hex.substr(4, 2), 16) / 255
-                  };
-                }
-                const token = {
-                  id: `fallback-${style.id}`,
-                  name: tokenName,
-                  type: "COLOR",
-                  value: rgbValue,
-                  collection: `${category}-colors`,
-                  mode: "default",
-                  description: `Fallback token from color style: ${style.name}`
-                };
-                tokens.push(token);
-                console.log(`\u{1F3A8} Created fallback token: "${tokenName}" from "${style.name}"`);
-              });
-            });
-            console.log(`\u{1F504} Created ${tokens.length} fallback design tokens from color styles`);
-            return tokens;
-          } catch (error) {
-            console.warn("\u26A0\uFE0F Failed to create fallback design tokens:", error);
-            return [];
-          }
-        }
-        /**
-         * Scan Figma Color Styles from the local file
-         */
-        static async scanFigmaColorStyles() {
-          console.log("\u{1F3A8} Scanning Figma Color Styles...");
-          try {
-            const paintStyles = await figma.getLocalPaintStylesAsync();
-            console.log(`\u2705 Found ${paintStyles.length} paint styles`);
-            const colorStyleCollection = {
-              primary: [],
-              secondary: [],
-              tertiary: [],
-              neutral: [],
-              semantic: [],
-              surface: [],
-              other: []
-            };
-            for (const paintStyle of paintStyles) {
-              try {
-                const colorStyle = await this.convertPaintStyleToColorStyle(paintStyle);
-                const category = this.categorizeColorStyle(colorStyle.name);
-                colorStyleCollection[category].push(colorStyle);
-                console.log(`\u{1F3A8} Categorized "${colorStyle.name}" as ${category} (variant: ${colorStyle.variant || "none"})`);
-              } catch (error) {
-                console.warn(`\u26A0\uFE0F Failed to process paint style "${paintStyle.name}":`, error);
-              }
-            }
-            const totalStyles = Object.values(colorStyleCollection).reduce((sum, styles) => sum + styles.length, 0);
-            console.log(`\u{1F3A8} Color Styles Summary:`);
-            console.log(`   Primary: ${colorStyleCollection.primary.length}`);
-            console.log(`   Secondary: ${colorStyleCollection.secondary.length}`);
-            console.log(`   Tertiary: ${colorStyleCollection.tertiary.length}`);
-            console.log(`   Neutral: ${colorStyleCollection.neutral.length}`);
-            console.log(`   Semantic: ${colorStyleCollection.semantic.length}`);
-            console.log(`   Surface: ${colorStyleCollection.surface.length}`);
-            console.log(`   Other: ${colorStyleCollection.other.length}`);
-            console.log(`   Total: ${totalStyles} styles`);
-            return colorStyleCollection;
-          } catch (error) {
-            console.error("\u274C Failed to scan color styles:", error);
-            return {
-              primary: [],
-              secondary: [],
-              tertiary: [],
-              neutral: [],
-              semantic: [],
-              surface: [],
-              other: []
-            };
-          }
-        }
-        /**
-         * Scans all local text styles in the current Figma file
-         * Mirrors the scanFigmaColorStyles pattern exactly
-         */
-        static async scanFigmaTextStyles() {
-          try {
-            console.log("\u{1F50D} Scanning text styles...");
-            const figmaTextStyles = await figma.getLocalTextStylesAsync();
-            console.log(`Found ${figmaTextStyles.length} text styles`);
-            const textStyles = figmaTextStyles.map((style) => {
-              const textStyle = {
-                id: style.id,
-                name: style.name,
-                description: style.description || "",
-                fontSize: style.fontSize,
-                fontName: style.fontName,
-                lineHeight: style.lineHeight,
-                letterSpacing: style.letterSpacing
-              };
-              if (style.textDecoration) {
-                textStyle.textDecoration = style.textDecoration;
-              }
-              if (style.textCase) {
-                textStyle.textCase = style.textCase;
-              }
-              if (style.textAlignHorizontal) {
-                textStyle.textAlignHorizontal = style.textAlignHorizontal;
-              }
-              if (style.textAlignVertical) {
-                textStyle.textAlignVertical = style.textAlignVertical;
-              }
-              if (style.paragraphSpacing !== void 0) {
-                textStyle.paragraphSpacing = style.paragraphSpacing;
-              }
-              if (style.paragraphIndent !== void 0) {
-                textStyle.paragraphIndent = style.paragraphIndent;
-              }
-              console.log(`\u2705 Processed text style: ${style.name} (${style.fontSize}px)`);
-              return textStyle;
-            });
-            console.log(`\u{1F4DD} Successfully scanned ${textStyles.length} text styles`);
-            return textStyles;
-          } catch (error) {
-            console.error("\u274C Error scanning text styles:", error);
-            throw new Error(`Failed to scan text styles: ${error.message}`);
-          }
-        }
-        /**
-         * Convert Figma PaintStyle to our ColorStyle interface
-         */
-        static async convertPaintStyleToColorStyle(paintStyle) {
-          const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
-          const { category, variant } = this.parseColorStyleName(paintStyle.name);
-          return {
-            id: paintStyle.id,
-            name: paintStyle.name,
-            description: paintStyle.description || void 0,
-            paints: paintStyle.paints,
-            category,
-            variant,
-            colorInfo: colorInfo || { type: "SOLID", color: "#000000", opacity: 1 }
-          };
-        }
-        /**
-         * Categorize a color style based on its name
-         * Supports patterns like: 'primary90', 'secondary50', 'neutral-100', 'Primary/500', etc.
-         */
-        static categorizeColorStyle(styleName) {
-          const name = styleName.toLowerCase();
-          if (name.includes("primary") || name.includes("brand")) {
-            return "primary";
-          }
-          if (name.includes("secondary") || name.includes("accent")) {
-            return "secondary";
-          }
-          if (name.includes("tertiary")) {
-            return "tertiary";
-          }
-          if (name.includes("neutral") || name.includes("gray") || name.includes("grey") || name.includes("black") || name.includes("white") || name.includes("slate")) {
-            return "neutral";
-          }
-          if (name.includes("success") || name.includes("error") || name.includes("warning") || name.includes("info") || name.includes("danger") || name.includes("alert") || name.includes("green") || name.includes("red") || name.includes("yellow") || name.includes("blue") || name.includes("orange")) {
-            return "semantic";
-          }
-          if (name.includes("surface") || name.includes("background") || name.includes("container") || name.includes("backdrop") || name.includes("overlay")) {
-            return "surface";
-          }
-          return "other";
-        }
-        /**
-         * Parse color style name to extract category and variant
-         * Examples: 'primary90' -> { category: 'primary', variant: '90' }
-         *          'Primary/500' -> { category: 'primary', variant: '500' }
-         *          'neutral-100' -> { category: 'neutral', variant: '100' }
-         */
-        static parseColorStyleName(styleName) {
-          const name = styleName.toLowerCase();
-          const pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
-          if (pattern1) {
-            const [, colorName, variant] = pattern1;
-            return {
-              category: this.categorizeColorStyle(colorName),
-              variant
-            };
-          }
-          const pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
-          if (pattern2) {
-            const [, colorName, variant] = pattern2;
-            return {
-              category: this.categorizeColorStyle(colorName),
-              variant
-            };
-          }
-          return {
-            category: this.categorizeColorStyle(name),
-            variant: void 0
-          };
-        }
-        /**
-         * Main scanning function - scans all pages for components and color styles
-         */
-        static async scanDesignSystem() {
-          console.log("\u{1F50D} Starting comprehensive design system scan...");
-          const components = [];
-          let colorStyles;
-          let textStyles;
-          try {
-            await figma.loadAllPagesAsync();
-            console.log("\u2705 All pages loaded");
-            console.log("\n\u{1F527} Phase 1: Scanning Design Tokens...");
-            let designTokens;
-            try {
-              designTokens = await this.scanFigmaVariables();
-              console.log(`\u{1F50D} Variables API returned:`, designTokens);
-              console.log(`\u{1F50D} Type: ${typeof designTokens}, Length: ${designTokens ? designTokens.length : "undefined"}`);
-              if (!designTokens || designTokens.length === 0) {
-                console.log("\u{1F504} No Variables found, trying fallback design tokens from color styles...");
-                designTokens = await this.createDesignTokensFromColorStyles();
-                if (designTokens && designTokens.length > 0) {
-                  console.log("\u2705 Using fallback design tokens created from color styles");
-                } else {
-                  console.log("\u26A0\uFE0F Fallback also returned no tokens");
-                }
-              } else {
-                console.log("\u2705 Using Variables API design tokens");
-              }
-            } catch (error) {
-              console.warn("\u26A0\uFE0F Design Tokens scanning failed, trying fallback:", error);
-              try {
-                designTokens = await this.createDesignTokensFromColorStyles();
-                console.log("\u2705 Using fallback design tokens despite Variables API error");
-              } catch (fallbackError) {
-                console.warn("\u26A0\uFE0F Fallback design tokens also failed:", fallbackError);
-                designTokens = void 0;
-              }
-            }
-            console.log("\n\u{1F3A8} Phase 2: Scanning Color Styles...");
-            try {
-              colorStyles = await this.scanFigmaColorStyles();
-            } catch (error) {
-              console.warn("\u26A0\uFE0F Color Styles scanning failed, continuing without color styles:", error);
-              colorStyles = void 0;
-            }
-            console.log("\n\u{1F4DD} Phase 3: Scanning Text Styles...");
-            try {
-              textStyles = await this.scanFigmaTextStyles();
-            } catch (error) {
-              console.warn("\u26A0\uFE0F Text Styles scanning failed, continuing without text styles:", error);
-              textStyles = void 0;
-            }
-            console.log("\n\u{1F9E9} Phase 4: Scanning Components...");
-            for (const page of figma.root.children) {
-              console.log(`\u{1F4CB} Scanning page: "${page.name}"`);
-              try {
-                const allNodes = page.findAll((node) => {
-                  if (node.type === "COMPONENT_SET") {
-                    return true;
-                  }
-                  if (node.type === "COMPONENT") {
-                    return !!(node.parent && node.parent.type !== "COMPONENT_SET");
-                  }
-                  return false;
-                });
-                console.log(`\u2705 Found ${allNodes.length} main components on page "${page.name}"`);
-                for (const node of allNodes) {
-                  try {
-                    if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
-                      const componentInfo = await this.analyzeComponent(node);
-                      if (componentInfo) {
-                        componentInfo.pageInfo = {
-                          pageName: page.name,
-                          pageId: page.id,
-                          isCurrentPage: page.id === figma.currentPage.id
-                        };
-                        components.push(componentInfo);
-                      }
-                    }
-                  } catch (e) {
-                    console.error(`\u274C Error analyzing component "${node.name}":`, e);
-                  }
-                }
-              } catch (e) {
-                console.error(`\u274C Error scanning page "${page.name}":`, e);
-              }
-            }
-            const scanSession = {
-              components,
-              colorStyles,
-              textStyles,
-              designTokens,
-              // NEW: Include design tokens
-              scanTime: Date.now(),
-              version: "2.1.0",
-              // Bump version for token support
-              fileKey: figma.fileKey || void 0
-            };
-            console.log(`
-\u{1F389} Comprehensive scan complete!`);
-            console.log(`   \u{1F4E6} Components: ${components.length}`);
-            console.log(`   \u{1F527} Design Tokens: ${designTokens ? designTokens.length : 0}`);
-            console.log(`   \u{1F3A8} Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
-            console.log(`   \u{1F4DD} Text Styles: ${textStyles ? textStyles.length : 0}`);
-            console.log(`   \u{1F4C4} File Key: ${scanSession.fileKey || "Unknown"}`);
-            return scanSession;
-          } catch (e) {
-            console.error("\u274C Critical error in scanDesignSystem:", e);
-            throw e;
-          }
-        }
-        /**
-         * Legacy method for backward compatibility - returns only components
-         */
-        static async scanComponents() {
-          const session = await this.scanDesignSystem();
-          return session.components;
-        }
-        /**
-         * Recursively searches for auto-layout containers with padding to find visual padding
-         */
-        static findNestedAutolayoutPadding(node, depth = 0) {
-          if (depth > 3) return null;
-          try {
-            if (node.layoutMode && node.layoutMode !== "NONE") {
-              const padding = {
-                paddingTop: node.paddingTop || 0,
-                paddingLeft: node.paddingLeft || 0,
-                paddingRight: node.paddingRight || 0,
-                paddingBottom: node.paddingBottom || 0
-              };
-              if (padding.paddingTop > 0 || padding.paddingLeft > 0 || padding.paddingRight > 0 || padding.paddingBottom > 0) {
-                console.log(`  \u{1F50D} Found nested auto-layout padding at depth ${depth}:`, padding, `(${node.name})`);
-                return padding;
-              }
-            }
-            if (node.children && node.children.length > 0) {
-              for (const child of node.children) {
-                const childPadding = this.findNestedAutolayoutPadding(child, depth + 1);
-                if (childPadding) {
-                  return childPadding;
-                }
-              }
-            }
-            return null;
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Error searching nested padding at depth ${depth}:`, error);
-            return null;
-          }
-        }
-        /**
-         * Extracts internal padding information from a component, including nested auto-layout containers
-         */
-        static extractInternalPadding(comp) {
-          try {
-            let targetNode = comp;
-            if (comp.type === "COMPONENT_SET") {
-              const defaultVariant = comp.defaultVariant || comp.children[0];
-              if (defaultVariant && defaultVariant.type === "COMPONENT") {
-                targetNode = defaultVariant;
-              }
-            }
-            if (targetNode.type === "COMPONENT") {
-              console.log(`\u{1F50D} Analyzing component "${comp.name}" for padding...`);
-              if (targetNode.layoutMode !== "NONE") {
-                const rootPadding = {
-                  paddingTop: targetNode.paddingTop || 0,
-                  paddingLeft: targetNode.paddingLeft || 0,
-                  paddingRight: targetNode.paddingRight || 0,
-                  paddingBottom: targetNode.paddingBottom || 0
-                };
-                if (rootPadding.paddingTop > 0 || rootPadding.paddingLeft > 0 || rootPadding.paddingRight > 0 || rootPadding.paddingBottom > 0) {
-                  console.log(`  \u2705 Found root auto-layout padding:`, rootPadding);
-                  return rootPadding;
-                }
-              }
-              const nestedPadding = this.findNestedAutolayoutPadding(targetNode);
-              if (nestedPadding) {
-                console.log(`  \u2705 Using nested auto-layout padding:`, nestedPadding);
-                return nestedPadding;
-              }
-              if (targetNode.children && targetNode.children.length > 0) {
-                const firstChild = targetNode.children[0];
-                if (firstChild.x !== void 0 && firstChild.y !== void 0) {
-                  const paddingLeft = firstChild.x;
-                  const paddingTop = firstChild.y;
-                  const paddingRight = targetNode.width - (firstChild.x + firstChild.width);
-                  const paddingBottom = targetNode.height - (firstChild.y + firstChild.height);
-                  if (paddingLeft >= 0 && paddingTop >= 0 && paddingRight >= 0 && paddingBottom >= 0 && paddingLeft <= 100 && paddingTop <= 100 && paddingRight <= 100 && paddingBottom <= 100) {
-                    const geometricPadding = {
-                      paddingTop: Math.round(paddingTop),
-                      paddingLeft: Math.round(paddingLeft),
-                      paddingRight: Math.round(paddingRight),
-                      paddingBottom: Math.round(paddingBottom)
-                    };
-                    console.log(`  \u2705 Using geometric padding detection:`, geometricPadding);
-                    return geometricPadding;
-                  }
-                }
-              }
-              console.log(`  \u274C No meaningful padding found for "${comp.name}"`);
-            }
-            return null;
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Error extracting padding for component ${comp.name}:`, error);
-            return null;
-          }
-        }
-        /**
-         * Analyzes a single component to extract metadata
-         */
-        static async analyzeComponent(comp) {
-          const name = comp.name;
-          const suggestedType = this.guessComponentType(name.toLowerCase());
-          const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-          const textLayers = this.findTextLayers(comp);
-          const textHierarchy = this.analyzeTextHierarchy(comp);
-          const componentInstances = await this.findComponentInstances(comp);
-          const vectorNodes = this.findVectorNodes(comp);
-          const imageNodes = this.findImageNodes(comp);
-          const styleInfo = this.extractStyleInfo(comp);
-          const internalPadding = this.extractInternalPadding(comp);
-          if (internalPadding) {
-            console.log(`\u{1F4CF} Found internal padding for "${comp.name}":`, internalPadding);
-          }
-          let variants = [];
-          const variantDetails = {};
-          if (comp.type === "COMPONENT_SET") {
-            const variantProps = comp.variantGroupProperties;
-            if (variantProps) {
-              variants = Object.keys(variantProps);
-              Object.entries(variantProps).forEach(([propName, propInfo]) => {
-                if (propInfo.values && propInfo.values.length > 0) {
-                  variantDetails[propName] = [...propInfo.values].sort();
-                  console.log(`\u2705 Found variant property: ${propName} with values: [${propInfo.values.join(", ")}]`);
-                }
-              });
-              console.log(`\u{1F3AF} Variant details for "${comp.name}":`, variantDetails);
-            }
-          }
-          return {
-            id: comp.id,
-            name,
-            suggestedType,
-            confidence,
-            variants: variants.length > 0 ? variants : void 0,
-            variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
-            textLayers: textLayers.length > 0 ? textLayers : void 0,
-            textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0,
-            componentInstances: componentInstances.length > 0 ? componentInstances : void 0,
-            vectorNodes: vectorNodes.length > 0 ? vectorNodes : void 0,
-            imageNodes: imageNodes.length > 0 ? imageNodes : void 0,
-            styleInfo,
-            // NEW: Include color and style information
-            internalPadding,
-            // NEW: Include internal padding information
-            isFromLibrary: false
-          };
-        }
-        /**
-         * Intelligent component type detection based on naming patterns
-         */
-        static guessComponentType(name) {
-          var _a;
-          const patterns = {
-            "icon-button": /icon.*button|button.*icon/i,
-            "upload": /upload|file.*drop|drop.*zone|attach/i,
-            "form": /form|captcha|verification/i,
-            "context-menu": /context-menu|context menu|contextual menu|options menu/i,
-            "modal-header": /modal-header|modal header|modalstack|modal_stack/i,
-            "list-item": /list-item|list item|list_item|list[\s\-_]*row|list[\s\-_]*cell/i,
-            "appbar": /appbar|app-bar|navbar|nav-bar|header|top bar|page header/i,
-            "dialog": /dialog|dialogue|popup|modal(?!-header)/i,
-            "list": /list(?!-item)/i,
-            "navigation": /nav|navigation(?!-bar)/i,
-            "header": /h[1-6]|title|heading(?! bar)/i,
-            "button": /button|btn|cta|action/i,
-            "input": /input|field|textfield|text-field|entry/i,
-            "textarea": /textarea|text-area|multiline/i,
-            "select": /select|dropdown|drop-down|picker/i,
-            "checkbox": /checkbox|check-box/i,
-            "radio": /radio|radiobutton|radio-button/i,
-            "switch": /switch|toggle/i,
-            "slider": /slider|range/i,
-            "searchbar": /search|searchbar|search-bar/i,
-            "tab": /tab|tabs|tabbar|tab-bar/i,
-            "breadcrumb": /breadcrumb|bread-crumb/i,
-            "pagination": /pagination|pager/i,
-            "bottomsheet": /bottomsheet|bottom-sheet|drawer/i,
-            "sidebar": /sidebar|side-bar/i,
-            "snackbar": /snack|snackbar|toast|notification/i,
-            "alert": /alert/i,
-            "tooltip": /tooltip|tip|hint/i,
-            "badge": /badge|indicator|count/i,
-            "progress": /progress|loader|loading|spinner/i,
-            "skeleton": /skeleton|placeholder/i,
-            "card": /card|tile|block|panel/i,
-            "avatar": /avatar|profile|user|photo/i,
-            "image": /image|img|picture/i,
-            "video": /video|player/i,
-            "icon": /icon|pictogram|symbol/i,
-            "text": /text|label|paragraph|caption|copy/i,
-            "link": /link|anchor/i,
-            "container": /container|wrapper|box|frame/i,
-            "grid": /grid/i,
-            "divider": /divider|separator|delimiter/i,
-            "spacer": /spacer|space|gap/i,
-            "fab": /fab|floating|float/i,
-            "chip": /chip|tag/i,
-            "actionsheet": /actionsheet|action-sheet/i,
-            "chart": /chart|graph/i,
-            "table": /table/i,
-            "calendar": /calendar|date/i,
-            "timeline": /timeline/i,
-            "gallery": /gallery|carousel/i,
-            "price": /price|cost/i,
-            "rating": /rating|star/i,
-            "cart": /cart|basket/i,
-            "map": /map|location/i,
-            "code": /code|syntax/i,
-            "terminal": /terminal|console/i
-          };
-          const priorityPatterns = [
-            "icon-button",
-            "upload",
-            "form",
-            "context-menu",
-            "modal-header",
-            "list-item",
-            "appbar",
-            "dialog",
-            "snackbar",
-            "bottomsheet",
-            "actionsheet",
-            "searchbar",
-            "fab",
-            "breadcrumb",
-            "pagination",
-            "skeleton",
-            "textarea",
-            "checkbox",
-            "radio",
-            "switch",
-            "slider",
-            "tab",
-            "navigation",
-            "tooltip",
-            "badge",
-            "progress",
-            "avatar",
-            "chip",
-            "stepper",
-            "chart",
-            "table",
-            "calendar",
-            "timeline",
-            "gallery",
-            "rating"
-          ];
-          for (const type of priorityPatterns) {
-            if ((_a = patterns[type]) == null ? void 0 : _a.test(name)) return type;
-          }
-          for (const type in patterns) {
-            if (Object.prototype.hasOwnProperty.call(patterns, type) && !priorityPatterns.includes(type)) {
-              if (patterns[type].test(name)) return type;
-            }
-          }
-          return "unknown";
-        }
-        /**
-         * Calculates confidence score for component type detection
-         */
-        static calculateConfidence(name, suggestedType) {
-          if (suggestedType === "unknown") return 0.1;
-          if (name.toLowerCase() === suggestedType.toLowerCase()) return 0.95;
-          if (name.includes(suggestedType)) return 0.9;
-          if (name.toLowerCase().includes(suggestedType + "-") || name.toLowerCase().includes(suggestedType + "_")) return 0.85;
-          return 0.7;
-        }
-        /**
-         * Finds and catalogs text layers within a component
-         */
-        static findTextLayers(comp) {
-          const textLayers = [];
-          try {
-            const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-            if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-              const allNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
-              allNodes.forEach((node) => {
-                if (node.type === "TEXT" && node.name) {
-                  const textNode = node;
-                  textLayers.push(textNode.name);
-                  try {
-                    const chars = textNode.characters || "[empty]";
-                    console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
-                  } catch (charError) {
-                    console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
-                  }
-                }
-              });
-            }
-          } catch (e) {
-            console.error(`Error finding text layers in "${comp.name}":`, e);
-          }
-          return textLayers;
-        }
-        /**
-         * Analyzes text nodes by fontSize/fontWeight and classifies by visual prominence
-         */
-        static analyzeTextHierarchy(comp) {
-          const textHierarchy = [];
-          try {
-            const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-            if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-              const textNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
-              const fontSizes = [];
-              const textNodeData = [];
-              textNodes.forEach((node) => {
-                if (node.type === "TEXT") {
-                  const textNode = node;
-                  try {
-                    const fontSize = typeof textNode.fontSize === "number" ? textNode.fontSize : 14;
-                    const fontWeight = textNode.fontWeight || "normal";
-                    fontSizes.push(fontSize);
-                    textNodeData.push({ node: textNode, fontSize, fontWeight });
-                  } catch (e) {
-                    console.warn(`Could not read font properties for text node "${textNode.name}"`);
-                  }
-                }
-              });
-              const uniqueSizes = [...new Set(fontSizes)].sort((a, b) => b - a);
-              textNodeData.forEach(({ node, fontSize, fontWeight }) => {
-                let classification = "tertiary";
-                if (uniqueSizes.length >= 3) {
-                  if (fontSize >= uniqueSizes[0]) classification = "primary";
-                  else if (fontSize >= uniqueSizes[1]) classification = "secondary";
-                  else classification = "tertiary";
-                } else if (uniqueSizes.length === 2) {
-                  classification = fontSize >= uniqueSizes[0] ? "primary" : "secondary";
-                } else {
-                  const weight = String(fontWeight).toLowerCase();
-                  if (weight.includes("bold") || weight.includes("700") || weight.includes("800") || weight.includes("900")) {
-                    classification = "primary";
-                  } else if (weight.includes("medium") || weight.includes("500") || weight.includes("600")) {
-                    classification = "secondary";
-                  } else {
-                    classification = "tertiary";
-                  }
-                }
-                let characters;
-                try {
-                  characters = node.characters || "[empty]";
-                } catch (e) {
-                  characters = void 0;
-                }
-                let textColor;
-                try {
-                  if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
-                    const firstFill = node.fills[0];
-                    if (firstFill.visible !== false) {
-                      textColor = this.convertPaintToColorInfo(firstFill) || void 0;
-                    }
-                  }
-                } catch (e) {
-                  console.warn(`Could not extract text color for "${node.name}"`);
-                }
-                textHierarchy.push({
-                  nodeName: node.name,
-                  nodeId: node.id,
-                  fontSize,
-                  fontWeight,
-                  classification,
-                  visible: node.visible,
-                  characters,
-                  textColor
-                  // NEW: Include text color information
-                });
-              });
-            }
-          } catch (e) {
-            console.error(`Error analyzing text hierarchy in "${comp.name}":`, e);
-          }
-          return textHierarchy;
-        }
-        /**
-         * Finds all nested COMPONENT/INSTANCE nodes (often icons)
-         */
-        static async findComponentInstances(comp) {
-          const componentInstances = [];
-          try {
-            const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-            if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-              const instanceNodes = nodeToAnalyze.findAll(
-                (node) => node.type === "COMPONENT" || node.type === "INSTANCE"
-              );
-              for (const node of instanceNodes) {
-                if (node.type === "COMPONENT" || node.type === "INSTANCE") {
-                  const instance = {
-                    nodeName: node.name,
-                    nodeId: node.id,
-                    visible: node.visible
-                  };
-                  if (node.type === "INSTANCE") {
-                    try {
-                      const mainComponent = await node.getMainComponentAsync();
-                      instance.componentId = mainComponent == null ? void 0 : mainComponent.id;
-                    } catch (e) {
-                      console.warn(`Could not get main component ID for instance "${node.name}"`);
-                    }
-                  }
-                  componentInstances.push(instance);
-                }
-              }
-            }
-          } catch (e) {
-            console.error(`Error finding component instances in "${comp.name}":`, e);
-          }
-          return componentInstances;
-        }
-        /**
-         * Finds all VECTOR nodes (direct SVG icons)
-         */
-        static findVectorNodes(comp) {
-          const vectorNodes = [];
-          try {
-            const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-            if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-              const vectors = nodeToAnalyze.findAll((node) => node.type === "VECTOR");
-              vectors.forEach((node) => {
-                if (node.type === "VECTOR") {
-                  vectorNodes.push({
-                    nodeName: node.name,
-                    nodeId: node.id,
-                    visible: node.visible
-                  });
-                }
-              });
-            }
-          } catch (e) {
-            console.error(`Error finding vector nodes in "${comp.name}":`, e);
-          }
-          return vectorNodes;
-        }
-        /**
-         * Finds all nodes that can accept image fills (RECTANGLE, ELLIPSE with image fills)
-         */
-        static findImageNodes(comp) {
-          const imageNodes = [];
-          try {
-            const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-            if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-              const shapeNodes = nodeToAnalyze.findAll(
-                (node) => node.type === "RECTANGLE" || node.type === "ELLIPSE"
-              );
-              shapeNodes.forEach((node) => {
-                if (node.type === "RECTANGLE" || node.type === "ELLIPSE") {
-                  let hasImageFill = false;
-                  try {
-                    const fills = node.fills;
-                    if (Array.isArray(fills)) {
-                      hasImageFill = fills.some(
-                        (fill) => typeof fill === "object" && fill !== null && fill.type === "IMAGE"
-                      );
-                    }
-                  } catch (e) {
-                    console.warn(`Could not check fills for node "${node.name}"`);
-                  }
-                  imageNodes.push({
-                    nodeName: node.name,
-                    nodeId: node.id,
-                    nodeType: node.type,
-                    visible: node.visible,
-                    hasImageFill
-                  });
-                }
-              });
-            }
-          } catch (e) {
-            console.error(`Error finding image nodes in "${comp.name}":`, e);
-          }
-          return imageNodes;
-        }
-        /**
-         * Generate LLM prompt based on scanned components and color styles
-         */
-        static generateLLMPrompt(components, colorStyles) {
-          var _a;
-          const componentsByType = {};
-          components.forEach((comp) => {
-            if (comp.confidence >= 0.7) {
-              if (!componentsByType[comp.suggestedType]) componentsByType[comp.suggestedType] = [];
-              componentsByType[comp.suggestedType].push(comp);
-            }
-          });
-          let prompt = `# AIDesigner JSON Generation Instructions
-
-`;
-          if (colorStyles) {
-            const totalColorStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
-            if (totalColorStyles > 0) {
-              prompt += `## Available Color Styles in Design System:
-
-`;
-              Object.entries(colorStyles).forEach(([category, styles]) => {
-                if (styles.length > 0) {
-                  prompt += `### ${category.toUpperCase()} COLORS
-`;
-                  styles.forEach((style) => {
-                    prompt += `- **${style.name}**: ${style.colorInfo.color}`;
-                    if (style.variant) {
-                      prompt += ` (variant: ${style.variant})`;
-                    }
-                    if (style.description) {
-                      prompt += ` - ${style.description}`;
-                    }
-                    prompt += `
-`;
-                  });
-                  prompt += `
-`;
-                }
-              });
-              prompt += `### Color Usage Guidelines:
-`;
-              prompt += `- Use PRIMARY colors for main actions, headers, and brand elements
-`;
-              prompt += `- Use SECONDARY colors for supporting actions and accents
-`;
-              prompt += `- Use NEUTRAL colors for text, backgrounds, and borders
-`;
-              prompt += `- Use SEMANTIC colors for success/error/warning states
-`;
-              prompt += `- Use SURFACE colors for backgrounds and containers
-`;
-              prompt += `- Reference colors by their exact name: "${((_a = colorStyles.primary[0]) == null ? void 0 : _a.name) || "Primary/500"}"
-
-`;
-            }
-          }
-          prompt += `## CRITICAL RENDERER CONSTRAINTS
-
-`;
-          prompt += `### The ONLY native elements supported:
-`;
-          prompt += `- **native-text**: Text elements with styling
-`;
-          prompt += `- **native-rectangle**: Rectangles (supports image fills)
-`;
-          prompt += `- **native-circle**: Circles/ellipses (supports image fills)
-
-`;
-          prompt += `### NEVER use these (they don't exist):
-`;
-          prompt += `- \u274C native-grid (use layoutContainer with wrap)
-`;
-          prompt += `- \u274C native-list-item (use list components)
-`;
-          prompt += `- \u274C native-rating (use star components)
-`;
-          prompt += `- \u274C native-image (use native-rectangle with image fill)
-`;
-          prompt += `- \u274C Any other native-* type
-
-`;
-          prompt += `### Sizing Rules:
-`;
-          prompt += `- \u2705 Use "horizontalSizing": "FILL" for full width
-`;
-          prompt += `- \u2705 Use numeric values for fixed width (e.g., 200)
-`;
-          prompt += `- \u274C NEVER use percentages like "50%" or "100%"
-
-`;
-          prompt += `## Available Components in Design System:
-
-`;
-          Object.keys(componentsByType).sort().forEach((type) => {
-            var _a2, _b, _c, _d, _e, _f;
-            const comps = componentsByType[type];
-            const bestComponent = comps.sort((a, b) => b.confidence - a.confidence)[0];
-            prompt += `### ${type.toUpperCase()}
-`;
-            prompt += `- Component ID: "${bestComponent.id}"
-`;
-            prompt += `- Component Name: "${bestComponent.name}"
-`;
-            if ((_a2 = bestComponent.textLayers) == null ? void 0 : _a2.length) prompt += `- Text Layers: ${bestComponent.textLayers.map((l) => `"${l}"`).join(", ")}
-`;
-            if ((_b = bestComponent.textHierarchy) == null ? void 0 : _b.length) {
-              prompt += `- Text Hierarchy:
-`;
-              bestComponent.textHierarchy.forEach((text) => {
-                prompt += `  - ${text.classification.toUpperCase()}: "${text.nodeName}" (${text.fontSize}px, ${text.fontWeight}${text.visible ? "" : ", hidden"})
-`;
-              });
-            }
-            if ((_c = bestComponent.componentInstances) == null ? void 0 : _c.length) {
-              prompt += `- Component Instances: ${bestComponent.componentInstances.map((c) => `"${c.nodeName}"${c.visible ? "" : " (hidden)"}`).join(", ")}
-`;
-            }
-            if ((_d = bestComponent.vectorNodes) == null ? void 0 : _d.length) {
-              prompt += `- Vector Icons: ${bestComponent.vectorNodes.map((v) => `"${v.nodeName}"${v.visible ? "" : " (hidden)"}`).join(", ")}
-`;
-            }
-            if ((_e = bestComponent.imageNodes) == null ? void 0 : _e.length) {
-              prompt += `- Image Containers: ${bestComponent.imageNodes.map((i) => `"${i.nodeName}" (${i.nodeType}${i.hasImageFill ? ", has image" : ""}${i.visible ? "" : ", hidden"})`).join(", ")}
-`;
-            }
-            if (bestComponent.variantDetails && Object.keys(bestComponent.variantDetails).length > 0) {
-              prompt += `
-  - \u{1F3AF} VARIANTS AVAILABLE:
-`;
-              Object.entries(bestComponent.variantDetails).forEach(([propName, values]) => {
-                prompt += `    - **${propName}**: [${values.map((v) => `"${v}"`).join(", ")}]
-`;
-                const propLower = propName.toLowerCase();
-                if (propLower.includes("condition") || propLower.includes("layout")) {
-                  prompt += `      \u{1F4A1} Layout control: ${values.includes("1-line") ? '"1-line" = single line, ' : ""}${values.includes("2-line") ? '"2-line" = detailed view' : ""}
-`;
-                }
-                if (propLower.includes("leading") || propLower.includes("start")) {
-                  prompt += `      \u{1F4A1} Leading element: "Icon" = shows leading icon, "None" = text only
-`;
-                }
-                if (propLower.includes("trailing") || propLower.includes("end")) {
-                  prompt += `      \u{1F4A1} Trailing element: "Icon" = shows trailing icon/chevron, "None" = no trailing element
-`;
-                }
-                if (propLower.includes("state") || propLower.includes("status")) {
-                  prompt += `      \u{1F4A1} Component state: controls enabled/disabled/selected appearance
-`;
-                }
-                if (propLower.includes("size")) {
-                  prompt += `      \u{1F4A1} Size control: affects padding, text size, and touch targets
-`;
-                }
-                if (propLower.includes("type") || propLower.includes("style") || propLower.includes("emphasis")) {
-                  prompt += `      \u{1F4A1} Visual emphasis: controls hierarchy and visual weight
-`;
-                }
-              });
-              prompt += `
-  - \u26A1 QUICK VARIANT GUIDE:
-`;
-              prompt += `    - "single line" request \u2192 use "Condition": "1-line"
-`;
-              prompt += `    - "with icon" request \u2192 use "Leading": "Icon"
-`;
-              prompt += `    - "arrow" or "chevron" \u2192 use "Trailing": "Icon"
-`;
-              prompt += `    - "simple" or "minimal" \u2192 omit variants to use defaults
-`;
-              prompt += `    - Only specify variants you want to change from defaults
-`;
-            }
-            prompt += `- Page: ${((_f = bestComponent.pageInfo) == null ? void 0 : _f.pageName) || "Unknown"}
-
-`;
-          });
-          prompt += `## JSON Structure & Rules:
-
-### Variant Usage Rules:
-- **Variants must be in a separate "variants" object inside properties**
-- **NEVER mix variants with regular properties at the same level**
-- Variant properties are case-sensitive: "Condition" not "condition"
-- Variant values are case-sensitive: "1-line" not "1-Line"
-
-### \u2705 CORRECT Variant Structure:
-\`\`\`json
-{
-  "type": "list-item",
-  "componentNodeId": "10:123",
-  "properties": {
-    "text": "Personal details",
-    "horizontalSizing": "FILL",
-    "variants": {
-      "Condition": "1-line",
-      "Leading": "Icon", 
-      "Trailing": "Icon"
-    }
-  }
-}
-\`\`\`
-
-### \u274C WRONG - Never do this:
-\`\`\`json
-{
-  "properties": {
-    "text": "Personal details",
-    "Condition": "1-line",    // WRONG: variants mixed with properties
-    "Leading": "Icon"         // WRONG: should be in variants object
-  }
-}
-\`\`\`
-
-### Settings Screen with Proper Variants:
-\`\`\`json
-{
-  "layoutContainer": {
-    "name": "Settings Screen",
-    "layoutMode": "VERTICAL",
-    "width": 360,
-    "itemSpacing": 8
-  },
-  "items": [
-    {
-      "type": "list-item",
-      "componentNodeId": "10:123",
-      "properties": {
-        "text": "Personal details",
-        "horizontalSizing": "FILL",
-        "variants": {
-          "Condition": "1-line",
-          "Leading": "Icon",
-          "Trailing": "None"
-        }
-      }
-    },
-    {
-      "type": "list-item",
-      "componentNodeId": "10:123",
-      "properties": {
-        "text": "Change language",
-        "trailing-text": "English",
-        "horizontalSizing": "FILL",
-        "variants": {
-          "Condition": "1-line",
-          "Leading": "Icon",
-          "Trailing": "Icon"
-        }
-      }
-    },
-    {
-      "type": "list-item",
-      "componentNodeId": "10:123",
-      "properties": {
-        "text": "Notifications",
-        "supporting-text": "Push notifications and email alerts",
-        "trailing-text": "On",
-        "horizontalSizing": "FILL",
-        "variants": {
-          "Condition": "2-line",
-          "Leading": "Icon",
-          "Trailing": "Icon"
-        }
-      }
-    }
-  ]
-}
-\`\`\`
-
-### \u2705 VARIANT BEST PRACTICES:
-- **Always use exact property names**: "Condition" not "condition"
-- **Use exact values**: "1-line" not "1-Line" or "single-line"
-- **Specify complete variant sets**: Include all required properties for that variant
-- **Common patterns**:
-  - Simple navigation: \`"Condition": "1-line", "Leading": "Icon", "Trailing": "None"\`
-  - With current value: \`"Condition": "1-line", "Leading": "Icon", "Trailing": "Icon"\`
-  - Detailed info: \`"Condition": "2-line", "Leading": "Icon", "Trailing": "Icon"\`
-
-*\u{1F3AF} Pro tip: Study your design system's variant combinations in Figma to understand which variants work together.*
-`;
-          return prompt;
-        }
-        /**
-         * Save scan results to Figma storage
-         */
-        static async saveLastScanResults(components) {
-          try {
-            const scanSession = {
-              components,
-              scanTime: Date.now(),
-              version: "1.0",
-              fileKey: figma.root.id
-            };
-            await figma.clientStorage.setAsync("design-system-scan", scanSession);
-            await figma.clientStorage.setAsync("last-scan-results", components);
-            console.log(`\u{1F4BE} Saved ${components.length} components with session data`);
-          } catch (error) {
-            console.error("\u274C Error saving scan results:", error);
-            try {
-              await figma.clientStorage.setAsync("last-scan-results", components);
-              console.log("\u{1F4BE} Fallback save successful");
-            } catch (fallbackError) {
-              console.warn("\u26A0\uFE0F Could not save scan results:", fallbackError);
-            }
-          }
-        }
-        /**
-         * Get component ID by type for UI generation
-         */
-        static async getComponentIdByType(type) {
-          const searchType = type.toLowerCase();
-          const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-          if (scanResults && Array.isArray(scanResults)) {
-            const matchingComponent = scanResults.find((comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7);
-            if (matchingComponent) return matchingComponent.id;
-            const nameMatchingComponent = scanResults.find((comp) => comp.name.toLowerCase().includes(searchType));
-            if (nameMatchingComponent) return nameMatchingComponent.id;
-          }
-          console.log(`\u274C ID for type ${type} not found`);
-          return null;
-        }
-        /**
-         * NEW: Extract color and style information from component
-         */
-        static extractStyleInfo(node) {
-          var _a, _b, _c;
-          const styleInfo = {};
-          try {
-            let primaryNode = node;
-            if (node.type === "COMPONENT_SET" && node.children.length > 0) {
-              primaryNode = node.children[0];
-            }
-            const fills = this.extractFills(primaryNode);
-            if (fills.length > 0) {
-              styleInfo.fills = fills;
-              styleInfo.primaryColor = fills[0];
-            }
-            const strokes = this.extractStrokes(primaryNode);
-            if (strokes.length > 0) {
-              styleInfo.strokes = strokes;
-            }
-            const textColor = this.findPrimaryTextColor(primaryNode);
-            if (textColor) {
-              styleInfo.textColor = textColor;
-            }
-            const backgroundColor = this.findBackgroundColor(primaryNode);
-            if (backgroundColor) {
-              styleInfo.backgroundColor = backgroundColor;
-            }
-            if (styleInfo.primaryColor || styleInfo.backgroundColor || styleInfo.textColor) {
-              console.log(`\u{1F3A8} Colors extracted for "${node.name}":`, {
-                primary: (_a = styleInfo.primaryColor) == null ? void 0 : _a.color,
-                background: (_b = styleInfo.backgroundColor) == null ? void 0 : _b.color,
-                text: (_c = styleInfo.textColor) == null ? void 0 : _c.color
-              });
-            }
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Error extracting style info for "${node.name}":`, error);
-          }
-          return styleInfo;
-        }
-        /**
-         * Extract fill colors from a node
-         */
-        static extractFills(node) {
-          const colorInfos = [];
-          try {
-            if ("fills" in node && node.fills && Array.isArray(node.fills)) {
-              for (const fill of node.fills) {
-                if (fill.visible !== false) {
-                  const colorInfo = this.convertPaintToColorInfo(fill);
-                  if (colorInfo) {
-                    colorInfos.push(colorInfo);
-                  }
-                }
-              }
-            }
-          } catch (error) {
-            console.warn("Error extracting fills:", error);
-          }
-          return colorInfos;
-        }
-        /**
-         * Extract stroke colors from a node
-         */
-        static extractStrokes(node) {
-          const colorInfos = [];
-          try {
-            if ("strokes" in node && node.strokes && Array.isArray(node.strokes)) {
-              for (const stroke of node.strokes) {
-                if (stroke.visible !== false) {
-                  const colorInfo = this.convertPaintToColorInfo(stroke);
-                  if (colorInfo) {
-                    colorInfos.push(colorInfo);
-                  }
-                }
-              }
-            }
-          } catch (error) {
-            console.warn("Error extracting strokes:", error);
-          }
-          return colorInfos;
-        }
-        /**
-         * Convert Figma Paint to ColorInfo
-         */
-        static convertPaintToColorInfo(paint) {
-          try {
-            if (paint.type === "SOLID" && paint.color) {
-              return {
-                type: "SOLID",
-                color: this.rgbToHex(paint.color),
-                opacity: paint.opacity || 1
-              };
-            }
-            if (paint.type === "GRADIENT_LINEAR" && paint.gradientStops) {
-              return {
-                type: "GRADIENT_LINEAR",
-                gradientStops: paint.gradientStops.map((stop) => ({
-                  color: this.rgbToHex(stop.color),
-                  position: stop.position
-                })),
-                opacity: paint.opacity || 1
-              };
-            }
-            if ((paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") && paint.gradientStops) {
-              return {
-                type: paint.type,
-                gradientStops: paint.gradientStops.map((stop) => ({
-                  color: this.rgbToHex(stop.color),
-                  position: stop.position
-                })),
-                opacity: paint.opacity || 1
-              };
-            }
-            if (paint.type === "IMAGE") {
-              return {
-                type: "IMAGE",
-                opacity: paint.opacity || 1
-              };
-            }
-          } catch (error) {
-            console.warn("Error converting paint to color info:", error);
-          }
-          return null;
-        }
-        /**
-         * Convert RGB to hex color
-         */
-        static rgbToHex(rgb) {
-          const toHex = (value) => {
-            const hex = Math.round(value * 255).toString(16);
-            return hex.length === 1 ? "0" + hex : hex;
-          };
-          return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
-        }
-        /**
-         * Find primary text color by analyzing text nodes
-         */
-        static findPrimaryTextColor(node) {
-          try {
-            const textNodes = node.findAll((n) => n.type === "TEXT");
-            for (const textNode of textNodes) {
-              if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
-                for (const fill of textNode.fills) {
-                  if (fill.visible !== false && fill.type === "SOLID") {
-                    return this.convertPaintToColorInfo(fill);
-                  }
-                }
-              }
-            }
-          } catch (error) {
-            console.warn("Error finding text color:", error);
-          }
-          return null;
-        }
-        /**
-         * Find background color by analyzing the largest rectangle or container
-         */
-        static findBackgroundColor(node) {
-          try {
-            const rectangles = node.findAll(
-              (n) => n.type === "RECTANGLE" || n.type === "FRAME" || n.type === "COMPONENT"
-            );
-            rectangles.sort((a, b) => {
-              const areaA = a.width * a.height;
-              const areaB = b.width * b.height;
-              return areaB - areaA;
-            });
-            for (const rect of rectangles) {
-              if ("fills" in rect && rect.fills && Array.isArray(rect.fills)) {
-                for (const fill of rect.fills) {
-                  if (fill.visible !== false) {
-                    const colorInfo = this.convertPaintToColorInfo(fill);
-                    if (colorInfo && colorInfo.type === "SOLID") {
-                      return colorInfo;
-                    }
-                  }
-                }
-              }
-            }
-          } catch (error) {
-            console.warn("Error finding background color:", error);
-          }
-          return null;
-        }
-      };
-    }
-  });
-
-  // src/core/session-manager.ts
-  var SessionManager;
-  var init_session_manager = __esm({
-    "src/core/session-manager.ts"() {
-      "use strict";
-      SessionManager = class {
-        // 30 днів
-        // Зберегти поточний стан сесії
-        static async saveSession(designState, scanData) {
-          try {
-            const fileId = figma.root.id;
-            const fileName = figma.root.name;
-            if (!designState.isIterating) return;
-            console.log(`\u{1F4BE} \u0417\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${fileName}`);
-            const storage = await this.getSessionStorage();
-            const session = {
-              fileId,
-              fileName,
-              lastModified: Date.now(),
-              designState: {
-                original: designState.original,
-                current: designState.current,
-                history: [...designState.history],
-                frameId: designState.frameId,
-                frameName: designState.frameId ? await this.getFrameName(designState.frameId) : "",
-                isIterating: designState.isIterating
-              },
-              scanData
-            };
-            storage.sessions[fileId] = session;
-            storage.lastActiveSession = fileId;
-            await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
-            console.log(`\u2705 \u0421\u0435\u0441\u0456\u044F \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u0430`);
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
-          }
-        }
-        // Завантажити сесію для поточного файлу
-        static async loadSession() {
-          try {
-            const fileId = figma.root.id;
-            const storage = await this.getSessionStorage();
-            const session = storage.sessions[fileId];
-            if (!session) return null;
-            if (session.designState.frameId) {
-              const frame = await figma.getNodeByIdAsync(session.designState.frameId);
-              if (!frame || frame.removed) {
-                console.log("\u26A0\uFE0F \u0424\u0440\u0435\u0439\u043C \u0437 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0457 \u0441\u0435\u0441\u0456\u0457 \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E, \u043E\u0447\u0438\u0449\u0443\u0454\u043C\u043E \u0441\u0435\u0441\u0456\u044E");
-                await this.clearSession(fileId);
-                return null;
-              }
-            }
-            console.log(`\u2705 \u0421\u0435\u0441\u0456\u044F \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${session.fileName}`);
-            return session;
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
-            return null;
-          }
-        }
-        // Отримати всі активні сесії
-        static async getAllSessions() {
-          try {
-            const storage = await this.getSessionStorage();
-            const now = Date.now();
-            const activeSessions = Object.values(storage.sessions).filter((session) => now - session.lastModified < this.MAX_SESSION_AGE).sort((a, b) => b.lastModified - a.lastModified);
-            return activeSessions;
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0432\u0441\u0456\u0445 \u0441\u0435\u0441\u0456\u0439:", error);
-            return [];
-          }
-        }
-        // Очистити сесію для файлу
-        static async clearSession(fileId) {
-          try {
-            const targetFileId = fileId || figma.root.id;
-            const storage = await this.getSessionStorage();
-            delete storage.sessions[targetFileId];
-            if (storage.lastActiveSession === targetFileId) {
-              delete storage.lastActiveSession;
-            }
-            await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
-            console.log(`\u{1F5D1}\uFE0F \u0421\u0435\u0441\u0456\u044F \u043E\u0447\u0438\u0449\u0435\u043D\u0430 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${targetFileId}`);
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0447\u0438\u0449\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
-          }
-        }
-        // Очистити старі сесії
-        static async cleanupOldSessions() {
-          try {
-            const storage = await this.getSessionStorage();
-            const now = Date.now();
-            let cleaned = 0;
-            Object.entries(storage.sessions).forEach(([fileId, session]) => {
-              if (now - session.lastModified > this.MAX_SESSION_AGE) {
-                delete storage.sessions[fileId];
-                cleaned++;
-              }
-            });
-            if (cleaned > 0) {
-              await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
-              console.log(`\u{1F9F9} \u041E\u0447\u0438\u0449\u0435\u043D\u043E ${cleaned} \u0441\u0442\u0430\u0440\u0438\u0445 \u0441\u0435\u0441\u0456\u0439`);
-            }
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0447\u0438\u0449\u0435\u043D\u043D\u044F \u0441\u0442\u0430\u0440\u0438\u0445 \u0441\u0435\u0441\u0456\u0439:", error);
-          }
-        }
-        // Отримати storage з ініціалізацією
-        static async getSessionStorage() {
-          try {
-            const storage = await figma.clientStorage.getAsync(this.STORAGE_KEY);
-            if (!storage || storage.version !== this.SESSION_VERSION) {
-              return {
-                sessions: {},
-                version: this.SESSION_VERSION
-              };
-            }
-            return storage;
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0442\u0440\u0438\u043C\u0430\u043D\u043D\u044F storage:", error);
-            return {
-              sessions: {},
-              version: this.SESSION_VERSION
-            };
-          }
-        }
-        // Отримати назву фрейму за ID
-        static async getFrameName(frameId) {
-          try {
-            const frame = await figma.getNodeByIdAsync(frameId);
-            return (frame == null ? void 0 : frame.name) || "Unknown Frame";
-          } catch (e) {
-            return "Unknown Frame";
-          }
-        }
-        // Відновити сесію з даних
-        static async restoreSessionData(sessionData) {
-          try {
-            if (sessionData.designState.frameId) {
-              const frame = await figma.getNodeByIdAsync(sessionData.designState.frameId);
-              if (!frame || frame.removed) {
-                throw new Error("\u0424\u0440\u0435\u0439\u043C \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E");
-              }
-              figma.currentPage.selection = [frame];
-              figma.viewport.scrollAndZoomIntoView([frame]);
-            }
-            return true;
-          } catch (error) {
-            console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0432\u0456\u0434\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
-            return false;
-          }
-        }
-      };
-      SessionManager.STORAGE_KEY = "aidesigner-sessions";
-      SessionManager.SESSION_VERSION = "1.0";
-      SessionManager.MAX_SESSION_AGE = 30 * 24 * 60 * 60 * 1e3;
-    }
-  });
-
-  // src/core/component-property-engine.ts
-  var TabComponentHandler, ChipComponentHandler, _PerformanceTracker, PerformanceTracker, _ComponentPropertyEngine, ComponentPropertyEngine;
-  var init_component_property_engine = __esm({
-    "src/core/component-property-engine.ts"() {
-      "use strict";
-      TabComponentHandler = class {
-        preprocessProperties(properties) {
-          if (properties.Label && !Array.isArray(properties.Label)) {
-            properties.Label = [properties.Label];
-          }
-          return properties;
-        }
-        postProcessInstance(instance, properties) {
-        }
-        getVariantPurpose(variantName) {
-          const purposes = {
-            "Type": "layout behavior (Fixed vs Scrollable)",
-            "Style": "visual emphasis (Primary vs Secondary)",
-            "Configuration": "content structure (Label-only vs Label & Icon)"
-          };
-          return purposes[variantName] || "component appearance";
-        }
-      };
-      ChipComponentHandler = class {
-        preprocessProperties(properties) {
-          if (properties.label && !Array.isArray(properties.label)) {
-            properties.label = [properties.label];
-          }
-          return properties;
-        }
-        postProcessInstance(instance, properties) {
-        }
-        getVariantPurpose(variantName) {
-          return "chip appearance and behavior";
-        }
-      };
-      _PerformanceTracker = class _PerformanceTracker {
-        static async track(operation, fn) {
-          const start = Date.now();
-          try {
-            return await fn();
-          } finally {
-            const duration = Date.now() - start;
-            if (!_PerformanceTracker.metrics.has(operation)) {
-              _PerformanceTracker.metrics.set(operation, []);
-            }
-            _PerformanceTracker.metrics.get(operation).push(duration);
-            console.log(`\u23F1\uFE0F ${operation}: ${duration.toFixed(2)}ms`);
-          }
-        }
-        static getReport() {
-          const report = {};
-          _PerformanceTracker.metrics.forEach((durations, operation) => {
-            report[operation] = {
-              avg: durations.reduce((a, b) => a + b, 0) / durations.length,
-              min: Math.min(...durations),
-              max: Math.max(...durations)
-            };
-          });
-          return report;
-        }
-      };
-      _PerformanceTracker.metrics = /* @__PURE__ */ new Map();
-      PerformanceTracker = _PerformanceTracker;
-      _ComponentPropertyEngine = class _ComponentPropertyEngine {
-        static async initialize() {
-          try {
-            await PerformanceTracker.track("engine-initialization", async () => {
-              figma.skipInvisibleInstanceChildren = true;
-              await _ComponentPropertyEngine.preloadCommonFonts();
-              const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-              if (!scanResults || !Array.isArray(scanResults)) {
-                console.warn("\u26A0\uFE0F No scan results found. Run ComponentScanner.scanDesignSystem() first.");
-                return;
-              }
-              for (const component of scanResults) {
-                const schema = await _ComponentPropertyEngine.buildComponentSchemaFromScanData(component);
-                _ComponentPropertyEngine.componentSchemas.set(component.id, schema);
-                console.log(`\u{1F4CB} Loaded schema for ${schema.name} (${schema.id})`);
-              }
-            });
-            console.log(`\u{1F3AF} ComponentPropertyEngine initialized with ${_ComponentPropertyEngine.componentSchemas.size} component schemas`);
-          } catch (error) {
-            console.error("\u274C Failed to initialize ComponentPropertyEngine:", error);
-          }
-        }
-        static async preloadCommonFonts() {
-          if (_ComponentPropertyEngine.commonFontsLoaded) return;
-          const commonFonts = [
-            { family: "Inter", style: "Regular" },
-            { family: "Inter", style: "Medium" },
-            { family: "Inter", style: "Bold" },
-            { family: "Roboto", style: "Regular" },
-            { family: "Roboto", style: "Medium" },
-            { family: "Roboto", style: "Bold" }
-          ];
-          await Promise.all(commonFonts.map(
-            (font) => figma.loadFontAsync(font).catch(() => {
-              console.warn(`\u26A0\uFE0F Could not preload font: ${font.family} ${font.style}`);
-            })
-          ));
-          _ComponentPropertyEngine.commonFontsLoaded = true;
-          console.log("\u2705 Common fonts preloaded");
-        }
-        static async buildComponentSchemaFromScanData(scanData) {
-          let componentProperties = {};
-          let availableVariants = {};
-          try {
-            const componentNode = await figma.getNodeByIdAsync(scanData.id);
-            if (componentNode && componentNode.type === "COMPONENT_SET") {
-              const propertyDefs = componentNode.componentPropertyDefinitions;
-              if (propertyDefs) {
-                componentProperties = propertyDefs;
-                Object.entries(propertyDefs).forEach(([key, definition]) => {
-                  if (definition.type === "VARIANT" && definition.variantOptions) {
-                    availableVariants[key] = definition.variantOptions;
-                  }
-                });
-              }
-            }
-          } catch (error) {
-            if (scanData.variantDetails) {
-              Object.entries(scanData.variantDetails).forEach(([key, values]) => {
-                availableVariants[key] = Array.isArray(values) ? values : [values];
-              });
-            }
-          }
-          const textLayers = {};
-          if (scanData.textHierarchy && Array.isArray(scanData.textHierarchy)) {
-            scanData.textHierarchy.forEach((textInfo) => {
-              const dataType = this.inferTextDataType(scanData.suggestedType, textInfo.nodeName);
-              textLayers[textInfo.nodeName] = {
-                nodeId: textInfo.nodeId,
-                nodeName: textInfo.nodeName,
-                classification: textInfo.classification || "secondary",
-                dataType,
-                maxItems: dataType === "array" ? this.inferMaxItems(scanData.suggestedType, textInfo.nodeName) : void 0,
-                fontSize: textInfo.fontSize,
-                fontWeight: textInfo.fontWeight
-              };
-            });
-          }
-          const mediaLayers = {};
-          [scanData.componentInstances, scanData.vectorNodes, scanData.imageNodes].forEach((nodeArray) => {
-            if (nodeArray) {
-              nodeArray.forEach((node) => {
-                mediaLayers[node.nodeName] = {
-                  nodeId: node.nodeId,
-                  nodeName: node.nodeName,
-                  mediaType: this.inferMediaType(node.nodeName),
-                  dataType: "single",
-                  visible: node.visible
-                };
-              });
-            }
-          });
-          return {
-            id: scanData.id,
-            name: scanData.name,
-            availableVariants,
-            componentProperties,
-            textLayers,
-            mediaLayers,
-            componentType: scanData.suggestedType || "unknown",
-            scanTimestamp: Date.now(),
-            scanVersion: "1.1",
-            componentHash: "hash_" + Date.now().toString(36)
-          };
-        }
-        static generateComponentHash(scanData) {
-          var _a, _b;
-          const hashData = JSON.stringify({
-            variants: scanData.variants,
-            textLayers: (_a = scanData.textLayers) == null ? void 0 : _a.length,
-            componentInstances: (_b = scanData.componentInstances) == null ? void 0 : _b.length
-          });
-          try {
-            return btoa(hashData).substring(0, 8);
-          } catch (e) {
-            let hash = 0;
-            for (let i = 0; i < hashData.length; i++) {
-              const char = hashData.charCodeAt(i);
-              hash = (hash << 5) - hash + char;
-              hash = hash & hash;
-            }
-            return Math.abs(hash).toString(16).substring(0, 8);
-          }
-        }
-        static inferTextDataType(componentType, layerName) {
-          const layerLower = layerName.toLowerCase();
-          const arrayPatterns = {
-            "tab": ["label"],
-            "tabs": ["label"],
-            "chip": ["label", "text"],
-            "list": ["item", "option", "choice"],
-            "navigation": ["label", "text"],
-            "menu": ["item", "option", "label"],
-            "breadcrumb": ["item", "label"],
-            "carousel": ["caption", "title"]
-          };
-          const componentPatterns = arrayPatterns[componentType];
-          if (componentPatterns) {
-            const supportsArray = componentPatterns.some((pattern) => layerLower.includes(pattern));
-            if (supportsArray) return "array";
-          }
-          return "single";
-        }
-        static inferMaxItems(componentType, layerName) {
-          const maxItemsMap = {
-            "tab": 8,
-            "tabs": 8,
-            "navigation": 6,
-            "chip": 10,
-            "list": 50,
-            "menu": 20,
-            "breadcrumb": 5,
-            "carousel": 10
-          };
-          return maxItemsMap[componentType] || 10;
-        }
-        static inferMediaType(nodeName) {
-          const nameLower = nodeName.toLowerCase();
-          if (nameLower.includes("avatar") || nameLower.includes("profile")) return "avatar";
-          if (nameLower.includes("badge") || nameLower.includes("indicator")) return "badge";
-          if (nameLower.includes("image") || nameLower.includes("photo")) return "image";
-          return "icon";
-        }
-        static validateAndProcessProperties(componentId, rawProperties) {
-          console.log("\u{1F50D} PROPERTY ENGINE - Schema lookup:", {
-            componentId,
-            rawProperties,
-            hasSchema: this.componentSchemas.has(componentId),
-            totalSchemas: this.componentSchemas.size,
-            allSchemaIds: Array.from(this.componentSchemas.keys())
-          });
-          const schema = this.componentSchemas.get(componentId);
-          if (!schema) {
-            return {
-              isValid: false,
-              processedProperties: { variants: {}, textProperties: {}, mediaProperties: {}, layoutProperties: {} },
-              warnings: [],
-              errors: [{
-                message: `No schema found for component ${componentId}`,
-                suggestion: "Ensure design system has been scanned",
-                llmHint: "Run ComponentScanner.scanDesignSystem() first"
-              }]
-            };
-          }
-          const handler = this.componentHandlers.get(schema.componentType);
-          const processedRawProperties = handler ? handler.preprocessProperties(__spreadValues({}, rawProperties)) : rawProperties;
-          const result = {
-            isValid: true,
-            processedProperties: { variants: {}, textProperties: {}, mediaProperties: {}, layoutProperties: {} },
-            warnings: [],
-            errors: []
-          };
-          Object.entries(processedRawProperties).forEach(([key, value]) => {
-            if (key === "variants" && typeof value === "object") {
-              Object.entries(value).forEach(([variantKey, variantValue]) => {
-                result.processedProperties.variants[variantKey] = variantValue;
-              });
-              return;
-            }
-            if (schema.componentProperties[key] || schema.availableVariants[key]) {
-              result.processedProperties.variants[key] = value;
-            } else if (schema.textLayers[key]) {
-              result.processedProperties.textProperties[key] = value;
-            } else if (schema.mediaLayers[key]) {
-              result.processedProperties.mediaProperties[key] = value;
-            } else if ([
-              "horizontalSizing",
-              "verticalSizing",
-              "layoutAlign",
-              "layoutGrow",
-              "minWidth",
-              "maxWidth",
-              "minHeight",
-              "maxHeight"
-            ].some((prop) => key.toLowerCase().includes(prop.toLowerCase()))) {
-              result.processedProperties.layoutProperties[key] = value;
-            } else {
-              const textMatch = this.findSemanticMatch(key, Object.keys(schema.textLayers));
-              const variantMatch = this.findSemanticMatch(key, Object.keys(schema.availableVariants));
-              const mediaMatch = this.findSemanticMatch(key, Object.keys(schema.mediaLayers));
-              if (textMatch) {
-                result.processedProperties.textProperties[textMatch] = value;
-                result.warnings.push(`Mapped "${key}" to text layer "${textMatch}"`);
-              } else if (variantMatch) {
-                result.processedProperties.variants[variantMatch] = value;
-                result.warnings.push(`Mapped "${key}" to variant "${variantMatch}"`);
-              } else if (mediaMatch) {
-                result.processedProperties.mediaProperties[mediaMatch] = value;
-                result.warnings.push(`Mapped "${key}" to media layer "${mediaMatch}"`);
-              } else {
-                result.warnings.push(`Unknown property "${key}" for component ${schema.name}`);
-              }
-            }
-          });
-          Object.entries(result.processedProperties.variants).forEach(([variantName, variantValue]) => {
-            const modernProp = schema.componentProperties[variantName];
-            const legacyValues = schema.availableVariants[variantName];
-            if (modernProp && modernProp.type === "VARIANT") {
-              if (!modernProp.variantOptions.includes(String(variantValue))) {
-                const variantPurpose = handler ? handler.getVariantPurpose(variantName) : "component appearance";
-                result.errors.push({
-                  message: `Invalid value "${variantValue}" for variant "${variantName}"`,
-                  suggestion: `Use one of: ${modernProp.variantOptions.map((v) => `"${v}"`).join(", ")}`,
-                  jsonPath: `properties.${variantName}`,
-                  llmHint: `For ${schema.componentType} components, ${variantName} controls ${variantPurpose}`
-                });
-              }
-            } else if (legacyValues) {
-              if (!legacyValues.includes(String(variantValue))) {
-                const variantPurpose = handler ? handler.getVariantPurpose(variantName) : "component appearance";
-                result.errors.push({
-                  message: `Invalid value "${variantValue}" for variant "${variantName}"`,
-                  suggestion: `Use one of: ${legacyValues.map((v) => `"${v}"`).join(", ")}`,
-                  jsonPath: `properties.${variantName}`,
-                  llmHint: `For ${schema.componentType} components, ${variantName} controls ${variantPurpose}`
-                });
-              }
-            }
-          });
-          Object.entries(result.processedProperties.textProperties).forEach(([textProp, value]) => {
-            const textLayer = schema.textLayers[textProp];
-            if (textLayer && textLayer.dataType === "array" && !Array.isArray(value)) {
-              result.warnings.push(`Property "${textProp}" expects array but got ${typeof value}. Converting to array.`);
-              result.processedProperties.textProperties[textProp] = [value];
-            }
-          });
-          result.isValid = result.errors.length === 0;
-          return result;
-        }
-        static findSemanticMatch(propertyKey, availableKeys) {
-          const keyLower = propertyKey.toLowerCase();
-          for (const availableKey of availableKeys) {
-            const availableLower = availableKey.toLowerCase();
-            if (availableLower === keyLower) return availableKey;
-            const normalizedKey = keyLower.replace(/[-_\s]/g, "");
-            const normalizedAvailable = availableLower.replace(/[-_\s]/g, "");
-            if (normalizedAvailable === normalizedKey) return availableKey;
-            if (availableLower.includes(keyLower) || keyLower.includes(availableLower)) {
-              return availableKey;
-            }
-          }
-          const semanticMap = {
-            "text": ["label", "title", "headline", "content"],
-            "label": ["text", "title", "headline"],
-            "supporting": ["subtitle", "description", "secondary"],
-            "trailing": ["end", "right", "action"],
-            "leading": ["start", "left", "icon"]
-          };
-          for (const [semantic, equivalents] of Object.entries(semanticMap)) {
-            if (keyLower.includes(semantic)) {
-              for (const equivalent of equivalents) {
-                const match = availableKeys.find((k) => k.toLowerCase().includes(equivalent));
-                if (match) return match;
-              }
-            }
-          }
-          return null;
-        }
-        static getComponentSchema(componentId) {
-          return _ComponentPropertyEngine.componentSchemas.get(componentId) || null;
-        }
-        static getAllSchemas() {
-          return Array.from(_ComponentPropertyEngine.componentSchemas.values());
-        }
-        static isSchemaStale(schema) {
-          const staleThreshold = 7 * 24 * 60 * 60 * 1e3;
-          return Date.now() - schema.scanTimestamp > staleThreshold;
-        }
-        static debugSchema(componentId) {
-          const schema = this.getComponentSchema(componentId);
-          if (schema) {
-            console.log(`\u{1F4CB} Schema for ${schema.name}:`);
-            console.log("  \u{1F3AF} Variants:", Object.keys(schema.availableVariants));
-            console.log("  \u{1F4DD} Text Layers:", Object.keys(schema.textLayers));
-            Object.entries(schema.textLayers).forEach(([name, info]) => {
-              console.log(`    - ${name}: ${info.dataType}${info.maxItems ? ` (max: ${info.maxItems})` : ""}`);
-            });
-            console.log("  \u{1F5BC}\uFE0F Media Layers:", Object.keys(schema.mediaLayers));
-            console.log("  \u{1F4C5} Scanned:", new Date(schema.scanTimestamp).toLocaleString());
-            console.log("  \u{1F522} Version:", schema.scanVersion);
-          } else {
-            console.log(`\u274C No schema found for component ${componentId}`);
-          }
-        }
-        static async createSchemaDebugFrame(componentId) {
-          const schema = this.getComponentSchema(componentId);
-          if (!schema) return;
-          const debugFrame = figma.createFrame();
-          debugFrame.name = `Debug: ${schema.name}`;
-          debugFrame.resize(400, 812);
-          debugFrame.fills = [{ type: "SOLID", color: { r: 0.95, g: 0.95, b: 0.95 } }];
-          await figma.loadFontAsync({ family: "Inter", style: "Bold" });
-          await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-          let yPos = 20;
-          const title = figma.createText();
-          title.fontName = { family: "Inter", style: "Bold" };
-          title.fontSize = 18;
-          title.characters = `${schema.name} (${schema.componentType})`;
-          title.x = 20;
-          title.y = yPos;
-          debugFrame.appendChild(title);
-          yPos += 40;
-          if (Object.keys(schema.availableVariants).length > 0) {
-            const variantsTitle = figma.createText();
-            variantsTitle.fontName = { family: "Inter", style: "Bold" };
-            variantsTitle.fontSize = 14;
-            variantsTitle.characters = "\u{1F3AF} Variants:";
-            variantsTitle.x = 20;
-            variantsTitle.y = yPos;
-            debugFrame.appendChild(variantsTitle);
-            yPos += 25;
-            Object.entries(schema.availableVariants).forEach(([name, values]) => {
-              const variantText = figma.createText();
-              variantText.fontName = { family: "Inter", style: "Regular" };
-              variantText.fontSize = 12;
-              variantText.characters = `${name}: [${values.join(", ")}]`;
-              variantText.x = 30;
-              variantText.y = yPos;
-              debugFrame.appendChild(variantText);
-              yPos += 20;
-            });
-            yPos += 10;
-          }
-          if (Object.keys(schema.textLayers).length > 0) {
-            const textTitle = figma.createText();
-            textTitle.fontName = { family: "Inter", style: "Bold" };
-            textTitle.fontSize = 14;
-            textTitle.characters = "\u{1F4DD} Text Layers:";
-            textTitle.x = 20;
-            textTitle.y = yPos;
-            debugFrame.appendChild(textTitle);
-            yPos += 25;
-            Object.entries(schema.textLayers).forEach(([name, info]) => {
-              const layerText = figma.createText();
-              layerText.fontName = { family: "Inter", style: "Regular" };
-              layerText.fontSize = 12;
-              layerText.characters = `${name}: ${info.dataType}${info.maxItems ? ` (max: ${info.maxItems})` : ""} - ${info.classification}`;
-              layerText.x = 30;
-              layerText.y = yPos;
-              debugFrame.appendChild(layerText);
-              yPos += 20;
-            });
-          }
-          figma.currentPage.appendChild(debugFrame);
-          figma.viewport.scrollAndZoomIntoView([debugFrame]);
-        }
-        static getPerformanceReport() {
-          return PerformanceTracker.getReport();
-        }
-      };
-      _ComponentPropertyEngine.componentSchemas = /* @__PURE__ */ new Map();
-      _ComponentPropertyEngine.componentHandlers = /* @__PURE__ */ new Map([
-        ["tab", new TabComponentHandler()],
-        ["tabs", new TabComponentHandler()],
-        ["chip", new ChipComponentHandler()]
-      ]);
-      _ComponentPropertyEngine.commonFontsLoaded = false;
-      ComponentPropertyEngine = _ComponentPropertyEngine;
-    }
-  });
-
-  // src/core/json-migrator.ts
-  var JSONMigrator;
-  var init_json_migrator = __esm({
-    "src/core/json-migrator.ts"() {
-      "use strict";
-      JSONMigrator = class {
-        static migrateToSystematic(originalJSON) {
-          if (originalJSON.items) {
-            originalJSON.items = this.traverseAndMerge(originalJSON.items);
-          }
-          if (originalJSON.layoutContainer && originalJSON.layoutContainer.items) {
-            originalJSON.layoutContainer.items = this.traverseAndMerge(originalJSON.layoutContainer.items);
-          }
-          return originalJSON;
-        }
-        static generateMigrationPreview(originalJSON) {
-          return {
-            action: "No migration needed",
-            details: "JSON is already in the correct format"
-          };
-        }
-        static traverseAndMerge(items) {
-          if (!items) {
-            return [];
-          }
-          let newItems = this.mergeConsecutiveTabs(items);
-          newItems = newItems.map((item) => {
-            if (item.items) {
-              item.items = this.traverseAndMerge(item.items);
-            }
-            if (item.layoutContainer && item.layoutContainer.items) {
-              item.layoutContainer.items = this.traverseAndMerge(item.layoutContainer.items);
-            }
-            return item;
-          });
-          return newItems;
-        }
-        static mergeConsecutiveTabs(items) {
-          if (!items || items.length === 0) {
-            return [];
-          }
-          const newItems = [];
-          let i = 0;
-          while (i < items.length) {
-            const currentItem = items[i];
-            if (currentItem.type === "tab" && i + 1 < items.length && items[i + 1].type === "tab") {
-              const tabGroup = [currentItem];
-              let j = i + 1;
-              while (j < items.length && items[j].type === "tab") {
-                tabGroup.push(items[j]);
-                j++;
-              }
-              const newTab = __spreadProps(__spreadValues({}, tabGroup[0]), {
-                properties: __spreadProps(__spreadValues({}, tabGroup[0].properties), {
-                  Label: tabGroup.map((tab) => tab.properties.Label)
-                })
-              });
-              newItems.push(newTab);
-              i = j;
-            } else {
-              newItems.push(currentItem);
-              i++;
-            }
-          }
-          return newItems;
-        }
-      };
-    }
-  });
-
-  // src/core/figma-renderer.ts
-  var _FigmaRenderer, FigmaRenderer;
-  var init_figma_renderer = __esm({
-    "src/core/figma-renderer.ts"() {
-      "use strict";
-      init_component_scanner();
-      init_session_manager();
-      init_component_property_engine();
-      init_json_migrator();
-      _FigmaRenderer = class _FigmaRenderer {
-        // Auto-positioning system to prevent overlapping renders
-        static async getNextRenderPosition(width, height) {
-          const GRID_SPACING = 50;
-          const COLUMN_WIDTH = 400;
-          try {
-            const positionData = await figma.clientStorage.getAsync("uxpal-render-positions");
-            let positions = positionData ? JSON.parse(positionData) : { nextX: 0, nextY: 0, currentRow: 0 };
-            const currentX = positions.nextX;
-            const currentY = positions.nextY;
-            positions.nextX += width + GRID_SPACING;
-            if (positions.nextX > COLUMN_WIDTH * 3) {
-              positions.nextX = 0;
-              positions.nextY += Math.max(height, 812) + GRID_SPACING;
-              positions.currentRow++;
-            }
-            await figma.clientStorage.setAsync("uxpal-render-positions", JSON.stringify(positions));
-            return { x: currentX, y: currentY };
-          } catch (error) {
-            console.warn("Position tracking failed, using default:", error);
-            return { x: 0, y: 0 };
-          }
-        }
-        // Reset render positions to start fresh
-        static async resetRenderPositions() {
-          try {
-            await figma.clientStorage.setAsync("uxpal-render-positions", JSON.stringify({ nextX: 0, nextY: 0, currentRow: 0 }));
-            console.log("\u{1F504} Render positions reset to origin");
-          } catch (error) {
-            console.warn("Failed to reset positions:", error);
-          }
-        }
-        /**
-         * Calculates the actual height needed for all content
-         */
-        static calculateContentHeight(frame) {
-          let maxBottom = 0;
-          for (const child of frame.children) {
-            const childBottom = child.y + child.height;
-            maxBottom = Math.max(maxBottom, childBottom);
-          }
-          const paddingBottom = "paddingBottom" in frame ? frame.paddingBottom : 0;
-          return maxBottom + paddingBottom;
-        }
-        /**
-         * Adjusts root frame height after content is rendered
-         * Ensures minimum viewport height while hugging content
-         */
-        static async adjustRootFrameHeight(rootFrame, minHeight = 812) {
-          try {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-            const contentHeight = this.calculateContentHeight(rootFrame);
-            console.log("\u{1F4CF} Content height analysis:", {
-              contentHeight,
-              minHeight,
-              shouldAdjust: contentHeight > minHeight,
-              currentFrameHeight: rootFrame.height,
-              primaryAxisSizing: rootFrame.primaryAxisSizingMode
-            });
-            if (contentHeight > minHeight && rootFrame.primaryAxisSizingMode === "AUTO") {
-              console.log("\u2705 Content height exceeds minimum - frame will hug content");
-            } else {
-              console.log("\u{1F4D0} Content fits within minimum - maintaining", minHeight, "px height");
-            }
-            if (rootFrame.layoutMode !== "NONE") {
-              const currentSpacing = rootFrame.itemSpacing;
-              rootFrame.itemSpacing = currentSpacing;
-            }
-          } catch (error) {
-            console.warn("\u26A0\uFE0F Failed to adjust root frame height:", error);
-          }
-        }
-        /**
-         * Main UI generation function - creates UI from structured JSON data
-         */
-        static async generateUIFromData(layoutData, parentNode) {
-          var _a, _b, _c, _d, _e, _f;
-          let currentFrame;
-          const containerData = layoutData.layoutContainer || layoutData;
-          if (parentNode.type === "PAGE" && containerData) {
-            currentFrame = figma.createFrame();
-            const initialWidth = containerData.width || 375;
-            const minHeight = containerData.minHeight || 812;
-            currentFrame.resize(initialWidth, minHeight);
-            if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
-              try {
-                currentFrame.layoutMode = containerData.layoutMode;
-                console.log("\u2705 Set layoutMode to:", containerData.layoutMode);
-              } catch (layoutModeError) {
-                console.warn("\u26A0\uFE0F Could not set layoutMode:", layoutModeError.message);
-                return currentFrame;
-              }
-              try {
-                currentFrame.primaryAxisSizingMode = "AUTO";
-                console.log("\u2705 Set primaryAxisSizingMode to AUTO");
-              } catch (sizingError) {
-                console.warn("\u26A0\uFE0F Could not set primaryAxisSizingMode:", sizingError.message);
-              }
-              try {
-                currentFrame.counterAxisSizingMode = "FIXED";
-                console.log("\u2705 Set counterAxisSizingMode to FIXED");
-              } catch (counterError) {
-                console.warn("\u26A0\uFE0F Could not set counterAxisSizingMode:", counterError.message);
-              }
-              try {
-                if (minHeight) {
-                  currentFrame.minHeight = minHeight;
-                  console.log("\u2705 Set minHeight to:", minHeight);
-                }
-              } catch (minHeightError) {
-                console.warn("\u26A0\uFE0F Could not set minHeight:", minHeightError.message);
-              }
-            }
-            const position = await this.getNextRenderPosition(initialWidth, minHeight);
-            currentFrame.x = position.x;
-            currentFrame.y = position.y;
-            parentNode.appendChild(currentFrame);
-          } else if (parentNode.type === "FRAME") {
-            currentFrame = parentNode;
-          } else {
-            figma.notify("Cannot add items without a parent frame.", { error: true });
-            return figma.createFrame();
-          }
-          if (containerData && containerData !== layoutData) {
-            currentFrame.name = containerData.name || "Generated Frame";
-            currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
-            if (currentFrame.layoutMode !== "NONE") {
-              currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
-              currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
-              currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
-              currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
-              if (containerData.itemSpacing === "AUTO") {
-                currentFrame.itemSpacing = "AUTO";
-              } else {
-                currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
-              }
-              try {
-                if (containerData.layoutWrap !== void 0) {
-                  currentFrame.layoutWrap = containerData.layoutWrap;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set layoutWrap:", e.message);
-              }
-              try {
-                if (containerData.primaryAxisAlignItems) {
-                  currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set primaryAxisAlignItems:", e.message);
-              }
-              try {
-                if (containerData.counterAxisAlignItems) {
-                  currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set counterAxisAlignItems:", e.message);
-              }
-              const hasPrimarySetter = ((_a = Object.getOwnPropertyDescriptor(currentFrame, "primaryAxisSizingMode")) == null ? void 0 : _a.set) !== void 0;
-              const hasCounterSetter = ((_b = Object.getOwnPropertyDescriptor(currentFrame, "counterAxisSizingMode")) == null ? void 0 : _b.set) !== void 0;
-              if (hasPrimarySetter) {
-                if (containerData.primaryAxisSizingMode) {
-                  currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-                } else if (currentFrame.primaryAxisSizingMode === "FIXED") {
-                  currentFrame.primaryAxisSizingMode = "AUTO";
-                }
-              } else {
-                console.warn("\u26A0\uFE0F Skipping primaryAxisSizingMode - setter not available");
-              }
-              if (hasCounterSetter && containerData.counterAxisSizingMode) {
-                currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
-              } else if (!hasCounterSetter) {
-                console.warn("\u26A0\uFE0F Skipping counterAxisSizingMode - setter not available");
-              }
-            }
-            try {
-              if (containerData.minWidth !== void 0) {
-                currentFrame.minWidth = containerData.minWidth;
-              }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set minWidth:", e.message);
-            }
-            try {
-              if (containerData.maxWidth !== void 0) {
-                currentFrame.maxWidth = containerData.maxWidth;
-              }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set maxWidth:", e.message);
-            }
-            try {
-              if (containerData.minHeight !== void 0) {
-                currentFrame.minHeight = containerData.minHeight;
-              }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set minHeight:", e.message);
-            }
-            try {
-              if (containerData.maxHeight !== void 0) {
-                currentFrame.maxHeight = containerData.maxHeight;
-              }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set maxHeight:", e.message);
-            }
-            if (containerData.width) {
-              if (currentFrame.layoutMode !== "NONE") {
-                currentFrame.width = containerData.width;
-                if (!containerData.counterAxisSizingMode) {
-                  currentFrame.counterAxisSizingMode = "FIXED";
-                }
-              } else {
-                currentFrame.resize(containerData.width, currentFrame.height);
-              }
-            } else if (!containerData.counterAxisSizingMode) {
-              currentFrame.counterAxisSizingMode = "AUTO";
-            }
-          }
-          const items = layoutData.items || containerData.items;
-          if (!items || !Array.isArray(items)) return currentFrame;
-          for (const item of items) {
-            if (item.type === "layoutContainer") {
-              const nestedFrame = figma.createFrame();
-              currentFrame.appendChild(nestedFrame);
-              console.log("\u{1F50D} DEBUG: Created nested frame with default sizing modes:", {
-                primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
-                counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
-                layoutMode: nestedFrame.layoutMode
-              });
-              this.applyChildLayoutProperties(nestedFrame, item);
-              if (nestedFrame.layoutMode === "HORIZONTAL" && nestedFrame.primaryAxisSizingMode === "AUTO") {
-                console.log("\u{1F527} HORIZONTAL AUTO CONTAINER (ALT PATH): Forcing height reset from default 100px");
-                try {
-                  console.log("\u{1F4CF} Current height before fix:", nestedFrame.height);
-                  const children = nestedFrame.children;
-                  if (children.length > 0) {
-                    let maxChildHeight = 0;
-                    for (const child of children) {
-                      if ("height" in child) {
-                        maxChildHeight = Math.max(maxChildHeight, child.height);
-                      }
-                    }
-                    console.log("\u{1F4CF} Calculated max child height:", maxChildHeight);
-                    if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
-                      const paddingTop = nestedFrame.paddingTop || 0;
-                      const paddingBottom = nestedFrame.paddingBottom || 0;
-                      const targetHeight = maxChildHeight + paddingTop + paddingBottom;
-                      console.log("\u{1F4CF} Setting frame height to:", targetHeight);
-                      nestedFrame.resize(nestedFrame.width, targetHeight);
-                    }
-                  }
-                  console.log("\u{1F4CF} Final height after fix:", nestedFrame.height);
-                  console.log("\u2705 Height reset complete - should now hug content");
-                } catch (error) {
-                  console.error("\u274C Height reset failed:", error);
-                }
-              }
-              console.log("\u{1F50D} DEBUG: After applyChildLayoutProperties:", {
-                primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
-                counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
-                layoutMode: nestedFrame.layoutMode,
-                height: nestedFrame.height
-              });
-              await this.generateUIFromData({ layoutContainer: item, items: item.items }, nestedFrame);
-              console.log("\u{1F50D} DEBUG: Final nested frame properties:", {
-                primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
-                counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
-                layoutMode: nestedFrame.layoutMode,
-                height: nestedFrame.height,
-                name: nestedFrame.name
-              });
-            } else if (item.type === "frame" && item.layoutContainer) {
-              const nestedFrame = figma.createFrame();
-              currentFrame.appendChild(nestedFrame);
-              await this.generateUIFromData(item, nestedFrame);
-            } else if (((_c = item.type) == null ? void 0 : _c.startsWith("native-")) && (item.items || ((_d = item.properties) == null ? void 0 : _d.items))) {
-              console.warn(`\u26A0\uFE0F Invalid structure: ${item.type} cannot have child items`);
-              console.warn("\u{1F4E6} Auto-converting to layoutContainer to prevent crash");
-              const childItems = item.items || ((_e = item.properties) == null ? void 0 : _e.items) || [];
-              const safeContainer = {
-                type: "layoutContainer",
-                layoutMode: "VERTICAL",
-                itemSpacing: 0,
-                padding: 0,
-                items: childItems
-              };
-              if (item.type === "native-rectangle" && item.properties) {
-                if ((_f = item.properties.fill) == null ? void 0 : _f.color) {
-                  safeContainer.backgroundColor = item.properties.fill.color;
-                }
-                if (item.properties.cornerRadius) {
-                  safeContainer.cornerRadius = item.properties.cornerRadius;
-                }
-                if (item.properties.padding) {
-                  safeContainer.padding = item.properties.padding;
-                }
-                if (item.properties.width) {
-                  safeContainer.width = item.properties.width;
-                }
-                if (item.properties.height) {
-                  safeContainer.height = item.properties.height;
-                }
-              }
-              console.log("\u{1F504} Converted structure:", {
-                from: item.type,
-                to: "layoutContainer",
-                preservedStyling: {
-                  backgroundColor: safeContainer.backgroundColor || "none",
-                  cornerRadius: safeContainer.cornerRadius || "none"
-                }
-              });
-              const nestedFrame = figma.createFrame();
-              currentFrame.appendChild(nestedFrame);
-              this.applyChildLayoutProperties(nestedFrame, safeContainer);
-              await this.generateUIFromData({ layoutContainer: safeContainer, items: safeContainer.items }, nestedFrame);
-              continue;
-            } else if (item.type === "native-text" || item.type === "text") {
-              await this.createTextNode(item, currentFrame);
-              continue;
-            } else if (item.type === "native-rectangle") {
-              await this.createRectangleNode(item, currentFrame);
-              continue;
-            } else if (item.type === "native-circle") {
-              await this.createEllipseNode(item, currentFrame);
-              continue;
-            } else {
-              if (!item.componentNodeId) continue;
-              const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
-              if (!componentNode) {
-                console.warn(`\u26A0\uFE0F Component with ID ${item.componentNodeId} not found. Skipping.`);
-                continue;
-              }
-              const masterComponent = componentNode.type === "COMPONENT_SET" ? componentNode.defaultVariant : componentNode;
-              if (!masterComponent || masterComponent.type !== "COMPONENT") {
-                console.warn(`\u26A0\uFE0F Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
-                continue;
-              }
-              const instance = masterComponent.createInstance();
-              currentFrame.appendChild(instance);
-              console.log(`\u{1F527} Creating instance of component: ${masterComponent.name}`);
-              console.log(`\u{1F527} Raw properties:`, item.properties);
-              const { cleanProperties, variants } = this.separateVariantsFromProperties(item.properties, item.componentNodeId);
-              const sanitizedProps = this.sanitizeProperties(cleanProperties);
-              console.log(`\u{1F527} Clean properties:`, sanitizedProps);
-              console.log(`\u{1F527} Extracted variants:`, variants);
-              if (Object.keys(variants).length > 0) {
-                try {
-                  if (componentNode && componentNode.type === "COMPONENT_SET") {
-                    const availableVariants = componentNode.variantGroupProperties;
-                    console.log(`\u{1F50D} Available variants for ${componentNode.name}:`, Object.keys(availableVariants || {}));
-                    console.log(`\u{1F50D} Requested variants:`, variants);
-                    if (!availableVariants) {
-                      console.warn("\u26A0\uFE0F No variant properties found on component, skipping variant application.");
-                    } else {
-                      const validVariants = {};
-                      let hasValidVariants = false;
-                      Object.entries(variants).forEach(([propName, propValue]) => {
-                        const availableProp = availableVariants[propName];
-                        if (availableProp && availableProp.values) {
-                          let stringValue;
-                          if (typeof propValue === "boolean") {
-                            stringValue = propValue ? "True" : "False";
-                            console.log(`\u{1F504} Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
-                          } else {
-                            stringValue = String(propValue);
-                          }
-                          if (availableProp.values.includes(stringValue)) {
-                            validVariants[propName] = stringValue;
-                            hasValidVariants = true;
-                            console.log(`\u2705 Valid variant: ${propName} = "${stringValue}"`);
-                          } else {
-                            console.warn(`\u26A0\uFE0F Invalid value for "${propName}": "${stringValue}". Available: [${availableProp.values.join(", ")}]`);
-                          }
-                        } else {
-                          console.warn(`\u26A0\uFE0F Unknown variant property: "${propName}". Available: [${Object.keys(availableVariants).join(", ")}]`);
-                        }
-                      });
-                      if (hasValidVariants) {
-                        console.log(`\u{1F527} Applying variants:`, validVariants);
-                        instance.setProperties(validVariants);
-                        console.log("\u2705 Variants applied successfully");
-                      } else {
-                        console.warn("\u26A0\uFE0F No valid variants to apply, using default variant");
-                      }
-                    }
-                  } else {
-                    console.log("\u2139\uFE0F Component is not a variant set, skipping variant application");
-                  }
-                } catch (e) {
-                  console.error("\u274C Error applying variants:", e);
-                  console.log("\u2139\uFE0F Continuing with default variant");
-                }
-              }
-              this.applyChildLayoutProperties(instance, sanitizedProps);
-              await this.applyTextProperties(instance, sanitizedProps);
-              await this.applyMediaProperties(instance, sanitizedProps);
-            }
-          }
-          if (parentNode.type === "PAGE") {
-            await this.adjustRootFrameHeight(currentFrame, (containerData == null ? void 0 : containerData.minHeight) || 812);
-            figma.currentPage.selection = [currentFrame];
-            figma.viewport.scrollAndZoomIntoView([currentFrame]);
-            figma.notify(`UI "${currentFrame.name}" generated!`, { timeout: 2500 });
-          }
-          return currentFrame;
-        }
-        /**
-         * Dynamic UI generation with component ID resolution
-         */
-        static async generateUIFromDataDynamic(layoutData) {
-          console.log("\u{1F680} START generateUIFromDataDynamic", { hasLayoutData: !!layoutData, hasItems: !!(layoutData == null ? void 0 : layoutData.items) });
-          if (!layoutData || !layoutData.items && !layoutData.layoutContainer) {
-            figma.notify("Invalid JSON structure", { error: true });
-            return null;
-          }
-          try {
-            figma.skipInvisibleInstanceChildren = true;
-            await this.ensureDesignSystemDataLoaded();
-            console.log("\u{1F527} Checking ComponentPropertyEngine schemas...");
-            const existingSchemas = ComponentPropertyEngine.getAllSchemas();
-            if (existingSchemas.length === 0) {
-              console.log("\u26A0\uFE0F No design system schemas found - running in basic mode");
-            } else {
-              await ComponentPropertyEngine.initialize();
-              console.log("\u2705 ComponentPropertyEngine initialized with", existingSchemas.length, "schemas");
-            }
-            const migratedData = JSONMigrator.migrateToSystematic(layoutData);
-            const isPlaceholderID = (id) => {
-              if (!id) return true;
-              return id.includes("_id") || id.includes("placeholder") || !id.match(/^[0-9]+:[0-9]+$/);
-            };
-            async function resolveComponentIds(items) {
-              for (const item of items) {
-                if (item.type === "layoutContainer") {
-                  if (item.items && Array.isArray(item.items)) {
-                    await resolveComponentIds(item.items);
-                  }
-                  continue;
-                }
-                if (item.type === "native-text" || item.type === "text" || item.type === "native-rectangle" || item.type === "native-circle") {
-                  console.log(`\u2139\uFE0F Skipping native element: ${item.type}`);
-                  continue;
-                }
-                if (item.type === "frame" && item.items) {
-                  await resolveComponentIds(item.items);
-                } else if (item.type !== "frame") {
-                  if (!item.componentNodeId || isPlaceholderID(item.componentNodeId)) {
-                    console.log(` Resolving component ID for type: ${item.type}`);
-                    const resolvedId = await ComponentScanner.getComponentIdByType(item.type);
-                    if (!resolvedId) {
-                      throw new Error(`Component for type "${item.type}" not found in design system. Please scan your design system first.`);
-                    }
-                    item.componentNodeId = resolvedId;
-                    console.log(`\u2705 Resolved ${item.type} -> ${resolvedId}`);
-                  } else {
-                    console.log(`\u2705 Using existing ID for ${item.type}: ${item.componentNodeId}`);
-                  }
-                }
-              }
-            }
-            await resolveComponentIds(migratedData.items);
-            console.log("\u{1F7E2} USING SYSTEMATIC GENERATION METHOD");
-            let designSystemData = null;
-            try {
-              console.log("\u{1F50D} Loading real design system data from storage...");
-              if (typeof figma !== "undefined" && figma.clientStorage) {
-                const scanSession = await figma.clientStorage.getAsync("design-system-scan");
-                if (scanSession && scanSession.components) {
-                  designSystemData = {
-                    components: scanSession.components,
-                    colorStyles: scanSession.colorStyles || null,
-                    scanTime: scanSession.scanTime,
-                    totalCount: scanSession.components.length
-                  };
-                  const iconCount = scanSession.components.filter((comp) => comp.suggestedType === "icon").length;
-                  console.log("\u2705 Loaded real design system data:", {
-                    totalComponents: scanSession.components.length,
-                    iconComponents: iconCount,
-                    scanTime: new Date(scanSession.scanTime).toLocaleString(),
-                    fileKey: scanSession.fileKey
-                  });
-                  const icons = scanSession.components.filter((comp) => comp.suggestedType === "icon");
-                  console.log("\u{1F3A8} Available icons:", icons.slice(0, 10).map((icon) => `${icon.name} (${icon.id})`));
-                } else {
-                  console.warn("\u26A0\uFE0F No design-system-scan data found in storage");
-                  const lastScan = await figma.clientStorage.getAsync("last-scan-results");
-                  if (lastScan && Array.isArray(lastScan)) {
-                    designSystemData = {
-                      components: lastScan,
-                      totalCount: lastScan.length
-                    };
-                    console.log("\u2705 Using fallback last-scan-results data:", lastScan.length, "components");
-                  }
-                }
-              } else {
-                console.warn("\u26A0\uFE0F figma.clientStorage not available");
-              }
-            } catch (error) {
-              console.error("\u274C Error loading design system data:", error);
-            }
-            return await this.generateUIFromDataSystematic(migratedData, figma.currentPage, designSystemData);
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            figma.notify(errorMessage, { error: true, timeout: 4e3 });
-            console.error("\u274C generateUIFromDataDynamic error:", e);
-            return null;
-          }
-        }
-        /**
-         * Detects if a container has width constraints that should constrain text
-         * NEW LOGIC: Uses effective width calculation from parent chain
-         */
-        static detectWidthConstraint(container) {
-          console.log("\u{1F50D} Detecting width constraint for container:", {
-            type: container.type,
-            layoutMode: container.layoutMode,
-            width: container.width,
-            name: container.name
-          });
-          const effectiveWidth = this.calculateEffectiveWidth(container);
-          if (effectiveWidth && effectiveWidth <= 375) {
-            console.log("\u2705 Width constraint detected: Effective width =", effectiveWidth);
-            return true;
-          }
-          console.log("\u274C No width constraint: Effective width =", effectiveWidth || "null");
-          return false;
-        }
-        /**
-         * Debug helper to log the full parent chain for width analysis
-         * Useful for troubleshooting width constraint detection issues
-         */
-        static debugParentChain(container) {
-          console.log("\u{1F50D} DEBUG: Parent chain analysis for:", container.name);
-          let current = container;
-          let level = 0;
-          while (current && level < 10) {
-            console.log(`Level ${level}:`, {
-              name: current.name,
-              type: current.type,
-              layoutMode: current.layoutMode || "none",
-              width: current.width,
-              horizontalSizing: current.horizontalSizing || "not-set",
-              primaryAxisSizingMode: current.primaryAxisSizingMode || "not-set",
-              counterAxisSizingMode: current.counterAxisSizingMode || "not-set",
-              hasEffectiveWidth: !!current._effectiveWidth,
-              effectiveWidth: current._effectiveWidth || "none"
-            });
-            const parent = current.parent;
-            if (parent && parent.type === "FRAME") {
-              current = parent;
-              level++;
-            } else {
-              break;
-            }
-          }
-        }
-        /**
-         * Calculate effective width constraint from parent chain
-         * Enhanced to handle FILL containers and metadata from JSON Engineer
-         * Walks up the layout hierarchy to find actual width limits
-         */
-        static calculateEffectiveWidth(container) {
-          console.log("\u{1F9EE} Calculating effective width for:", container.name);
-          let current = container;
-          let level = 0;
-          while (current && level < 10) {
-            console.log(`  Level ${level}: ${current.name} (${current.layoutMode || "no-layout"})`);
-            if (current.primaryAxisSizingMode === "FIXED" && current.counterAxisSizingMode === "FIXED" && current.width > 0) {
-              const rootWidth = current.width;
-              console.log(`  \u2705 Case 1 - Found root width: ${rootWidth}px`);
-              return rootWidth;
-            }
-            if (current.width > 0) {
-              const constrainedWidth = current.width - (current.paddingLeft || 0) - (current.paddingRight || 0);
-              console.log(`  \u2705 Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
-              return Math.max(constrainedWidth, 100);
-            }
-            if (current._effectiveWidth) {
-              const metadataWidth = current._effectiveWidth;
-              console.log(`  \u2705 Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
-              return metadataWidth;
-            }
-            const parent = current.parent;
-            if (parent && parent.type === "FRAME") {
-              const parentFrame = parent;
-              if (parentFrame.layoutMode === "VERTICAL" && current.layoutMode !== void 0) {
-                console.log(`  \u{1F50D} Case 4 - Checking FILL in VERTICAL parent`);
-                console.log(`    Parent: ${parentFrame.name}, layout: VERTICAL`);
-                console.log(`    Current horizontalSizing: ${current.horizontalSizing || "not-set"}`);
-                const parentWidth = this.calculateEffectiveWidth(parentFrame);
-                if (parentWidth) {
-                  const availableWidth = parentWidth - (parentFrame.paddingLeft || 0) - (parentFrame.paddingRight || 0);
-                  console.log(`  \u2705 Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
-                  return Math.max(availableWidth, 100);
-                }
-              }
-              if (parentFrame.layoutMode === "HORIZONTAL" && parentFrame.width > 0) {
-                const parentWidth = parentFrame.width - (parentFrame.paddingLeft || 0) - (parentFrame.paddingRight || 0);
-                console.log(`  \u2705 Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
-                return Math.max(parentWidth, 100);
-              }
-              current = parentFrame;
-              level++;
-            } else {
-              break;
-            }
-          }
-          console.log("  \u274C No effective width found in parent chain (reached top or max depth)");
-          return null;
-        }
-        /**
-         * Create native text element
-         */
-        static async createTextNode(textData, container) {
-          var _a, _b;
-          console.log("Creating native text:", textData);
-          const textNode = figma.createText();
-          await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-          const textContent = textData.text || textData.content || ((_a = textData.properties) == null ? void 0 : _a.content) || textData.characters || "Text";
-          textNode.characters = textContent;
-          const props = textData.properties || textData;
-          const constraintWidth = textData._constraintWidth || null;
-          const parentLayout = textData._parentLayout || null;
-          const useFlexFill = textData._useFlexFill || false;
-          console.log("\u{1F4D0} Text metadata:", {
-            constraintWidth,
-            parentLayout,
-            useFlexFill,
-            content: ((_b = props.content) == null ? void 0 : _b.substring(0, 30)) + "..."
-          });
-          const fontSize = props.fontSize || props.size || props.textSize || 16;
-          textNode.fontSize = fontSize;
-          if (props.fontWeight === "bold" || props.weight === "bold" || props.style === "bold") {
-            await figma.loadFontAsync({ family: "Inter", style: "Bold" });
-            textNode.fontName = { family: "Inter", style: "Bold" };
-          }
-          if (props.alignment === "center" || props.textAlign === "center") {
-            textNode.textAlignHorizontal = "CENTER";
-          } else if (props.alignment === "right" || props.textAlign === "right") {
-            textNode.textAlignHorizontal = "RIGHT";
-          } else {
-            textNode.textAlignHorizontal = "LEFT";
-          }
-          if (props.color) {
-            const fills = textNode.fills;
-            if (fills.length > 0 && fills[0].type === "SOLID") {
-              if (typeof props.color === "string") {
-                console.log(`\u{1F3A8} Attempting to resolve semantic color: "${props.color}"`);
-                try {
-                  const colorStyle = await this.resolveColorStyleReference(props.color);
-                  if (colorStyle) {
-                    await textNode.setFillStyleIdAsync(colorStyle.id);
-                    console.log(`\u2705 Applied semantic color "${props.color}" to text (as style reference)`);
-                  } else {
-                    const resolvedColor = this.resolveColorReference(props.color);
-                    if (resolvedColor) {
-                      textNode.fills = [this.createSolidPaint(resolvedColor)];
-                      console.log(`\u2705 Applied semantic color "${props.color}" to text (as RGB fallback)`);
-                    } else {
-                      console.warn(`\u26A0\uFE0F Could not resolve semantic color "${props.color}", skipping color application`);
-                    }
-                  }
-                } catch (error) {
-                  console.error(`\u274C Error applying color "${props.color}":`, error);
-                }
-              } else if (typeof props.color === "object" && "r" in props.color) {
-                const { r, g, b } = props.color;
-                textNode.fills = [{ type: "SOLID", color: { r, g, b } }];
-              } else {
-                textNode.fills = [{ type: "SOLID", color: props.color }];
-              }
-            }
-          }
-          if (props.colorStyleName) {
-            console.log(`\u{1F3A8} Attempting to resolve color style: "${props.colorStyleName}"`);
-            try {
-              const colorStyle = await this.resolveColorStyleReference(props.colorStyleName);
-              if (colorStyle) {
-                await textNode.setFillStyleIdAsync(colorStyle.id);
-                console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as style reference)`);
-              } else {
-                const resolvedColor = this.resolveColorReference(props.colorStyleName);
-                if (resolvedColor) {
-                  textNode.fills = [this.createSolidPaint(resolvedColor)];
-                  console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
-                } else {
-                  console.warn(`\u26A0\uFE0F Could not resolve color style "${props.colorStyleName}", skipping color application`);
-                }
-              }
-            } catch (error) {
-              console.error(`\u274C Error applying color style "${props.colorStyleName}":`, error);
-            }
-          }
-          if (props.textStyle || props.textStyleName) {
-            const styleName = props.textStyle || props.textStyleName;
-            console.log(`\u{1F4DD} Attempting to apply text style: "${styleName}"`);
-            try {
-              await _FigmaRenderer.applyTextStyle(textNode, styleName);
-            } catch (error) {
-              console.error(`\u274C Error applying text style "${styleName}":`, error);
-            }
-          }
-          const isInConstrainedContainer = this.detectWidthConstraint(container);
-          if (useFlexFill) {
-            console.log("\u{1F4DD} Text flex-fill decision:", {
-              content: textContent.substring(0, 30) + "...",
-              useFlexFill,
-              parentLayout,
-              isInConstrainedContainer,
-              containerName: container.name,
-              effectiveWidth: this.calculateEffectiveWidth(container)
-            });
-          }
-          if (useFlexFill) {
-            textNode.textAutoResize = "HEIGHT";
-            console.log("\u2705 FINAL: Applied flex-fill (auto-layout managed width)", {
-              parentLayout,
-              textAutoResize: "HEIGHT",
-              strategy: parentLayout === "VERTICAL_IN_HORIZONTAL" ? "nested" : "direct"
-            });
-          } else if (isInConstrainedContainer && !useFlexFill) {
-            textNode.textAutoResize = "HEIGHT";
-            let targetWidth = constraintWidth;
-            if (!targetWidth) {
-              const effectiveWidth = this.calculateEffectiveWidth(container);
-              targetWidth = effectiveWidth;
-            }
-            if (!targetWidth) {
-              targetWidth = container.width;
-            }
-            const availableWidth = Math.max(
-              targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)),
-              100
-              // Minimum 100px
-            );
-            textNode.resize(availableWidth, textNode.height);
-            console.log("\u2705 FINAL: Applied width constraint", {
-              source: constraintWidth ? "metadata" : "calculated",
-              targetWidth,
-              availableWidth,
-              containerPadding: (container.paddingLeft || 0) + (container.paddingRight || 0)
-            });
-          } else {
-            textNode.textAutoResize = "WIDTH_AND_HEIGHT";
-            console.log("\u2705 FINAL: Applied free expansion (no width constraint detected)");
-          }
-          this.applyChildLayoutProperties(textNode, props);
-          container.appendChild(textNode);
-          console.log("Native text created successfully");
-        }
-        /**
-         * Create native rectangle element
-         */
-        static async createRectangleNode(rectData, container) {
-          console.log("Creating native rectangle:", rectData);
-          const rect = figma.createRectangle();
-          const props = rectData.properties || rectData;
-          const width = props.width || rectData.width || 100;
-          const height = props.height || rectData.height || 100;
-          rect.resize(width, height);
-          if (props.fill || rectData.fill) {
-            const fillColor = props.fill || rectData.fill;
-            try {
-              if (typeof fillColor === "string" && fillColor.includes("#")) {
-                const hexColor = fillColor.replace("#", "");
-                if (hexColor.length === 6) {
-                  const r = parseInt(hexColor.substr(0, 2), 16) / 255;
-                  const g = parseInt(hexColor.substr(2, 2), 16) / 255;
-                  const b = parseInt(hexColor.substr(4, 2), 16) / 255;
-                  if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
-                    rect.fills = [{ type: "SOLID", color: { r, g, b } }];
-                  }
-                }
-              } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
-                const { r, g, b } = fillColor;
-                rect.fills = [{ type: "SOLID", color: { r, g, b } }];
-              } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
-                await this.applyImageFill(rect, fillColor);
-              }
-            } catch (error) {
-              console.log("Skipping invalid fill color:", fillColor);
-            }
-          }
-          if (props.cornerRadius || rectData.cornerRadius) {
-            const radius = props.cornerRadius || rectData.cornerRadius;
-            rect.cornerRadius = radius;
-          }
-          this.applyChildLayoutProperties(rect, props);
-          if (props.horizontalSizing === "FILL") {
-            rect.layoutAlign = "STRETCH";
-            rect.layoutGrow = 1;
-          }
-          container.appendChild(rect);
-          console.log("Rectangle created successfully");
-        }
-        /**
-         * Apply image fill to a shape element (rectangle or ellipse)
-         */
-        static async applyImageFill(element, fillData) {
-          console.log("\u{1F50D} DEBUG: applyImageFill called with:", fillData);
-          console.log("\u{1F50D} DEBUG: Element type:", element.type);
-          try {
-            const imageUrl = fillData.imageUrl;
-            const scaleMode = fillData.scaleMode || "FILL";
-            console.log("\u{1F50D} DEBUG: imageUrl:", imageUrl);
-            console.log("\u{1F50D} DEBUG: scaleMode:", scaleMode);
-            if (!imageUrl) {
-              console.log("\u{1F50D} DEBUG: No imageUrl - attempting native placeholder");
-              try {
-                const checkeredPattern = new Uint8Array([
-                  137,
-                  80,
-                  78,
-                  71,
-                  13,
-                  10,
-                  26,
-                  10,
-                  // PNG signature
-                  0,
-                  0,
-                  0,
-                  13,
-                  73,
-                  72,
-                  68,
-                  82,
-                  // IHDR chunk
-                  0,
-                  0,
-                  0,
-                  2,
-                  0,
-                  0,
-                  0,
-                  2,
-                  // 2x2 pixels
-                  8,
-                  2,
-                  0,
-                  0,
-                  0,
-                  144,
-                  93,
-                  104,
-                  // RGB color type
-                  22,
-                  0,
-                  0,
-                  0,
-                  24,
-                  73,
-                  68,
-                  65,
-                  // IDAT chunk
-                  84,
-                  8,
-                  29,
-                  1,
-                  13,
-                  0,
-                  242,
-                  255,
-                  // Compressed data
-                  255,
-                  255,
-                  255,
-                  240,
-                  240,
-                  240,
-                  240,
-                  240,
-                  // White and light gray pixels
-                  240,
-                  255,
-                  255,
-                  255,
-                  35,
-                  40,
-                  1,
-                  153,
-                  // Creating checkered pattern
-                  0,
-                  0,
-                  0,
-                  0,
-                  73,
-                  69,
-                  78,
-                  68,
-                  // IEND chunk
-                  174,
-                  66,
-                  96,
-                  130
-                ]);
-                const placeholderImage = figma.createImage(checkeredPattern);
-                console.log("\u{1F50D} DEBUG: Created placeholder image with hash:", placeholderImage.hash);
-                const placeholderPaint = {
-                  type: "IMAGE",
-                  imageHash: placeholderImage.hash,
-                  scaleMode
-                };
-                console.log("\u{1F50D} DEBUG: Created ImagePaint:", placeholderPaint);
-                element.fills = [placeholderPaint];
-                console.log("\u{1F50D} DEBUG: Applied fills to element");
-                console.log("\u{1F50D} DEBUG: Element fills after setting:", element.fills);
-                return;
-              } catch (placeholderError) {
-                console.log("\u{1F50D} DEBUG: Placeholder creation failed:", placeholderError);
-                throw placeholderError;
-              }
-            }
-            console.log("\u{1F50D} DEBUG: Creating image from URL:", imageUrl);
-            const image = await figma.createImageAsync(imageUrl);
-            console.log("\u{1F50D} DEBUG: Created image with hash:", image.hash);
-            const imagePaint = {
-              type: "IMAGE",
-              imageHash: image.hash,
-              scaleMode
-              // FILL, STRETCH, FIT, CROP, etc.
-            };
-            console.log("\u{1F50D} DEBUG: Created ImagePaint from URL:", imagePaint);
-            element.fills = [imagePaint];
-            console.log("\u{1F50D} DEBUG: Applied URL image fill successfully");
-            console.log("\u{1F50D} DEBUG: Element fills after URL setting:", element.fills);
-          } catch (error) {
-            console.log("\u{1F50D} DEBUG: applyImageFill error occurred:", error);
-            console.log("\u{1F50D} DEBUG: Falling back to solid gray");
-            const grayFill = { type: "SOLID", color: { r: 0.8, g: 0.8, b: 0.8 } };
-            element.fills = [grayFill];
-            console.log("\u{1F50D} DEBUG: Applied gray fallback:", grayFill);
-            console.log("\u{1F50D} DEBUG: Element fills after fallback:", element.fills);
-          }
-        }
-        /**
-         * Create native ellipse element
-         */
-        static async createEllipseNode(ellipseData, container) {
-          console.log("Creating native ellipse:", ellipseData);
-          const ellipse = figma.createEllipse();
-          const props = ellipseData.properties || ellipseData;
-          const width = props.width || ellipseData.width || 50;
-          const height = props.height || ellipseData.height || 50;
-          ellipse.resize(width, height);
-          if (props.fill || ellipseData.fill) {
-            const fillColor = props.fill || ellipseData.fill;
-            try {
-              if (typeof fillColor === "string" && fillColor.includes("#")) {
-                const hexColor = fillColor.replace("#", "");
-                if (hexColor.length === 6) {
-                  const r = parseInt(hexColor.substr(0, 2), 16) / 255;
-                  const g = parseInt(hexColor.substr(2, 2), 16) / 255;
-                  const b = parseInt(hexColor.substr(4, 2), 16) / 255;
-                  if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
-                    ellipse.fills = [{ type: "SOLID", color: { r, g, b } }];
-                  }
-                }
-              } else if (fillColor && typeof fillColor === "object" && "r" in fillColor) {
-                const { r, g, b } = fillColor;
-                ellipse.fills = [{ type: "SOLID", color: { r, g, b } }];
-              } else if (fillColor && typeof fillColor === "object" && fillColor.type === "IMAGE") {
-                await this.applyImageFill(ellipse, fillColor);
-              }
-            } catch (error) {
-              console.log("Skipping invalid fill color:", fillColor);
-            }
-          }
-          this.applyChildLayoutProperties(ellipse, props);
-          if (props.horizontalSizing === "FILL") {
-            ellipse.layoutAlign = "STRETCH";
-            ellipse.layoutGrow = 1;
-          }
-          container.appendChild(ellipse);
-          console.log("Ellipse created successfully");
-        }
-        /**
-         * Apply text properties to component instances using enhanced scan data
-         */
-        static async applyTextProperties(instance, properties) {
-          if (!properties) return;
-          console.log("\u{1F50D} Applying text properties:", properties);
-          let allTextNodes = [];
-          try {
-            allTextNodes = instance.findAll((n) => n.type === "TEXT");
-          } catch (findError) {
-            console.error(`\u274C Error finding text nodes in component instance:`, findError.message);
-            return;
-          }
-          console.log(
-            "\u{1F50D} Available text nodes in component:",
-            allTextNodes.map((textNode) => ({
-              name: textNode.name,
-              id: textNode.id,
-              visible: textNode.visible,
-              chars: textNode.characters || "[empty]"
-            }))
-          );
-          const componentTextHierarchy = await this.getComponentTextHierarchy(instance);
-          console.log("\u{1F50D} Text hierarchy from scan data:", componentTextHierarchy);
-          const semanticMappings = {
-            "primary-text": ["primary"],
-            "secondary-text": ["secondary"],
-            "tertiary-text": ["tertiary"],
-            "headline": ["primary", "secondary"],
-            "title": ["primary", "secondary"],
-            "content": ["primary", "secondary"],
-            "text": ["primary", "secondary"],
-            "supporting-text": ["secondary", "tertiary"],
-            "supporting": ["secondary", "tertiary"],
-            "subtitle": ["secondary", "tertiary"],
-            "trailing-text": ["tertiary", "secondary"],
-            "trailing": ["tertiary", "secondary"],
-            "caption": ["tertiary"],
-            "overline": ["tertiary"]
-          };
-          const legacyMappings = {
-            "content": ["headline", "title", "text", "label"],
-            "headline": ["headline", "title", "text", "label"],
-            "text": ["headline", "title", "text", "label"],
-            "supporting-text": ["supporting", "subtitle", "description", "body"],
-            "supporting": ["supporting", "subtitle", "description", "body"],
-            "trailing-text": ["trailing", "value", "action", "status", "end"],
-            "trailing": ["trailing", "value", "action", "status", "end"],
-            "title": ["title", "headline", "text"],
-            "subtitle": ["subtitle", "supporting", "description"]
-          };
-          for (const [propKey, propValue] of Object.entries(properties)) {
-            if (!propValue || typeof propValue !== "string" || !propValue.trim()) continue;
-            const nonTextProperties = /* @__PURE__ */ new Set([
-              "horizontalSizing",
-              "variants",
-              "textStyle",
-              "colorStyleName",
-              "leading-icon",
-              "trailing-icon",
-              "layoutAlign",
-              "layoutGrow"
-            ]);
-            if (nonTextProperties.has(propKey) || propKey.endsWith("Style") || propKey.includes("icon")) {
-              continue;
-            }
-            console.log(`\u{1F527} Trying to set ${propKey} = "${propValue}"`);
-            let textNode = null;
-            let matchMethod = "none";
-            if (componentTextHierarchy) {
-              const hierarchyEntry = componentTextHierarchy.find(
-                (entry) => entry.nodeName.toLowerCase() === propKey.toLowerCase() || entry.nodeName.toLowerCase().replace(/\s+/g, "-") === propKey.toLowerCase()
-              );
-              if (hierarchyEntry) {
-                textNode = allTextNodes.find((n) => n.id === hierarchyEntry.nodeId) || null;
-                if (textNode) {
-                  matchMethod = "exact-name";
-                  console.log(`\u2705 Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
-                } else {
-                  textNode = allTextNodes.find((n) => n.name === hierarchyEntry.nodeName) || null;
-                  if (textNode) {
-                    matchMethod = "name-fallback";
-                    console.log(`\u2705 Found text node by name fallback: "${textNode.name}" (ID mismatch resolved)`);
-                  }
-                }
-              }
-            }
-            if (!textNode && componentTextHierarchy && semanticMappings[propKey.toLowerCase()]) {
-              const targetClassifications = semanticMappings[propKey.toLowerCase()];
-              for (const classification of targetClassifications) {
-                const hierarchyEntry = componentTextHierarchy.find(
-                  (entry) => entry.classification === classification
-                );
-                if (hierarchyEntry) {
-                  textNode = allTextNodes.find((n) => n.id === hierarchyEntry.nodeId) || null;
-                  if (textNode) {
-                    matchMethod = "semantic-classification";
-                    console.log(`\u2705 Found text node by semantic classification: "${textNode.name}" (${classification})`);
-                    break;
-                  } else {
-                    textNode = allTextNodes.find((n) => n.name === hierarchyEntry.nodeName) || null;
-                    if (textNode) {
-                      matchMethod = "semantic-name-fallback";
-                      console.log(`\u2705 Found text node by semantic name fallback: "${textNode.name}" (ID mismatch resolved)`);
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-            if (!textNode && componentTextHierarchy) {
-              const hierarchyEntry = componentTextHierarchy.find(
-                (entry) => entry.nodeName.toLowerCase().includes(propKey.toLowerCase()) || propKey.toLowerCase().includes(entry.nodeName.toLowerCase())
-              );
-              if (hierarchyEntry) {
-                textNode = allTextNodes.find((n) => n.id === hierarchyEntry.nodeId) || null;
-                if (textNode) {
-                  matchMethod = "partial-name";
-                  console.log(`\u2705 Found text node by partial name match: "${textNode.name}"`);
-                } else {
-                  textNode = allTextNodes.find((n) => n.name === hierarchyEntry.nodeName) || null;
-                  if (textNode) {
-                    matchMethod = "partial-name-fallback";
-                    console.log(`\u2705 Found text node by partial name fallback: "${textNode.name}" (ID mismatch resolved)`);
-                  }
-                }
-              }
-            }
-            if (!textNode) {
-              const possibleNames = legacyMappings[propKey.toLowerCase()] || [propKey.toLowerCase()];
-              for (const targetName of possibleNames) {
-                textNode = allTextNodes.find(
-                  (n) => n.name.toLowerCase().includes(targetName.toLowerCase())
-                ) || null;
-                if (textNode) {
-                  matchMethod = "legacy-mapping";
-                  console.log(`\u2705 Found text node by legacy mapping: "${textNode.name}"`);
-                  break;
-                }
-              }
-            }
-            if (!textNode) {
-              if (propKey.toLowerCase().includes("headline") || propKey.toLowerCase().includes("title") || propKey.toLowerCase().includes("primary")) {
-                textNode = allTextNodes[0] || null;
-                matchMethod = "position-first";
-                console.log(`\u{1F504} Using first text node as fallback for "${propKey}"`);
-              } else if (propKey.toLowerCase().includes("trailing") || propKey.toLowerCase().includes("tertiary")) {
-                textNode = allTextNodes[allTextNodes.length - 1] || null;
-                matchMethod = "position-last";
-                console.log(`\u{1F504} Using last text node as fallback for "${propKey}"`);
-              } else if (propKey.toLowerCase().includes("supporting") || propKey.toLowerCase().includes("secondary")) {
-                textNode = allTextNodes[1] || allTextNodes[0] || null;
-                matchMethod = "position-second";
-                console.log(`\u{1F504} Using second text node as fallback for "${propKey}"`);
-              }
-            }
-            if (textNode) {
-              try {
-                if (!textNode.visible) {
-                  textNode.visible = true;
-                  console.log(`\u{1F441}\uFE0F Activated hidden text node: "${textNode.name}"`);
-                }
-                if (typeof textNode.fontName !== "symbol") {
-                  await figma.loadFontAsync(textNode.fontName);
-                  textNode.characters = propValue;
-                  console.log(`\u2705 Successfully set "${textNode.name}" to "${propValue}" (method: ${matchMethod})`);
-                }
-              } catch (fontError) {
-                console.error(`\u274C Font loading failed for "${textNode.name}":`, fontError);
-              }
-            } else {
-              console.warn(`\u274C No text node found for property "${propKey}" with value "${propValue}"`);
-            }
-          }
-        }
-        /**
-         * Get text hierarchy data for a component instance from scan results
-         */
-        static async getComponentTextHierarchy(instance) {
-          try {
-            const mainComponent = await instance.getMainComponentAsync();
-            if (!mainComponent) return null;
-            const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-            if (!scanResults || !Array.isArray(scanResults)) return null;
-            const componentInfo = scanResults.find((comp) => comp.id === mainComponent.id);
-            return (componentInfo == null ? void 0 : componentInfo.textHierarchy) || null;
-          } catch (error) {
-            console.warn("Could not get text hierarchy data:", error);
-            return null;
-          }
-        }
-        /**
-         * Apply media properties to component instances using enhanced scan data validation
-         */
-        static async applyMediaProperties(instance, properties) {
-          var _a;
-          if (!properties) return;
-          console.log("\u{1F5BC}\uFE0F Validating media properties:", properties);
-          const componentMediaData = await this.getComponentMediaData(instance);
-          console.log("\u{1F5BC}\uFE0F Media data from scan results:", componentMediaData);
-          const mediaPropertyPatterns = [
-            "icon",
-            "image",
-            "avatar",
-            "photo",
-            "logo",
-            "media",
-            "leading-icon",
-            "trailing-icon",
-            "start-icon",
-            "end-icon",
-            "profile-image",
-            "user-avatar",
-            "cover-image",
-            "thumbnail"
-          ];
-          const mediaProperties = {};
-          Object.entries(properties).forEach(([key, value]) => {
-            const keyLower = key.toLowerCase();
-            if (mediaPropertyPatterns.some((pattern) => keyLower.includes(pattern))) {
-              mediaProperties[key] = value;
-            }
-          });
-          if (Object.keys(mediaProperties).length === 0) {
-            console.log("\u{1F5BC}\uFE0F No media properties found to validate");
-            return;
-          }
-          console.log("\u{1F5BC}\uFE0F Found media properties to validate:", Object.keys(mediaProperties));
-          for (const [propKey, propValue] of Object.entries(mediaProperties)) {
-            if (!propValue || typeof propValue !== "string" || !propValue.trim()) continue;
-            console.log(`\u{1F50D} Validating media property: ${propKey} = "${propValue}"`);
-            let validationResult = this.validateMediaProperty(propKey, propValue, componentMediaData);
-            if (validationResult.isValid) {
-              console.log(`\u2705 ${propKey} \u2192 would set to "${propValue}" (${validationResult.targetType}: "${validationResult.targetName}")`);
-            } else {
-              console.warn(`\u274C Invalid media property: "${propKey}" = "${propValue}" - ${validationResult.reason}`);
-              if ((_a = validationResult.suggestions) == null ? void 0 : _a.length) {
-                console.log(`\u{1F4A1} Available media slots: ${validationResult.suggestions.join(", ")}`);
-              }
-            }
-          }
-        }
-        /**
-         * Get media structure data for a component instance from scan results
-         */
-        static async getComponentMediaData(instance) {
-          try {
-            const mainComponent = await instance.getMainComponentAsync();
-            if (!mainComponent) {
-              console.warn("Could not get main component from instance");
-              return null;
-            }
-            console.log("\u{1F50D} Looking for media data for main component ID:", mainComponent.id);
-            const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-            if (!scanResults || !Array.isArray(scanResults)) {
-              console.warn("No scan results found in storage");
-              return null;
-            }
-            console.log("\u{1F50D} Available component IDs in scan data:", scanResults.map((c) => c.id));
-            const componentInfo = scanResults.find((comp) => comp.id === mainComponent.id);
-            if (!componentInfo) {
-              console.warn(`Component ${mainComponent.id} not found in scan results`);
-              return null;
-            }
-            console.log("\u{1F50D} Found component info:", componentInfo.name);
-            console.log("\u{1F50D} Component instances:", componentInfo.componentInstances);
-            console.log("\u{1F50D} Vector nodes:", componentInfo.vectorNodes);
-            console.log("\u{1F50D} Image nodes:", componentInfo.imageNodes);
-            return {
-              componentInstances: componentInfo.componentInstances || [],
-              vectorNodes: componentInfo.vectorNodes || [],
-              imageNodes: componentInfo.imageNodes || []
-            };
-          } catch (error) {
-            console.warn("Could not get media data:", error);
-            return null;
-          }
-        }
-        /**
-         * Validate a media property against available media slots in scan data
-         */
-        static validateMediaProperty(propKey, propValue, mediaData) {
-          if (!mediaData) {
-            return {
-              isValid: false,
-              reason: "No media scan data available"
-            };
-          }
-          const { componentInstances, vectorNodes, imageNodes } = mediaData;
-          const allMediaSlots = [
-            ...componentInstances.map((c) => ({ name: c.nodeName, type: "component-instance" })),
-            ...vectorNodes.map((v) => ({ name: v.nodeName, type: "vector-node" })),
-            ...imageNodes.map((i) => ({ name: i.nodeName, type: "image-node" }))
-          ];
-          if (allMediaSlots.length === 0) {
-            return {
-              isValid: false,
-              reason: "No media slots found in component"
-            };
-          }
-          const exactMatch = allMediaSlots.find(
-            (slot) => slot.name.toLowerCase() === propKey.toLowerCase() || slot.name.toLowerCase().replace(/\s+/g, "-") === propKey.toLowerCase()
-          );
-          if (exactMatch) {
-            return {
-              isValid: true,
-              targetType: exactMatch.type,
-              targetName: exactMatch.name
-            };
-          }
-          const partialMatch = allMediaSlots.find(
-            (slot) => slot.name.toLowerCase().includes(propKey.toLowerCase()) || propKey.toLowerCase().includes(slot.name.toLowerCase())
-          );
-          if (partialMatch) {
-            return {
-              isValid: true,
-              targetType: partialMatch.type,
-              targetName: partialMatch.name
-            };
-          }
-          const semanticMatch = this.findSemanticMediaMatch(propKey, allMediaSlots);
-          if (semanticMatch) {
-            return {
-              isValid: true,
-              targetType: semanticMatch.type,
-              targetName: semanticMatch.name
-            };
-          }
-          return {
-            isValid: false,
-            reason: `No matching media slot found for "${propKey}"`,
-            suggestions: allMediaSlots.map((slot) => slot.name)
-          };
-        }
-        /**
-         * Find semantic matches for media properties using intelligent classification
-         */
-        static findSemanticMediaMatch(propKey, mediaSlots) {
-          const keyLower = propKey.toLowerCase();
-          const classifications = this.classifyMediaSlots(mediaSlots);
-          if (keyLower.includes("avatar") || keyLower.includes("profile") || keyLower.includes("user")) {
-            return classifications.avatars[0] || classifications.images[0] || classifications.circles[0] || null;
-          }
-          if (keyLower.includes("icon") && !keyLower.includes("leading") && !keyLower.includes("trailing")) {
-            return classifications.icons[0] || classifications.vectors[0] || classifications.smallImages[0] || null;
-          }
-          if (keyLower.includes("image") || keyLower.includes("photo") || keyLower.includes("picture")) {
-            return classifications.images[0] || classifications.rectangularImages[0] || classifications.avatars[0] || null;
-          }
-          if (keyLower.includes("logo") || keyLower.includes("brand")) {
-            return classifications.logos[0] || classifications.vectors[0] || classifications.images[0] || null;
-          }
-          if (keyLower.includes("badge") || keyLower.includes("indicator") || keyLower.includes("status")) {
-            return classifications.badges[0] || classifications.smallImages[0] || classifications.vectors[0] || null;
-          }
-          if (keyLower.includes("leading") || keyLower.includes("start") || keyLower.includes("left")) {
-            const positionMatch = this.findByPosition(mediaSlots, "leading");
-            if (positionMatch) return positionMatch;
-            return classifications.icons[0] || classifications.vectors[0] || null;
-          }
-          if (keyLower.includes("trailing") || keyLower.includes("end") || keyLower.includes("right")) {
-            const positionMatch = this.findByPosition(mediaSlots, "trailing");
-            if (positionMatch) return positionMatch;
-            return classifications.icons[0] || classifications.vectors[0] || null;
-          }
-          if (keyLower.includes("large") || keyLower.includes("big") || keyLower.includes("cover")) {
-            return classifications.largeImages[0] || classifications.images[0] || null;
-          }
-          if (keyLower.includes("small") || keyLower.includes("mini") || keyLower.includes("thumb")) {
-            return classifications.smallImages[0] || classifications.icons[0] || classifications.vectors[0] || null;
-          }
-          if (keyLower.includes("icon")) {
-            return classifications.vectors[0] || classifications.icons[0] || null;
-          }
-          return null;
-        }
-        /**
-         * Classify media slots into semantic categories based on names and types
-         */
-        static classifyMediaSlots(mediaSlots) {
-          const classifications = {
-            avatars: [],
-            icons: [],
-            images: [],
-            vectors: [],
-            badges: [],
-            logos: [],
-            smallImages: [],
-            largeImages: [],
-            circles: [],
-            rectangularImages: []
-          };
-          mediaSlots.forEach((slot) => {
-            const nameLower = slot.name.toLowerCase();
-            if (nameLower.includes("avatar") || nameLower.includes("profile") || nameLower.includes("user") || nameLower.includes("person") || nameLower.includes("selfie") || nameLower.includes("face") || nameLower.includes("man") || nameLower.includes("woman") || nameLower.includes("people") || slot.type === "image-node" && nameLower.includes("photo")) {
-              classifications.avatars.push(slot);
-            } else if (nameLower.includes("icon") || nameLower.includes("symbol") || nameLower.includes("pictogram") || slot.type === "vector-node" && nameLower.length < 10) {
-              classifications.icons.push(slot);
-            } else if (nameLower.includes("badge") || nameLower.includes("indicator") || nameLower.includes("status") || nameLower.includes("notification") || nameLower.includes("dot") || nameLower.includes("alert")) {
-              classifications.badges.push(slot);
-            } else if (nameLower.includes("logo") || nameLower.includes("brand") || nameLower.includes("company")) {
-              classifications.logos.push(slot);
-            } else if (slot.type === "vector-node") {
-              classifications.vectors.push(slot);
-            } else if (slot.type === "image-node" || nameLower.includes("image") || nameLower.includes("picture") || nameLower.includes("photo")) {
-              classifications.images.push(slot);
-              if (nameLower.includes("small") || nameLower.includes("mini") || nameLower.includes("thumb")) {
-                classifications.smallImages.push(slot);
-              } else if (nameLower.includes("large") || nameLower.includes("big") || nameLower.includes("cover")) {
-                classifications.largeImages.push(slot);
-              }
-              if (nameLower.includes("circle") || nameLower.includes("round")) {
-                classifications.circles.push(slot);
-              } else {
-                classifications.rectangularImages.push(slot);
-              }
-            } else if (slot.type === "component-instance") {
-              classifications.images.push(slot);
-            }
-          });
-          return classifications;
-        }
-        /**
-         * Find media slots by position keywords
-         */
-        static findByPosition(mediaSlots, position) {
-          const positionKeywords = position === "leading" ? ["leading", "start", "left", "first", "begin"] : ["trailing", "end", "right", "last", "final"];
-          return mediaSlots.find(
-            (slot) => positionKeywords.some(
-              (keyword) => slot.name.toLowerCase().includes(keyword)
-            )
-          ) || null;
-        }
-        /**
-         * Sanitize and clean property names and values
-         */
-        static sanitizeProperties(properties) {
-          if (!properties) return {};
-          return Object.entries(properties).reduce((acc, [key, value]) => {
-            const cleanKey = key.replace(/\s+/g, "-");
-            if (key.toLowerCase().includes("text") && value !== null && value !== void 0) {
-              acc[cleanKey] = String(value);
-            } else {
-              acc[cleanKey] = value;
-            }
-            return acc;
-          }, {});
-        }
-        /**
-         * Separate variant properties from regular properties
-         */
-        static separateVariantsFromProperties(properties, componentId) {
-          if (!properties) return { cleanProperties: {}, variants: {} };
-          const cleanProperties = {};
-          const variants = {};
-          const knownTextProperties = ["text", "supporting-text", "trailing-text", "headline", "subtitle", "value"];
-          const knownLayoutProperties = ["horizontalSizing", "verticalSizing", "layoutAlign", "layoutGrow"];
-          const variantPropertyNames = [
-            "condition",
-            "Condition",
-            "leading",
-            "Leading",
-            "trailing",
-            "Trailing",
-            "state",
-            "State",
-            "style",
-            "Style",
-            "size",
-            "Size",
-            "type",
-            "Type",
-            "emphasis",
-            "Emphasis",
-            "variant",
-            "Variant"
-          ];
-          Object.entries(properties).forEach(([key, value]) => {
-            if (key === "variants") {
-              Object.assign(variants, value);
-              console.log(`\u{1F527} Found existing variants object:`, value);
-              return;
-            }
-            if (knownTextProperties.some((prop) => key.toLowerCase().includes(prop.toLowerCase()))) {
-              cleanProperties[key] = value;
-              return;
-            }
-            if (knownLayoutProperties.some((prop) => key.toLowerCase().includes(prop.toLowerCase()))) {
-              cleanProperties[key] = value;
-              return;
-            }
-            if (variantPropertyNames.includes(key)) {
-              const properKey = key.charAt(0).toUpperCase() + key.slice(1);
-              variants[properKey] = value;
-              console.log(`\u{1F527} Moved "${key}" -> "${properKey}" from properties to variants`);
-              return;
-            }
-            cleanProperties[key] = value;
-          });
-          console.log(`\u{1F50D} Final separation for ${componentId}:`);
-          console.log(`   Clean properties:`, cleanProperties);
-          console.log(`   Variants:`, variants);
-          return { cleanProperties, variants };
-        }
-        /**
-         * Apply child layout properties for auto-layout items
-         */
-        static applyChildLayoutProperties(node, properties) {
-          if (!properties || !node) return;
-          console.log("\u{1F525} CODE DEPLOYMENT TEST - APPLYING CHILD LAYOUT PROPERTIES:", {
-            nodeType: node.type,
-            properties,
-            DEPLOYMENT_TEST: "August 12 - If you see this, code is deployed"
-          });
-          console.log("\u{1F525}\u{1F525}\u{1F525} BEFORE SIZING MODE LOGIC:", {
-            primaryAxisSizingMode: node.primaryAxisSizingMode,
-            counterAxisSizingMode: node.counterAxisSizingMode,
-            layoutMode: node.layoutMode,
-            height: node.height
-          });
-          if (node.type !== "FRAME" && node.type !== "COMPONENT" && node.type !== "INSTANCE") {
-            console.warn("\u26A0\uFE0F Node type does not support layout properties:", node.type);
-            return;
-          }
-          const frame = node;
-          if (properties.horizontalSizing === "FILL") {
-            const parent = frame.parent;
-            if (parent && "layoutMode" in parent) {
-              const parentFrame = parent;
-              if (parentFrame.layoutMode === "VERTICAL") {
-                try {
-                  frame.layoutAlign = properties.layoutAlign || "STRETCH";
-                  if (frame.layoutMode !== "NONE") {
-                    frame.counterAxisSizingMode = "FIXED";
-                    frame.primaryAxisSizingMode = "AUTO";
-                  }
-                  console.log("\u2705 Applied FILL for VERTICAL parent - set layoutAlign to STRETCH");
-                } catch (e) {
-                  console.error("\u274C Failed to apply FILL sizing:", e);
-                }
-              } else if (parentFrame.layoutMode === "HORIZONTAL") {
-                try {
-                  frame.layoutGrow = 1;
-                  frame.layoutAlign = "STRETCH";
-                  if (frame.layoutMode !== "NONE") {
-                    frame.primaryAxisSizingMode = "FIXED";
-                    frame.counterAxisSizingMode = "AUTO";
-                  }
-                  console.log("\u2705 Applied FILL for HORIZONTAL parent - set layoutGrow to 1 and layoutAlign to STRETCH");
-                } catch (e) {
-                  console.error("\u274C Failed to apply FILL sizing:", e);
-                }
-              }
-            }
-          } else if (properties.horizontalSizing === "HUG" || properties.horizontalSizing === "AUTO") {
-            try {
-              if (frame.layoutMode !== "NONE") {
-                frame.primaryAxisSizingMode = "AUTO";
-                frame.counterAxisSizingMode = "AUTO";
-              }
-              console.log("\u2705 Applied HUG/AUTO sizing");
-            } catch (e) {
-              console.error("\u274C Failed to apply HUG sizing:", e);
-            }
-          }
-          if (properties.layoutAlign && !properties.horizontalSizing) {
-            try {
-              frame.layoutAlign = properties.layoutAlign;
-              console.log("\u2705 Set layoutAlign:", properties.layoutAlign);
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set layoutAlign:", e);
-            }
-          }
-          if (properties.layoutGrow !== void 0 && properties.layoutGrow !== null) {
-            try {
-              frame.layoutGrow = properties.layoutGrow;
-              console.log("\u2705 Set layoutGrow:", properties.layoutGrow);
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set layoutGrow:", e);
-            }
-          }
-          if (properties.layoutPositioning) {
-            try {
-              frame.layoutPositioning = properties.layoutPositioning;
-              console.log("\u2705 Set layoutPositioning:", properties.layoutPositioning);
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to set layoutPositioning:", e);
-            }
-          }
-          if (properties.layoutMode && properties.layoutMode !== frame.layoutMode) {
-            try {
-              frame.layoutMode = properties.layoutMode;
-              console.log("\u2705 Set child layoutMode:", properties.layoutMode);
-            } catch (e) {
-              console.error("\u274C Failed to set layoutMode:", e);
-            }
-          }
-          if (properties.primaryAxisSizingMode || properties.counterAxisSizingMode) {
-            try {
-              if (properties.primaryAxisSizingMode) {
-                frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
-                console.log("\u2705 Set child primaryAxisSizingMode:", properties.primaryAxisSizingMode);
-              }
-              if (properties.counterAxisSizingMode) {
-                frame.counterAxisSizingMode = properties.counterAxisSizingMode;
-                console.log("\u2705 Set child counterAxisSizingMode:", properties.counterAxisSizingMode);
-              }
-            } catch (e) {
-              console.error("\u274C Failed to apply sizing modes:", e);
-            }
-          }
-          console.log("\u{1F525}\u{1F525}\u{1F525} AFTER ALL LOGIC:", {
-            primaryAxisSizingMode: node.primaryAxisSizingMode,
-            counterAxisSizingMode: node.counterAxisSizingMode,
-            layoutMode: node.layoutMode,
-            height: node.height
-          });
-        }
-        /**
-         * Enhanced systematic component creation with modern API
-         */
-        static async createComponentInstanceSystematic(item, container) {
-          if (!item.componentNodeId) return;
-          let componentNode;
-          try {
-            componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
-          } catch (nodeError) {
-            console.error(`\u274C Error accessing component ${item.componentNodeId}:`, nodeError.message);
-            await this.createMissingComponentPlaceholder(item.componentNodeId, container);
-            return;
-          }
-          if (!componentNode) {
-            console.warn(`\u26A0\uFE0F Component with ID ${item.componentNodeId} not found. Skipping.`);
-            await this.createMissingComponentPlaceholder(item.componentNodeId, container);
-            return;
-          }
-          const masterComponent = componentNode.type === "COMPONENT_SET" ? componentNode.defaultVariant : componentNode;
-          if (!masterComponent || masterComponent.type !== "COMPONENT") {
-            console.warn(`\u26A0\uFE0F Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
-            return;
-          }
-          console.log(` Creating systematic instance: ${masterComponent.name}`);
-          const allProperties = __spreadProps(__spreadValues({}, item.properties || {}), {
-            variants: item.variants || {}
-          });
-          const validationResult = ComponentPropertyEngine.validateAndProcessProperties(
-            item.componentNodeId,
-            allProperties
-          );
-          if (validationResult.warnings.length > 0) {
-            console.warn(`\u26A0\uFE0F Warnings:`, validationResult.warnings);
-          }
-          if (validationResult.errors.length > 0) {
-            console.error(`\u274C Validation errors:`, validationResult.errors);
-            const llmErrors = validationResult.errors.map(
-              (err) => `${err.message}${err.suggestion ? ` - ${err.suggestion}` : ""}${err.llmHint ? ` (${err.llmHint})` : ""}`
-            ).join("\n");
-            console.error(` LLM Error Summary:
-${llmErrors}`);
-          }
-          const { variants, textProperties, mediaProperties, layoutProperties } = validationResult.processedProperties;
-          console.log("\u{1F527} VALIDATION RESULTS:", {
-            originalVariants: item.variants,
-            processedVariants: variants,
-            variantCount: Object.keys(variants).length
-          });
-          let instance;
-          try {
-            instance = masterComponent.createInstance();
-            container.appendChild(instance);
-          } catch (createError) {
-            console.error(`\u274C Error creating instance of ${masterComponent.name}:`, createError.message);
-            await this.createMissingComponentPlaceholder(item.componentNodeId, container);
-            return;
-          }
-          try {
-            if (Object.keys(variants).length > 0) {
-              console.log("\u2705 About to apply variants:", variants);
-              await this.applyVariantsSystematic(instance, variants, componentNode);
-            } else {
-              console.log("\u26A0\uFE0F NO VARIANTS TO APPLY - variants object is empty");
-            }
-          } catch (variantError) {
-            console.error(`\u274C Error applying variants to ${masterComponent.name}:`, variantError.message);
-          }
-          try {
-            this.applyChildLayoutProperties(instance, layoutProperties);
-          } catch (layoutError) {
-            console.error(`\u274C Error applying layout properties to ${masterComponent.name}:`, layoutError.message);
-          }
-          try {
-            if (Object.keys(textProperties).length > 0) {
-              await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
-            }
-          } catch (textError) {
-            console.error(`\u274C Error applying text properties to ${masterComponent.name}:`, textError.message);
-          }
-          try {
-            if (Object.keys(mediaProperties).length > 0) {
-              await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
-            }
-          } catch (mediaError) {
-            console.error(`\u274C Error applying media properties to ${masterComponent.name}:`, mediaError.message);
-          }
-          try {
-            await this.applyVisibilityOverrides(instance, item);
-          } catch (visibilityError) {
-            console.error(`\u274C Error applying visibility overrides to ${masterComponent.name}:`, visibilityError.message);
-          }
-          try {
-            if (item.iconSwaps) {
-              await this.applyIconSwaps(instance, item.iconSwaps);
-            }
-          } catch (iconError) {
-            console.error(`\u274C Error applying icon swaps to ${masterComponent.name}:`, iconError.message);
-          }
-        }
-        /**
-         * Apply variants with modern Component Properties API
-         */
-        static async applyVariantsSystematic(instance, variants, componentNode) {
-          console.log("\u{1F3A8} VARIANT APPLICATION START", {
-            variants,
-            componentType: componentNode == null ? void 0 : componentNode.type,
-            instanceName: instance.name
-          });
-          try {
-            await PerformanceTracker.track("apply-variants", async () => {
-              if (componentNode && componentNode.type === "COMPONENT_SET") {
-                const propertyDefinitions = componentNode.componentPropertyDefinitions;
-                if (!propertyDefinitions) {
-                  console.warn("\u26A0\uFE0F No component property definitions found");
-                  return;
-                }
-                const validVariants = {};
-                Object.entries(variants).forEach(([propName, propValue]) => {
-                  var _a;
-                  const propertyDef = propertyDefinitions[propName];
-                  if (propertyDef && propertyDef.type === "VARIANT") {
-                    let stringValue;
-                    if (typeof propValue === "boolean") {
-                      stringValue = propValue ? "True" : "False";
-                      console.log(`\u{1F504} Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
-                    } else {
-                      stringValue = String(propValue);
-                    }
-                    if (propertyDef.variantOptions && propertyDef.variantOptions.includes(stringValue)) {
-                      validVariants[propName] = stringValue;
-                      console.log(`\u2705 Valid variant: ${propName} = "${stringValue}"`);
-                    } else {
-                      console.warn(`\u26A0\uFE0F Invalid value for "${propName}": "${stringValue}". Available: [${((_a = propertyDef.variantOptions) == null ? void 0 : _a.join(", ")) || ""}]`);
-                    }
-                  } else {
-                    console.warn(`\u26A0\uFE0F Unknown variant property: "${propName}"`);
-                  }
-                });
-                if (Object.keys(validVariants).length > 0) {
-                  instance.setProperties(validVariants);
-                  console.log("\u2705 Variants applied successfully");
-                }
-              }
-            });
-          } catch (e) {
-            console.error("\u274C Error applying variants:", e);
-          }
-        }
-        /**
-         * Apply visibility overrides to component child elements
-         */
-        static async applyVisibilityOverrides(instance, itemData) {
-          console.log("\u{1F41B} applyVisibilityOverrides CALLED", {
-            hasOverrides: !!itemData.visibilityOverrides,
-            hasIconSwaps: !!itemData.iconSwaps,
-            overrideCount: Object.keys(itemData.visibilityOverrides || {}).length,
-            iconSwapCount: Object.keys(itemData.iconSwaps || {}).length,
-            instanceName: instance.name,
-            instanceId: instance.id,
-            itemType: itemData.type
-          });
-          if (!itemData.visibilityOverrides && !itemData.iconSwaps) {
-            console.log("\u{1F41B} No overrides to apply, returning early");
-            return;
-          }
-          console.log("\u{1F41B} Instance children:", instance.children.map((child) => ({
-            name: child.name,
-            id: child.id,
-            type: child.type,
-            visible: child.visible
-          })));
-          try {
-            if (itemData.visibilityOverrides) {
-              console.log("\u{1F41B} Processing visibility overrides:", itemData.visibilityOverrides);
-              Object.entries(itemData.visibilityOverrides).forEach(([nodeId, visible]) => {
-                console.log(`\u{1F41B} Looking for node ${nodeId} to set visibility to ${visible}`);
-                let child = instance.findChild((node) => node.id === nodeId);
-                if (!child) {
-                  console.log(`\u{1F41B} Exact match failed, trying base node ID matching for ${nodeId}`);
-                  child = instance.findChild((node) => node.id.endsWith(nodeId) || node.id.includes(nodeId));
-                  if (!child) {
-                    console.log(`\u{1F41B} Direct child search failed, searching all descendants for ${nodeId}`);
-                    try {
-                      child = instance.findAll((node) => node.id.includes(nodeId))[0];
-                      if (child) {
-                        console.log(`\u{1F41B} Found in descendants: ${child.id} (${child.name})`);
-                      }
-                    } catch (findAllError) {
-                      console.warn(`\u{1F41B} findAll search failed:`, findAllError);
-                    }
-                  }
-                }
-                if (child) {
-                  try {
-                    const previousVisible = child.visible;
-                    child.visible = visible;
-                    const childName = child.name || "unnamed";
-                    console.log(`\u2705 Applied visibility override: ${nodeId} = ${visible} (was: ${previousVisible}, name: ${childName}, actualId: ${child.id})`);
-                  } catch (nodeError) {
-                    console.warn(`\u26A0\uFE0F Error accessing node ${nodeId}:`, nodeError);
-                    console.warn(`\u{1F41B} Node may have been invalidated during component instantiation`);
-                  }
-                } else {
-                  console.warn(`\u26A0\uFE0F Child node ${nodeId} not found for visibility override`);
-                  console.warn(`\u{1F41B} Available node IDs:`, instance.children.map((c) => c.id));
-                }
-              });
-            }
-            console.log("\u{1F41B} applyVisibilityOverrides completed successfully");
-          } catch (error) {
-            console.error("\u274C Visibility override application failed:", error);
-          }
-        }
-        /**
-         * Simple icon resolution using existing design system structure
-         */
-        static resolveIcon(iconName, designSystemData) {
-          if (!(designSystemData == null ? void 0 : designSystemData.components)) {
-            console.warn("\u26A0\uFE0F No design system data available for icon resolution");
-            return null;
-          }
-          console.log(`\u{1F50D} Resolving icon "${iconName}" from ${designSystemData.components.length} components`);
-          console.log(
-            `\u{1F50D} Available icons:`,
-            designSystemData.components.filter((comp) => comp.suggestedType === "icon").map((comp) => `${comp.name} (${comp.id})`)
-          );
-          const iconComponent = designSystemData.components.find(
-            (comp) => comp.suggestedType === "icon" && comp.name.toLowerCase().includes(iconName.toLowerCase())
-          );
-          if (iconComponent) {
-            console.log(`\u2705 Resolved icon "${iconName}" \u2192 ${iconComponent.id} (${iconComponent.name})`);
-            return iconComponent.id;
-          }
-          console.warn(`\u274C Icon "${iconName}" not found in design system`);
-          return null;
-        }
-        /**
-         * Get cached design system data for icon resolution
-         */
-        static getCachedDesignSystemData() {
-          var _a, _b;
-          if (!this.currentDesignSystemData) {
-            console.warn("\u26A0\uFE0F No design system data available for icon resolution");
-            return null;
-          }
-          console.log("\u2705 Using design system data with", ((_b = (_a = this.currentDesignSystemData) == null ? void 0 : _a.components) == null ? void 0 : _b.length) || 0, "components");
-          return this.currentDesignSystemData;
-        }
-        /**
-         * Set design system data for the current rendering session
-         */
-        static setDesignSystemData(data) {
-          var _a;
-          this.currentDesignSystemData = data;
-          console.log("\u{1F4CB} Design system data loaded for rendering:", ((_a = data == null ? void 0 : data.components) == null ? void 0 : _a.length) || 0, "components");
-        }
-        /**
-         * Apply icon swaps after component rendering is complete
-         */
-        static async applyIconSwaps(instance, iconSwaps) {
-          var _a, _b;
-          console.log("\u{1F504} Applying icon swaps AFTER rendering:", iconSwaps);
-          const designSystemData = this.getCachedDesignSystemData();
-          let schema = null;
-          let componentId = null;
-          try {
-            const mainComponent = await instance.getMainComponentAsync();
-            componentId = mainComponent == null ? void 0 : mainComponent.id;
-            if (componentId) {
-              schema = ComponentPropertyEngine.getComponentSchema(componentId);
-              if (schema) {
-                console.log(`\u{1F4CB} Using schema for component ${componentId}:`, schema);
-              } else {
-                console.warn(`\u26A0\uFE0F No schema found for component ${componentId}`);
-              }
-            } else {
-              console.warn(`\u26A0\uFE0F No main component found for instance`);
-            }
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Error getting main component:`, error);
-          }
-          for (const [nodeId, iconName] of Object.entries(iconSwaps)) {
-            console.log(`\u{1F504} Icon swap: ${nodeId} \u2192 ${iconName}`);
-            let targetInstance = null;
-            if (schema && schema.componentInstances) {
-              console.log(`\u{1F4CB} Schema-based search for "${nodeId}"...`);
-              console.log(`\u{1F4CB} Available componentInstances:`, schema.componentInstances);
-              for (const compInstance of schema.componentInstances) {
-                const instName = compInstance.nodeName.toLowerCase();
-                const instId = compInstance.nodeId;
-                console.log(`\u{1F4CB} Checking schema instance: ${compInstance.nodeName} (${instId})`);
-                if (nodeId.includes("leading") && instName.includes("leading")) {
-                  try {
-                    const foundNode = instance.findChild((node) => node.id === instId) || instance.findAll((node) => node.id.includes(instId))[0];
-                    if (foundNode && foundNode.type === "INSTANCE") {
-                      targetInstance = foundNode;
-                      console.log(`\u{1F4CB} Found leading instance via schema: ${foundNode.name} (${foundNode.id})`);
-                      break;
-                    } else if (foundNode) {
-                      console.log(`\u{1F4CB} Found container "${foundNode.name}", searching for icon instances inside...`);
-                      try {
-                        const iconInstances = ((_a = foundNode.findAll) == null ? void 0 : _a.call(foundNode, (n) => n.type === "INSTANCE")) || [];
-                        if (iconInstances.length > 0) {
-                          targetInstance = iconInstances[0];
-                          console.log(`\u{1F4CB} Found icon inside container: ${targetInstance.name} (${targetInstance.id})`);
-                          break;
-                        }
-                      } catch (nestedError) {
-                        console.warn(`\u{1F4CB} Error searching inside container:`, nestedError);
-                      }
-                    }
-                  } catch (error) {
-                    console.warn(`\u{1F4CB} Error finding schema instance ${instId}:`, error);
-                  }
-                }
-              }
-            }
-            if (!targetInstance) {
-              console.log(`\u{1F50D} Fallback search for "${nodeId}"...`);
-              try {
-                console.log(`\u{1F50D} All children of ${instance.name}:`, instance.children.map((child) => ({
-                  name: child.name,
-                  type: child.type,
-                  id: child.id
-                })));
-                const allInstances = instance.findAll((node) => node.type === "INSTANCE");
-                console.log(`\u{1F50D} Found ${allInstances.length} total instances in component`);
-                for (const inst of allInstances) {
-                  const instName = inst.name.toLowerCase();
-                  console.log(`\u{1F50D} Checking instance: ${inst.name} (${inst.id})`);
-                  if (nodeId.includes("leading") && instName.includes("leading")) {
-                    targetInstance = inst;
-                    console.log(`\u{1F50D} Found by semantic match: ${inst.name}`);
-                    break;
-                  } else if (nodeId.includes("trailing") && instName.includes("trailing")) {
-                    targetInstance = inst;
-                    console.log(`\u{1F50D} Found by semantic match: ${inst.name}`);
-                    break;
-                  } else if (nodeId.includes("icon") && instName.includes("icon")) {
-                    targetInstance = inst;
-                    console.log(`\u{1F50D} Found by semantic match: ${inst.name}`);
-                    break;
-                  }
-                }
-                if (!targetInstance && allInstances.length > 0) {
-                  console.log(`\u{1F50D} No semantic match, checking all instances for potential icon swaps...`);
-                  for (const inst of allInstances) {
-                    console.log(`\u{1F50D} Instance details: ${inst.name} (${inst.id})`);
-                    try {
-                      const mainComp = await inst.getMainComponentAsync();
-                      console.log(`\u{1F50D} Instance ${inst.name} has mainComponent: ${(mainComp == null ? void 0 : mainComp.name) || "none"}`);
-                      if (mainComp && mainComp.name.toLowerCase().includes("icon")) {
-                        targetInstance = inst;
-                        console.log(`\u{1F50D} Found potential icon by mainComponent: ${inst.name} \u2192 ${mainComp.name}`);
-                        break;
-                      }
-                    } catch (error) {
-                      console.warn(`\u{1F50D} Error checking mainComponent for ${inst.name}:`, error);
-                    }
-                  }
-                }
-              } catch (error) {
-                console.warn(`\u{1F50D} Fallback search failed:`, error);
-              }
-            }
-            if (!targetInstance) {
-              console.log(`\u{1F50D} Searching by exact ID: ${nodeId}`);
-              let node = instance.findChild((node2) => node2.id === nodeId);
-              if (node && node.type === "INSTANCE") {
-                targetInstance = node;
-              } else if (node) {
-                console.log(`\u{1F50D} Found node ${nodeId} (type: ${node.type}), searching for component instances within...`);
-                try {
-                  const instances = ((_b = node.findAll) == null ? void 0 : _b.call(node, (n) => n.type === "INSTANCE")) || [];
-                  if (instances.length > 0) {
-                    targetInstance = instances[0];
-                    console.log(`\u{1F50D} Found nested instance: ${targetInstance.name} (${targetInstance.id})`);
-                  }
-                } catch (error) {
-                  console.warn(`\u{1F50D} Error searching within node:`, error);
-                }
-              }
-            }
-            if (!targetInstance) {
-              console.log(`\u{1F50D} Broader search for any matching instances...`);
-              try {
-                const allInstances = instance.findAll((node) => node.type === "INSTANCE");
-                for (const inst of allInstances) {
-                  if (inst.id.includes(nodeId) || inst.id === nodeId) {
-                    targetInstance = inst;
-                    console.log(`\u{1F50D} Found instance by ID match: ${inst.name} (${inst.id})`);
-                    break;
-                  }
-                  try {
-                    const childNode = inst.findChild((n) => n.id === nodeId);
-                    if (childNode && childNode.type === "INSTANCE") {
-                      targetInstance = childNode;
-                      console.log(`\u{1F50D} Found nested instance within ${inst.name}: ${childNode.name}`);
-                      break;
-                    }
-                  } catch (nestedError) {
-                  }
-                }
-              } catch (error) {
-                console.warn(`\u{1F50D} Recursive search failed:`, error);
-              }
-            }
-            if (targetInstance) {
-              try {
-                const iconId = this.resolveIcon(iconName, designSystemData);
-                if (iconId) {
-                  const iconNode = await figma.getNodeByIdAsync(iconId);
-                  let iconComponent = null;
-                  if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT") {
-                    iconComponent = iconNode;
-                  } else if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT_SET") {
-                    const componentSet = iconNode;
-                    iconComponent = componentSet.defaultVariant || componentSet.children.find((child) => child.type === "COMPONENT");
-                  }
-                  if (iconComponent && iconComponent.type === "COMPONENT") {
-                    console.log(`\u{1F504} Attempting to swap component: ${targetInstance.name} \u2192 ${iconComponent.name}`);
-                    targetInstance.swapComponent(iconComponent);
-                    console.log(`\u2705 Successfully swapped ${nodeId} to ${iconName} (${iconId})`);
-                  } else {
-                    console.error(`\u274C Could not get valid component for ${iconName}: ${iconId}`);
-                  }
-                } else {
-                  console.warn(`\u274C Could not resolve icon "${iconName}"`);
-                }
-              } catch (error) {
-                console.error(`\u274C Icon swap failed for ${nodeId} \u2192 ${iconName}:`, error);
-              }
-            } else {
-              console.warn(`\u26A0\uFE0F No suitable component instance found for ${nodeId}`);
-              console.log(`\u{1F6A8} FALLBACK: Attempting to swap any icon instance to "${iconName}"`);
-              try {
-                const allInstances = instance.findAll((node) => node.type === "INSTANCE");
-                console.log(`\u{1F41B} Available instances:`, allInstances.map((i) => `${i.name} (${i.id})`));
-                if (allInstances.length > 0) {
-                  const firstInstance = allInstances[0];
-                  console.log(`\u{1F6A8} Trying to swap first available instance: ${firstInstance.name}`);
-                  const iconId = this.resolveIcon(iconName, designSystemData);
-                  console.log(`\u{1F6A8} FALLBACK: Icon ID resolved to: ${iconId}`);
-                  if (iconId) {
-                    console.log(`\u{1F6A8} FALLBACK: Getting component node for ID: ${iconId}`);
-                    const iconNode = await figma.getNodeByIdAsync(iconId);
-                    console.log(`\u{1F6A8} FALLBACK: Got node:`, iconNode == null ? void 0 : iconNode.name, iconNode == null ? void 0 : iconNode.type);
-                    let iconComponent = null;
-                    if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT") {
-                      iconComponent = iconNode;
-                      console.log(`\u{1F6A8} FALLBACK: Using COMPONENT directly`);
-                    } else if ((iconNode == null ? void 0 : iconNode.type) === "COMPONENT_SET") {
-                      console.log(`\u{1F6A8} FALLBACK: Got COMPONENT_SET, finding default component...`);
-                      const componentSet = iconNode;
-                      const defaultComponent = componentSet.defaultVariant;
-                      if (defaultComponent) {
-                        iconComponent = defaultComponent;
-                        console.log(`\u{1F6A8} FALLBACK: Using default variant: ${defaultComponent.name}`);
-                      } else {
-                        console.log(`\u{1F6A8} FALLBACK: No default variant, trying first child...`);
-                        const firstChild = componentSet.children.find((child) => child.type === "COMPONENT");
-                        if (firstChild) {
-                          iconComponent = firstChild;
-                          console.log(`\u{1F6A8} FALLBACK: Using first child component: ${firstChild.name}`);
-                        }
-                      }
-                    }
-                    if (iconComponent && iconComponent.type === "COMPONENT") {
-                      console.log(`\u{1F6A8} FALLBACK: Attempting to swap ${firstInstance.name} \u2192 ${iconComponent.name}`);
-                      try {
-                        firstInstance.swapComponent(iconComponent);
-                        console.log(`\u2705 FALLBACK SUCCESS: Swapped ${firstInstance.name} to ${iconName}`);
-                      } catch (swapError) {
-                        console.error(`\u274C FALLBACK: Swap failed:`, swapError);
-                      }
-                    } else {
-                      console.error(`\u274C FALLBACK: Could not get valid COMPONENT from ${iconNode == null ? void 0 : iconNode.type}`);
-                    }
-                  } else {
-                    console.error(`\u274C FALLBACK: No icon ID resolved for "${iconName}"`);
-                  }
-                }
-              } catch (error) {
-                console.warn(`\u{1F6A8} Fallback swap failed:`, error);
-              }
-            }
-          }
-        }
-        /**
-         * Apply text properties with proper font loading and array support
-         */
-        static async applyTextPropertiesSystematic(instance, textProperties, componentId) {
-          console.log(" Applying text properties systematically:", textProperties);
-          const schema = ComponentPropertyEngine.getComponentSchema(componentId);
-          if (!schema) {
-            console.warn(`\u26A0\uFE0F No schema found for component ${componentId}, using fallback text application`);
-            await this.applyTextProperties(instance, textProperties);
-            return;
-          }
-          let allTextNodes = [];
-          try {
-            allTextNodes = await PerformanceTracker.track(
-              "find-text-nodes",
-              async () => instance.findAllWithCriteria({ types: ["TEXT"] })
-            );
-          } catch (findError) {
-            console.error(`\u274C Error finding text nodes in component ${componentId}:`, findError.message);
-            try {
-              await this.applyTextProperties(instance, textProperties);
-            } catch (fallbackError) {
-              console.error(`\u274C Fallback text application also failed:`, fallbackError.message);
-            }
-            return;
-          }
-          for (const [propKey, propValue] of Object.entries(textProperties)) {
-            const textLayerInfo = schema.textLayers[propKey];
-            if (!textLayerInfo) {
-              console.warn(`\u26A0\uFE0F No text layer info found for property "${propKey}"`);
-              const semanticMatch = Object.entries(schema.textLayers).find(([layerName, info]) => {
-                const layerLower = layerName.toLowerCase();
-                const propLower = propKey.toLowerCase();
-                return layerLower.includes(propLower) || propLower.includes(layerLower);
-              });
-              if (semanticMatch) {
-                const [matchedName, matchedInfo] = semanticMatch;
-                console.log(` Using semantic match: "${propKey}" \u2192 "${matchedName}"`);
-                if (matchedInfo.dataType === "array" && Array.isArray(propValue)) {
-                  await this.applyArrayTextProperty(propKey, propValue, allTextNodes, matchedInfo);
-                } else {
-                  const valueToUse = Array.isArray(propValue) ? propValue[0] : propValue;
-                  await this.applySingleTextProperty(propKey, valueToUse, allTextNodes, matchedInfo);
-                }
-              }
-              continue;
-            }
-            if (textLayerInfo.dataType === "array" && Array.isArray(propValue)) {
-              await this.applyArrayTextProperty(propKey, propValue, allTextNodes, textLayerInfo);
-            } else {
-              const valueToUse = Array.isArray(propValue) ? propValue[0] : propValue;
-              await this.applySingleTextProperty(propKey, valueToUse, allTextNodes, textLayerInfo);
-            }
-          }
-        }
-        /**
-         * Apply array text property (for tabs, chips, etc.)
-         */
-        static async applyArrayTextProperty(propKey, propValues, allTextNodes, textLayerInfo) {
-          console.log(` Applying array text property ${propKey}:`, propValues);
-          const matchingNodes = allTextNodes.filter((node) => {
-            const nodeLower = node.name.toLowerCase();
-            const layerLower = textLayerInfo.nodeName.toLowerCase();
-            const propLower = propKey.toLowerCase();
-            return nodeLower === layerLower || nodeLower.includes(propLower) || nodeLower === propLower;
-          });
-          const maxItems = Math.min(propValues.length, textLayerInfo.maxItems || propValues.length);
-          for (let i = 0; i < maxItems && i < matchingNodes.length; i++) {
-            const textNode = matchingNodes[i];
-            const value = propValues[i];
-            if (value && typeof value === "string" && value.trim()) {
-              await this.setTextNodeValueSafe(textNode, value, `${propKey}[${i}]`);
-            }
-          }
-          for (let i = maxItems; i < matchingNodes.length; i++) {
-            matchingNodes[i].visible = false;
-            console.log(`\uFE0F Hidden extra text node: "${matchingNodes[i].name}"`);
-          }
-          console.log(`\u2705 Applied ${maxItems} values to ${propKey} array property`);
-        }
-        /**
-         * Apply single text property
-         */
-        static async applySingleTextProperty(propKey, propValue, allTextNodes, textLayerInfo) {
-          if (!propValue || typeof propValue !== "string" || !propValue.trim()) return;
-          let textNode = allTextNodes.find((n) => n.id === textLayerInfo.nodeId);
-          if (!textNode) {
-            textNode = allTextNodes.find(
-              (n) => n.name.toLowerCase() === textLayerInfo.nodeName.toLowerCase()
-            );
-          }
-          if (!textNode) {
-            textNode = allTextNodes.find((n) => {
-              const nodeLower = n.name.toLowerCase();
-              const layerLower = textLayerInfo.nodeName.toLowerCase();
-              return nodeLower.includes(layerLower) || layerLower.includes(nodeLower);
-            });
-          }
-          if (textNode) {
-            await this.setTextNodeValueSafe(textNode, propValue, propKey);
-          } else {
-            console.warn(`\u274C No text node found for property "${propKey}" (looking for "${textLayerInfo.nodeName}")`);
-          }
-        }
-        /**
-         * Apply media properties systematically
-         */
-        static async applyMediaPropertiesSystematic(instance, mediaProperties, componentId) {
-          console.log("\uFE0F Applying media properties systematically:", mediaProperties);
-          const schema = ComponentPropertyEngine.getComponentSchema(componentId);
-          if (!schema) {
-            console.warn(`\u26A0\uFE0F No schema found for component ${componentId}, skipping media application`);
-            return;
-          }
-          let allMediaNodes = [];
-          try {
-            allMediaNodes = await PerformanceTracker.track("find-media-nodes", async () => {
-              const vectors = instance.findAllWithCriteria({ types: ["VECTOR"] });
-              const rectangles = instance.findAllWithCriteria({ types: ["RECTANGLE"] });
-              const ellipses = instance.findAllWithCriteria({ types: ["ELLIPSE"] });
-              const components = instance.findAllWithCriteria({ types: ["INSTANCE", "COMPONENT"] });
-              return [...vectors, ...rectangles, ...ellipses, ...components];
-            });
-          } catch (findError) {
-            console.error(`\u274C Error finding media nodes in component ${componentId}:`, findError.message);
-            return;
-          }
-          for (const [propKey, propValue] of Object.entries(mediaProperties)) {
-            const mediaLayerInfo = schema.mediaLayers[propKey];
-            if (!mediaLayerInfo) {
-              console.warn(`\u26A0\uFE0F No media layer info found for property "${propKey}"`);
-              continue;
-            }
-            const mediaNode = allMediaNodes.find((n) => n.id === mediaLayerInfo.nodeId) || allMediaNodes.find((n) => n.name.toLowerCase() === mediaLayerInfo.nodeName.toLowerCase());
-            if (mediaNode) {
-              console.log(`\u2705 Found media node for "${propKey}": "${mediaNode.name}" (${mediaNode.type})`);
-            } else {
-              console.warn(`\u274C No media node found for property "${propKey}"`);
-            }
-          }
-        }
-        /**
-         * Safe text setting with proper font loading
-         */
-        static async setTextNodeValueSafe(textNode, value, context) {
-          try {
-            await PerformanceTracker.track("set-text-value", async () => {
-              if (textNode.hasMissingFont) {
-                console.error(`\u274C Cannot set text "${context}": Missing fonts`);
-                return;
-              }
-              if (!textNode.visible) {
-                textNode.visible = true;
-              }
-              await this.loadAllRequiredFonts(textNode);
-              textNode.characters = value;
-              console.log(`\u2705 Set "${textNode.name}" to "${value}" (${context})`);
-            });
-          } catch (fontError) {
-            console.error(`\u274C Font loading failed for "${textNode.name}":`, fontError);
-            try {
-              await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-              textNode.fontName = { family: "Inter", style: "Regular" };
-              textNode.characters = value;
-              console.log(`\u26A0\uFE0F Used fallback font for "${textNode.name}"`);
-            } catch (fallbackError) {
-              console.error(`\u274C Even fallback failed:`, fallbackError);
-            }
-          }
-        }
-        /**
-         * Load all fonts required for a text node (handles mixed fonts)
-         */
-        static async loadAllRequiredFonts(textNode) {
-          try {
-            if (typeof textNode.fontName !== "symbol") {
-              await figma.loadFontAsync(textNode.fontName);
-              return;
-            }
-            if (textNode.fontName === figma.mixed && textNode.characters.length > 0) {
-              const allFonts = textNode.getRangeAllFontNames(0, textNode.characters.length);
-              const uniqueFonts = /* @__PURE__ */ new Map();
-              allFonts.forEach((font) => {
-                uniqueFonts.set(`${font.family}-${font.style}`, font);
-              });
-              const fontPromises = Array.from(uniqueFonts.values()).map(
-                (font) => figma.loadFontAsync(font)
-              );
-              await Promise.all(fontPromises);
-            }
-          } catch (error) {
-            throw error;
-          }
-        }
-        /**
-         * Enhanced dynamic generation using systematic approach
-         */
-        static async generateUIFromDataSystematic(layoutData, parentNode, designSystemData) {
-          var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E;
-          let lastBreadcrumb = "START";
-          const breadcrumb = (location) => {
-            lastBreadcrumb = location;
-            console.log(`\u{1F35E} ${location}`);
-          };
-          try {
-            breadcrumb("INIT: Method start");
-            if (designSystemData) {
-              breadcrumb("INIT: Setting design system data");
-              this.setDesignSystemData(designSystemData);
-            }
-            console.log("\u{1F527} Starting generateUIFromDataSystematic with data:", {
-              hasLayoutContainer: !!layoutData.layoutContainer,
-              hasItems: !!layoutData.items,
-              parentType: parentNode.type,
-              hasDesignSystemData: !!designSystemData
-            });
-            console.log("\u{1F6A8} DEBUG TRACE: About to start main processing");
-            const schemas = ComponentPropertyEngine.getAllSchemas();
-            if (schemas.length === 0) {
-              console.log("\u26A0\uFE0F No schemas - running systematic generation in basic mode");
-            }
-            let currentFrame;
-            const containerData = layoutData.layoutContainer || layoutData;
-            console.log("\u{1F6A8} DEBUG TRACE: Container data extracted:", {
-              hasContainerData: !!containerData,
-              containerDataKeys: containerData ? Object.keys(containerData) : [],
-              hasWidth: !!(containerData && containerData.width),
-              parentNodeType: parentNode.type
-            });
-            const debugData = {
-              timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-              inputData: layoutData,
-              containerData,
-              parentNodeType: parentNode.type
-            };
-            console.log("\u{1F4C1} FULL INPUT DATA FOR DEBUGGING:", JSON.stringify(debugData, null, 2));
-            try {
-              const debugContent = JSON.stringify(debugData, null, 2);
-              const blob = new Blob([debugContent], { type: "application/json" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = "debug-renderer-input.json";
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-              console.log("\u{1F4BE} Debug file auto-downloaded as: debug-renderer-input.json");
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Could not auto-download debug file:", e.message);
-              console.log("\u{1F4CB} Copy this JSON manually:", JSON.stringify(debugData, null, 2));
-            }
-            console.log("\u{1F50D} INPUT DATA:", {
-              containerData,
-              hasWidth: !!(containerData == null ? void 0 : containerData.width),
-              widthValue: containerData == null ? void 0 : containerData.width
-            });
-            if (parentNode.type === "PAGE" && containerData) {
-              breadcrumb("FRAME: Creating root frame for PAGE");
-              console.log("\u{1F6A8} DEBUG TRACE: Creating root frame for PAGE");
-              currentFrame = figma.createFrame();
-              console.log("\u{1F6A8} DEBUG TRACE: Root frame created successfully");
-              const initialWidth = containerData.width || 375;
-              const minHeight = containerData.minHeight || 812;
-              breadcrumb("FRAME: Setting initial size with resize");
-              console.log("\u{1F6A8} DEBUG TRACE: About to call resize with:", { initialWidth, minHeight });
-              currentFrame.resize(initialWidth, minHeight);
-              console.log("\u{1F6A8} DEBUG TRACE: Resize completed successfully");
-              if (containerData.layoutMode && containerData.layoutMode !== "NONE") {
-                try {
-                  breadcrumb("FRAME: Setting layoutMode to " + containerData.layoutMode);
-                  currentFrame.layoutMode = containerData.layoutMode;
-                  console.log("\u2705 Set layoutMode to:", containerData.layoutMode);
-                } catch (layoutModeError) {
-                  console.warn("\u26A0\uFE0F Could not set layoutMode:", layoutModeError.message);
-                  return currentFrame;
-                }
-                try {
-                  breadcrumb("FRAME: Setting primaryAxisSizingMode to AUTO");
-                  currentFrame.primaryAxisSizingMode = "AUTO";
-                  console.log("\u2705 Set primaryAxisSizingMode to AUTO");
-                } catch (sizingError) {
-                  console.warn("\u26A0\uFE0F Could not set primaryAxisSizingMode:", sizingError.message);
-                }
-                try {
-                  currentFrame.counterAxisSizingMode = "FIXED";
-                  console.log("\u2705 Set counterAxisSizingMode to FIXED");
-                } catch (counterError) {
-                  console.warn("\u26A0\uFE0F Could not set counterAxisSizingMode:", counterError.message);
-                }
-                try {
-                  if (minHeight) {
-                    currentFrame.minHeight = minHeight;
-                    console.log("\u2705 Set minHeight to:", minHeight);
-                  }
-                } catch (minHeightError) {
-                  console.warn("\u26A0\uFE0F Could not set minHeight:", minHeightError.message);
-                }
-              }
-              const position = await this.getNextRenderPosition(initialWidth, minHeight);
-              currentFrame.x = position.x;
-              currentFrame.y = position.y;
-              parentNode.appendChild(currentFrame);
-            } else if (parentNode.type === "FRAME") {
-              console.log("\u{1F6A8} DEBUG TRACE: Using existing FRAME as container");
-              currentFrame = parentNode;
-              console.log("\u{1F6A8} DEBUG TRACE: Current frame properties:", {
-                type: currentFrame.type,
-                layoutMode: currentFrame.layoutMode,
-                hasWidthProperty: "width" in currentFrame,
-                widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, "width")
-              });
-            } else {
-              figma.notify("Cannot add items without a parent frame.", { error: true });
-              return figma.createFrame();
-            }
-            console.log("\u{1F50D} CONTAINER CONDITION:", {
-              hasContainerData: !!containerData,
-              containerEqualsLayout: containerData === layoutData,
-              conditionPassed: !!(containerData && containerData !== layoutData)
-            });
-            if (containerData) {
-              breadcrumb("FRAME: Setting name to " + (containerData.name || "Generated Frame"));
-              currentFrame.name = containerData.name || "Generated Frame";
-              console.log("\u{1F527} Applying container properties:", {
-                name: containerData.name,
-                layoutMode: containerData.layoutMode,
-                itemSpacing: containerData.itemSpacing,
-                primaryAxisSizingMode: containerData.primaryAxisSizingMode,
-                width: containerData.width,
-                hasWidth: !!containerData.width
-              });
-              try {
-                breadcrumb("FRAME: Setting secondary layoutMode to " + (containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE"));
-                currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
-                console.log("\u{1F527} Frame layoutMode set to:", currentFrame.layoutMode);
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set layoutMode:", e.message);
-              }
-              if (currentFrame.layoutMode !== "NONE") {
-                try {
-                  breadcrumb("FRAME: Setting paddingTop to " + (typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0));
-                  currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set paddingTop:", e.message);
-                }
-                try {
-                  breadcrumb("FRAME: Setting paddingBottom to " + (typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0));
-                  currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set paddingBottom:", e.message);
-                }
-                try {
-                  breadcrumb("FRAME: Setting paddingLeft to " + (typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0));
-                  currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set paddingLeft:", e.message);
-                }
-                try {
-                  breadcrumb("FRAME: Setting paddingRight to " + (typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0));
-                  currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set paddingRight:", e.message);
-                }
-                try {
-                  if (containerData.itemSpacing === "AUTO") {
-                    currentFrame.itemSpacing = "AUTO";
-                  } else {
-                    currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
-                  }
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set itemSpacing:", e.message);
-                }
-                try {
-                  if (containerData.layoutWrap !== void 0) {
-                    currentFrame.layoutWrap = containerData.layoutWrap;
-                  }
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set layoutWrap:", e.message);
-                }
-                try {
-                  if (containerData.primaryAxisAlignItems) {
-                    currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
-                  }
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set primaryAxisAlignItems:", e.message);
-                }
-                try {
-                  if (containerData.counterAxisAlignItems) {
-                    currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
-                  }
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set counterAxisAlignItems:", e.message);
-                }
-                console.log("\u{1F50D} EARLY CHECK:", {
-                  hasWidth: !!containerData.width,
-                  widthValue: containerData.width,
-                  skipEarlySetting: !containerData.width
-                });
-                if (!containerData.width || containerData.width === 0) {
-                  try {
-                    if (containerData.primaryAxisSizingMode) {
-                      const hasPrimarySetter = ((_a = Object.getOwnPropertyDescriptor(currentFrame, "primaryAxisSizingMode")) == null ? void 0 : _a.set) !== void 0;
-                      if (hasPrimarySetter) {
-                        breadcrumb("FRAME: Setting early primaryAxisSizingMode to " + containerData.primaryAxisSizingMode);
-                        currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-                        console.log("\u{1F50D} Set primaryAxisSizingMode early:", containerData.primaryAxisSizingMode);
-                      } else {
-                        console.warn("\u26A0\uFE0F Skipping early primaryAxisSizingMode - setter not available");
-                      }
-                    }
-                  } catch (e) {
-                    console.warn("\u26A0\uFE0F Failed to set primaryAxisSizingMode:", e.message);
-                  }
-                } else {
-                  console.log("\u{1F50D} SKIPPED early primaryAxisSizingMode setting (has width)");
-                }
-                try {
-                  if (containerData.counterAxisSizingMode) {
-                    const hasCounterSetter = ((_b = Object.getOwnPropertyDescriptor(currentFrame, "counterAxisSizingMode")) == null ? void 0 : _b.set) !== void 0;
-                    if (hasCounterSetter) {
-                      breadcrumb("FRAME: Setting counterAxisSizingMode to " + containerData.counterAxisSizingMode);
-                      currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
-                    } else {
-                      console.warn("\u26A0\uFE0F Skipping counterAxisSizingMode - setter not available");
-                    }
-                  }
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set counterAxisSizingMode:", e.message);
-                }
-              }
-              try {
-                if (containerData.minWidth !== void 0) {
-                  currentFrame.minWidth = containerData.minWidth;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set minWidth:", e.message);
-              }
-              try {
-                if (containerData.maxWidth !== void 0) {
-                  currentFrame.maxWidth = containerData.maxWidth;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set maxWidth:", e.message);
-              }
-              try {
-                if (containerData.minHeight !== void 0) {
-                  currentFrame.minHeight = containerData.minHeight;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set minHeight:", e.message);
-              }
-              try {
-                if (containerData.maxHeight !== void 0) {
-                  currentFrame.maxHeight = containerData.maxHeight;
-                }
-              } catch (e) {
-                console.warn("\u26A0\uFE0F Failed to set maxHeight:", e.message);
-              }
-              if (containerData.width) {
-                console.log("\u{1F6A8} WIDTH SETTING ENTRY POINT:", {
-                  layoutMode: currentFrame.layoutMode,
-                  widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, "width"),
-                  hasWidthSetter: ((_c = Object.getOwnPropertyDescriptor(currentFrame, "width")) == null ? void 0 : _c.set) !== void 0
-                });
-                try {
-                  const frameState = {
-                    width: containerData.width,
-                    currentWidth: currentFrame.width,
-                    layoutMode: currentFrame.layoutMode,
-                    primaryAxisSizing: currentFrame.primaryAxisSizingMode,
-                    counterAxisSizing: currentFrame.counterAxisSizingMode,
-                    frameType: currentFrame.type,
-                    parent: (_d = currentFrame.parent) == null ? void 0 : _d.type,
-                    hasLayoutMode: "layoutMode" in currentFrame,
-                    isAutoLayout: currentFrame.layoutMode !== "NONE"
-                  };
-                  console.log("COMPREHENSIVE WIDTH SET ATTEMPT:", frameState);
-                  console.log("FRAME PROPERTIES AVAILABLE:", Object.getOwnPropertyNames(currentFrame));
-                  console.log("ATTEMPTING WIDTH SET ON:", {
-                    nodeId: currentFrame.id,
-                    nodeName: currentFrame.name,
-                    canSetWidth: "width" in currentFrame
-                  });
-                  if (currentFrame.layoutMode !== "NONE") {
-                    console.log("\u{1F527} ATTEMPTING AUTO-LAYOUT WIDTH SET");
-                    const hasWidthSetter = ((_e = Object.getOwnPropertyDescriptor(currentFrame, "width")) == null ? void 0 : _e.set) !== void 0;
-                    if (!hasWidthSetter) {
-                      console.log("\u26A0\uFE0F WIDTH SETTER NOT AVAILABLE - Using resize workaround for auto-layout frame");
-                      breadcrumb("FRAME: Using resize workaround for width " + containerData.width);
-                      currentFrame.resize(containerData.width, currentFrame.height);
-                      try {
-                        const hasPrimarySetter = ((_f = Object.getOwnPropertyDescriptor(currentFrame, "primaryAxisSizingMode")) == null ? void 0 : _f.set) !== void 0;
-                        const hasCounterSetter = ((_g = Object.getOwnPropertyDescriptor(currentFrame, "counterAxisSizingMode")) == null ? void 0 : _g.set) !== void 0;
-                        console.log("\u{1F527} SIZING MODE SETTERS CHECK:", {
-                          hasPrimarySetter,
-                          hasCounterSetter,
-                          layoutMode: currentFrame.layoutMode
-                        });
-                        if (hasPrimarySetter) {
-                          breadcrumb("FRAME: Setting primaryAxisSizingMode to FIXED (resize workaround)");
-                          currentFrame.primaryAxisSizingMode = "FIXED";
-                        } else {
-                          console.warn("\u26A0\uFE0F primaryAxisSizingMode setter not available");
-                        }
-                        if (hasCounterSetter) {
-                          breadcrumb("FRAME: Setting counterAxisSizingMode to " + (containerData.counterAxisSizingMode || "FIXED") + " (resize workaround)");
-                          currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
-                        } else {
-                          console.warn("\u26A0\uFE0F counterAxisSizingMode setter not available");
-                        }
-                      } catch (e) {
-                        console.warn("\u26A0\uFE0F Could not set sizing modes:", e.message);
-                      }
-                      console.log("\u2705 Applied width via resize workaround:", containerData.width);
-                    } else {
-                      breadcrumb("FRAME: Setting width directly to " + containerData.width);
-                      currentFrame.width = containerData.width;
-                      console.log("\u2705 Set width directly:", containerData.width);
-                    }
-                  } else {
-                    console.log("REGULAR FRAME RESIZE:", {
-                      currentHeight: currentFrame.height,
-                      targetWidth: containerData.width
-                    });
-                    breadcrumb("FRAME: Regular frame resize to width " + containerData.width);
-                    currentFrame.resize(containerData.width, currentFrame.height);
-                    console.log("Regular frame resized successfully");
-                  }
-                } catch (e) {
-                  console.error("DETAILED WIDTH SET ERROR:", {
-                    message: e.message,
-                    stack: e.stack,
-                    containerWidth: containerData.width,
-                    frameState: {
-                      type: currentFrame.type,
-                      layoutMode: currentFrame.layoutMode,
-                      primaryAxis: currentFrame.primaryAxisSizingMode,
-                      counterAxis: currentFrame.counterAxisSizingMode
-                    }
-                  });
-                }
-              } else {
-                try {
-                  if (!containerData.counterAxisSizingMode) {
-                    currentFrame.counterAxisSizingMode = "AUTO";
-                  }
-                } catch (e) {
-                  console.warn("\u26A0\uFE0F Failed to set counterAxisSizingMode (AUTO):", e.message);
-                }
-              }
-            }
-            const items = layoutData.items || containerData.items;
-            if (!items || !Array.isArray(items)) return currentFrame;
-            for (const item of items) {
-              try {
-                console.log("\u{1F525} PROCESSING ITEM:", item.type, item.name || "unnamed", "layoutMode:", item.layoutMode);
-                const processedItem = __spreadValues({}, item);
-                if ((_h = processedItem.type) == null ? void 0 : _h.startsWith("native-")) {
-                  const validatedType = this.validateNativeType(processedItem.type);
-                  if (!validatedType) {
-                    console.error(`\u274C Skipping invalid native element type: ${processedItem.type}`);
-                    continue;
-                  }
-                  if (validatedType === "layoutContainer") {
-                    processedItem.type = "layoutContainer";
-                    processedItem.layoutMode = processedItem.layoutMode || "VERTICAL";
-                    processedItem.itemSpacing = processedItem.itemSpacing || 8;
-                    if ((_i = processedItem.properties) == null ? void 0 : _i.items) {
-                      processedItem.items = processedItem.properties.items;
-                      delete processedItem.properties.items;
-                    }
-                  } else {
-                    processedItem.type = validatedType;
-                  }
-                }
-                if (processedItem.type === "component") {
-                  processedItem.componentNodeId = processedItem.componentNodeId || processedItem.componentId || processedItem.id;
-                  delete processedItem.componentId;
-                  delete processedItem.id;
-                }
-                if ((_j = processedItem.properties) == null ? void 0 : _j.width) {
-                  const sanitizedWidth = this.sanitizeWidth(processedItem.properties.width);
-                  if (sanitizedWidth === null && processedItem.properties.width === "100%") {
-                    processedItem.properties.horizontalSizing = "FILL";
-                    delete processedItem.properties.width;
-                  } else if (sanitizedWidth !== null) {
-                    processedItem.properties.width = sanitizedWidth;
-                  } else {
-                    delete processedItem.properties.width;
-                  }
-                }
-                if (processedItem.width && processedItem.layoutMode) {
-                  const sanitizedWidth = this.sanitizeWidth(processedItem.width);
-                  if (sanitizedWidth !== null) {
-                    processedItem.width = sanitizedWidth;
-                  } else {
-                    delete processedItem.width;
-                    processedItem.counterAxisSizingMode = "AUTO";
-                  }
-                }
-                if (processedItem.type === "layoutContainer") {
-                  console.log("\u{1F525} CREATING NESTED LAYOUT CONTAINER:", processedItem.name, "layoutMode:", processedItem.layoutMode);
-                  console.log("\u{1F680} DEPLOYMENT CHECK AUG 12 2025 - CODE IS DEPLOYED AND RUNNING");
-                  breadcrumb("NESTED: Creating layoutContainer frame for " + (processedItem.name || "unnamed"));
-                  const nestedFrame = figma.createFrame();
-                  breadcrumb("NESTED: Appending layoutContainer frame to parent");
-                  currentFrame.appendChild(nestedFrame);
-                  console.log("\u{1F50D} DEBUG: Created nested frame with defaults:", {
-                    name: processedItem.name,
-                    layoutMode: processedItem.layoutMode,
-                    primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
-                    counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
-                    height: nestedFrame.height
-                  });
-                  console.log("\u{1F6A8} DEBUG LINE 3072: About to call applyChildLayoutProperties", {
-                    nestedFrameType: nestedFrame.type,
-                    itemType: processedItem.type,
-                    itemKeys: Object.keys(processedItem),
-                    itemHasProperties: "properties" in processedItem,
-                    itemDirectProperties: {
-                      layoutAlign: processedItem.layoutAlign,
-                      horizontalSizing: processedItem.horizontalSizing,
-                      layoutGrow: processedItem.layoutGrow,
-                      width: processedItem.width,
-                      layoutMode: processedItem.layoutMode
-                    }
-                  });
-                  const childLayoutProps = {
-                    layoutAlign: processedItem.layoutAlign,
-                    horizontalSizing: processedItem.horizontalSizing,
-                    layoutGrow: processedItem.layoutGrow,
-                    layoutPositioning: processedItem.layoutPositioning,
-                    minWidth: processedItem.minWidth,
-                    maxWidth: processedItem.maxWidth,
-                    minHeight: processedItem.minHeight,
-                    maxHeight: processedItem.maxHeight,
-                    // FIX: Pass sizing modes so horizontal containers can hug content
-                    primaryAxisSizingMode: processedItem.primaryAxisSizingMode,
-                    counterAxisSizingMode: processedItem.counterAxisSizingMode,
-                    layoutMode: processedItem.layoutMode
-                  };
-                  Object.keys(childLayoutProps).forEach((key) => {
-                    if (childLayoutProps[key] === void 0) {
-                      delete childLayoutProps[key];
-                    }
-                  });
-                  breadcrumb("NESTED: Applying child layout properties to layoutContainer");
-                  this.applyChildLayoutProperties(nestedFrame, childLayoutProps);
-                  if (nestedFrame.layoutMode === "HORIZONTAL" && nestedFrame.primaryAxisSizingMode === "AUTO") {
-                    console.log("\u{1F527} HORIZONTAL AUTO CONTAINER: Forcing height reset from default 100px");
-                    try {
-                      console.log("\u{1F4CF} Current height before fix:", nestedFrame.height);
-                      const children = nestedFrame.children;
-                      if (children.length > 0) {
-                        let maxChildHeight = 0;
-                        for (const child of children) {
-                          if ("height" in child) {
-                            maxChildHeight = Math.max(maxChildHeight, child.height);
-                          }
-                        }
-                        console.log("\u{1F4CF} Calculated max child height:", maxChildHeight);
-                        if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
-                          const paddingTop = nestedFrame.paddingTop || 0;
-                          const paddingBottom = nestedFrame.paddingBottom || 0;
-                          const targetHeight = maxChildHeight + paddingTop + paddingBottom;
-                          console.log("\u{1F4CF} Setting frame height to:", targetHeight);
-                          nestedFrame.resize(nestedFrame.width, targetHeight);
-                        }
-                      }
-                      console.log("\u{1F4CF} Final height after fix:", nestedFrame.height);
-                      console.log("\u2705 Height reset complete - should now hug content");
-                    } catch (error) {
-                      console.error("\u274C Height reset failed:", error);
-                    }
-                  }
-                  console.log("\u{1F50D} DEBUG: After applyChildLayoutProperties:", {
-                    name: processedItem.name,
-                    layoutMode: nestedFrame.layoutMode,
-                    primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
-                    counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
-                    height: nestedFrame.height
-                  });
-                  breadcrumb("NESTED: Recursive call to generateUIFromDataSystematic for layoutContainer");
-                  await this.generateUIFromDataSystematic({
-                    layoutContainer: processedItem,
-                    items: processedItem.items
-                  }, nestedFrame);
-                  console.log("\u{1F50D} DEBUG: Final frame properties:", {
-                    name: nestedFrame.name,
-                    layoutMode: nestedFrame.layoutMode,
-                    primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
-                    counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
-                    height: nestedFrame.height
-                  });
-                } else if (processedItem.type === "frame" && processedItem.layoutContainer) {
-                  breadcrumb("NESTED: Creating frame with layoutContainer");
-                  const nestedFrame = figma.createFrame();
-                  breadcrumb("NESTED: Appending frame to parent");
-                  currentFrame.appendChild(nestedFrame);
-                  breadcrumb("NESTED: Recursive call for frame type");
-                  await this.generateUIFromDataSystematic(processedItem, nestedFrame);
-                } else if (((_k = processedItem.type) == null ? void 0 : _k.startsWith("native-")) && (processedItem.items || ((_l = processedItem.properties) == null ? void 0 : _l.items))) {
-                  console.warn(`\u26A0\uFE0F Invalid structure: ${processedItem.type} cannot have child items`);
-                  console.warn("\u{1F4E6} Auto-converting to layoutContainer to prevent crash");
-                  const childItems = processedItem.items || ((_m = processedItem.properties) == null ? void 0 : _m.items) || [];
-                  const safeContainer = {
-                    type: "layoutContainer",
-                    layoutMode: "VERTICAL",
-                    itemSpacing: 0,
-                    padding: 0,
-                    items: childItems
-                  };
-                  if (processedItem.type === "native-rectangle" && processedItem.properties) {
-                    if ((_n = processedItem.properties.fill) == null ? void 0 : _n.color) {
-                      safeContainer.backgroundColor = processedItem.properties.fill.color;
-                    }
-                    if (processedItem.properties.cornerRadius) {
-                      safeContainer.cornerRadius = processedItem.properties.cornerRadius;
-                    }
-                    if (processedItem.properties.padding) {
-                      safeContainer.padding = processedItem.properties.padding;
-                    }
-                    if (processedItem.properties.width) {
-                      safeContainer.width = processedItem.properties.width;
-                    }
-                    if (processedItem.properties.height) {
-                      safeContainer.height = processedItem.properties.height;
-                    }
-                  }
-                  console.log("\u{1F504} Converted structure:", {
-                    from: processedItem.type,
-                    to: "layoutContainer",
-                    preservedStyling: {
-                      backgroundColor: safeContainer.backgroundColor || "none",
-                      cornerRadius: safeContainer.cornerRadius || "none"
-                    }
-                  });
-                  breadcrumb("NESTED: Creating defensive container frame for native element");
-                  const nestedFrame = figma.createFrame();
-                  breadcrumb("NESTED: Appending defensive container to parent");
-                  currentFrame.appendChild(nestedFrame);
-                  console.log("\u{1F6A8} DEBUG LINE 3138: About to call applyChildLayoutProperties", {
-                    nestedFrameType: nestedFrame.type,
-                    itemType: safeContainer.type,
-                    itemKeys: Object.keys(safeContainer),
-                    itemHasProperties: "properties" in safeContainer,
-                    itemDirectProperties: {
-                      layoutAlign: safeContainer.layoutAlign,
-                      horizontalSizing: safeContainer.horizontalSizing,
-                      layoutGrow: safeContainer.layoutGrow,
-                      width: safeContainer.width,
-                      layoutMode: safeContainer.layoutMode
-                    }
-                  });
-                  const childLayoutProps2 = {
-                    layoutAlign: safeContainer.layoutAlign,
-                    horizontalSizing: safeContainer.horizontalSizing,
-                    layoutGrow: safeContainer.layoutGrow,
-                    layoutPositioning: safeContainer.layoutPositioning,
-                    minWidth: safeContainer.minWidth,
-                    maxWidth: safeContainer.maxWidth,
-                    minHeight: safeContainer.minHeight,
-                    maxHeight: safeContainer.maxHeight
-                  };
-                  Object.keys(childLayoutProps2).forEach((key) => {
-                    if (childLayoutProps2[key] === void 0) {
-                      delete childLayoutProps2[key];
-                    }
-                  });
-                  breadcrumb("NESTED: Applying child layout properties to defensive container");
-                  this.applyChildLayoutProperties(nestedFrame, childLayoutProps2);
-                  breadcrumb("NESTED: Recursive call for defensive container");
-                  await this.generateUIFromDataSystematic({
-                    layoutContainer: safeContainer,
-                    items: safeContainer.items
-                  }, nestedFrame);
-                  continue;
-                } else if (processedItem.type === "native-text" || processedItem.type === "text") {
-                  await this.createTextNode(processedItem, currentFrame);
-                  continue;
-                } else if (processedItem.type === "native-rectangle") {
-                  await this.createRectangleNode(processedItem, currentFrame);
-                  continue;
-                } else if (processedItem.type === "native-circle") {
-                  await this.createEllipseNode(processedItem, currentFrame);
-                  continue;
-                } else if (processedItem.type === "component") {
-                  if (!processedItem.componentNodeId) {
-                    console.error("\u274C No component ID found after normalization");
-                    continue;
-                  }
-                  let componentNode;
-                  try {
-                    componentNode = await figma.getNodeByIdAsync(processedItem.componentNodeId);
-                  } catch (nodeError) {
-                    console.warn(`\u26A0\uFE0F Error accessing component ${processedItem.componentNodeId}: ${nodeError.message}`);
-                    componentNode = null;
-                  }
-                  if (!componentNode) {
-                    console.warn(`\u26A0\uFE0F Component ${processedItem.componentNodeId} not found - creating placeholder`);
-                    await this.createMissingComponentPlaceholder(processedItem.componentNodeId, currentFrame);
-                    continue;
-                  }
-                  let componentInfo = null;
-                  try {
-                    const { DesignSystemScannerService: DesignSystemScannerService2 } = await Promise.resolve().then(() => (init_design_system_scanner_service(), design_system_scanner_service_exports));
-                    const scanSession = await DesignSystemScannerService2.getScanSession();
-                    if (scanSession == null ? void 0 : scanSession.components) {
-                      componentInfo = scanSession.components.find((c) => c.id === processedItem.componentNodeId);
-                    }
-                  } catch (error) {
-                    console.warn("\u26A0\uFE0F Could not load component info from scan data:", error);
-                  }
-                  if (processedItem.properties && (componentInfo == null ? void 0 : componentInfo.textLayers)) {
-                    processedItem.properties = this.normalizePropertyNames(
-                      processedItem.properties,
-                      componentInfo.textLayers
-                    );
-                  }
-                  if (processedItem.variants && (componentInfo == null ? void 0 : componentInfo.variantDetails)) {
-                    processedItem.variants = this.validateAndFixVariants(
-                      processedItem.variants,
-                      componentInfo.variantDetails
-                    );
-                  }
-                  await this.createComponentInstanceSystematic(processedItem, currentFrame);
-                  const componentInstance = currentFrame.children[currentFrame.children.length - 1];
-                  if (componentInstance) {
-                    const childLayoutProps = {
-                      layoutAlign: processedItem.layoutAlign || ((_o = processedItem.properties) == null ? void 0 : _o.layoutAlign),
-                      horizontalSizing: processedItem.horizontalSizing || ((_p = processedItem.properties) == null ? void 0 : _p.horizontalSizing),
-                      layoutGrow: processedItem.layoutGrow || ((_q = processedItem.properties) == null ? void 0 : _q.layoutGrow),
-                      layoutPositioning: processedItem.layoutPositioning || ((_r = processedItem.properties) == null ? void 0 : _r.layoutPositioning),
-                      minWidth: processedItem.minWidth || ((_s = processedItem.properties) == null ? void 0 : _s.minWidth),
-                      maxWidth: processedItem.maxWidth || ((_t = processedItem.properties) == null ? void 0 : _t.maxWidth),
-                      minHeight: processedItem.minHeight || ((_u = processedItem.properties) == null ? void 0 : _u.minHeight),
-                      maxHeight: processedItem.maxHeight || ((_v = processedItem.properties) == null ? void 0 : _v.maxHeight)
-                    };
-                    Object.keys(childLayoutProps).forEach((key) => {
-                      if (childLayoutProps[key] === void 0) {
-                        delete childLayoutProps[key];
-                      }
-                    });
-                    if (Object.keys(childLayoutProps).length > 0) {
-                      console.log("\u2705 Applying child layout properties to component:", childLayoutProps);
-                      this.applyChildLayoutProperties(componentInstance, childLayoutProps);
-                    }
-                  }
-                } else {
-                  await this.createComponentInstanceSystematic(processedItem, currentFrame);
-                  const createdInstance = currentFrame.children[currentFrame.children.length - 1];
-                  if (createdInstance) {
-                    const childLayoutProps = {
-                      layoutAlign: processedItem.layoutAlign || ((_w = processedItem.properties) == null ? void 0 : _w.layoutAlign),
-                      horizontalSizing: processedItem.horizontalSizing || ((_x = processedItem.properties) == null ? void 0 : _x.horizontalSizing),
-                      layoutGrow: processedItem.layoutGrow || ((_y = processedItem.properties) == null ? void 0 : _y.layoutGrow),
-                      layoutPositioning: processedItem.layoutPositioning || ((_z = processedItem.properties) == null ? void 0 : _z.layoutPositioning),
-                      minWidth: processedItem.minWidth || ((_A = processedItem.properties) == null ? void 0 : _A.minWidth),
-                      maxWidth: processedItem.maxWidth || ((_B = processedItem.properties) == null ? void 0 : _B.maxWidth),
-                      minHeight: processedItem.minHeight || ((_C = processedItem.properties) == null ? void 0 : _C.minHeight),
-                      maxHeight: processedItem.maxHeight || ((_D = processedItem.properties) == null ? void 0 : _D.maxHeight)
-                    };
-                    Object.keys(childLayoutProps).forEach((key) => {
-                      if (childLayoutProps[key] === void 0) {
-                        delete childLayoutProps[key];
-                      }
-                    });
-                    if (Object.keys(childLayoutProps).length > 0) {
-                      console.log("\u2705 Applying child layout properties to other type:", childLayoutProps);
-                      this.applyChildLayoutProperties(createdInstance, childLayoutProps);
-                    }
-                  }
-                }
-              } catch (itemError) {
-                console.error(`\u274C Error rendering item:`, itemError);
-                console.log("Problematic item:", JSON.stringify(item, null, 2));
-                try {
-                  breadcrumb("ERROR: Creating error placeholder frame");
-                  const errorFrame = figma.createFrame();
-                  try {
-                    errorFrame.name = `Error: ${itemError.message}`;
-                  } catch (e) {
-                    console.warn("Could not set name on error frame:", e.message);
-                  }
-                  try {
-                    errorFrame.fills = [{ type: "SOLID", color: { r: 1, g: 0.8, b: 0.8 } }];
-                  } catch (e) {
-                    console.warn("Could not set fills on error frame:", e.message);
-                  }
-                  try {
-                    errorFrame.resize(200, 50);
-                  } catch (e) {
-                    console.warn("Could not resize error frame:", e.message);
-                  }
-                  currentFrame.appendChild(errorFrame);
-                } catch (e) {
-                  console.error("Could not create error placeholder:", e);
-                }
-                continue;
-              }
-            }
-            const postProcessContainerData = layoutData.layoutContainer || layoutData;
-            if (postProcessContainerData && postProcessContainerData.width && currentFrame.layoutMode !== "NONE") {
-              console.log("\u{1F527} Post-processing: Re-enforcing frame width to:", postProcessContainerData.width);
-              breadcrumb("POSTPROCESS: Re-enforcing frame width to " + postProcessContainerData.width);
-              const hasWidthSetter = ((_E = Object.getOwnPropertyDescriptor(currentFrame, "width")) == null ? void 0 : _E.set) !== void 0;
-              if (hasWidthSetter) {
-                currentFrame.width = postProcessContainerData.width;
-                console.log("\u2705 Re-enforced width via setter");
-              } else {
-                try {
-                  currentFrame.resize(postProcessContainerData.width, currentFrame.height);
-                  console.log("\u2705 Re-enforced width via resize fallback");
-                } catch (resizeError) {
-                  console.warn("\u26A0\uFE0F Could not re-enforce width:", resizeError.message);
-                }
-              }
-            }
-            if (parentNode.type === "PAGE" && currentFrame.layoutMode !== "NONE") {
-              const minHeight = containerData.minHeight || 812;
-              await this.adjustRootFrameHeight(currentFrame, minHeight);
-              console.log("\u{1F3AF} Final root frame dimensions:", {
-                width: currentFrame.width,
-                height: currentFrame.height,
-                primaryAxisSizing: currentFrame.primaryAxisSizingMode,
-                minHeight: currentFrame.minHeight
-              });
-            }
-            if (parentNode.type === "PAGE") {
-              figma.currentPage.selection = [currentFrame];
-              figma.viewport.scrollAndZoomIntoView([currentFrame]);
-              const perfReport = ComponentPropertyEngine.getPerformanceReport();
-              console.log("\u26A1 Performance Report:", perfReport);
-              figma.notify(`UI generated with systematic validation!`, { timeout: 2500 });
-            }
-            return currentFrame;
-          } catch (error) {
-            console.error("\u274C BREADCRUMB LOCATION:", lastBreadcrumb);
-            console.error("\u274C generateUIFromDataSystematic error:", error);
-            console.error("\u274C Error details:", {
-              lastBreadcrumb,
-              message: error.message,
-              stack: error.stack,
-              name: error.name,
-              layoutData,
-              parentNodeType: parentNode.type
-            });
-            breadcrumb("FALLBACK: Creating fallback frame");
-            const fallbackFrame = figma.createFrame();
-            try {
-              fallbackFrame.name = "Error Frame";
-            } catch (e) {
-              console.warn("Could not set name on fallback frame:", e.message);
-            }
-            try {
-              fallbackFrame.resize(375, 100);
-            } catch (e) {
-              console.warn("Could not resize fallback frame:", e.message);
-            }
-            if (parentNode.type === "PAGE") {
-              parentNode.appendChild(fallbackFrame);
-            }
-            figma.notify(`\u274C Error creating UI: ${error.message}`, { error: true });
-            return fallbackFrame;
-          }
-        }
-        /**
-         * Modify existing UI frame by replacing its content
-         */
-        static async modifyExistingUI(modifiedJSON, frameId) {
-          try {
-            const existingFrame = await figma.getNodeByIdAsync(frameId);
-            if (existingFrame && existingFrame.type === "FRAME") {
-              for (let i = existingFrame.children.length - 1; i >= 0; i--) {
-                existingFrame.children[i].remove();
-              }
-              await this.generateUIFromData(modifiedJSON, existingFrame);
-              figma.notify("UI updated successfully!", { timeout: 2e3 });
-              return existingFrame;
-            } else {
-              throw new Error("Target frame for modification not found.");
-            }
-          } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            figma.notify("Modification error: " + errorMessage, { error: true });
-            console.error("\u274C modifyExistingUI error:", e);
-            return null;
-          }
-        }
-        /**
-         * Ensure color styles are loaded before UI generation
-         */
-        static async ensureColorStylesLoaded() {
-          if (!this.cachedColorStyles) {
-            console.log("\u{1F3A8} Color styles not cached, attempting to load from storage...");
-            try {
-              const scanSession = await SessionManager.loadLastScanSession();
-              if (scanSession == null ? void 0 : scanSession.colorStyles) {
-                this.setColorStyles(scanSession.colorStyles);
-                console.log("\u2705 Color styles loaded from scan session");
-              } else {
-                console.warn("\u26A0\uFE0F No color styles found in storage. Run a design system scan first.");
-              }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to load color styles from storage:", e);
-            }
-          } else {
-            console.log("\u2705 Color styles already cached");
-          }
-        }
-        /**
-         * Ensure design tokens are loaded before UI generation
-         */
-        static async ensureDesignTokensLoaded() {
-          if (!this.cachedDesignTokens) {
-            console.log("\u{1F527} Design tokens not cached, attempting to load from storage...");
-            try {
-              const scanSession = await SessionManager.loadLastScanSession();
-              if (scanSession == null ? void 0 : scanSession.designTokens) {
-                this.setDesignTokens(scanSession.designTokens);
-                console.log("\u2705 Design tokens loaded from scan session");
-              } else {
-                console.warn("\u26A0\uFE0F No design tokens found in storage. Run a design system scan first.");
-              }
-            } catch (e) {
-              console.warn("\u26A0\uFE0F Failed to load design tokens from storage:", e);
-            }
-          } else {
-            console.log("\u2705 Design tokens already cached");
-          }
-        }
-        /**
-         * Ensure all cached design system data is loaded (color styles, text styles, design tokens)
-         */
-        static async ensureDesignSystemDataLoaded() {
-          await this.ensureColorStylesLoaded();
-          await this.ensureDesignTokensLoaded();
-        }
-        /**
-         * Initialize Color Styles from a scan session
-         */
-        static setColorStyles(colorStyles) {
-          this.cachedColorStyles = colorStyles;
-          if (colorStyles) {
-            const totalStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
-            console.log(`\u{1F3A8} FigmaRenderer: Loaded ${totalStyles} Color Styles for semantic color resolution`);
-          }
-        }
-        /**
-         * NEW: Set cached design tokens for renderer to use
-         */
-        static setDesignTokens(designTokens) {
-          this.cachedDesignTokens = designTokens;
-          console.log(`\u{1F527} Cached ${(designTokens == null ? void 0 : designTokens.length) || 0} design tokens for renderer`);
-        }
-        /**
-         * NEW: Resolve design token names to RGB values
-         * Supports various token naming patterns: 'button.primary', 'color-primary-500', 'Primary/500'
-         */
-        static resolveDesignTokenReference(tokenName) {
-          if (!this.cachedDesignTokens || this.cachedDesignTokens.length === 0) {
-            return null;
-          }
-          console.log(`\u{1F527} Resolving design token: "${tokenName}"`);
-          const exactMatch = this.cachedDesignTokens.find(
-            (token) => token.type === "COLOR" && token.name === tokenName
-          );
-          if (exactMatch) {
-            console.log(`\u2705 Found exact design token: ${exactMatch.name}`);
-            return this.convertTokenValueToRgb(exactMatch.value);
-          }
-          const caseInsensitiveMatch = this.cachedDesignTokens.find(
-            (token) => token.type === "COLOR" && token.name.toLowerCase() === tokenName.toLowerCase()
-          );
-          if (caseInsensitiveMatch) {
-            console.log(`\u2705 Found case-insensitive design token: ${caseInsensitiveMatch.name}`);
-            return this.convertTokenValueToRgb(caseInsensitiveMatch.value);
-          }
-          const collectionMatch = this.cachedDesignTokens.find(
-            (token) => token.type === "COLOR" && `${token.collection}/${token.name}`.toLowerCase() === tokenName.toLowerCase()
-          );
-          if (collectionMatch) {
-            console.log(`\u2705 Found collection-based design token: ${collectionMatch.collection}/${collectionMatch.name}`);
-            return this.convertTokenValueToRgb(collectionMatch.value);
-          }
-          console.warn(`\u26A0\uFE0F Could not find design token "${tokenName}"`);
-          return null;
-        }
-        /**
-         * NEW: Convert design token value to RGB
-         */
-        static convertTokenValueToRgb(tokenValue) {
-          try {
-            if (typeof tokenValue === "object" && tokenValue !== null) {
-              if ("r" in tokenValue && "g" in tokenValue && "b" in tokenValue) {
-                return {
-                  r: Math.max(0, Math.min(1, Number(tokenValue.r) || 0)),
-                  g: Math.max(0, Math.min(1, Number(tokenValue.g) || 0)),
-                  b: Math.max(0, Math.min(1, Number(tokenValue.b) || 0))
-                };
-              }
-            }
-            if (typeof tokenValue === "string" && tokenValue.startsWith("#")) {
-              return this.hexToRgb(tokenValue);
-            }
-            console.warn(`\u26A0\uFE0F Unsupported token value format:`, tokenValue);
-            return null;
-          } catch (error) {
-            console.error(`\u274C Error converting token value:`, error);
-            return null;
-          }
-        }
-        /**
-         * Resolve color style names to actual Figma color styles (for style application)
-         * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
-         */
-        static async resolveColorStyleReference(colorStyleName) {
-          console.log(`\u{1F3A8} Resolving color style reference: "${colorStyleName}"`);
-          try {
-            const localPaintStyles = await figma.getLocalPaintStylesAsync();
-            console.log(`\u{1F4CB} Found ${localPaintStyles.length} local paint styles in Figma`);
-            if (localPaintStyles.length > 0) {
-              console.log(`\u{1F4CB} First 5 style names:`, localPaintStyles.slice(0, 5).map((s) => s.name));
-            }
-            const exactMatch = localPaintStyles.find((style) => style.name === colorStyleName);
-            if (exactMatch) {
-              console.log(`\u2705 Found exact color style: ${exactMatch.name}`);
-              return exactMatch;
-            }
-            const caseInsensitiveMatch = localPaintStyles.find(
-              (style) => style.name.toLowerCase() === colorStyleName.toLowerCase()
-            );
-            if (caseInsensitiveMatch) {
-              console.log(`\u2705 Found case-insensitive color style: ${caseInsensitiveMatch.name}`);
-              return caseInsensitiveMatch;
-            }
-            console.warn(`\u26A0\uFE0F Could not find color style "${colorStyleName}"`);
-            console.log(`\u{1F4CB} All available paint styles:`, localPaintStyles.map((s) => s.name));
-            return null;
-          } catch (error) {
-            console.error(`\u274C Error resolving color style "${colorStyleName}":`, error);
-            return null;
-          }
-        }
-        /**
-         * ENHANCED: Resolve color references with 3-tier fallback system
-         * 1. Design Tokens (preferred)
-         * 2. Color Styles (legacy)
-         * 3. Semantic color fallback
-         */
-        static resolveColorReference(colorName) {
-          console.log(`\u{1F3A8} Resolving color: "${colorName}" with 3-tier system`);
-          const tokenColor = this.resolveDesignTokenReference(colorName);
-          if (tokenColor) {
-            console.log(`\u2705 Resolved via design token`);
-            return tokenColor;
-          }
-          const styleColor = this.resolveSemanticColor(colorName);
-          if (styleColor && !(styleColor.r === 0 && styleColor.g === 0 && styleColor.b === 0)) {
-            console.log(`\u2705 Resolved via color style`);
-            return styleColor;
-          }
-          console.warn(`\u26A0\uFE0F Could not resolve color "${colorName}" through any method`);
-          return { r: 0, g: 0, b: 0 };
-        }
-        /**
-         * Resolve color style names to actual RGB values from scanned Color Styles (fallback)
-         * Uses exact name matching from design system scan data
-         * Examples: "Primary/primary80", "Button-color", "Light Green", "ui-primary-500"
-         */
-        static resolveSemanticColor(colorStyleName) {
-          if (!this.cachedColorStyles) {
-            console.warn(`\u26A0\uFE0F No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
-            return null;
-          }
-          console.log(`\u{1F3A8} Resolving color style: "${colorStyleName}"`);
-          const allCategories = Object.values(this.cachedColorStyles).flat();
-          const exactMatch = allCategories.find((style) => style.name === colorStyleName);
-          if (exactMatch && exactMatch.colorInfo.type === "SOLID") {
-            console.log(`\u2705 Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
-            return this.hexToRgb(exactMatch.colorInfo.color || "#000000");
-          }
-          const caseInsensitiveMatch = allCategories.find(
-            (style) => style.name.toLowerCase() === colorStyleName.toLowerCase()
-          );
-          if (caseInsensitiveMatch && caseInsensitiveMatch.colorInfo.type === "SOLID") {
-            console.log(`\u2705 Found case-insensitive match: ${caseInsensitiveMatch.name} (${caseInsensitiveMatch.colorInfo.color})`);
-            return this.hexToRgb(caseInsensitiveMatch.colorInfo.color || "#000000");
-          }
-          console.warn(`\u26A0\uFE0F Could not find color style "${colorStyleName}"`);
-          console.log(`Available color styles:`, allCategories.map((s) => s.name));
-          return { r: 0, g: 0, b: 0 };
-        }
-        /**
-         * Convert hex color to RGB values (0-1 range)
-         */
-        static hexToRgb(hex) {
-          hex = hex.replace("#", "");
-          if (hex.length === 3) {
-            hex = hex.split("").map((char) => char + char).join("");
-          }
-          const r = parseInt(hex.substr(0, 2), 16) / 255;
-          const g = parseInt(hex.substr(2, 2), 16) / 255;
-          const b = parseInt(hex.substr(4, 2), 16) / 255;
-          return { r, g, b };
-        }
-        /**
-         * Create a solid paint from RGB values
-         */
-        static createSolidPaint(rgb, opacity = 1) {
-          return {
-            type: "SOLID",
-            color: rgb,
-            opacity
-          };
-        }
-        /**
-         * Helper method to resolve and apply semantic colors to text nodes
-         */
-        static applySemanticTextColor(textNode, semanticColorName) {
-          const rgb = this.resolveColorReference(semanticColorName);
-          if (rgb) {
-            textNode.fills = [this.createSolidPaint(rgb)];
-            console.log(`\u2705 Applied semantic color "${semanticColorName}" to text node`);
-            return true;
-          }
-          return false;
-        }
-        /**
-         * Helper method to resolve and apply color styles to any node with fills
-         */
-        static async applySemanticFillColor(node, semanticColorName) {
-          const colorStyle = await this.resolveColorStyleReference(semanticColorName);
-          if (colorStyle && "setFillStyleIdAsync" in node) {
-            await node.setFillStyleIdAsync(colorStyle.id);
-            console.log(`\u2705 Applied color style "${semanticColorName}" to node (as style reference)`);
-            return true;
-          }
-          const rgb = this.resolveColorReference(semanticColorName);
-          if (rgb && "fills" in node) {
-            node.fills = [this.createSolidPaint(rgb)];
-            console.log(`\u2705 Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
-            return true;
-          }
-          return false;
-        }
-        // Text Styles Caching and Resolution
-        /**
-         * Sets the cached text styles for the renderer
-         * Mirrors setColorStyles pattern exactly
-         */
-        static setTextStyles(textStyles) {
-          _FigmaRenderer.cachedTextStyles = textStyles;
-          console.log(`\u{1F4DD} Cached ${textStyles.length} text styles for rendering`);
-          if (textStyles.length > 0) {
-            console.log("Available text styles:", textStyles.map((s) => s.name).join(", "));
-          }
-        }
-        /**
-         * Resolves text style name to Figma text style ID
-         * Mirrors resolveColorStyleReference pattern
-         */
-        static async resolveTextStyleReference(textStyleName) {
-          console.log(`\u{1F4DD} Resolving text style reference: "${textStyleName}"`);
-          try {
-            const localTextStyles = await figma.getLocalTextStylesAsync();
-            console.log(`\u{1F4CB} Found ${localTextStyles.length} local text styles in Figma`);
-            if (localTextStyles.length > 0) {
-              console.log(`\u{1F4CB} First 5 text style names:`, localTextStyles.slice(0, 5).map((s) => s.name));
-            }
-            const exactMatch = localTextStyles.find((style) => style.name === textStyleName);
-            if (exactMatch) {
-              console.log(`\u2705 Found exact text style: ${exactMatch.name}`);
-              return exactMatch;
-            }
-            const caseInsensitiveMatch = localTextStyles.find(
-              (style) => style.name.toLowerCase() === textStyleName.toLowerCase()
-            );
-            if (caseInsensitiveMatch) {
-              console.log(`\u2705 Found case-insensitive text style: ${caseInsensitiveMatch.name}`);
-              return caseInsensitiveMatch;
-            }
-            console.warn(`\u26A0\uFE0F Could not find text style "${textStyleName}"`);
-            console.log(`\u{1F4CB} All available text styles:`, localTextStyles.map((s) => s.name));
-            return null;
-          } catch (error) {
-            console.error(`\u274C Error resolving text style "${textStyleName}":`, error);
-            return null;
-          }
-        }
-        /**
-         * Applies text style to a text node
-         */
-        static async applyTextStyle(textNode, textStyleName) {
-          try {
-            console.log(`\u{1F4DD} Attempting to apply text style: "${textStyleName}"`);
-            const textStyle = await _FigmaRenderer.resolveTextStyleReference(textStyleName);
-            if (textStyle) {
-              console.log(`\u{1F4DD} Text style found - ID: ${textStyle.id}, Name: ${textStyle.name}`);
-              await textNode.setTextStyleIdAsync(textStyle.id);
-              console.log(`\u2705 Applied text style "${textStyleName}" to text node`);
-            } else {
-              console.warn(`\u274C Could not apply text style "${textStyleName}" - style not found`);
-            }
-          } catch (error) {
-            console.error(`\u274C Error applying text style "${textStyleName}":`, error);
-            console.error(`\u274C Error details:`, {
-              errorMessage: error.message,
-              errorStack: error.stack,
-              textStyleName,
-              textNodeType: textNode == null ? void 0 : textNode.type,
-              textNodeId: textNode == null ? void 0 : textNode.id
-            });
-          }
-        }
-        /**
-         * Validates native element types and provides fallbacks
-         */
-        static validateNativeType(type) {
-          const ALLOWED_NATIVE_TYPES = ["native-text", "native-rectangle", "native-circle"];
-          if (ALLOWED_NATIVE_TYPES.includes(type)) {
-            return type;
-          }
-          const fallbackMap = {
-            "native-grid": "layoutContainer",
-            "native-list-item": "layoutContainer",
-            "native-rating": "native-rectangle",
-            "native-image": "native-rectangle",
-            "native-vertical-scroll": "layoutContainer",
-            "native-horizontal-scroll": "layoutContainer"
-          };
-          if (fallbackMap[type]) {
-            console.warn(`\u26A0\uFE0F Unknown native type "${type}" - falling back to "${fallbackMap[type]}"`);
-            return fallbackMap[type];
-          }
-          console.error(`\u274C Unknown native type "${type}" - no fallback available`);
-          return null;
-        }
-        /**
-         * Sanitizes width properties to handle percentages and invalid values
-         */
-        static sanitizeWidth(width) {
-          if (typeof width === "string") {
-            if (width.endsWith("%")) {
-              const percentage = parseFloat(width);
-              if (width === "100%") {
-                console.warn('\u26A0\uFE0F Converting width "100%" to horizontalSizing: "FILL"');
-                return null;
-              } else {
-                const defaultContainerWidth = 375;
-                const calculated = defaultContainerWidth * percentage / 100;
-                console.warn(`\u26A0\uFE0F Converting width "${width}" to ${calculated}px`);
-                return calculated;
-              }
-            }
-            const parsed = parseFloat(width);
-            if (!isNaN(parsed)) {
-              return parsed;
-            }
-          }
-          if (typeof width === "number") {
-            return width;
-          }
-          console.warn(`\u26A0\uFE0F Invalid width value: ${width}`);
-          return null;
-        }
-        /**
-         * Normalizes property names to match component schemas
-         */
-        static normalizePropertyNames(properties, textLayers) {
-          if (!properties) return {};
-          const normalized = __spreadValues({}, properties);
-          const aliases = {
-            "Action": ["text", "label", "action", "Default", "buttonText"],
-            "label-text": ["label", "labelText", "text"],
-            "placeholder-text": ["placeholder", "placeholderText"],
-            "isPassword": ["isSecure", "secure", "password"],
-            "Headline": ["title", "heading", "headline"],
-            "Supporting text": ["subtitle", "description", "supportingText"],
-            "Default": ["text", "content", "label"]
-          };
-          if (textLayers && textLayers.length > 0) {
-            Object.keys(properties).forEach((propName) => {
-              if (!textLayers.includes(propName)) {
-                for (const [correct, wrongNames] of Object.entries(aliases)) {
-                  if (wrongNames.includes(propName) && textLayers.includes(correct)) {
-                    console.warn(`\u26A0\uFE0F Normalizing property "${propName}" to "${correct}"`);
-                    normalized[correct] = properties[propName];
-                    delete normalized[propName];
-                    break;
-                  }
-                }
-              }
-            });
-          }
-          return normalized;
-        }
-        /**
-         * Validates and fixes component variants
-         */
-        static validateAndFixVariants(variants, variantDetails) {
-          if (!variants || !variantDetails) {
-            return variants || {};
-          }
-          const fixed = __spreadValues({}, variants);
-          Object.entries(variants).forEach(([propName, value]) => {
-            const validValues = variantDetails[propName];
-            if (!validValues) {
-              console.warn(`\u26A0\uFE0F Unknown variant property "${propName}" - removing`);
-              delete fixed[propName];
-              return;
-            }
-            if (!validValues.includes(value)) {
-              const match = validValues.find(
-                (v) => v.toLowerCase() === String(value).toLowerCase()
-              );
-              if (match) {
-                console.warn(`\u26A0\uFE0F Fixing variant case: "${value}" \u2192 "${match}"`);
-                fixed[propName] = match;
-              } else {
-                console.warn(`\u26A0\uFE0F Invalid variant value "${value}" for "${propName}". Using default: "${validValues[0]}"`);
-                fixed[propName] = validValues[0];
-              }
-            }
-          });
-          Object.entries(variantDetails).forEach(([propName, values]) => {
-            if (!fixed[propName] && Array.isArray(values) && values.length > 0) {
-              console.warn(`\u26A0\uFE0F Adding missing variant "${propName}" with default: "${values[0]}"`);
-              fixed[propName] = values[0];
-            }
-          });
-          return fixed;
-        }
-        /**
-         * Pre-render validation of entire layout data
-         */
-        static validateLayoutData(layoutData) {
-          var _a;
-          const errors = [];
-          const warnings = [];
-          if (!layoutData.layoutContainer && !layoutData.items) {
-            errors.push("Missing layoutContainer or items at root level");
-          }
-          const validateItems = (items2, path = "") => {
-            if (!Array.isArray(items2)) return;
-            items2.forEach((item, index) => {
-              var _a2, _b, _c;
-              const itemPath = `${path}[${index}]`;
-              if (((_a2 = item.type) == null ? void 0 : _a2.startsWith("native-")) && !["native-text", "native-rectangle", "native-circle"].includes(item.type)) {
-                warnings.push(`Invalid native type "${item.type}" at ${itemPath} - will attempt fallback`);
-              }
-              if (typeof item.width === "string" && item.width.includes("%")) {
-                warnings.push(`Percentage width "${item.width}" at ${itemPath} - will convert`);
-              }
-              if (typeof ((_b = item.properties) == null ? void 0 : _b.width) === "string" && item.properties.width.includes("%")) {
-                warnings.push(`Percentage width "${item.properties.width}" in properties at ${itemPath} - will convert`);
-              }
-              if (item.type === "component") {
-                if (!item.componentNodeId && !item.componentId && !item.id) {
-                  errors.push(`Missing component ID at ${itemPath}`);
-                } else if (!item.componentNodeId) {
-                  warnings.push(`Using legacy property name for component ID at ${itemPath} - will normalize`);
-                }
-              }
-              if (item.items) {
-                validateItems(item.items, `${itemPath}.items`);
-              }
-              if ((_c = item.layoutContainer) == null ? void 0 : _c.items) {
-                validateItems(item.layoutContainer.items, `${itemPath}.layoutContainer.items`);
-              }
-            });
-          };
-          const items = layoutData.items || ((_a = layoutData.layoutContainer) == null ? void 0 : _a.items);
-          if (items) {
-            validateItems(items);
-          }
-          return {
-            valid: errors.length === 0,
-            errors,
-            warnings
-          };
-        }
-        /**
-         * Creates a visual placeholder for missing components
-         */
-        static async createMissingComponentPlaceholder(componentId, parentNode) {
-          const placeholder = figma.createRectangle();
-          placeholder.name = `Missing Component: ${componentId}`;
-          placeholder.fills = [{ type: "SOLID", color: { r: 1, g: 0.9, b: 0.9 } }];
-          placeholder.resize(200, 100);
-          placeholder.cornerRadius = 8;
-          placeholder.strokes = [{ type: "SOLID", color: { r: 0.8, g: 0.2, b: 0.2 } }];
-          placeholder.strokeWeight = 2;
-          placeholder.dashPattern = [5, 5];
-          parentNode.appendChild(placeholder);
-          try {
-            const text = figma.createText();
-            await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-            text.characters = `Component
-${componentId}
-not found`;
-            text.fontSize = 12;
-            text.fills = [{ type: "SOLID", color: { r: 0.5, g: 0.5, b: 0.5 } }];
-            text.textAlignHorizontal = "CENTER";
-            text.textAlignVertical = "CENTER";
-            text.resize(200, 100);
-            placeholder.appendChild(text);
-          } catch (e) {
-            console.warn("Could not add text to placeholder:", e);
-          }
-          return placeholder;
-        }
-      };
-      // Static storage for Color Styles scanned from the design system
-      _FigmaRenderer.cachedColorStyles = null;
-      _FigmaRenderer.cachedDesignTokens = null;
-      // NEW: Design tokens cache
-      // Static storage for Text Styles scanned from the design system
-      _FigmaRenderer.cachedTextStyles = null;
-      // Static field to store design system data for this rendering session
-      _FigmaRenderer.currentDesignSystemData = null;
-      FigmaRenderer = _FigmaRenderer;
-    }
-  });
-
-  // src/core/design-system-scanner-service.ts
-  var design_system_scanner_service_exports = {};
-  __export(design_system_scanner_service_exports, {
-    DesignSystemScannerService: () => DesignSystemScannerService
-  });
-  var DesignSystemScannerService;
-  var init_design_system_scanner_service = __esm({
-    "src/core/design-system-scanner-service.ts"() {
-      "use strict";
-      init_component_scanner();
-      init_figma_renderer();
-      DesignSystemScannerService = class {
-        /**
-         * Main scanning function - scans all pages for components, Color Styles, and Text Styles
-         */
-        static async scanDesignSystem(progressCallback) {
-          console.log("\u{1F50D} Starting comprehensive design system scan with Color Styles and Text Styles...");
-          try {
-            progressCallback == null ? void 0 : progressCallback({ current: 0, total: 100, status: "Initializing comprehensive scan..." });
-            const scanSession = await ComponentScanner.scanDesignSystem();
-            progressCallback == null ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles and Text Styles with renderer..." });
-            FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
-            if (scanSession.textStyles && scanSession.textStyles.length > 0) {
-              FigmaRenderer.setTextStyles(scanSession.textStyles);
-              console.log(`\u{1F4DD} Loaded ${scanSession.textStyles.length} text styles into renderer`);
-            } else {
-              console.log("\u{1F4DD} No text styles found in scan session");
-            }
-            if (scanSession.designTokens && scanSession.designTokens.length > 0) {
-              FigmaRenderer.setDesignTokens(scanSession.designTokens);
-              console.log(`\u{1F527} Loaded ${scanSession.designTokens.length} design tokens into renderer`);
-            } else {
-              console.log("\u{1F527} No design tokens found in scan session");
-            }
-            progressCallback == null ? void 0 : progressCallback({ current: 100, total: 100, status: "Comprehensive scan complete!" });
-            return scanSession;
-          } catch (e) {
-            console.error("\u274C Critical error in comprehensive design system scan:", e);
-            throw e;
-          }
-        }
-        /**
-         * Legacy method for backward compatibility - returns only components
-         */
-        static async scanComponents(progressCallback) {
-          const session = await this.scanDesignSystem(progressCallback);
-          return session.components;
-        }
-        /**
-         * Scan only Color Styles without components
-         */
-        static async scanColorStyles() {
-          console.log("\u{1F3A8} Scanning only Color Styles...");
-          try {
-            const colorStyles = await ComponentScanner.scanFigmaColorStyles();
-            FigmaRenderer.setColorStyles(colorStyles);
-            return colorStyles;
-          } catch (e) {
-            console.error("\u274C Error scanning Color Styles:", e);
-            throw e;
-          }
-        }
-        /**
-         * Scan only Text Styles without components
-         */
-        static async scanTextStyles() {
-          console.log("\u{1F4DD} Scanning only Text Styles...");
-          try {
-            const textStyles = await ComponentScanner.scanFigmaTextStyles();
-            FigmaRenderer.setTextStyles(textStyles);
-            return textStyles;
-          } catch (e) {
-            console.error("\u274C Error scanning Text Styles:", e);
-            throw e;
-          }
-        }
-        /**
-         * Scan only Design Tokens without components
-         */
-        static async scanDesignTokens() {
-          console.log("\u{1F527} Scanning only Design Tokens...");
-          try {
-            const designTokens = await ComponentScanner.scanFigmaVariables();
-            FigmaRenderer.setDesignTokens(designTokens);
-            return designTokens;
-          } catch (e) {
-            console.error("\u274C Error scanning Design Tokens:", e);
-            throw e;
-          }
-        }
-        // Remove the old implementation below and replace with legacy support
-        static async legacyScanImplementation(progressCallback) {
-          console.log("\u{1F50D} Starting legacy design system scan...");
-          const components = [];
-          try {
-            await figma.loadAllPagesAsync();
-            console.log("\u2705 All pages loaded");
-            const totalPages = figma.root.children.length;
-            let currentPage = 0;
-            progressCallback == null ? void 0 : progressCallback({ current: 0, total: totalPages, status: "Initializing scan..." });
-            for (const page of figma.root.children) {
-              currentPage++;
-              const pageStatus = `Scanning page: "${page.name}" (${currentPage}/${totalPages})`;
-              console.log(`\u{1F4CB} ${pageStatus}`);
-              progressCallback == null ? void 0 : progressCallback({
-                current: currentPage,
-                total: totalPages,
-                status: pageStatus
-              });
-              try {
-                const allNodes = page.findAll((node) => {
-                  if (node.type === "COMPONENT_SET") {
-                    return true;
-                  }
-                  if (node.type === "COMPONENT") {
-                    return !!(node.parent && node.parent.type !== "COMPONENT_SET");
-                  }
-                  return false;
-                });
-                console.log(`\u2705 Found ${allNodes.length} main components on page "${page.name}"`);
-                for (const node of allNodes) {
-                  try {
-                    if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
-                      const componentInfo = await ComponentScanner.analyzeComponent(node);
-                      if (componentInfo) {
-                        componentInfo.pageInfo = {
-                          pageName: page.name,
-                          pageId: page.id,
-                          isCurrentPage: page.id === figma.currentPage.id
-                        };
-                        components.push(componentInfo);
-                      }
-                    }
-                  } catch (e) {
-                    console.error(`\u274C Error analyzing component "${node.name}":`, e);
-                  }
-                }
-              } catch (e) {
-                console.error(`\u274C Error scanning page "${page.name}":`, e);
-              }
-            }
-            progressCallback == null ? void 0 : progressCallback({
-              current: totalPages,
-              total: totalPages,
-              status: `Scan complete! Found ${components.length} components`
-            });
-            console.log(`\u{1F389} Design system scan complete! Found ${components.length} unique components.`);
-            return components;
-          } catch (e) {
-            console.error("\u274C Critical error in design system scan:", e);
-            throw e;
-          }
-        }
-        /**
-         * Generate LLM prompt with components and color styles
-         */
-        static generateLLMPrompt(components, colorStyles) {
-          return ComponentScanner.generateLLMPrompt(components, colorStyles);
-        }
-        /**
-         * Analyzes a single component to extract metadata and variants
-         * @deprecated Use ComponentScanner.analyzeComponent instead
-         */
-        static analyzeComponent(comp) {
-          const name = comp.name;
-          const suggestedType = this.guessComponentType(name.toLowerCase());
-          const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-          const textLayers = this.findTextLayers(comp);
-          let variants = [];
-          let variantDetails = {};
-          if (comp.type === "COMPONENT_SET") {
-            const variantProps = comp.variantGroupProperties;
-            if (variantProps) {
-              variants = Object.keys(variantProps);
-              Object.entries(variantProps).forEach(([propName, propInfo]) => {
-                if (propInfo.values && propInfo.values.length > 0) {
-                  variantDetails[propName] = [...propInfo.values].sort();
-                  console.log(`\u2705 Found variant property: ${propName} with values: [${propInfo.values.join(", ")}]`);
-                }
-              });
-              console.log(`\u{1F3AF} Variant details for "${comp.name}":`, variantDetails);
-            }
-          }
-          return {
-            id: comp.id,
-            name,
-            suggestedType,
-            confidence,
-            variants: variants.length > 0 ? variants : void 0,
-            variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
-            textLayers: textLayers.length > 0 ? textLayers : void 0,
-            isFromLibrary: false
-          };
-        }
-        /**
-         * Intelligent component type detection based on naming patterns
-         */
-        static guessComponentType(name) {
-          var _a;
-          const patterns = {
-            "icon-button": /icon.*button|button.*icon/i,
-            "upload": /upload|file.*drop|drop.*zone|attach/i,
-            "form": /form|captcha|verification/i,
-            "context-menu": /context-menu|context menu|contextual menu|options menu/i,
-            "modal-header": /modal-header|modal header|modalstack|modal_stack/i,
-            "list-item": /list-item|list item|list_item|list[\s\-_]*row|list[\s\-_]*cell/i,
-            "appbar": /appbar|app-bar|navbar|nav-bar|header|top bar|page header/i,
-            "dialog": /dialog|dialogue|popup|modal(?!-header)/i,
-            "list": /list(?!-item)/i,
-            "navigation": /nav|navigation(?!-bar)/i,
-            "header": /h[1-6]|title|heading(?! bar)/i,
-            "button": /button|btn|cta|action/i,
-            "input": /input|field|textfield|text-field|entry/i,
-            "textarea": /textarea|text-area|multiline/i,
-            "select": /select|dropdown|drop-down|picker/i,
-            "checkbox": /checkbox|check-box/i,
-            "radio": /radio|radiobutton|radio-button/i,
-            "switch": /switch|toggle/i,
-            "slider": /slider|range/i,
-            "searchbar": /search|searchbar|search-bar/i,
-            "tab": /tab|tabs|tabbar|tab-bar/i,
-            "breadcrumb": /breadcrumb|bread-crumb/i,
-            "pagination": /pagination|pager/i,
-            "bottomsheet": /bottomsheet|bottom-sheet|drawer/i,
-            "sidebar": /sidebar|side-bar/i,
-            "snackbar": /snack|snackbar|toast|notification/i,
-            "alert": /alert/i,
-            "tooltip": /tooltip|tip|hint/i,
-            "badge": /badge|indicator|count/i,
-            "progress": /progress|loader|loading|spinner/i,
-            "skeleton": /skeleton|placeholder/i,
-            "card": /card|tile|block|panel/i,
-            "avatar": /avatar|profile|user|photo/i,
-            "image": /image|img|picture/i,
-            "video": /video|player/i,
-            "icon": /icon|pictogram|symbol/i,
-            "text": /text|label|paragraph|caption|copy/i,
-            "link": /link|anchor/i,
-            "container": /container|wrapper|box|frame/i,
-            "grid": /grid/i,
-            "divider": /divider|separator|delimiter/i,
-            "spacer": /spacer|space|gap/i,
-            "fab": /fab|floating|float/i,
-            "chip": /chip|tag/i,
-            "actionsheet": /actionsheet|action-sheet/i,
-            "chart": /chart|graph/i,
-            "table": /table/i,
-            "calendar": /calendar|date/i,
-            "timeline": /timeline/i,
-            "gallery": /gallery|carousel/i,
-            "price": /price|cost/i,
-            "rating": /rating|star/i,
-            "cart": /cart|basket/i,
-            "map": /map|location/i,
-            "code": /code|syntax/i,
-            "terminal": /terminal|console/i
-          };
-          const priorityPatterns = [
-            "icon-button",
-            "upload",
-            "form",
-            "context-menu",
-            "modal-header",
-            "list-item",
-            "appbar",
-            "dialog",
-            "snackbar",
-            "bottomsheet",
-            "actionsheet",
-            "searchbar",
-            "fab",
-            "breadcrumb",
-            "pagination",
-            "skeleton",
-            "textarea",
-            "checkbox",
-            "radio",
-            "switch",
-            "slider",
-            "tab",
-            "navigation",
-            "tooltip",
-            "badge",
-            "progress",
-            "avatar",
-            "chip",
-            "stepper",
-            "chart",
-            "table",
-            "calendar",
-            "timeline",
-            "gallery",
-            "rating"
-          ];
-          for (const type of priorityPatterns) {
-            if ((_a = patterns[type]) == null ? void 0 : _a.test(name)) return type;
-          }
-          for (const type in patterns) {
-            if (patterns.hasOwnProperty(type) && !priorityPatterns.includes(type)) {
-              if (patterns[type].test(name)) return type;
-            }
-          }
-          return "unknown";
-        }
-        /**
-         * Calculates confidence score for component type detection
-         */
-        static calculateConfidence(name, suggestedType) {
-          if (suggestedType === "unknown") return 0.1;
-          if (name.toLowerCase() === suggestedType.toLowerCase()) return 0.95;
-          if (name.includes(suggestedType)) return 0.9;
-          if (name.toLowerCase().includes(suggestedType + "-") || name.toLowerCase().includes(suggestedType + "_")) return 0.85;
-          return 0.7;
-        }
-        /**
-         * Finds and catalogs text layers within a component
-         */
-        static findTextLayers(comp) {
-          const textLayers = [];
-          try {
-            const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
-            if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
-              const allNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
-              allNodes.forEach((node) => {
-                if (node.type === "TEXT" && node.name) {
-                  const textNode = node;
-                  textLayers.push(textNode.name);
-                  try {
-                    const chars = textNode.characters || "[empty]";
-                    console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
-                  } catch (charError) {
-                    console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
-                  }
-                }
-              });
-            }
-          } catch (e) {
-            console.error(`Error finding text layers in "${comp.name}":`, e);
-          }
-          return textLayers;
-        }
-        /**
-         * Save scan results to Figma storage - supports full scan session with color styles, text styles, and design tokens
-         */
-        static async saveScanResults(components, colorStyles, textStyles, designTokens) {
-          try {
-            const scanSession = {
-              components,
-              colorStyles: colorStyles || void 0,
-              textStyles: textStyles || void 0,
-              designTokens: designTokens || void 0,
-              scanTime: Date.now(),
-              version: "2.1.0",
-              fileKey: figma.fileKey || figma.root.id
-            };
-            await figma.clientStorage.setAsync("design-system-scan", scanSession);
-            await figma.clientStorage.setAsync("last-scan-results", components);
-            const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-            const textStylesCount = textStyles ? textStyles.length : 0;
-            const designTokensCount = designTokens ? designTokens.length : 0;
-            console.log(`\u{1F4BE} Saved ${components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens with session data`);
-          } catch (error) {
-            console.error("\u274C Error saving scan results:", error);
-            try {
-              await figma.clientStorage.setAsync("last-scan-results", components);
-              console.log("\u{1F4BE} Fallback save successful");
-            } catch (fallbackError) {
-              console.warn("\u26A0\uFE0F Could not save scan results:", fallbackError);
-            }
-          }
-        }
-        /**
-         * Save complete scan session including color styles, text styles, and design tokens
-         */
-        static async saveScanSession(scanSession) {
-          try {
-            await figma.clientStorage.setAsync("design-system-scan", scanSession);
-            await figma.clientStorage.setAsync("last-scan-results", scanSession.components);
-            const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-            const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
-            const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
-            console.log(`\u{1F4BE} Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens`);
-          } catch (error) {
-            console.error("\u274C Error saving scan session:", error);
-            throw error;
-          }
-        }
-        /**
-         * Get component ID by type for UI generation
-         */
-        static async getComponentIdByType(type) {
-          const searchType = type.toLowerCase();
-          const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-          if (scanResults && Array.isArray(scanResults)) {
-            const matchingComponent = scanResults.find(
-              (comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7
-            );
-            if (matchingComponent) return matchingComponent.id;
-            const nameMatchingComponent = scanResults.find(
-              (comp) => comp.name.toLowerCase().includes(searchType)
-            );
-            if (nameMatchingComponent) return nameMatchingComponent.id;
-          }
-          console.log(`\u274C Component ID for type "${type}" not found`);
-          return null;
-        }
-        /**
-         * Get saved scan results from storage
-         */
-        static async getSavedScanResults() {
-          try {
-            const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-            return scanResults || null;
-          } catch (error) {
-            console.error("\u274C Error getting saved scan results:", error);
-            return null;
-          }
-        }
-        /**
-         * Get scan session data
-         */
-        static async getScanSession() {
-          try {
-            const scanSession = await figma.clientStorage.getAsync("design-system-scan");
-            return scanSession || null;
-          } catch (error) {
-            console.error("\u274C Error getting scan session:", error);
-            return null;
-          }
-        }
-        /**
-         * Update component type manually
-         */
-        static async updateComponentType(componentId, newType) {
-          try {
-            const scanResults = await figma.clientStorage.getAsync("last-scan-results");
-            if (scanResults && Array.isArray(scanResults)) {
-              let componentName = "";
-              const updatedResults = scanResults.map((comp) => {
-                if (comp.id === componentId) {
-                  componentName = comp.name;
-                  return __spreadProps(__spreadValues({}, comp), { suggestedType: newType, confidence: 1 });
-                }
-                return comp;
-              });
-              await this.saveScanResults(updatedResults);
-              return { success: true, componentName };
-            }
-            return { success: false };
-          } catch (error) {
-            console.error("\u274C Error updating component type:", error);
-            return { success: false };
-          }
-        }
-        /**
-         * Clear all scan data and renderer cache
-         */
-        static async clearScanData() {
-          try {
-            await figma.clientStorage.setAsync("design-system-scan", null);
-            await figma.clientStorage.setAsync("last-scan-results", null);
-            FigmaRenderer.setColorStyles(null);
-            FigmaRenderer.setTextStyles([]);
-            FigmaRenderer.setDesignTokens([]);
-            console.log("\u2705 Scan data and renderer cache cleared");
-          } catch (error) {
-            console.error("\u274C Error clearing scan data:", error);
-          }
-        }
-      };
-    }
-  });
 
   // src/core/session-service.ts
   var SessionService = class {
@@ -6587,36 +402,6 @@ not found`;
       return "\u25CF".repeat(apiKey.length - 4) + apiKey.slice(-4);
     }
     /**
-     * Analyze image with Gemini API for design feedback
-     */
-    static async analyzeImage(imageBytes, prompt) {
-      try {
-        const apiKey = await this.getApiKey();
-        if (!apiKey) {
-          throw new Error("No API key found. Please configure your API key first.");
-        }
-        const base64 = btoa(String.fromCharCode(...imageBytes));
-        const response = await this.callGeminiAPI(
-          apiKey,
-          prompt,
-          { base64, type: "image/png" },
-          {
-            temperature: 0.1,
-            maxOutputTokens: 1024,
-            responseMimeType: "application/json"
-          }
-        );
-        if (response.success) {
-          return response.data || "";
-        } else {
-          throw new Error(response.error || "Analysis failed");
-        }
-      } catch (error) {
-        console.error("Vision analysis failed:", error);
-        throw error;
-      }
-    }
-    /**
      * Format error message for user display
      */
     static formatErrorMessage(error) {
@@ -6642,9 +427,3514 @@ not found`;
     responseMimeType: "application/json"
   };
 
-  // code.ts
-  init_design_system_scanner_service();
-  init_figma_renderer();
+  // src/core/component-scanner.ts
+  var ComponentScanner = class {
+    /**
+     * Scan Figma Color Styles from the local file
+     */
+    static async scanFigmaColorStyles() {
+      console.log("\u{1F3A8} Scanning Figma Color Styles...");
+      try {
+        const paintStyles = await figma.getLocalPaintStylesAsync();
+        console.log(`\u2705 Found ${paintStyles.length} paint styles`);
+        const colorStyleCollection = {
+          primary: [],
+          secondary: [],
+          tertiary: [],
+          neutral: [],
+          semantic: [],
+          surface: [],
+          other: []
+        };
+        for (const paintStyle of paintStyles) {
+          try {
+            const colorStyle = await this.convertPaintStyleToColorStyle(paintStyle);
+            const category = this.categorizeColorStyle(colorStyle.name);
+            colorStyleCollection[category].push(colorStyle);
+            console.log(`\u{1F3A8} Categorized "${colorStyle.name}" as ${category} (variant: ${colorStyle.variant || "none"})`);
+          } catch (error) {
+            console.warn(`\u26A0\uFE0F Failed to process paint style "${paintStyle.name}":`, error);
+          }
+        }
+        const totalStyles = Object.values(colorStyleCollection).reduce((sum, styles) => sum + styles.length, 0);
+        console.log(`\u{1F3A8} Color Styles Summary:`);
+        console.log(`   Primary: ${colorStyleCollection.primary.length}`);
+        console.log(`   Secondary: ${colorStyleCollection.secondary.length}`);
+        console.log(`   Tertiary: ${colorStyleCollection.tertiary.length}`);
+        console.log(`   Neutral: ${colorStyleCollection.neutral.length}`);
+        console.log(`   Semantic: ${colorStyleCollection.semantic.length}`);
+        console.log(`   Surface: ${colorStyleCollection.surface.length}`);
+        console.log(`   Other: ${colorStyleCollection.other.length}`);
+        console.log(`   Total: ${totalStyles} styles`);
+        return colorStyleCollection;
+      } catch (error) {
+        console.error("\u274C Failed to scan color styles:", error);
+        return {
+          primary: [],
+          secondary: [],
+          tertiary: [],
+          neutral: [],
+          semantic: [],
+          surface: [],
+          other: []
+        };
+      }
+    }
+    /**
+     * Convert Figma PaintStyle to our ColorStyle interface
+     */
+    static async convertPaintStyleToColorStyle(paintStyle) {
+      const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
+      const { category, variant } = this.parseColorStyleName(paintStyle.name);
+      return {
+        id: paintStyle.id,
+        name: paintStyle.name,
+        description: paintStyle.description || void 0,
+        paints: paintStyle.paints,
+        category,
+        variant,
+        colorInfo: colorInfo || { type: "SOLID", color: "#000000", opacity: 1 }
+      };
+    }
+    /**
+     * Categorize a color style based on its name
+     * Supports patterns like: 'primary90', 'secondary50', 'neutral-100', 'Primary/500', etc.
+     */
+    static categorizeColorStyle(styleName) {
+      const name = styleName.toLowerCase();
+      if (name.includes("primary") || name.includes("brand")) {
+        return "primary";
+      }
+      if (name.includes("secondary") || name.includes("accent")) {
+        return "secondary";
+      }
+      if (name.includes("tertiary")) {
+        return "tertiary";
+      }
+      if (name.includes("neutral") || name.includes("gray") || name.includes("grey") || name.includes("black") || name.includes("white") || name.includes("slate")) {
+        return "neutral";
+      }
+      if (name.includes("success") || name.includes("error") || name.includes("warning") || name.includes("info") || name.includes("danger") || name.includes("alert") || name.includes("green") || name.includes("red") || name.includes("yellow") || name.includes("blue") || name.includes("orange")) {
+        return "semantic";
+      }
+      if (name.includes("surface") || name.includes("background") || name.includes("container") || name.includes("backdrop") || name.includes("overlay")) {
+        return "surface";
+      }
+      return "other";
+    }
+    /**
+     * Parse color style name to extract category and variant
+     * Examples: 'primary90' -> { category: 'primary', variant: '90' }
+     *          'Primary/500' -> { category: 'primary', variant: '500' }
+     *          'neutral-100' -> { category: 'neutral', variant: '100' }
+     */
+    static parseColorStyleName(styleName) {
+      const name = styleName.toLowerCase();
+      const pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
+      if (pattern1) {
+        const [, colorName, variant] = pattern1;
+        return {
+          category: this.categorizeColorStyle(colorName),
+          variant
+        };
+      }
+      const pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
+      if (pattern2) {
+        const [, colorName, variant] = pattern2;
+        return {
+          category: this.categorizeColorStyle(colorName),
+          variant
+        };
+      }
+      return {
+        category: this.categorizeColorStyle(name),
+        variant: void 0
+      };
+    }
+    /**
+     * Main scanning function - scans all pages for components and color styles
+     */
+    static async scanDesignSystem() {
+      console.log("\u{1F50D} Starting comprehensive design system scan...");
+      const components = [];
+      let colorStyles;
+      try {
+        await figma.loadAllPagesAsync();
+        console.log("\u2705 All pages loaded");
+        console.log("\n\u{1F3A8} Phase 1: Scanning Color Styles...");
+        try {
+          colorStyles = await this.scanFigmaColorStyles();
+        } catch (error) {
+          console.warn("\u26A0\uFE0F Color Styles scanning failed, continuing without color styles:", error);
+          colorStyles = void 0;
+        }
+        console.log("\n\u{1F9E9} Phase 2: Scanning Components...");
+        for (const page of figma.root.children) {
+          console.log(`\u{1F4CB} Scanning page: "${page.name}"`);
+          try {
+            const allNodes = page.findAll((node) => {
+              if (node.type === "COMPONENT_SET") {
+                return true;
+              }
+              if (node.type === "COMPONENT") {
+                return !!(node.parent && node.parent.type !== "COMPONENT_SET");
+              }
+              return false;
+            });
+            console.log(`\u2705 Found ${allNodes.length} main components on page "${page.name}"`);
+            for (const node of allNodes) {
+              try {
+                if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
+                  const componentInfo = await this.analyzeComponent(node);
+                  if (componentInfo) {
+                    componentInfo.pageInfo = {
+                      pageName: page.name,
+                      pageId: page.id,
+                      isCurrentPage: page.id === figma.currentPage.id
+                    };
+                    components.push(componentInfo);
+                  }
+                }
+              } catch (e) {
+                console.error(`\u274C Error analyzing component "${node.name}":`, e);
+              }
+            }
+          } catch (e) {
+            console.error(`\u274C Error scanning page "${page.name}":`, e);
+          }
+        }
+        const scanSession = {
+          components,
+          colorStyles,
+          scanTime: Date.now(),
+          version: "2.0.0",
+          fileKey: figma.fileKey || void 0
+        };
+        console.log(`
+\u{1F389} Comprehensive scan complete!`);
+        console.log(`   \u{1F4E6} Components: ${components.length}`);
+        console.log(`   \u{1F3A8} Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+        console.log(`   \u{1F4C4} File Key: ${scanSession.fileKey || "Unknown"}`);
+        return scanSession;
+      } catch (e) {
+        console.error("\u274C Critical error in scanDesignSystem:", e);
+        throw e;
+      }
+    }
+    /**
+     * Legacy method for backward compatibility - returns only components
+     */
+    static async scanComponents() {
+      const session = await this.scanDesignSystem();
+      return session.components;
+    }
+    /**
+     * Analyzes a single component to extract metadata
+     */
+    static async analyzeComponent(comp) {
+      const name = comp.name;
+      const suggestedType = this.guessComponentType(name.toLowerCase());
+      const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+      const textLayers = this.findTextLayers(comp);
+      const textHierarchy = this.analyzeTextHierarchy(comp);
+      const componentInstances = await this.findComponentInstances(comp);
+      const vectorNodes = this.findVectorNodes(comp);
+      const imageNodes = this.findImageNodes(comp);
+      const styleInfo = this.extractStyleInfo(comp);
+      let variants = [];
+      const variantDetails = {};
+      if (comp.type === "COMPONENT_SET") {
+        const variantProps = comp.variantGroupProperties;
+        if (variantProps) {
+          variants = Object.keys(variantProps);
+          Object.entries(variantProps).forEach(([propName, propInfo]) => {
+            if (propInfo.values && propInfo.values.length > 0) {
+              variantDetails[propName] = [...propInfo.values].sort();
+              console.log(`\u2705 Found variant property: ${propName} with values: [${propInfo.values.join(", ")}]`);
+            }
+          });
+          console.log(`\u{1F3AF} Variant details for "${comp.name}":`, variantDetails);
+        }
+      }
+      return {
+        id: comp.id,
+        name,
+        suggestedType,
+        confidence,
+        variants: variants.length > 0 ? variants : void 0,
+        variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
+        textLayers: textLayers.length > 0 ? textLayers : void 0,
+        textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0,
+        componentInstances: componentInstances.length > 0 ? componentInstances : void 0,
+        vectorNodes: vectorNodes.length > 0 ? vectorNodes : void 0,
+        imageNodes: imageNodes.length > 0 ? imageNodes : void 0,
+        styleInfo,
+        // NEW: Include color and style information
+        isFromLibrary: false
+      };
+    }
+    /**
+     * Intelligent component type detection based on naming patterns
+     */
+    static guessComponentType(name) {
+      var _a;
+      const patterns = {
+        "icon-button": /icon.*button|button.*icon/i,
+        "upload": /upload|file.*drop|drop.*zone|attach/i,
+        "form": /form|captcha|verification/i,
+        "context-menu": /context-menu|context menu|contextual menu|options menu/i,
+        "modal-header": /modal-header|modal header|modalstack|modal_stack/i,
+        "list-item": /list-item|list item|list_item|list[\s\-_]*row|list[\s\-_]*cell/i,
+        "appbar": /appbar|app-bar|navbar|nav-bar|header|top bar|page header/i,
+        "dialog": /dialog|dialogue|popup|modal(?!-header)/i,
+        "list": /list(?!-item)/i,
+        "navigation": /nav|navigation(?!-bar)/i,
+        "header": /h[1-6]|title|heading(?! bar)/i,
+        "button": /button|btn|cta|action/i,
+        "input": /input|field|textfield|text-field|entry/i,
+        "textarea": /textarea|text-area|multiline/i,
+        "select": /select|dropdown|drop-down|picker/i,
+        "checkbox": /checkbox|check-box/i,
+        "radio": /radio|radiobutton|radio-button/i,
+        "switch": /switch|toggle/i,
+        "slider": /slider|range/i,
+        "searchbar": /search|searchbar|search-bar/i,
+        "tab": /tab|tabs|tabbar|tab-bar/i,
+        "breadcrumb": /breadcrumb|bread-crumb/i,
+        "pagination": /pagination|pager/i,
+        "bottomsheet": /bottomsheet|bottom-sheet|drawer/i,
+        "sidebar": /sidebar|side-bar/i,
+        "snackbar": /snack|snackbar|toast|notification/i,
+        "alert": /alert/i,
+        "tooltip": /tooltip|tip|hint/i,
+        "badge": /badge|indicator|count/i,
+        "progress": /progress|loader|loading|spinner/i,
+        "skeleton": /skeleton|placeholder/i,
+        "card": /card|tile|block|panel/i,
+        "avatar": /avatar|profile|user|photo/i,
+        "image": /image|img|picture/i,
+        "video": /video|player/i,
+        "icon": /icon|pictogram|symbol/i,
+        "text": /text|label|paragraph|caption|copy/i,
+        "link": /link|anchor/i,
+        "container": /container|wrapper|box|frame/i,
+        "grid": /grid/i,
+        "divider": /divider|separator|delimiter/i,
+        "spacer": /spacer|space|gap/i,
+        "fab": /fab|floating|float/i,
+        "chip": /chip|tag/i,
+        "actionsheet": /actionsheet|action-sheet/i,
+        "chart": /chart|graph/i,
+        "table": /table/i,
+        "calendar": /calendar|date/i,
+        "timeline": /timeline/i,
+        "gallery": /gallery|carousel/i,
+        "price": /price|cost/i,
+        "rating": /rating|star/i,
+        "cart": /cart|basket/i,
+        "map": /map|location/i,
+        "code": /code|syntax/i,
+        "terminal": /terminal|console/i
+      };
+      const priorityPatterns = [
+        "icon-button",
+        "upload",
+        "form",
+        "context-menu",
+        "modal-header",
+        "list-item",
+        "appbar",
+        "dialog",
+        "snackbar",
+        "bottomsheet",
+        "actionsheet",
+        "searchbar",
+        "fab",
+        "breadcrumb",
+        "pagination",
+        "skeleton",
+        "textarea",
+        "checkbox",
+        "radio",
+        "switch",
+        "slider",
+        "tab",
+        "navigation",
+        "tooltip",
+        "badge",
+        "progress",
+        "avatar",
+        "chip",
+        "stepper",
+        "chart",
+        "table",
+        "calendar",
+        "timeline",
+        "gallery",
+        "rating"
+      ];
+      for (const type of priorityPatterns) {
+        if ((_a = patterns[type]) == null ? void 0 : _a.test(name)) return type;
+      }
+      for (const type in patterns) {
+        if (Object.prototype.hasOwnProperty.call(patterns, type) && !priorityPatterns.includes(type)) {
+          if (patterns[type].test(name)) return type;
+        }
+      }
+      return "unknown";
+    }
+    /**
+     * Calculates confidence score for component type detection
+     */
+    static calculateConfidence(name, suggestedType) {
+      if (suggestedType === "unknown") return 0.1;
+      if (name.toLowerCase() === suggestedType.toLowerCase()) return 0.95;
+      if (name.includes(suggestedType)) return 0.9;
+      if (name.toLowerCase().includes(suggestedType + "-") || name.toLowerCase().includes(suggestedType + "_")) return 0.85;
+      return 0.7;
+    }
+    /**
+     * Finds and catalogs text layers within a component
+     */
+    static findTextLayers(comp) {
+      const textLayers = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const allNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
+          allNodes.forEach((node) => {
+            if (node.type === "TEXT" && node.name) {
+              const textNode = node;
+              textLayers.push(textNode.name);
+              try {
+                const chars = textNode.characters || "[empty]";
+                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
+              } catch (charError) {
+                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.error(`Error finding text layers in "${comp.name}":`, e);
+      }
+      return textLayers;
+    }
+    /**
+     * Analyzes text nodes by fontSize/fontWeight and classifies by visual prominence
+     */
+    static analyzeTextHierarchy(comp) {
+      const textHierarchy = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const textNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
+          const fontSizes = [];
+          const textNodeData = [];
+          textNodes.forEach((node) => {
+            if (node.type === "TEXT") {
+              const textNode = node;
+              try {
+                const fontSize = typeof textNode.fontSize === "number" ? textNode.fontSize : 14;
+                const fontWeight = textNode.fontWeight || "normal";
+                fontSizes.push(fontSize);
+                textNodeData.push({ node: textNode, fontSize, fontWeight });
+              } catch (e) {
+                console.warn(`Could not read font properties for text node "${textNode.name}"`);
+              }
+            }
+          });
+          const uniqueSizes = [...new Set(fontSizes)].sort((a, b) => b - a);
+          textNodeData.forEach(({ node, fontSize, fontWeight }) => {
+            let classification = "tertiary";
+            if (uniqueSizes.length >= 3) {
+              if (fontSize >= uniqueSizes[0]) classification = "primary";
+              else if (fontSize >= uniqueSizes[1]) classification = "secondary";
+              else classification = "tertiary";
+            } else if (uniqueSizes.length === 2) {
+              classification = fontSize >= uniqueSizes[0] ? "primary" : "secondary";
+            } else {
+              const weight = String(fontWeight).toLowerCase();
+              if (weight.includes("bold") || weight.includes("700") || weight.includes("800") || weight.includes("900")) {
+                classification = "primary";
+              } else if (weight.includes("medium") || weight.includes("500") || weight.includes("600")) {
+                classification = "secondary";
+              } else {
+                classification = "tertiary";
+              }
+            }
+            let characters;
+            try {
+              characters = node.characters || "[empty]";
+            } catch (e) {
+              characters = void 0;
+            }
+            let textColor;
+            try {
+              if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                const firstFill = node.fills[0];
+                if (firstFill.visible !== false) {
+                  textColor = this.convertPaintToColorInfo(firstFill) || void 0;
+                }
+              }
+            } catch (e) {
+              console.warn(`Could not extract text color for "${node.name}"`);
+            }
+            textHierarchy.push({
+              nodeName: node.name,
+              nodeId: node.id,
+              fontSize,
+              fontWeight,
+              classification,
+              visible: node.visible,
+              characters,
+              textColor
+              // NEW: Include text color information
+            });
+          });
+        }
+      } catch (e) {
+        console.error(`Error analyzing text hierarchy in "${comp.name}":`, e);
+      }
+      return textHierarchy;
+    }
+    /**
+     * Finds all nested COMPONENT/INSTANCE nodes (often icons)
+     */
+    static async findComponentInstances(comp) {
+      const componentInstances = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const instanceNodes = nodeToAnalyze.findAll(
+            (node) => node.type === "COMPONENT" || node.type === "INSTANCE"
+          );
+          for (const node of instanceNodes) {
+            if (node.type === "COMPONENT" || node.type === "INSTANCE") {
+              const instance = {
+                nodeName: node.name,
+                nodeId: node.id,
+                visible: node.visible
+              };
+              if (node.type === "INSTANCE") {
+                try {
+                  const mainComponent = await node.getMainComponentAsync();
+                  instance.componentId = mainComponent == null ? void 0 : mainComponent.id;
+                } catch (e) {
+                  console.warn(`Could not get main component ID for instance "${node.name}"`);
+                }
+              }
+              componentInstances.push(instance);
+            }
+          }
+        }
+      } catch (e) {
+        console.error(`Error finding component instances in "${comp.name}":`, e);
+      }
+      return componentInstances;
+    }
+    /**
+     * Finds all VECTOR nodes (direct SVG icons)
+     */
+    static findVectorNodes(comp) {
+      const vectorNodes = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const vectors = nodeToAnalyze.findAll((node) => node.type === "VECTOR");
+          vectors.forEach((node) => {
+            if (node.type === "VECTOR") {
+              vectorNodes.push({
+                nodeName: node.name,
+                nodeId: node.id,
+                visible: node.visible
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.error(`Error finding vector nodes in "${comp.name}":`, e);
+      }
+      return vectorNodes;
+    }
+    /**
+     * Finds all nodes that can accept image fills (RECTANGLE, ELLIPSE with image fills)
+     */
+    static findImageNodes(comp) {
+      const imageNodes = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const shapeNodes = nodeToAnalyze.findAll(
+            (node) => node.type === "RECTANGLE" || node.type === "ELLIPSE"
+          );
+          shapeNodes.forEach((node) => {
+            if (node.type === "RECTANGLE" || node.type === "ELLIPSE") {
+              let hasImageFill = false;
+              try {
+                const fills = node.fills;
+                if (Array.isArray(fills)) {
+                  hasImageFill = fills.some(
+                    (fill) => typeof fill === "object" && fill !== null && fill.type === "IMAGE"
+                  );
+                }
+              } catch (e) {
+                console.warn(`Could not check fills for node "${node.name}"`);
+              }
+              imageNodes.push({
+                nodeName: node.name,
+                nodeId: node.id,
+                nodeType: node.type,
+                visible: node.visible,
+                hasImageFill
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.error(`Error finding image nodes in "${comp.name}":`, e);
+      }
+      return imageNodes;
+    }
+    /**
+     * Generate LLM prompt based on scanned components and color styles
+     */
+    static generateLLMPrompt(components, colorStyles) {
+      var _a;
+      const componentsByType = {};
+      components.forEach((comp) => {
+        if (comp.confidence >= 0.7) {
+          if (!componentsByType[comp.suggestedType]) componentsByType[comp.suggestedType] = [];
+          componentsByType[comp.suggestedType].push(comp);
+        }
+      });
+      let prompt = `# AIDesigner JSON Generation Instructions
+
+`;
+      if (colorStyles) {
+        const totalColorStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+        if (totalColorStyles > 0) {
+          prompt += `## Available Color Styles in Design System:
+
+`;
+          Object.entries(colorStyles).forEach(([category, styles]) => {
+            if (styles.length > 0) {
+              prompt += `### ${category.toUpperCase()} COLORS
+`;
+              styles.forEach((style) => {
+                prompt += `- **${style.name}**: ${style.colorInfo.color}`;
+                if (style.variant) {
+                  prompt += ` (variant: ${style.variant})`;
+                }
+                if (style.description) {
+                  prompt += ` - ${style.description}`;
+                }
+                prompt += `
+`;
+              });
+              prompt += `
+`;
+            }
+          });
+          prompt += `### Color Usage Guidelines:
+`;
+          prompt += `- Use PRIMARY colors for main actions, headers, and brand elements
+`;
+          prompt += `- Use SECONDARY colors for supporting actions and accents
+`;
+          prompt += `- Use NEUTRAL colors for text, backgrounds, and borders
+`;
+          prompt += `- Use SEMANTIC colors for success/error/warning states
+`;
+          prompt += `- Use SURFACE colors for backgrounds and containers
+`;
+          prompt += `- Reference colors by their exact name: "${((_a = colorStyles.primary[0]) == null ? void 0 : _a.name) || "Primary/500"}"
+
+`;
+        }
+      }
+      prompt += `## Available Components in Design System:
+
+`;
+      Object.keys(componentsByType).sort().forEach((type) => {
+        var _a2, _b, _c, _d, _e, _f;
+        const comps = componentsByType[type];
+        const bestComponent = comps.sort((a, b) => b.confidence - a.confidence)[0];
+        prompt += `### ${type.toUpperCase()}
+`;
+        prompt += `- Component ID: "${bestComponent.id}"
+`;
+        prompt += `- Component Name: "${bestComponent.name}"
+`;
+        if ((_a2 = bestComponent.textLayers) == null ? void 0 : _a2.length) prompt += `- Text Layers: ${bestComponent.textLayers.map((l) => `"${l}"`).join(", ")}
+`;
+        if ((_b = bestComponent.textHierarchy) == null ? void 0 : _b.length) {
+          prompt += `- Text Hierarchy:
+`;
+          bestComponent.textHierarchy.forEach((text) => {
+            prompt += `  - ${text.classification.toUpperCase()}: "${text.nodeName}" (${text.fontSize}px, ${text.fontWeight}${text.visible ? "" : ", hidden"})
+`;
+          });
+        }
+        if ((_c = bestComponent.componentInstances) == null ? void 0 : _c.length) {
+          prompt += `- Component Instances: ${bestComponent.componentInstances.map((c) => `"${c.nodeName}"${c.visible ? "" : " (hidden)"}`).join(", ")}
+`;
+        }
+        if ((_d = bestComponent.vectorNodes) == null ? void 0 : _d.length) {
+          prompt += `- Vector Icons: ${bestComponent.vectorNodes.map((v) => `"${v.nodeName}"${v.visible ? "" : " (hidden)"}`).join(", ")}
+`;
+        }
+        if ((_e = bestComponent.imageNodes) == null ? void 0 : _e.length) {
+          prompt += `- Image Containers: ${bestComponent.imageNodes.map((i) => `"${i.nodeName}" (${i.nodeType}${i.hasImageFill ? ", has image" : ""}${i.visible ? "" : ", hidden"})`).join(", ")}
+`;
+        }
+        if (bestComponent.variantDetails && Object.keys(bestComponent.variantDetails).length > 0) {
+          prompt += `
+  - \u{1F3AF} VARIANTS AVAILABLE:
+`;
+          Object.entries(bestComponent.variantDetails).forEach(([propName, values]) => {
+            prompt += `    - **${propName}**: [${values.map((v) => `"${v}"`).join(", ")}]
+`;
+            const propLower = propName.toLowerCase();
+            if (propLower.includes("condition") || propLower.includes("layout")) {
+              prompt += `      \u{1F4A1} Layout control: ${values.includes("1-line") ? '"1-line" = single line, ' : ""}${values.includes("2-line") ? '"2-line" = detailed view' : ""}
+`;
+            }
+            if (propLower.includes("leading") || propLower.includes("start")) {
+              prompt += `      \u{1F4A1} Leading element: "Icon" = shows leading icon, "None" = text only
+`;
+            }
+            if (propLower.includes("trailing") || propLower.includes("end")) {
+              prompt += `      \u{1F4A1} Trailing element: "Icon" = shows trailing icon/chevron, "None" = no trailing element
+`;
+            }
+            if (propLower.includes("state") || propLower.includes("status")) {
+              prompt += `      \u{1F4A1} Component state: controls enabled/disabled/selected appearance
+`;
+            }
+            if (propLower.includes("size")) {
+              prompt += `      \u{1F4A1} Size control: affects padding, text size, and touch targets
+`;
+            }
+            if (propLower.includes("type") || propLower.includes("style") || propLower.includes("emphasis")) {
+              prompt += `      \u{1F4A1} Visual emphasis: controls hierarchy and visual weight
+`;
+            }
+          });
+          prompt += `
+  - \u26A1 QUICK VARIANT GUIDE:
+`;
+          prompt += `    - "single line" request \u2192 use "Condition": "1-line"
+`;
+          prompt += `    - "with icon" request \u2192 use "Leading": "Icon"
+`;
+          prompt += `    - "arrow" or "chevron" \u2192 use "Trailing": "Icon"
+`;
+          prompt += `    - "simple" or "minimal" \u2192 omit variants to use defaults
+`;
+          prompt += `    - Only specify variants you want to change from defaults
+`;
+        }
+        prompt += `- Page: ${((_f = bestComponent.pageInfo) == null ? void 0 : _f.pageName) || "Unknown"}
+
+`;
+      });
+      prompt += `## JSON Structure & Rules:
+
+### Variant Usage Rules:
+- **Variants must be in a separate "variants" object inside properties**
+- **NEVER mix variants with regular properties at the same level**
+- Variant properties are case-sensitive: "Condition" not "condition"
+- Variant values are case-sensitive: "1-line" not "1-Line"
+
+### \u2705 CORRECT Variant Structure:
+\`\`\`json
+{
+  "type": "list-item",
+  "componentNodeId": "10:123",
+  "properties": {
+    "text": "Personal details",
+    "horizontalSizing": "FILL",
+    "variants": {
+      "Condition": "1-line",
+      "Leading": "Icon", 
+      "Trailing": "Icon"
+    }
+  }
+}
+\`\`\`
+
+### \u274C WRONG - Never do this:
+\`\`\`json
+{
+  "properties": {
+    "text": "Personal details",
+    "Condition": "1-line",    // WRONG: variants mixed with properties
+    "Leading": "Icon"         // WRONG: should be in variants object
+  }
+}
+\`\`\`
+
+### Settings Screen with Proper Variants:
+\`\`\`json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "width": 360,
+    "itemSpacing": 8
+  },
+  "items": [
+    {
+      "type": "list-item",
+      "componentNodeId": "10:123",
+      "properties": {
+        "text": "Personal details",
+        "horizontalSizing": "FILL",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:123",
+      "properties": {
+        "text": "Change language",
+        "trailing-text": "English",
+        "horizontalSizing": "FILL",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:123",
+      "properties": {
+        "text": "Notifications",
+        "supporting-text": "Push notifications and email alerts",
+        "trailing-text": "On",
+        "horizontalSizing": "FILL",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "Icon"
+        }
+      }
+    }
+  ]
+}
+\`\`\`
+
+### \u2705 VARIANT BEST PRACTICES:
+- **Always use exact property names**: "Condition" not "condition"
+- **Use exact values**: "1-line" not "1-Line" or "single-line"
+- **Specify complete variant sets**: Include all required properties for that variant
+- **Common patterns**:
+  - Simple navigation: \`"Condition": "1-line", "Leading": "Icon", "Trailing": "None"\`
+  - With current value: \`"Condition": "1-line", "Leading": "Icon", "Trailing": "Icon"\`
+  - Detailed info: \`"Condition": "2-line", "Leading": "Icon", "Trailing": "Icon"\`
+
+*\u{1F3AF} Pro tip: Study your design system's variant combinations in Figma to understand which variants work together.*
+`;
+      return prompt;
+    }
+    /**
+     * Save scan results to Figma storage
+     */
+    static async saveLastScanResults(components) {
+      try {
+        const scanSession = {
+          components,
+          scanTime: Date.now(),
+          version: "1.0",
+          fileKey: figma.root.id
+        };
+        await figma.clientStorage.setAsync("design-system-scan", scanSession);
+        await figma.clientStorage.setAsync("last-scan-results", components);
+        console.log(`\u{1F4BE} Saved ${components.length} components with session data`);
+      } catch (error) {
+        console.error("\u274C Error saving scan results:", error);
+        try {
+          await figma.clientStorage.setAsync("last-scan-results", components);
+          console.log("\u{1F4BE} Fallback save successful");
+        } catch (fallbackError) {
+          console.warn("\u26A0\uFE0F Could not save scan results:", fallbackError);
+        }
+      }
+    }
+    /**
+     * Get component ID by type for UI generation
+     */
+    static async getComponentIdByType(type) {
+      const searchType = type.toLowerCase();
+      const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+      if (scanResults && Array.isArray(scanResults)) {
+        const matchingComponent = scanResults.find((comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7);
+        if (matchingComponent) return matchingComponent.id;
+        const nameMatchingComponent = scanResults.find((comp) => comp.name.toLowerCase().includes(searchType));
+        if (nameMatchingComponent) return nameMatchingComponent.id;
+      }
+      console.log(`\u274C ID for type ${type} not found`);
+      return null;
+    }
+    /**
+     * NEW: Extract color and style information from component
+     */
+    static extractStyleInfo(node) {
+      var _a, _b, _c;
+      const styleInfo = {};
+      try {
+        let primaryNode = node;
+        if (node.type === "COMPONENT_SET" && node.children.length > 0) {
+          primaryNode = node.children[0];
+        }
+        const fills = this.extractFills(primaryNode);
+        if (fills.length > 0) {
+          styleInfo.fills = fills;
+          styleInfo.primaryColor = fills[0];
+        }
+        const strokes = this.extractStrokes(primaryNode);
+        if (strokes.length > 0) {
+          styleInfo.strokes = strokes;
+        }
+        const textColor = this.findPrimaryTextColor(primaryNode);
+        if (textColor) {
+          styleInfo.textColor = textColor;
+        }
+        const backgroundColor = this.findBackgroundColor(primaryNode);
+        if (backgroundColor) {
+          styleInfo.backgroundColor = backgroundColor;
+        }
+        if (styleInfo.primaryColor || styleInfo.backgroundColor || styleInfo.textColor) {
+          console.log(`\u{1F3A8} Colors extracted for "${node.name}":`, {
+            primary: (_a = styleInfo.primaryColor) == null ? void 0 : _a.color,
+            background: (_b = styleInfo.backgroundColor) == null ? void 0 : _b.color,
+            text: (_c = styleInfo.textColor) == null ? void 0 : _c.color
+          });
+        }
+      } catch (error) {
+        console.warn(`\u26A0\uFE0F Error extracting style info for "${node.name}":`, error);
+      }
+      return styleInfo;
+    }
+    /**
+     * Extract fill colors from a node
+     */
+    static extractFills(node) {
+      const colorInfos = [];
+      try {
+        if ("fills" in node && node.fills && Array.isArray(node.fills)) {
+          for (const fill of node.fills) {
+            if (fill.visible !== false) {
+              const colorInfo = this.convertPaintToColorInfo(fill);
+              if (colorInfo) {
+                colorInfos.push(colorInfo);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("Error extracting fills:", error);
+      }
+      return colorInfos;
+    }
+    /**
+     * Extract stroke colors from a node
+     */
+    static extractStrokes(node) {
+      const colorInfos = [];
+      try {
+        if ("strokes" in node && node.strokes && Array.isArray(node.strokes)) {
+          for (const stroke of node.strokes) {
+            if (stroke.visible !== false) {
+              const colorInfo = this.convertPaintToColorInfo(stroke);
+              if (colorInfo) {
+                colorInfos.push(colorInfo);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("Error extracting strokes:", error);
+      }
+      return colorInfos;
+    }
+    /**
+     * Convert Figma Paint to ColorInfo
+     */
+    static convertPaintToColorInfo(paint) {
+      try {
+        if (paint.type === "SOLID" && paint.color) {
+          return {
+            type: "SOLID",
+            color: this.rgbToHex(paint.color),
+            opacity: paint.opacity || 1
+          };
+        }
+        if (paint.type === "GRADIENT_LINEAR" && paint.gradientStops) {
+          return {
+            type: "GRADIENT_LINEAR",
+            gradientStops: paint.gradientStops.map((stop) => ({
+              color: this.rgbToHex(stop.color),
+              position: stop.position
+            })),
+            opacity: paint.opacity || 1
+          };
+        }
+        if ((paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") && paint.gradientStops) {
+          return {
+            type: paint.type,
+            gradientStops: paint.gradientStops.map((stop) => ({
+              color: this.rgbToHex(stop.color),
+              position: stop.position
+            })),
+            opacity: paint.opacity || 1
+          };
+        }
+        if (paint.type === "IMAGE") {
+          return {
+            type: "IMAGE",
+            opacity: paint.opacity || 1
+          };
+        }
+      } catch (error) {
+        console.warn("Error converting paint to color info:", error);
+      }
+      return null;
+    }
+    /**
+     * Convert RGB to hex color
+     */
+    static rgbToHex(rgb) {
+      const toHex = (value) => {
+        const hex = Math.round(value * 255).toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      };
+      return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+    }
+    /**
+     * Find primary text color by analyzing text nodes
+     */
+    static findPrimaryTextColor(node) {
+      try {
+        const textNodes = node.findAll((n) => n.type === "TEXT");
+        for (const textNode of textNodes) {
+          if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
+            for (const fill of textNode.fills) {
+              if (fill.visible !== false && fill.type === "SOLID") {
+                return this.convertPaintToColorInfo(fill);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("Error finding text color:", error);
+      }
+      return null;
+    }
+    /**
+     * Find background color by analyzing the largest rectangle or container
+     */
+    static findBackgroundColor(node) {
+      try {
+        const rectangles = node.findAll(
+          (n) => n.type === "RECTANGLE" || n.type === "FRAME" || n.type === "COMPONENT"
+        );
+        rectangles.sort((a, b) => {
+          const areaA = a.width * a.height;
+          const areaB = b.width * b.height;
+          return areaB - areaA;
+        });
+        for (const rect of rectangles) {
+          if ("fills" in rect && rect.fills && Array.isArray(rect.fills)) {
+            for (const fill of rect.fills) {
+              if (fill.visible !== false) {
+                const colorInfo = this.convertPaintToColorInfo(fill);
+                if (colorInfo && colorInfo.type === "SOLID") {
+                  return colorInfo;
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("Error finding background color:", error);
+      }
+      return null;
+    }
+  };
+
+  // src/core/session-manager.ts
+  var SessionManager = class {
+    // 30 днів
+    // Зберегти поточний стан сесії
+    static async saveSession(designState, scanData) {
+      try {
+        const fileId = figma.root.id;
+        const fileName = figma.root.name;
+        if (!designState.isIterating) return;
+        console.log(`\u{1F4BE} \u0417\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${fileName}`);
+        const storage = await this.getSessionStorage();
+        const session = {
+          fileId,
+          fileName,
+          lastModified: Date.now(),
+          designState: {
+            original: designState.original,
+            current: designState.current,
+            history: [...designState.history],
+            frameId: designState.frameId,
+            frameName: designState.frameId ? await this.getFrameName(designState.frameId) : "",
+            isIterating: designState.isIterating
+          },
+          scanData
+        };
+        storage.sessions[fileId] = session;
+        storage.lastActiveSession = fileId;
+        await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
+        console.log(`\u2705 \u0421\u0435\u0441\u0456\u044F \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u0430`);
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+      }
+    }
+    // Завантажити сесію для поточного файлу
+    static async loadSession() {
+      try {
+        const fileId = figma.root.id;
+        const storage = await this.getSessionStorage();
+        const session = storage.sessions[fileId];
+        if (!session) return null;
+        if (session.designState.frameId) {
+          const frame = await figma.getNodeByIdAsync(session.designState.frameId);
+          if (!frame || frame.removed) {
+            console.log("\u26A0\uFE0F \u0424\u0440\u0435\u0439\u043C \u0437 \u043F\u043E\u043F\u0435\u0440\u0435\u0434\u043D\u044C\u043E\u0457 \u0441\u0435\u0441\u0456\u0457 \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E, \u043E\u0447\u0438\u0449\u0443\u0454\u043C\u043E \u0441\u0435\u0441\u0456\u044E");
+            await this.clearSession(fileId);
+            return null;
+          }
+        }
+        console.log(`\u2705 \u0421\u0435\u0441\u0456\u044F \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${session.fileName}`);
+        return session;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+        return null;
+      }
+    }
+    // Отримати всі активні сесії
+    static async getAllSessions() {
+      try {
+        const storage = await this.getSessionStorage();
+        const now = Date.now();
+        const activeSessions = Object.values(storage.sessions).filter((session) => now - session.lastModified < this.MAX_SESSION_AGE).sort((a, b) => b.lastModified - a.lastModified);
+        return activeSessions;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0432\u0441\u0456\u0445 \u0441\u0435\u0441\u0456\u0439:", error);
+        return [];
+      }
+    }
+    // Очистити сесію для файлу
+    static async clearSession(fileId) {
+      try {
+        const targetFileId = fileId || figma.root.id;
+        const storage = await this.getSessionStorage();
+        delete storage.sessions[targetFileId];
+        if (storage.lastActiveSession === targetFileId) {
+          delete storage.lastActiveSession;
+        }
+        await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
+        console.log(`\u{1F5D1}\uFE0F \u0421\u0435\u0441\u0456\u044F \u043E\u0447\u0438\u0449\u0435\u043D\u0430 \u0434\u043B\u044F \u0444\u0430\u0439\u043B\u0443: ${targetFileId}`);
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0447\u0438\u0449\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+      }
+    }
+    // Очистити старі сесії
+    static async cleanupOldSessions() {
+      try {
+        const storage = await this.getSessionStorage();
+        const now = Date.now();
+        let cleaned = 0;
+        Object.entries(storage.sessions).forEach(([fileId, session]) => {
+          if (now - session.lastModified > this.MAX_SESSION_AGE) {
+            delete storage.sessions[fileId];
+            cleaned++;
+          }
+        });
+        if (cleaned > 0) {
+          await figma.clientStorage.setAsync(this.STORAGE_KEY, storage);
+          console.log(`\u{1F9F9} \u041E\u0447\u0438\u0449\u0435\u043D\u043E ${cleaned} \u0441\u0442\u0430\u0440\u0438\u0445 \u0441\u0435\u0441\u0456\u0439`);
+        }
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0447\u0438\u0449\u0435\u043D\u043D\u044F \u0441\u0442\u0430\u0440\u0438\u0445 \u0441\u0435\u0441\u0456\u0439:", error);
+      }
+    }
+    // Отримати storage з ініціалізацією
+    static async getSessionStorage() {
+      try {
+        const storage = await figma.clientStorage.getAsync(this.STORAGE_KEY);
+        if (!storage || storage.version !== this.SESSION_VERSION) {
+          return {
+            sessions: {},
+            version: this.SESSION_VERSION
+          };
+        }
+        return storage;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043E\u0442\u0440\u0438\u043C\u0430\u043D\u043D\u044F storage:", error);
+        return {
+          sessions: {},
+          version: this.SESSION_VERSION
+        };
+      }
+    }
+    // Отримати назву фрейму за ID
+    static async getFrameName(frameId) {
+      try {
+        const frame = await figma.getNodeByIdAsync(frameId);
+        return (frame == null ? void 0 : frame.name) || "Unknown Frame";
+      } catch (e) {
+        return "Unknown Frame";
+      }
+    }
+    // Відновити сесію з даних
+    static async restoreSessionData(sessionData) {
+      try {
+        if (sessionData.designState.frameId) {
+          const frame = await figma.getNodeByIdAsync(sessionData.designState.frameId);
+          if (!frame || frame.removed) {
+            throw new Error("\u0424\u0440\u0435\u0439\u043C \u043D\u0435 \u0437\u043D\u0430\u0439\u0434\u0435\u043D\u043E");
+          }
+          figma.currentPage.selection = [frame];
+          figma.viewport.scrollAndZoomIntoView([frame]);
+        }
+        return true;
+      } catch (error) {
+        console.error("\u274C \u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0432\u0456\u0434\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u044F \u0441\u0435\u0441\u0456\u0457:", error);
+        return false;
+      }
+    }
+  };
+  SessionManager.STORAGE_KEY = "aidesigner-sessions";
+  SessionManager.SESSION_VERSION = "1.0";
+  SessionManager.MAX_SESSION_AGE = 30 * 24 * 60 * 60 * 1e3;
+
+  // src/core/component-property-engine.ts
+  var TabComponentHandler = class {
+    preprocessProperties(properties) {
+      if (properties.Label && !Array.isArray(properties.Label)) {
+        properties.Label = [properties.Label];
+      }
+      return properties;
+    }
+    postProcessInstance(instance, properties) {
+    }
+    getVariantPurpose(variantName) {
+      const purposes = {
+        "Type": "layout behavior (Fixed vs Scrollable)",
+        "Style": "visual emphasis (Primary vs Secondary)",
+        "Configuration": "content structure (Label-only vs Label & Icon)"
+      };
+      return purposes[variantName] || "component appearance";
+    }
+  };
+  var ChipComponentHandler = class {
+    preprocessProperties(properties) {
+      if (properties.label && !Array.isArray(properties.label)) {
+        properties.label = [properties.label];
+      }
+      return properties;
+    }
+    postProcessInstance(instance, properties) {
+    }
+    getVariantPurpose(variantName) {
+      return "chip appearance and behavior";
+    }
+  };
+  var _PerformanceTracker = class _PerformanceTracker {
+    static async track(operation, fn) {
+      const start = Date.now();
+      try {
+        return await fn();
+      } finally {
+        const duration = Date.now() - start;
+        if (!_PerformanceTracker.metrics.has(operation)) {
+          _PerformanceTracker.metrics.set(operation, []);
+        }
+        _PerformanceTracker.metrics.get(operation).push(duration);
+        console.log(`\u23F1\uFE0F ${operation}: ${duration.toFixed(2)}ms`);
+      }
+    }
+    static getReport() {
+      const report = {};
+      _PerformanceTracker.metrics.forEach((durations, operation) => {
+        report[operation] = {
+          avg: durations.reduce((a, b) => a + b, 0) / durations.length,
+          min: Math.min(...durations),
+          max: Math.max(...durations)
+        };
+      });
+      return report;
+    }
+  };
+  _PerformanceTracker.metrics = /* @__PURE__ */ new Map();
+  var PerformanceTracker = _PerformanceTracker;
+  var _ComponentPropertyEngine = class _ComponentPropertyEngine {
+    static async initialize() {
+      try {
+        await PerformanceTracker.track("engine-initialization", async () => {
+          figma.skipInvisibleInstanceChildren = true;
+          await _ComponentPropertyEngine.preloadCommonFonts();
+          const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+          if (!scanResults || !Array.isArray(scanResults)) {
+            console.warn("\u26A0\uFE0F No scan results found. Run ComponentScanner.scanDesignSystem() first.");
+            return;
+          }
+          for (const component of scanResults) {
+            const schema = await _ComponentPropertyEngine.buildComponentSchemaFromScanData(component);
+            _ComponentPropertyEngine.componentSchemas.set(component.id, schema);
+            console.log(`\u{1F4CB} Loaded schema for ${schema.name} (${schema.id})`);
+          }
+        });
+        console.log(`\u{1F3AF} ComponentPropertyEngine initialized with ${_ComponentPropertyEngine.componentSchemas.size} component schemas`);
+      } catch (error) {
+        console.error("\u274C Failed to initialize ComponentPropertyEngine:", error);
+      }
+    }
+    static async preloadCommonFonts() {
+      if (_ComponentPropertyEngine.commonFontsLoaded) return;
+      const commonFonts = [
+        { family: "Inter", style: "Regular" },
+        { family: "Inter", style: "Medium" },
+        { family: "Inter", style: "Bold" },
+        { family: "Roboto", style: "Regular" },
+        { family: "Roboto", style: "Medium" },
+        { family: "Roboto", style: "Bold" }
+      ];
+      await Promise.all(commonFonts.map(
+        (font) => figma.loadFontAsync(font).catch(() => {
+          console.warn(`\u26A0\uFE0F Could not preload font: ${font.family} ${font.style}`);
+        })
+      ));
+      _ComponentPropertyEngine.commonFontsLoaded = true;
+      console.log("\u2705 Common fonts preloaded");
+    }
+    static async buildComponentSchemaFromScanData(scanData) {
+      let componentProperties = {};
+      let availableVariants = {};
+      try {
+        const componentNode = await figma.getNodeByIdAsync(scanData.id);
+        if (componentNode && componentNode.type === "COMPONENT_SET") {
+          const propertyDefs = componentNode.componentPropertyDefinitions;
+          if (propertyDefs) {
+            componentProperties = propertyDefs;
+            Object.entries(propertyDefs).forEach(([key, definition]) => {
+              if (definition.type === "VARIANT" && definition.variantOptions) {
+                availableVariants[key] = definition.variantOptions;
+              }
+            });
+          }
+        }
+      } catch (error) {
+        if (scanData.variantDetails) {
+          Object.entries(scanData.variantDetails).forEach(([key, values]) => {
+            availableVariants[key] = Array.isArray(values) ? values : [values];
+          });
+        }
+      }
+      const textLayers = {};
+      if (scanData.textHierarchy && Array.isArray(scanData.textHierarchy)) {
+        scanData.textHierarchy.forEach((textInfo) => {
+          const dataType = this.inferTextDataType(scanData.suggestedType, textInfo.nodeName);
+          textLayers[textInfo.nodeName] = {
+            nodeId: textInfo.nodeId,
+            nodeName: textInfo.nodeName,
+            classification: textInfo.classification || "secondary",
+            dataType,
+            maxItems: dataType === "array" ? this.inferMaxItems(scanData.suggestedType, textInfo.nodeName) : void 0,
+            fontSize: textInfo.fontSize,
+            fontWeight: textInfo.fontWeight
+          };
+        });
+      }
+      const mediaLayers = {};
+      [scanData.componentInstances, scanData.vectorNodes, scanData.imageNodes].forEach((nodeArray) => {
+        if (nodeArray) {
+          nodeArray.forEach((node) => {
+            mediaLayers[node.nodeName] = {
+              nodeId: node.nodeId,
+              nodeName: node.nodeName,
+              mediaType: this.inferMediaType(node.nodeName),
+              dataType: "single",
+              visible: node.visible
+            };
+          });
+        }
+      });
+      return {
+        id: scanData.id,
+        name: scanData.name,
+        availableVariants,
+        componentProperties,
+        textLayers,
+        mediaLayers,
+        componentType: scanData.suggestedType || "unknown",
+        scanTimestamp: Date.now(),
+        scanVersion: "1.1",
+        componentHash: "hash_" + Date.now().toString(36)
+      };
+    }
+    static generateComponentHash(scanData) {
+      var _a, _b;
+      const hashData = JSON.stringify({
+        variants: scanData.variants,
+        textLayers: (_a = scanData.textLayers) == null ? void 0 : _a.length,
+        componentInstances: (_b = scanData.componentInstances) == null ? void 0 : _b.length
+      });
+      try {
+        return btoa(hashData).substring(0, 8);
+      } catch (e) {
+        let hash = 0;
+        for (let i = 0; i < hashData.length; i++) {
+          const char = hashData.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).substring(0, 8);
+      }
+    }
+    static inferTextDataType(componentType, layerName) {
+      const layerLower = layerName.toLowerCase();
+      const arrayPatterns = {
+        "tab": ["label"],
+        "tabs": ["label"],
+        "chip": ["label", "text"],
+        "list": ["item", "option", "choice"],
+        "navigation": ["label", "text"],
+        "menu": ["item", "option", "label"],
+        "breadcrumb": ["item", "label"],
+        "carousel": ["caption", "title"]
+      };
+      const componentPatterns = arrayPatterns[componentType];
+      if (componentPatterns) {
+        const supportsArray = componentPatterns.some((pattern) => layerLower.includes(pattern));
+        if (supportsArray) return "array";
+      }
+      return "single";
+    }
+    static inferMaxItems(componentType, layerName) {
+      const maxItemsMap = {
+        "tab": 8,
+        "tabs": 8,
+        "navigation": 6,
+        "chip": 10,
+        "list": 50,
+        "menu": 20,
+        "breadcrumb": 5,
+        "carousel": 10
+      };
+      return maxItemsMap[componentType] || 10;
+    }
+    static inferMediaType(nodeName) {
+      const nameLower = nodeName.toLowerCase();
+      if (nameLower.includes("avatar") || nameLower.includes("profile")) return "avatar";
+      if (nameLower.includes("badge") || nameLower.includes("indicator")) return "badge";
+      if (nameLower.includes("image") || nameLower.includes("photo")) return "image";
+      return "icon";
+    }
+    static validateAndProcessProperties(componentId, rawProperties) {
+      const schema = this.componentSchemas.get(componentId);
+      if (!schema) {
+        return {
+          isValid: false,
+          processedProperties: { variants: {}, textProperties: {}, mediaProperties: {}, layoutProperties: {} },
+          warnings: [],
+          errors: [{
+            message: `No schema found for component ${componentId}`,
+            suggestion: "Ensure design system has been scanned",
+            llmHint: "Run ComponentScanner.scanDesignSystem() first"
+          }]
+        };
+      }
+      const handler = this.componentHandlers.get(schema.componentType);
+      const processedRawProperties = handler ? handler.preprocessProperties(__spreadValues({}, rawProperties)) : rawProperties;
+      const result = {
+        isValid: true,
+        processedProperties: { variants: {}, textProperties: {}, mediaProperties: {}, layoutProperties: {} },
+        warnings: [],
+        errors: []
+      };
+      Object.entries(processedRawProperties).forEach(([key, value]) => {
+        if (key === "variants" && typeof value === "object") {
+          Object.entries(value).forEach(([variantKey, variantValue]) => {
+            result.processedProperties.variants[variantKey] = variantValue;
+          });
+          return;
+        }
+        if (schema.componentProperties[key] || schema.availableVariants[key]) {
+          result.processedProperties.variants[key] = value;
+        } else if (schema.textLayers[key]) {
+          result.processedProperties.textProperties[key] = value;
+        } else if (schema.mediaLayers[key]) {
+          result.processedProperties.mediaProperties[key] = value;
+        } else if ([
+          "horizontalSizing",
+          "verticalSizing",
+          "layoutAlign",
+          "layoutGrow",
+          "minWidth",
+          "maxWidth",
+          "minHeight",
+          "maxHeight"
+        ].some((prop) => key.toLowerCase().includes(prop.toLowerCase()))) {
+          result.processedProperties.layoutProperties[key] = value;
+        } else {
+          const textMatch = this.findSemanticMatch(key, Object.keys(schema.textLayers));
+          const variantMatch = this.findSemanticMatch(key, Object.keys(schema.availableVariants));
+          const mediaMatch = this.findSemanticMatch(key, Object.keys(schema.mediaLayers));
+          if (textMatch) {
+            result.processedProperties.textProperties[textMatch] = value;
+            result.warnings.push(`Mapped "${key}" to text layer "${textMatch}"`);
+          } else if (variantMatch) {
+            result.processedProperties.variants[variantMatch] = value;
+            result.warnings.push(`Mapped "${key}" to variant "${variantMatch}"`);
+          } else if (mediaMatch) {
+            result.processedProperties.mediaProperties[mediaMatch] = value;
+            result.warnings.push(`Mapped "${key}" to media layer "${mediaMatch}"`);
+          } else {
+            result.warnings.push(`Unknown property "${key}" for component ${schema.name}`);
+          }
+        }
+      });
+      Object.entries(result.processedProperties.variants).forEach(([variantName, variantValue]) => {
+        const modernProp = schema.componentProperties[variantName];
+        const legacyValues = schema.availableVariants[variantName];
+        if (modernProp && modernProp.type === "VARIANT") {
+          if (!modernProp.variantOptions.includes(String(variantValue))) {
+            const variantPurpose = handler ? handler.getVariantPurpose(variantName) : "component appearance";
+            result.errors.push({
+              message: `Invalid value "${variantValue}" for variant "${variantName}"`,
+              suggestion: `Use one of: ${modernProp.variantOptions.map((v) => `"${v}"`).join(", ")}`,
+              jsonPath: `properties.${variantName}`,
+              llmHint: `For ${schema.componentType} components, ${variantName} controls ${variantPurpose}`
+            });
+          }
+        } else if (legacyValues) {
+          if (!legacyValues.includes(String(variantValue))) {
+            const variantPurpose = handler ? handler.getVariantPurpose(variantName) : "component appearance";
+            result.errors.push({
+              message: `Invalid value "${variantValue}" for variant "${variantName}"`,
+              suggestion: `Use one of: ${legacyValues.map((v) => `"${v}"`).join(", ")}`,
+              jsonPath: `properties.${variantName}`,
+              llmHint: `For ${schema.componentType} components, ${variantName} controls ${variantPurpose}`
+            });
+          }
+        }
+      });
+      Object.entries(result.processedProperties.textProperties).forEach(([textProp, value]) => {
+        const textLayer = schema.textLayers[textProp];
+        if (textLayer && textLayer.dataType === "array" && !Array.isArray(value)) {
+          result.warnings.push(`Property "${textProp}" expects array but got ${typeof value}. Converting to array.`);
+          result.processedProperties.textProperties[textProp] = [value];
+        }
+      });
+      result.isValid = result.errors.length === 0;
+      return result;
+    }
+    static findSemanticMatch(propertyKey, availableKeys) {
+      const keyLower = propertyKey.toLowerCase();
+      for (const availableKey of availableKeys) {
+        const availableLower = availableKey.toLowerCase();
+        if (availableLower === keyLower) return availableKey;
+        const normalizedKey = keyLower.replace(/[-_\s]/g, "");
+        const normalizedAvailable = availableLower.replace(/[-_\s]/g, "");
+        if (normalizedAvailable === normalizedKey) return availableKey;
+        if (availableLower.includes(keyLower) || keyLower.includes(availableLower)) {
+          return availableKey;
+        }
+      }
+      const semanticMap = {
+        "text": ["label", "title", "headline", "content"],
+        "label": ["text", "title", "headline"],
+        "supporting": ["subtitle", "description", "secondary"],
+        "trailing": ["end", "right", "action"],
+        "leading": ["start", "left", "icon"]
+      };
+      for (const [semantic, equivalents] of Object.entries(semanticMap)) {
+        if (keyLower.includes(semantic)) {
+          for (const equivalent of equivalents) {
+            const match = availableKeys.find((k) => k.toLowerCase().includes(equivalent));
+            if (match) return match;
+          }
+        }
+      }
+      return null;
+    }
+    static getComponentSchema(componentId) {
+      return _ComponentPropertyEngine.componentSchemas.get(componentId) || null;
+    }
+    static getAllSchemas() {
+      return Array.from(_ComponentPropertyEngine.componentSchemas.values());
+    }
+    static isSchemaStale(schema) {
+      const staleThreshold = 7 * 24 * 60 * 60 * 1e3;
+      return Date.now() - schema.scanTimestamp > staleThreshold;
+    }
+    static debugSchema(componentId) {
+      const schema = this.getComponentSchema(componentId);
+      if (schema) {
+        console.log(`\u{1F4CB} Schema for ${schema.name}:`);
+        console.log("  \u{1F3AF} Variants:", Object.keys(schema.availableVariants));
+        console.log("  \u{1F4DD} Text Layers:", Object.keys(schema.textLayers));
+        Object.entries(schema.textLayers).forEach(([name, info]) => {
+          console.log(`    - ${name}: ${info.dataType}${info.maxItems ? ` (max: ${info.maxItems})` : ""}`);
+        });
+        console.log("  \u{1F5BC}\uFE0F Media Layers:", Object.keys(schema.mediaLayers));
+        console.log("  \u{1F4C5} Scanned:", new Date(schema.scanTimestamp).toLocaleString());
+        console.log("  \u{1F522} Version:", schema.scanVersion);
+      } else {
+        console.log(`\u274C No schema found for component ${componentId}`);
+      }
+    }
+    static async createSchemaDebugFrame(componentId) {
+      const schema = this.getComponentSchema(componentId);
+      if (!schema) return;
+      const debugFrame = figma.createFrame();
+      debugFrame.name = `Debug: ${schema.name}`;
+      debugFrame.resize(400, 600);
+      debugFrame.fills = [{ type: "SOLID", color: { r: 0.95, g: 0.95, b: 0.95 } }];
+      await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+      let yPos = 20;
+      const title = figma.createText();
+      title.fontName = { family: "Inter", style: "Bold" };
+      title.fontSize = 18;
+      title.characters = `${schema.name} (${schema.componentType})`;
+      title.x = 20;
+      title.y = yPos;
+      debugFrame.appendChild(title);
+      yPos += 40;
+      if (Object.keys(schema.availableVariants).length > 0) {
+        const variantsTitle = figma.createText();
+        variantsTitle.fontName = { family: "Inter", style: "Bold" };
+        variantsTitle.fontSize = 14;
+        variantsTitle.characters = "\u{1F3AF} Variants:";
+        variantsTitle.x = 20;
+        variantsTitle.y = yPos;
+        debugFrame.appendChild(variantsTitle);
+        yPos += 25;
+        Object.entries(schema.availableVariants).forEach(([name, values]) => {
+          const variantText = figma.createText();
+          variantText.fontName = { family: "Inter", style: "Regular" };
+          variantText.fontSize = 12;
+          variantText.characters = `${name}: [${values.join(", ")}]`;
+          variantText.x = 30;
+          variantText.y = yPos;
+          debugFrame.appendChild(variantText);
+          yPos += 20;
+        });
+        yPos += 10;
+      }
+      if (Object.keys(schema.textLayers).length > 0) {
+        const textTitle = figma.createText();
+        textTitle.fontName = { family: "Inter", style: "Bold" };
+        textTitle.fontSize = 14;
+        textTitle.characters = "\u{1F4DD} Text Layers:";
+        textTitle.x = 20;
+        textTitle.y = yPos;
+        debugFrame.appendChild(textTitle);
+        yPos += 25;
+        Object.entries(schema.textLayers).forEach(([name, info]) => {
+          const layerText = figma.createText();
+          layerText.fontName = { family: "Inter", style: "Regular" };
+          layerText.fontSize = 12;
+          layerText.characters = `${name}: ${info.dataType}${info.maxItems ? ` (max: ${info.maxItems})` : ""} - ${info.classification}`;
+          layerText.x = 30;
+          layerText.y = yPos;
+          debugFrame.appendChild(layerText);
+          yPos += 20;
+        });
+      }
+      figma.currentPage.appendChild(debugFrame);
+      figma.viewport.scrollAndZoomIntoView([debugFrame]);
+    }
+    static getPerformanceReport() {
+      return PerformanceTracker.getReport();
+    }
+  };
+  _ComponentPropertyEngine.componentSchemas = /* @__PURE__ */ new Map();
+  _ComponentPropertyEngine.componentHandlers = /* @__PURE__ */ new Map([
+    ["tab", new TabComponentHandler()],
+    ["tabs", new TabComponentHandler()],
+    ["chip", new ChipComponentHandler()]
+  ]);
+  _ComponentPropertyEngine.commonFontsLoaded = false;
+  var ComponentPropertyEngine = _ComponentPropertyEngine;
+
+  // src/core/json-migrator.ts
+  var JSONMigrator = class {
+    static migrateToSystematic(originalJSON) {
+      if (originalJSON.items) {
+        originalJSON.items = this.traverseAndMerge(originalJSON.items);
+      }
+      if (originalJSON.layoutContainer && originalJSON.layoutContainer.items) {
+        originalJSON.layoutContainer.items = this.traverseAndMerge(originalJSON.layoutContainer.items);
+      }
+      return originalJSON;
+    }
+    static generateMigrationPreview(originalJSON) {
+      return {
+        action: "No migration needed",
+        details: "JSON is already in the correct format"
+      };
+    }
+    static traverseAndMerge(items) {
+      if (!items) {
+        return [];
+      }
+      let newItems = this.mergeConsecutiveTabs(items);
+      newItems = newItems.map((item) => {
+        if (item.items) {
+          item.items = this.traverseAndMerge(item.items);
+        }
+        if (item.layoutContainer && item.layoutContainer.items) {
+          item.layoutContainer.items = this.traverseAndMerge(item.layoutContainer.items);
+        }
+        return item;
+      });
+      return newItems;
+    }
+    static mergeConsecutiveTabs(items) {
+      if (!items || items.length === 0) {
+        return [];
+      }
+      const newItems = [];
+      let i = 0;
+      while (i < items.length) {
+        const currentItem = items[i];
+        if (currentItem.type === "tab" && i + 1 < items.length && items[i + 1].type === "tab") {
+          const tabGroup = [currentItem];
+          let j = i + 1;
+          while (j < items.length && items[j].type === "tab") {
+            tabGroup.push(items[j]);
+            j++;
+          }
+          const newTab = __spreadProps(__spreadValues({}, tabGroup[0]), {
+            properties: __spreadProps(__spreadValues({}, tabGroup[0].properties), {
+              Label: tabGroup.map((tab) => tab.properties.Label)
+            })
+          });
+          newItems.push(newTab);
+          i = j;
+        } else {
+          newItems.push(currentItem);
+          i++;
+        }
+      }
+      return newItems;
+    }
+  };
+
+  // src/core/figma-renderer.ts
+  var FigmaRenderer = class {
+    /**
+     * Main UI generation function - creates UI from structured JSON data
+     */
+    static async generateUIFromData(layoutData, parentNode) {
+      let currentFrame;
+      const containerData = layoutData.layoutContainer || layoutData;
+      if (parentNode.type === "PAGE" && containerData) {
+        currentFrame = figma.createFrame();
+        parentNode.appendChild(currentFrame);
+      } else if (parentNode.type === "FRAME") {
+        currentFrame = parentNode;
+      } else {
+        figma.notify("Cannot add items without a parent frame.", { error: true });
+        return figma.createFrame();
+      }
+      if (containerData && containerData !== layoutData) {
+        currentFrame.name = containerData.name || "Generated Frame";
+        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
+        if (currentFrame.layoutMode !== "NONE") {
+          currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
+          currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
+          currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
+          currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
+          if (containerData.itemSpacing === "AUTO") {
+            currentFrame.itemSpacing = "AUTO";
+          } else {
+            currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
+          }
+          if (containerData.layoutWrap !== void 0) {
+            currentFrame.layoutWrap = containerData.layoutWrap;
+          }
+          if (containerData.primaryAxisAlignItems) {
+            currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+          }
+          if (containerData.counterAxisAlignItems) {
+            currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+          }
+          if (containerData.primaryAxisSizingMode) {
+            currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+          } else {
+            currentFrame.primaryAxisSizingMode = "AUTO";
+          }
+          if (containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+          }
+        }
+        if (containerData.minWidth !== void 0) {
+          currentFrame.minWidth = containerData.minWidth;
+        }
+        if (containerData.maxWidth !== void 0) {
+          currentFrame.maxWidth = containerData.maxWidth;
+        }
+        if (containerData.minHeight !== void 0) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+        if (containerData.maxHeight !== void 0) {
+          currentFrame.maxHeight = containerData.maxHeight;
+        }
+        if (containerData.width) {
+          currentFrame.resize(containerData.width, currentFrame.height);
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "FIXED";
+          }
+        } else if (!containerData.counterAxisSizingMode) {
+          currentFrame.counterAxisSizingMode = "AUTO";
+        }
+      }
+      const items = layoutData.items || containerData.items;
+      if (!items || !Array.isArray(items)) return currentFrame;
+      for (const item of items) {
+        if (item.type === "layoutContainer") {
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          this.applyChildLayoutProperties(nestedFrame, item);
+          await this.generateUIFromData({ layoutContainer: item, items: item.items }, nestedFrame);
+        } else if (item.type === "frame" && item.layoutContainer) {
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          await this.generateUIFromData(item, nestedFrame);
+        } else if (item.type === "native-text" || item.type === "text") {
+          await this.createTextNode(item, currentFrame);
+          continue;
+        } else if (item.type === "native-rectangle") {
+          await this.createRectangleNode(item, currentFrame);
+          continue;
+        } else if (item.type === "native-circle") {
+          await this.createEllipseNode(item, currentFrame);
+          continue;
+        } else {
+          if (!item.componentNodeId) continue;
+          const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
+          if (!componentNode) {
+            console.warn(`\u26A0\uFE0F Component with ID ${item.componentNodeId} not found. Skipping.`);
+            continue;
+          }
+          const masterComponent = componentNode.type === "COMPONENT_SET" ? componentNode.defaultVariant : componentNode;
+          if (!masterComponent || masterComponent.type !== "COMPONENT") {
+            console.warn(`\u26A0\uFE0F Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
+            continue;
+          }
+          const instance = masterComponent.createInstance();
+          currentFrame.appendChild(instance);
+          console.log(`\u{1F527} Creating instance of component: ${masterComponent.name}`);
+          console.log(`\u{1F527} Raw properties:`, item.properties);
+          const { cleanProperties, variants } = this.separateVariantsFromProperties(item.properties, item.componentNodeId);
+          const sanitizedProps = this.sanitizeProperties(cleanProperties);
+          console.log(`\u{1F527} Clean properties:`, sanitizedProps);
+          console.log(`\u{1F527} Extracted variants:`, variants);
+          if (Object.keys(variants).length > 0) {
+            try {
+              if (componentNode && componentNode.type === "COMPONENT_SET") {
+                const availableVariants = componentNode.variantGroupProperties;
+                console.log(`\u{1F50D} Available variants for ${componentNode.name}:`, Object.keys(availableVariants || {}));
+                console.log(`\u{1F50D} Requested variants:`, variants);
+                if (!availableVariants) {
+                  console.warn("\u26A0\uFE0F No variant properties found on component, skipping variant application.");
+                } else {
+                  const validVariants = {};
+                  let hasValidVariants = false;
+                  Object.entries(variants).forEach(([propName, propValue]) => {
+                    const availableProp = availableVariants[propName];
+                    if (availableProp && availableProp.values) {
+                      const stringValue = String(propValue);
+                      if (availableProp.values.includes(stringValue)) {
+                        validVariants[propName] = stringValue;
+                        hasValidVariants = true;
+                        console.log(`\u2705 Valid variant: ${propName} = "${stringValue}"`);
+                      } else {
+                        console.warn(`\u26A0\uFE0F Invalid value for "${propName}": "${stringValue}". Available: [${availableProp.values.join(", ")}]`);
+                      }
+                    } else {
+                      console.warn(`\u26A0\uFE0F Unknown variant property: "${propName}". Available: [${Object.keys(availableVariants).join(", ")}]`);
+                    }
+                  });
+                  if (hasValidVariants) {
+                    console.log(`\u{1F527} Applying variants:`, validVariants);
+                    instance.setProperties(validVariants);
+                    console.log("\u2705 Variants applied successfully");
+                  } else {
+                    console.warn("\u26A0\uFE0F No valid variants to apply, using default variant");
+                  }
+                }
+              } else {
+                console.log("\u2139\uFE0F Component is not a variant set, skipping variant application");
+              }
+            } catch (e) {
+              console.error("\u274C Error applying variants:", e);
+              console.log("\u2139\uFE0F Continuing with default variant");
+            }
+          }
+          this.applyChildLayoutProperties(instance, sanitizedProps);
+          await this.applyTextProperties(instance, sanitizedProps);
+          await this.applyMediaProperties(instance, sanitizedProps);
+        }
+      }
+      if (parentNode.type === "PAGE") {
+        figma.currentPage.selection = [currentFrame];
+        figma.viewport.scrollAndZoomIntoView([currentFrame]);
+        figma.notify(`UI "${currentFrame.name}" generated!`, { timeout: 2500 });
+      }
+      return currentFrame;
+    }
+    /**
+     * Dynamic UI generation with component ID resolution
+     */
+    static async generateUIFromDataDynamic(layoutData) {
+      if (!layoutData || !layoutData.items) {
+        figma.notify("Invalid JSON structure", { error: true });
+        return null;
+      }
+      try {
+        figma.skipInvisibleInstanceChildren = true;
+        await this.ensureColorStylesLoaded();
+        console.log("\u{1F527} Checking ComponentPropertyEngine schemas...");
+        const existingSchemas = ComponentPropertyEngine.getAllSchemas();
+        if (existingSchemas.length === 0) {
+          console.log("\u26A0\uFE0F No design system schemas found - running in basic mode");
+        } else {
+          await ComponentPropertyEngine.initialize();
+          console.log("\u2705 ComponentPropertyEngine initialized with", existingSchemas.length, "schemas");
+        }
+        const migratedData = JSONMigrator.migrateToSystematic(layoutData);
+        const isPlaceholderID = (id) => {
+          if (!id) return true;
+          return id.includes("_id") || id.includes("placeholder") || !id.match(/^[0-9]+:[0-9]+$/);
+        };
+        async function resolveComponentIds(items) {
+          for (const item of items) {
+            if (item.type === "layoutContainer") {
+              if (item.items && Array.isArray(item.items)) {
+                await resolveComponentIds(item.items);
+              }
+              continue;
+            }
+            if (item.type === "native-text" || item.type === "text" || item.type === "native-rectangle" || item.type === "native-circle") {
+              console.log(`\u2139\uFE0F Skipping native element: ${item.type}`);
+              continue;
+            }
+            if (item.type === "frame" && item.items) {
+              await resolveComponentIds(item.items);
+            } else if (item.type !== "frame") {
+              if (!item.componentNodeId || isPlaceholderID(item.componentNodeId)) {
+                console.log(` Resolving component ID for type: ${item.type}`);
+                const resolvedId = await ComponentScanner.getComponentIdByType(item.type);
+                if (!resolvedId) {
+                  throw new Error(`Component for type "${item.type}" not found in design system. Please scan your design system first.`);
+                }
+                item.componentNodeId = resolvedId;
+                console.log(`\u2705 Resolved ${item.type} -> ${resolvedId}`);
+              } else {
+                console.log(`\u2705 Using existing ID for ${item.type}: ${item.componentNodeId}`);
+              }
+            }
+          }
+        }
+        await resolveComponentIds(migratedData.items);
+        return await this.generateUIFromDataSystematic(migratedData, figma.currentPage);
+      } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        figma.notify(errorMessage, { error: true, timeout: 4e3 });
+        console.error("\u274C generateUIFromDataDynamic error:", e);
+        return null;
+      }
+    }
+    /**
+     * Create native text element
+     */
+    static async createTextNode(textData, container) {
+      var _a;
+      console.log("Creating native text:", textData);
+      const textNode = figma.createText();
+      await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+      const textContent = textData.text || textData.content || ((_a = textData.properties) == null ? void 0 : _a.content) || textData.characters || "Text";
+      textNode.characters = textContent;
+      const props = textData.properties || textData;
+      const fontSize = props.fontSize || props.size || props.textSize || 16;
+      textNode.fontSize = fontSize;
+      if (props.fontWeight === "bold" || props.weight === "bold" || props.style === "bold") {
+        await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+        textNode.fontName = { family: "Inter", style: "Bold" };
+      }
+      if (props.alignment === "center" || props.textAlign === "center") {
+        textNode.textAlignHorizontal = "CENTER";
+      } else if (props.alignment === "right" || props.textAlign === "right") {
+        textNode.textAlignHorizontal = "RIGHT";
+      } else {
+        textNode.textAlignHorizontal = "LEFT";
+      }
+      if (props.color) {
+        const fills = textNode.fills;
+        if (fills.length > 0 && fills[0].type === "SOLID") {
+          if (typeof props.color === "string") {
+            console.log(`\u{1F3A8} Attempting to resolve semantic color: "${props.color}"`);
+            try {
+              const colorStyle = await this.resolveColorStyleReference(props.color);
+              if (colorStyle) {
+                await textNode.setFillStyleIdAsync(colorStyle.id);
+                console.log(`\u2705 Applied semantic color "${props.color}" to text (as style reference)`);
+              } else {
+                const resolvedColor = this.resolveSemanticColor(props.color);
+                if (resolvedColor) {
+                  textNode.fills = [this.createSolidPaint(resolvedColor)];
+                  console.log(`\u2705 Applied semantic color "${props.color}" to text (as RGB fallback)`);
+                } else {
+                  console.warn(`\u26A0\uFE0F Could not resolve semantic color "${props.color}", skipping color application`);
+                }
+              }
+            } catch (error) {
+              console.error(`\u274C Error applying color "${props.color}":`, error);
+            }
+          } else {
+            textNode.fills = [{ type: "SOLID", color: props.color }];
+          }
+        }
+      }
+      if (props.colorStyleName) {
+        console.log(`\u{1F3A8} Attempting to resolve color style: "${props.colorStyleName}"`);
+        try {
+          const colorStyle = await this.resolveColorStyleReference(props.colorStyleName);
+          if (colorStyle) {
+            await textNode.setFillStyleIdAsync(colorStyle.id);
+            console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as style reference)`);
+          } else {
+            const resolvedColor = this.resolveSemanticColor(props.colorStyleName);
+            if (resolvedColor) {
+              textNode.fills = [this.createSolidPaint(resolvedColor)];
+              console.log(`\u2705 Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
+            } else {
+              console.warn(`\u26A0\uFE0F Could not resolve color style "${props.colorStyleName}", skipping color application`);
+            }
+          }
+        } catch (error) {
+          console.error(`\u274C Error applying color style "${props.colorStyleName}":`, error);
+        }
+      }
+      this.applyChildLayoutProperties(textNode, props);
+      if (props.horizontalSizing === "FILL") {
+        textNode.textAutoResize = "HEIGHT";
+      } else {
+        textNode.textAutoResize = "WIDTH_AND_HEIGHT";
+      }
+      container.appendChild(textNode);
+      console.log("Native text created successfully");
+    }
+    /**
+     * Create native rectangle element
+     */
+    static async createRectangleNode(rectData, container) {
+      console.log("Creating native rectangle:", rectData);
+      const rect = figma.createRectangle();
+      if (rectData.width && rectData.height) {
+        rect.resize(rectData.width, rectData.height);
+      } else {
+        rect.resize(100, 100);
+      }
+      if (rectData.fill) {
+        rect.fills = [{ type: "SOLID", color: rectData.fill }];
+      }
+      if (rectData.cornerRadius) {
+        rect.cornerRadius = rectData.cornerRadius;
+      }
+      if (rectData.horizontalSizing === "FILL") {
+        rect.layoutAlign = "STRETCH";
+      }
+      container.appendChild(rect);
+      console.log("Rectangle created successfully");
+    }
+    /**
+     * Create native ellipse element
+     */
+    static async createEllipseNode(ellipseData, container) {
+      console.log("Creating native ellipse:", ellipseData);
+      const ellipse = figma.createEllipse();
+      if (ellipseData.width && ellipseData.height) {
+        ellipse.resize(ellipseData.width, ellipseData.height);
+      } else {
+        ellipse.resize(50, 50);
+      }
+      if (ellipseData.fill) {
+        ellipse.fills = [{ type: "SOLID", color: ellipseData.fill }];
+      }
+      container.appendChild(ellipse);
+      console.log("Ellipse created successfully");
+    }
+    /**
+     * Apply text properties to component instances using enhanced scan data
+     */
+    static async applyTextProperties(instance, properties) {
+      if (!properties) return;
+      console.log("\u{1F50D} Applying text properties:", properties);
+      const allTextNodes = instance.findAll((n) => n.type === "TEXT");
+      console.log(
+        "\u{1F50D} Available text nodes in component:",
+        allTextNodes.map((textNode) => ({
+          name: textNode.name,
+          id: textNode.id,
+          visible: textNode.visible,
+          chars: textNode.characters || "[empty]"
+        }))
+      );
+      const componentTextHierarchy = await this.getComponentTextHierarchy(instance);
+      console.log("\u{1F50D} Text hierarchy from scan data:", componentTextHierarchy);
+      const semanticMappings = {
+        "primary-text": ["primary"],
+        "secondary-text": ["secondary"],
+        "tertiary-text": ["tertiary"],
+        "headline": ["primary", "secondary"],
+        "title": ["primary", "secondary"],
+        "content": ["primary", "secondary"],
+        "text": ["primary", "secondary"],
+        "supporting-text": ["secondary", "tertiary"],
+        "supporting": ["secondary", "tertiary"],
+        "subtitle": ["secondary", "tertiary"],
+        "trailing-text": ["tertiary", "secondary"],
+        "trailing": ["tertiary", "secondary"],
+        "caption": ["tertiary"],
+        "overline": ["tertiary"]
+      };
+      const legacyMappings = {
+        "content": ["headline", "title", "text", "label"],
+        "headline": ["headline", "title", "text", "label"],
+        "text": ["headline", "title", "text", "label"],
+        "supporting-text": ["supporting", "subtitle", "description", "body"],
+        "supporting": ["supporting", "subtitle", "description", "body"],
+        "trailing-text": ["trailing", "value", "action", "status", "end"],
+        "trailing": ["trailing", "value", "action", "status", "end"],
+        "title": ["title", "headline", "text"],
+        "subtitle": ["subtitle", "supporting", "description"]
+      };
+      for (const [propKey, propValue] of Object.entries(properties)) {
+        if (!propValue || typeof propValue !== "string" || !propValue.trim()) continue;
+        if (propKey === "horizontalSizing" || propKey === "variants") continue;
+        console.log(`\u{1F527} Trying to set ${propKey} = "${propValue}"`);
+        let textNode = null;
+        let matchMethod = "none";
+        if (componentTextHierarchy) {
+          const hierarchyEntry = componentTextHierarchy.find(
+            (entry) => entry.nodeName.toLowerCase() === propKey.toLowerCase() || entry.nodeName.toLowerCase().replace(/\s+/g, "-") === propKey.toLowerCase()
+          );
+          if (hierarchyEntry) {
+            textNode = allTextNodes.find((n) => n.id === hierarchyEntry.nodeId) || null;
+            if (textNode) {
+              matchMethod = "exact-name";
+              console.log(`\u2705 Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
+            }
+          }
+        }
+        if (!textNode && componentTextHierarchy && semanticMappings[propKey.toLowerCase()]) {
+          const targetClassifications = semanticMappings[propKey.toLowerCase()];
+          for (const classification of targetClassifications) {
+            const hierarchyEntry = componentTextHierarchy.find(
+              (entry) => entry.classification === classification
+            );
+            if (hierarchyEntry) {
+              textNode = allTextNodes.find((n) => n.id === hierarchyEntry.nodeId) || null;
+              if (textNode) {
+                matchMethod = "semantic-classification";
+                console.log(`\u2705 Found text node by semantic classification: "${textNode.name}" (${classification})`);
+                break;
+              }
+            }
+          }
+        }
+        if (!textNode && componentTextHierarchy) {
+          const hierarchyEntry = componentTextHierarchy.find(
+            (entry) => entry.nodeName.toLowerCase().includes(propKey.toLowerCase()) || propKey.toLowerCase().includes(entry.nodeName.toLowerCase())
+          );
+          if (hierarchyEntry) {
+            textNode = allTextNodes.find((n) => n.id === hierarchyEntry.nodeId) || null;
+            if (textNode) {
+              matchMethod = "partial-name";
+              console.log(`\u2705 Found text node by partial name match: "${textNode.name}"`);
+            }
+          }
+        }
+        if (!textNode) {
+          const possibleNames = legacyMappings[propKey.toLowerCase()] || [propKey.toLowerCase()];
+          for (const targetName of possibleNames) {
+            textNode = allTextNodes.find(
+              (n) => n.name.toLowerCase().includes(targetName.toLowerCase())
+            ) || null;
+            if (textNode) {
+              matchMethod = "legacy-mapping";
+              console.log(`\u2705 Found text node by legacy mapping: "${textNode.name}"`);
+              break;
+            }
+          }
+        }
+        if (!textNode) {
+          if (propKey.toLowerCase().includes("headline") || propKey.toLowerCase().includes("title") || propKey.toLowerCase().includes("primary")) {
+            textNode = allTextNodes[0] || null;
+            matchMethod = "position-first";
+            console.log(`\u{1F504} Using first text node as fallback for "${propKey}"`);
+          } else if (propKey.toLowerCase().includes("trailing") || propKey.toLowerCase().includes("tertiary")) {
+            textNode = allTextNodes[allTextNodes.length - 1] || null;
+            matchMethod = "position-last";
+            console.log(`\u{1F504} Using last text node as fallback for "${propKey}"`);
+          } else if (propKey.toLowerCase().includes("supporting") || propKey.toLowerCase().includes("secondary")) {
+            textNode = allTextNodes[1] || allTextNodes[0] || null;
+            matchMethod = "position-second";
+            console.log(`\u{1F504} Using second text node as fallback for "${propKey}"`);
+          }
+        }
+        if (textNode) {
+          try {
+            if (!textNode.visible) {
+              textNode.visible = true;
+              console.log(`\u{1F441}\uFE0F Activated hidden text node: "${textNode.name}"`);
+            }
+            if (typeof textNode.fontName !== "symbol") {
+              await figma.loadFontAsync(textNode.fontName);
+              textNode.characters = propValue;
+              console.log(`\u2705 Successfully set "${textNode.name}" to "${propValue}" (method: ${matchMethod})`);
+            }
+          } catch (fontError) {
+            console.error(`\u274C Font loading failed for "${textNode.name}":`, fontError);
+          }
+        } else {
+          console.warn(`\u274C No text node found for property "${propKey}" with value "${propValue}"`);
+        }
+      }
+    }
+    /**
+     * Get text hierarchy data for a component instance from scan results
+     */
+    static async getComponentTextHierarchy(instance) {
+      try {
+        const mainComponent = await instance.getMainComponentAsync();
+        if (!mainComponent) return null;
+        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+        if (!scanResults || !Array.isArray(scanResults)) return null;
+        const componentInfo = scanResults.find((comp) => comp.id === mainComponent.id);
+        return (componentInfo == null ? void 0 : componentInfo.textHierarchy) || null;
+      } catch (error) {
+        console.warn("Could not get text hierarchy data:", error);
+        return null;
+      }
+    }
+    /**
+     * Apply media properties to component instances using enhanced scan data validation
+     */
+    static async applyMediaProperties(instance, properties) {
+      var _a;
+      if (!properties) return;
+      console.log("\u{1F5BC}\uFE0F Validating media properties:", properties);
+      const componentMediaData = await this.getComponentMediaData(instance);
+      console.log("\u{1F5BC}\uFE0F Media data from scan results:", componentMediaData);
+      const mediaPropertyPatterns = [
+        "icon",
+        "image",
+        "avatar",
+        "photo",
+        "logo",
+        "media",
+        "leading-icon",
+        "trailing-icon",
+        "start-icon",
+        "end-icon",
+        "profile-image",
+        "user-avatar",
+        "cover-image",
+        "thumbnail"
+      ];
+      const mediaProperties = {};
+      Object.entries(properties).forEach(([key, value]) => {
+        const keyLower = key.toLowerCase();
+        if (mediaPropertyPatterns.some((pattern) => keyLower.includes(pattern))) {
+          mediaProperties[key] = value;
+        }
+      });
+      if (Object.keys(mediaProperties).length === 0) {
+        console.log("\u{1F5BC}\uFE0F No media properties found to validate");
+        return;
+      }
+      console.log("\u{1F5BC}\uFE0F Found media properties to validate:", Object.keys(mediaProperties));
+      for (const [propKey, propValue] of Object.entries(mediaProperties)) {
+        if (!propValue || typeof propValue !== "string" || !propValue.trim()) continue;
+        console.log(`\u{1F50D} Validating media property: ${propKey} = "${propValue}"`);
+        let validationResult = this.validateMediaProperty(propKey, propValue, componentMediaData);
+        if (validationResult.isValid) {
+          console.log(`\u2705 ${propKey} \u2192 would set to "${propValue}" (${validationResult.targetType}: "${validationResult.targetName}")`);
+        } else {
+          console.warn(`\u274C Invalid media property: "${propKey}" = "${propValue}" - ${validationResult.reason}`);
+          if ((_a = validationResult.suggestions) == null ? void 0 : _a.length) {
+            console.log(`\u{1F4A1} Available media slots: ${validationResult.suggestions.join(", ")}`);
+          }
+        }
+      }
+    }
+    /**
+     * Get media structure data for a component instance from scan results
+     */
+    static async getComponentMediaData(instance) {
+      try {
+        const mainComponent = await instance.getMainComponentAsync();
+        if (!mainComponent) {
+          console.warn("Could not get main component from instance");
+          return null;
+        }
+        console.log("\u{1F50D} Looking for media data for main component ID:", mainComponent.id);
+        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+        if (!scanResults || !Array.isArray(scanResults)) {
+          console.warn("No scan results found in storage");
+          return null;
+        }
+        console.log("\u{1F50D} Available component IDs in scan data:", scanResults.map((c) => c.id));
+        const componentInfo = scanResults.find((comp) => comp.id === mainComponent.id);
+        if (!componentInfo) {
+          console.warn(`Component ${mainComponent.id} not found in scan results`);
+          return null;
+        }
+        console.log("\u{1F50D} Found component info:", componentInfo.name);
+        console.log("\u{1F50D} Component instances:", componentInfo.componentInstances);
+        console.log("\u{1F50D} Vector nodes:", componentInfo.vectorNodes);
+        console.log("\u{1F50D} Image nodes:", componentInfo.imageNodes);
+        return {
+          componentInstances: componentInfo.componentInstances || [],
+          vectorNodes: componentInfo.vectorNodes || [],
+          imageNodes: componentInfo.imageNodes || []
+        };
+      } catch (error) {
+        console.warn("Could not get media data:", error);
+        return null;
+      }
+    }
+    /**
+     * Validate a media property against available media slots in scan data
+     */
+    static validateMediaProperty(propKey, propValue, mediaData) {
+      if (!mediaData) {
+        return {
+          isValid: false,
+          reason: "No media scan data available"
+        };
+      }
+      const { componentInstances, vectorNodes, imageNodes } = mediaData;
+      const allMediaSlots = [
+        ...componentInstances.map((c) => ({ name: c.nodeName, type: "component-instance" })),
+        ...vectorNodes.map((v) => ({ name: v.nodeName, type: "vector-node" })),
+        ...imageNodes.map((i) => ({ name: i.nodeName, type: "image-node" }))
+      ];
+      if (allMediaSlots.length === 0) {
+        return {
+          isValid: false,
+          reason: "No media slots found in component"
+        };
+      }
+      const exactMatch = allMediaSlots.find(
+        (slot) => slot.name.toLowerCase() === propKey.toLowerCase() || slot.name.toLowerCase().replace(/\s+/g, "-") === propKey.toLowerCase()
+      );
+      if (exactMatch) {
+        return {
+          isValid: true,
+          targetType: exactMatch.type,
+          targetName: exactMatch.name
+        };
+      }
+      const partialMatch = allMediaSlots.find(
+        (slot) => slot.name.toLowerCase().includes(propKey.toLowerCase()) || propKey.toLowerCase().includes(slot.name.toLowerCase())
+      );
+      if (partialMatch) {
+        return {
+          isValid: true,
+          targetType: partialMatch.type,
+          targetName: partialMatch.name
+        };
+      }
+      const semanticMatch = this.findSemanticMediaMatch(propKey, allMediaSlots);
+      if (semanticMatch) {
+        return {
+          isValid: true,
+          targetType: semanticMatch.type,
+          targetName: semanticMatch.name
+        };
+      }
+      return {
+        isValid: false,
+        reason: `No matching media slot found for "${propKey}"`,
+        suggestions: allMediaSlots.map((slot) => slot.name)
+      };
+    }
+    /**
+     * Find semantic matches for media properties using intelligent classification
+     */
+    static findSemanticMediaMatch(propKey, mediaSlots) {
+      const keyLower = propKey.toLowerCase();
+      const classifications = this.classifyMediaSlots(mediaSlots);
+      if (keyLower.includes("avatar") || keyLower.includes("profile") || keyLower.includes("user")) {
+        return classifications.avatars[0] || classifications.images[0] || classifications.circles[0] || null;
+      }
+      if (keyLower.includes("icon") && !keyLower.includes("leading") && !keyLower.includes("trailing")) {
+        return classifications.icons[0] || classifications.vectors[0] || classifications.smallImages[0] || null;
+      }
+      if (keyLower.includes("image") || keyLower.includes("photo") || keyLower.includes("picture")) {
+        return classifications.images[0] || classifications.rectangularImages[0] || classifications.avatars[0] || null;
+      }
+      if (keyLower.includes("logo") || keyLower.includes("brand")) {
+        return classifications.logos[0] || classifications.vectors[0] || classifications.images[0] || null;
+      }
+      if (keyLower.includes("badge") || keyLower.includes("indicator") || keyLower.includes("status")) {
+        return classifications.badges[0] || classifications.smallImages[0] || classifications.vectors[0] || null;
+      }
+      if (keyLower.includes("leading") || keyLower.includes("start") || keyLower.includes("left")) {
+        const positionMatch = this.findByPosition(mediaSlots, "leading");
+        if (positionMatch) return positionMatch;
+        return classifications.icons[0] || classifications.vectors[0] || null;
+      }
+      if (keyLower.includes("trailing") || keyLower.includes("end") || keyLower.includes("right")) {
+        const positionMatch = this.findByPosition(mediaSlots, "trailing");
+        if (positionMatch) return positionMatch;
+        return classifications.icons[0] || classifications.vectors[0] || null;
+      }
+      if (keyLower.includes("large") || keyLower.includes("big") || keyLower.includes("cover")) {
+        return classifications.largeImages[0] || classifications.images[0] || null;
+      }
+      if (keyLower.includes("small") || keyLower.includes("mini") || keyLower.includes("thumb")) {
+        return classifications.smallImages[0] || classifications.icons[0] || classifications.vectors[0] || null;
+      }
+      if (keyLower.includes("icon")) {
+        return classifications.vectors[0] || classifications.icons[0] || null;
+      }
+      return null;
+    }
+    /**
+     * Classify media slots into semantic categories based on names and types
+     */
+    static classifyMediaSlots(mediaSlots) {
+      const classifications = {
+        avatars: [],
+        icons: [],
+        images: [],
+        vectors: [],
+        badges: [],
+        logos: [],
+        smallImages: [],
+        largeImages: [],
+        circles: [],
+        rectangularImages: []
+      };
+      mediaSlots.forEach((slot) => {
+        const nameLower = slot.name.toLowerCase();
+        if (nameLower.includes("avatar") || nameLower.includes("profile") || nameLower.includes("user") || nameLower.includes("person") || nameLower.includes("selfie") || nameLower.includes("face") || nameLower.includes("man") || nameLower.includes("woman") || nameLower.includes("people") || slot.type === "image-node" && nameLower.includes("photo")) {
+          classifications.avatars.push(slot);
+        } else if (nameLower.includes("icon") || nameLower.includes("symbol") || nameLower.includes("pictogram") || slot.type === "vector-node" && nameLower.length < 10) {
+          classifications.icons.push(slot);
+        } else if (nameLower.includes("badge") || nameLower.includes("indicator") || nameLower.includes("status") || nameLower.includes("notification") || nameLower.includes("dot") || nameLower.includes("alert")) {
+          classifications.badges.push(slot);
+        } else if (nameLower.includes("logo") || nameLower.includes("brand") || nameLower.includes("company")) {
+          classifications.logos.push(slot);
+        } else if (slot.type === "vector-node") {
+          classifications.vectors.push(slot);
+        } else if (slot.type === "image-node" || nameLower.includes("image") || nameLower.includes("picture") || nameLower.includes("photo")) {
+          classifications.images.push(slot);
+          if (nameLower.includes("small") || nameLower.includes("mini") || nameLower.includes("thumb")) {
+            classifications.smallImages.push(slot);
+          } else if (nameLower.includes("large") || nameLower.includes("big") || nameLower.includes("cover")) {
+            classifications.largeImages.push(slot);
+          }
+          if (nameLower.includes("circle") || nameLower.includes("round")) {
+            classifications.circles.push(slot);
+          } else {
+            classifications.rectangularImages.push(slot);
+          }
+        } else if (slot.type === "component-instance") {
+          classifications.images.push(slot);
+        }
+      });
+      return classifications;
+    }
+    /**
+     * Find media slots by position keywords
+     */
+    static findByPosition(mediaSlots, position) {
+      const positionKeywords = position === "leading" ? ["leading", "start", "left", "first", "begin"] : ["trailing", "end", "right", "last", "final"];
+      return mediaSlots.find(
+        (slot) => positionKeywords.some(
+          (keyword) => slot.name.toLowerCase().includes(keyword)
+        )
+      ) || null;
+    }
+    /**
+     * Sanitize and clean property names and values
+     */
+    static sanitizeProperties(properties) {
+      if (!properties) return {};
+      return Object.entries(properties).reduce((acc, [key, value]) => {
+        const cleanKey = key.replace(/\s+/g, "-");
+        if (key.toLowerCase().includes("text") && value !== null && value !== void 0) {
+          acc[cleanKey] = String(value);
+        } else {
+          acc[cleanKey] = value;
+        }
+        return acc;
+      }, {});
+    }
+    /**
+     * Separate variant properties from regular properties
+     */
+    static separateVariantsFromProperties(properties, componentId) {
+      if (!properties) return { cleanProperties: {}, variants: {} };
+      const cleanProperties = {};
+      const variants = {};
+      const knownTextProperties = ["text", "supporting-text", "trailing-text", "headline", "subtitle", "value"];
+      const knownLayoutProperties = ["horizontalSizing", "verticalSizing", "layoutAlign", "layoutGrow"];
+      const variantPropertyNames = [
+        "condition",
+        "Condition",
+        "leading",
+        "Leading",
+        "trailing",
+        "Trailing",
+        "state",
+        "State",
+        "style",
+        "Style",
+        "size",
+        "Size",
+        "type",
+        "Type",
+        "emphasis",
+        "Emphasis",
+        "variant",
+        "Variant"
+      ];
+      Object.entries(properties).forEach(([key, value]) => {
+        if (key === "variants") {
+          Object.assign(variants, value);
+          console.log(`\u{1F527} Found existing variants object:`, value);
+          return;
+        }
+        if (knownTextProperties.some((prop) => key.toLowerCase().includes(prop.toLowerCase()))) {
+          cleanProperties[key] = value;
+          return;
+        }
+        if (knownLayoutProperties.some((prop) => key.toLowerCase().includes(prop.toLowerCase()))) {
+          cleanProperties[key] = value;
+          return;
+        }
+        if (variantPropertyNames.includes(key)) {
+          const properKey = key.charAt(0).toUpperCase() + key.slice(1);
+          variants[properKey] = value;
+          console.log(`\u{1F527} Moved "${key}" -> "${properKey}" from properties to variants`);
+          return;
+        }
+        cleanProperties[key] = value;
+      });
+      console.log(`\u{1F50D} Final separation for ${componentId}:`);
+      console.log(`   Clean properties:`, cleanProperties);
+      console.log(`   Variants:`, variants);
+      return { cleanProperties, variants };
+    }
+    /**
+     * Apply child layout properties for auto-layout items
+     */
+    static applyChildLayoutProperties(node, properties) {
+      if (!properties) return;
+      if (properties.layoutAlign) {
+        node.layoutAlign = properties.layoutAlign;
+      } else if (properties.horizontalSizing === "FILL") {
+        node.layoutAlign = "STRETCH";
+      }
+      if (properties.layoutGrow !== void 0) {
+        node.layoutGrow = properties.layoutGrow;
+      } else if (properties.horizontalSizing === "FILL") {
+        const parent = node.parent;
+        if (parent && "layoutMode" in parent && parent.layoutMode === "HORIZONTAL") {
+          node.layoutGrow = 1;
+        }
+      }
+      if (properties.layoutPositioning) {
+        node.layoutPositioning = properties.layoutPositioning;
+      }
+      if (properties.minWidth !== void 0 && "minWidth" in node) {
+        node.minWidth = properties.minWidth;
+      }
+      if (properties.maxWidth !== void 0 && "maxWidth" in node) {
+        node.maxWidth = properties.maxWidth;
+      }
+      if (properties.minHeight !== void 0 && "minHeight" in node) {
+        node.minHeight = properties.minHeight;
+      }
+      if (properties.maxHeight !== void 0 && "maxHeight" in node) {
+        node.maxHeight = properties.maxHeight;
+      }
+    }
+    /**
+     * Enhanced systematic component creation with modern API
+     */
+    static async createComponentInstanceSystematic(item, container) {
+      if (!item.componentNodeId) return;
+      const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
+      if (!componentNode) {
+        console.warn(`\u26A0\uFE0F Component with ID ${item.componentNodeId} not found. Skipping.`);
+        return;
+      }
+      const masterComponent = componentNode.type === "COMPONENT_SET" ? componentNode.defaultVariant : componentNode;
+      if (!masterComponent || masterComponent.type !== "COMPONENT") {
+        console.warn(`\u26A0\uFE0F Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
+        return;
+      }
+      console.log(` Creating systematic instance: ${masterComponent.name}`);
+      const validationResult = ComponentPropertyEngine.validateAndProcessProperties(
+        item.componentNodeId,
+        item.properties || {}
+      );
+      if (validationResult.warnings.length > 0) {
+        console.warn(`\u26A0\uFE0F Warnings:`, validationResult.warnings);
+      }
+      if (validationResult.errors.length > 0) {
+        console.error(`\u274C Validation errors:`, validationResult.errors);
+        const llmErrors = validationResult.errors.map(
+          (err) => `${err.message}${err.suggestion ? ` - ${err.suggestion}` : ""}${err.llmHint ? ` (${err.llmHint})` : ""}`
+        ).join("\n");
+        console.error(` LLM Error Summary:
+${llmErrors}`);
+      }
+      const { variants, textProperties, mediaProperties, layoutProperties } = validationResult.processedProperties;
+      const instance = masterComponent.createInstance();
+      container.appendChild(instance);
+      if (Object.keys(variants).length > 0) {
+        await this.applyVariantsSystematic(instance, variants, componentNode);
+      }
+      this.applyChildLayoutProperties(instance, layoutProperties);
+      if (Object.keys(textProperties).length > 0) {
+        await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
+      }
+      if (Object.keys(mediaProperties).length > 0) {
+        await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
+      }
+    }
+    /**
+     * Apply variants with modern Component Properties API
+     */
+    static async applyVariantsSystematic(instance, variants, componentNode) {
+      try {
+        await PerformanceTracker.track("apply-variants", async () => {
+          if (componentNode && componentNode.type === "COMPONENT_SET") {
+            const propertyDefinitions = componentNode.componentPropertyDefinitions;
+            if (!propertyDefinitions) {
+              console.warn("\u26A0\uFE0F No component property definitions found");
+              return;
+            }
+            const validVariants = {};
+            Object.entries(variants).forEach(([propName, propValue]) => {
+              var _a;
+              const propertyDef = propertyDefinitions[propName];
+              if (propertyDef && propertyDef.type === "VARIANT") {
+                const stringValue = String(propValue);
+                if (propertyDef.variantOptions && propertyDef.variantOptions.includes(stringValue)) {
+                  validVariants[propName] = stringValue;
+                  console.log(`\u2705 Valid variant: ${propName} = "${stringValue}"`);
+                } else {
+                  console.warn(`\u26A0\uFE0F Invalid value for "${propName}": "${stringValue}". Available: [${((_a = propertyDef.variantOptions) == null ? void 0 : _a.join(", ")) || ""}]`);
+                }
+              } else {
+                console.warn(`\u26A0\uFE0F Unknown variant property: "${propName}"`);
+              }
+            });
+            if (Object.keys(validVariants).length > 0) {
+              instance.setProperties(validVariants);
+              console.log("\u2705 Variants applied successfully");
+            }
+          }
+        });
+      } catch (e) {
+        console.error("\u274C Error applying variants:", e);
+      }
+    }
+    /**
+     * Apply text properties with proper font loading and array support
+     */
+    static async applyTextPropertiesSystematic(instance, textProperties, componentId) {
+      console.log(" Applying text properties systematically:", textProperties);
+      const schema = ComponentPropertyEngine.getComponentSchema(componentId);
+      if (!schema) {
+        console.warn(`\u26A0\uFE0F No schema found for component ${componentId}, using fallback text application`);
+        await this.applyTextProperties(instance, textProperties);
+        return;
+      }
+      const allTextNodes = await PerformanceTracker.track(
+        "find-text-nodes",
+        async () => instance.findAllWithCriteria({ types: ["TEXT"] })
+      );
+      for (const [propKey, propValue] of Object.entries(textProperties)) {
+        const textLayerInfo = schema.textLayers[propKey];
+        if (!textLayerInfo) {
+          console.warn(`\u26A0\uFE0F No text layer info found for property "${propKey}"`);
+          const semanticMatch = Object.entries(schema.textLayers).find(([layerName, info]) => {
+            const layerLower = layerName.toLowerCase();
+            const propLower = propKey.toLowerCase();
+            return layerLower.includes(propLower) || propLower.includes(layerLower);
+          });
+          if (semanticMatch) {
+            const [matchedName, matchedInfo] = semanticMatch;
+            console.log(` Using semantic match: "${propKey}" \u2192 "${matchedName}"`);
+            if (matchedInfo.dataType === "array" && Array.isArray(propValue)) {
+              await this.applyArrayTextProperty(propKey, propValue, allTextNodes, matchedInfo);
+            } else {
+              const valueToUse = Array.isArray(propValue) ? propValue[0] : propValue;
+              await this.applySingleTextProperty(propKey, valueToUse, allTextNodes, matchedInfo);
+            }
+          }
+          continue;
+        }
+        if (textLayerInfo.dataType === "array" && Array.isArray(propValue)) {
+          await this.applyArrayTextProperty(propKey, propValue, allTextNodes, textLayerInfo);
+        } else {
+          const valueToUse = Array.isArray(propValue) ? propValue[0] : propValue;
+          await this.applySingleTextProperty(propKey, valueToUse, allTextNodes, textLayerInfo);
+        }
+      }
+    }
+    /**
+     * Apply array text property (for tabs, chips, etc.)
+     */
+    static async applyArrayTextProperty(propKey, propValues, allTextNodes, textLayerInfo) {
+      console.log(` Applying array text property ${propKey}:`, propValues);
+      const matchingNodes = allTextNodes.filter((node) => {
+        const nodeLower = node.name.toLowerCase();
+        const layerLower = textLayerInfo.nodeName.toLowerCase();
+        const propLower = propKey.toLowerCase();
+        return nodeLower === layerLower || nodeLower.includes(propLower) || nodeLower === propLower;
+      });
+      const maxItems = Math.min(propValues.length, textLayerInfo.maxItems || propValues.length);
+      for (let i = 0; i < maxItems && i < matchingNodes.length; i++) {
+        const textNode = matchingNodes[i];
+        const value = propValues[i];
+        if (value && typeof value === "string" && value.trim()) {
+          await this.setTextNodeValueSafe(textNode, value, `${propKey}[${i}]`);
+        }
+      }
+      for (let i = maxItems; i < matchingNodes.length; i++) {
+        matchingNodes[i].visible = false;
+        console.log(`\uFE0F Hidden extra text node: "${matchingNodes[i].name}"`);
+      }
+      console.log(`\u2705 Applied ${maxItems} values to ${propKey} array property`);
+    }
+    /**
+     * Apply single text property
+     */
+    static async applySingleTextProperty(propKey, propValue, allTextNodes, textLayerInfo) {
+      if (!propValue || typeof propValue !== "string" || !propValue.trim()) return;
+      let textNode = allTextNodes.find((n) => n.id === textLayerInfo.nodeId);
+      if (!textNode) {
+        textNode = allTextNodes.find(
+          (n) => n.name.toLowerCase() === textLayerInfo.nodeName.toLowerCase()
+        );
+      }
+      if (!textNode) {
+        textNode = allTextNodes.find((n) => {
+          const nodeLower = n.name.toLowerCase();
+          const layerLower = textLayerInfo.nodeName.toLowerCase();
+          return nodeLower.includes(layerLower) || layerLower.includes(nodeLower);
+        });
+      }
+      if (textNode) {
+        await this.setTextNodeValueSafe(textNode, propValue, propKey);
+      } else {
+        console.warn(`\u274C No text node found for property "${propKey}" (looking for "${textLayerInfo.nodeName}")`);
+      }
+    }
+    /**
+     * Apply media properties systematically
+     */
+    static async applyMediaPropertiesSystematic(instance, mediaProperties, componentId) {
+      console.log("\uFE0F Applying media properties systematically:", mediaProperties);
+      const schema = ComponentPropertyEngine.getComponentSchema(componentId);
+      if (!schema) {
+        console.warn(`\u26A0\uFE0F No schema found for component ${componentId}, skipping media application`);
+        return;
+      }
+      const allMediaNodes = await PerformanceTracker.track("find-media-nodes", async () => {
+        const vectors = instance.findAllWithCriteria({ types: ["VECTOR"] });
+        const rectangles = instance.findAllWithCriteria({ types: ["RECTANGLE"] });
+        const ellipses = instance.findAllWithCriteria({ types: ["ELLIPSE"] });
+        const components = instance.findAllWithCriteria({ types: ["INSTANCE", "COMPONENT"] });
+        return [...vectors, ...rectangles, ...ellipses, ...components];
+      });
+      for (const [propKey, propValue] of Object.entries(mediaProperties)) {
+        const mediaLayerInfo = schema.mediaLayers[propKey];
+        if (!mediaLayerInfo) {
+          console.warn(`\u26A0\uFE0F No media layer info found for property "${propKey}"`);
+          continue;
+        }
+        const mediaNode = allMediaNodes.find((n) => n.id === mediaLayerInfo.nodeId) || allMediaNodes.find((n) => n.name.toLowerCase() === mediaLayerInfo.nodeName.toLowerCase());
+        if (mediaNode) {
+          console.log(`\u2705 Found media node for "${propKey}": "${mediaNode.name}" (${mediaNode.type})`);
+        } else {
+          console.warn(`\u274C No media node found for property "${propKey}"`);
+        }
+      }
+    }
+    /**
+     * Safe text setting with proper font loading
+     */
+    static async setTextNodeValueSafe(textNode, value, context) {
+      try {
+        await PerformanceTracker.track("set-text-value", async () => {
+          if (textNode.hasMissingFont) {
+            console.error(`\u274C Cannot set text "${context}": Missing fonts`);
+            return;
+          }
+          if (!textNode.visible) {
+            textNode.visible = true;
+          }
+          await this.loadAllRequiredFonts(textNode);
+          textNode.characters = value;
+          console.log(`\u2705 Set "${textNode.name}" to "${value}" (${context})`);
+        });
+      } catch (fontError) {
+        console.error(`\u274C Font loading failed for "${textNode.name}":`, fontError);
+        try {
+          await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+          textNode.fontName = { family: "Inter", style: "Regular" };
+          textNode.characters = value;
+          console.log(`\u26A0\uFE0F Used fallback font for "${textNode.name}"`);
+        } catch (fallbackError) {
+          console.error(`\u274C Even fallback failed:`, fallbackError);
+        }
+      }
+    }
+    /**
+     * Load all fonts required for a text node (handles mixed fonts)
+     */
+    static async loadAllRequiredFonts(textNode) {
+      try {
+        if (typeof textNode.fontName !== "symbol") {
+          await figma.loadFontAsync(textNode.fontName);
+          return;
+        }
+        if (textNode.fontName === figma.mixed && textNode.characters.length > 0) {
+          const allFonts = textNode.getRangeAllFontNames(0, textNode.characters.length);
+          const uniqueFonts = /* @__PURE__ */ new Map();
+          allFonts.forEach((font) => {
+            uniqueFonts.set(`${font.family}-${font.style}`, font);
+          });
+          const fontPromises = Array.from(uniqueFonts.values()).map(
+            (font) => figma.loadFontAsync(font)
+          );
+          await Promise.all(fontPromises);
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+    /**
+     * Enhanced dynamic generation using systematic approach
+     */
+    static async generateUIFromDataSystematic(layoutData, parentNode) {
+      const schemas = ComponentPropertyEngine.getAllSchemas();
+      if (schemas.length === 0) {
+        console.log("\u26A0\uFE0F No schemas - running systematic generation in basic mode");
+      }
+      let currentFrame;
+      const containerData = layoutData.layoutContainer || layoutData;
+      if (parentNode.type === "PAGE" && containerData) {
+        currentFrame = figma.createFrame();
+        parentNode.appendChild(currentFrame);
+      } else if (parentNode.type === "FRAME") {
+        currentFrame = parentNode;
+      } else {
+        figma.notify("Cannot add items without a parent frame.", { error: true });
+        return figma.createFrame();
+      }
+      if (containerData && containerData !== layoutData) {
+        currentFrame.name = containerData.name || "Generated Frame";
+        console.log("\u{1F527} Applying container properties:", {
+          name: containerData.name,
+          layoutMode: containerData.layoutMode,
+          itemSpacing: containerData.itemSpacing,
+          primaryAxisSizingMode: containerData.primaryAxisSizingMode
+        });
+        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE";
+        console.log("\u{1F527} Frame layoutMode set to:", currentFrame.layoutMode);
+        if (currentFrame.layoutMode !== "NONE") {
+          currentFrame.paddingTop = typeof containerData.paddingTop === "number" ? containerData.paddingTop : 0;
+          currentFrame.paddingBottom = typeof containerData.paddingBottom === "number" ? containerData.paddingBottom : 0;
+          currentFrame.paddingLeft = typeof containerData.paddingLeft === "number" ? containerData.paddingLeft : 0;
+          currentFrame.paddingRight = typeof containerData.paddingRight === "number" ? containerData.paddingRight : 0;
+          if (containerData.itemSpacing === "AUTO") {
+            currentFrame.itemSpacing = "AUTO";
+          } else {
+            currentFrame.itemSpacing = typeof containerData.itemSpacing === "number" ? containerData.itemSpacing : 0;
+          }
+          if (containerData.layoutWrap !== void 0) {
+            currentFrame.layoutWrap = containerData.layoutWrap;
+          }
+          if (containerData.primaryAxisAlignItems) {
+            currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+          }
+          if (containerData.counterAxisAlignItems) {
+            currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+          }
+          if (containerData.primaryAxisSizingMode) {
+            currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+          }
+          if (containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+          }
+        }
+        if (containerData.minWidth !== void 0) {
+          currentFrame.minWidth = containerData.minWidth;
+        }
+        if (containerData.maxWidth !== void 0) {
+          currentFrame.maxWidth = containerData.maxWidth;
+        }
+        if (containerData.minHeight !== void 0) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+        if (containerData.maxHeight !== void 0) {
+          currentFrame.maxHeight = containerData.maxHeight;
+        }
+        if (containerData.width) {
+          currentFrame.resize(containerData.width, currentFrame.height);
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "FIXED";
+          }
+        } else if (!containerData.counterAxisSizingMode) {
+          currentFrame.counterAxisSizingMode = "AUTO";
+        }
+      }
+      const items = layoutData.items || containerData.items;
+      if (!items || !Array.isArray(items)) return currentFrame;
+      for (const item of items) {
+        if (item.type === "layoutContainer") {
+          console.log("\u{1F527} Creating nested layoutContainer:", item.name, "layoutMode:", item.layoutMode);
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          this.applyChildLayoutProperties(nestedFrame, item);
+          await this.generateUIFromDataSystematic({ layoutContainer: item, items: item.items }, nestedFrame);
+        } else if (item.type === "frame" && item.layoutContainer) {
+          const nestedFrame = figma.createFrame();
+          currentFrame.appendChild(nestedFrame);
+          await this.generateUIFromDataSystematic(item, nestedFrame);
+        } else if (item.type === "native-text" || item.type === "text") {
+          await this.createTextNode(item, currentFrame);
+        } else if (item.type === "native-rectangle") {
+          await this.createRectangleNode(item, currentFrame);
+        } else if (item.type === "native-circle") {
+          await this.createEllipseNode(item, currentFrame);
+        } else {
+          await this.createComponentInstanceSystematic(item, currentFrame);
+        }
+      }
+      if (parentNode.type === "PAGE") {
+        figma.currentPage.selection = [currentFrame];
+        figma.viewport.scrollAndZoomIntoView([currentFrame]);
+        const perfReport = ComponentPropertyEngine.getPerformanceReport();
+        console.log("\u26A1 Performance Report:", perfReport);
+        figma.notify(`UI generated with systematic validation!`, { timeout: 2500 });
+      }
+      return currentFrame;
+    }
+    /**
+     * Modify existing UI frame by replacing its content
+     */
+    static async modifyExistingUI(modifiedJSON, frameId) {
+      try {
+        const existingFrame = await figma.getNodeByIdAsync(frameId);
+        if (existingFrame && existingFrame.type === "FRAME") {
+          for (let i = existingFrame.children.length - 1; i >= 0; i--) {
+            existingFrame.children[i].remove();
+          }
+          await this.generateUIFromData(modifiedJSON, existingFrame);
+          figma.notify("UI updated successfully!", { timeout: 2e3 });
+          return existingFrame;
+        } else {
+          throw new Error("Target frame for modification not found.");
+        }
+      } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        figma.notify("Modification error: " + errorMessage, { error: true });
+        console.error("\u274C modifyExistingUI error:", e);
+        return null;
+      }
+    }
+    /**
+     * Ensure color styles are loaded before UI generation
+     */
+    static async ensureColorStylesLoaded() {
+      if (!this.cachedColorStyles) {
+        console.log("\u{1F3A8} Color styles not cached, attempting to load from storage...");
+        try {
+          const scanSession = await SessionManager.loadLastScanSession();
+          if (scanSession == null ? void 0 : scanSession.colorStyles) {
+            this.setColorStyles(scanSession.colorStyles);
+            console.log("\u2705 Color styles loaded from scan session");
+          } else {
+            console.warn("\u26A0\uFE0F No color styles found in storage. Run a design system scan first.");
+          }
+        } catch (e) {
+          console.warn("\u26A0\uFE0F Failed to load color styles from storage:", e);
+        }
+      } else {
+        console.log("\u2705 Color styles already cached");
+      }
+    }
+    /**
+     * Initialize Color Styles from a scan session
+     */
+    static setColorStyles(colorStyles) {
+      this.cachedColorStyles = colorStyles;
+      if (colorStyles) {
+        const totalStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+        console.log(`\u{1F3A8} FigmaRenderer: Loaded ${totalStyles} Color Styles for semantic color resolution`);
+      }
+    }
+    /**
+     * Resolve color style names to actual Figma color styles (for style application)
+     * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
+     */
+    static async resolveColorStyleReference(colorStyleName) {
+      console.log(`\u{1F3A8} Resolving color style reference: "${colorStyleName}"`);
+      try {
+        const localPaintStyles = await figma.getLocalPaintStylesAsync();
+        console.log(`\u{1F4CB} Found ${localPaintStyles.length} local paint styles in Figma`);
+        if (localPaintStyles.length > 0) {
+          console.log(`\u{1F4CB} First 5 style names:`, localPaintStyles.slice(0, 5).map((s) => s.name));
+        }
+        const exactMatch = localPaintStyles.find((style) => style.name === colorStyleName);
+        if (exactMatch) {
+          console.log(`\u2705 Found exact color style: ${exactMatch.name}`);
+          return exactMatch;
+        }
+        const caseInsensitiveMatch = localPaintStyles.find(
+          (style) => style.name.toLowerCase() === colorStyleName.toLowerCase()
+        );
+        if (caseInsensitiveMatch) {
+          console.log(`\u2705 Found case-insensitive color style: ${caseInsensitiveMatch.name}`);
+          return caseInsensitiveMatch;
+        }
+        console.warn(`\u26A0\uFE0F Could not find color style "${colorStyleName}"`);
+        console.log(`\u{1F4CB} All available paint styles:`, localPaintStyles.map((s) => s.name));
+        return null;
+      } catch (error) {
+        console.error(`\u274C Error resolving color style "${colorStyleName}":`, error);
+        return null;
+      }
+    }
+    /**
+     * Resolve color style names to actual RGB values from scanned Color Styles (fallback)
+     * Uses exact name matching from design system scan data
+     * Examples: "Primary/primary80", "Button-color", "Light Green", "ui-primary-500"
+     */
+    static resolveSemanticColor(colorStyleName) {
+      if (!this.cachedColorStyles) {
+        console.warn(`\u26A0\uFE0F No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
+        return null;
+      }
+      console.log(`\u{1F3A8} Resolving color style: "${colorStyleName}"`);
+      const allCategories = Object.values(this.cachedColorStyles).flat();
+      const exactMatch = allCategories.find((style) => style.name === colorStyleName);
+      if (exactMatch && exactMatch.colorInfo.type === "SOLID") {
+        console.log(`\u2705 Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
+        return this.hexToRgb(exactMatch.colorInfo.color || "#000000");
+      }
+      const caseInsensitiveMatch = allCategories.find(
+        (style) => style.name.toLowerCase() === colorStyleName.toLowerCase()
+      );
+      if (caseInsensitiveMatch && caseInsensitiveMatch.colorInfo.type === "SOLID") {
+        console.log(`\u2705 Found case-insensitive match: ${caseInsensitiveMatch.name} (${caseInsensitiveMatch.colorInfo.color})`);
+        return this.hexToRgb(caseInsensitiveMatch.colorInfo.color || "#000000");
+      }
+      console.warn(`\u26A0\uFE0F Could not find color style "${colorStyleName}"`);
+      console.log(`Available color styles:`, allCategories.map((s) => s.name));
+      return { r: 0, g: 0, b: 0 };
+    }
+    /**
+     * Convert hex color to RGB values (0-1 range)
+     */
+    static hexToRgb(hex) {
+      hex = hex.replace("#", "");
+      if (hex.length === 3) {
+        hex = hex.split("").map((char) => char + char).join("");
+      }
+      const r = parseInt(hex.substr(0, 2), 16) / 255;
+      const g = parseInt(hex.substr(2, 2), 16) / 255;
+      const b = parseInt(hex.substr(4, 2), 16) / 255;
+      return { r, g, b };
+    }
+    /**
+     * Create a solid paint from RGB values
+     */
+    static createSolidPaint(rgb, opacity = 1) {
+      return {
+        type: "SOLID",
+        color: rgb,
+        opacity
+      };
+    }
+    /**
+     * Helper method to resolve and apply semantic colors to text nodes
+     */
+    static applySemanticTextColor(textNode, semanticColorName) {
+      const rgb = this.resolveSemanticColor(semanticColorName);
+      if (rgb) {
+        textNode.fills = [this.createSolidPaint(rgb)];
+        console.log(`\u2705 Applied semantic color "${semanticColorName}" to text node`);
+        return true;
+      }
+      return false;
+    }
+    /**
+     * Helper method to resolve and apply color styles to any node with fills
+     */
+    static async applySemanticFillColor(node, semanticColorName) {
+      const colorStyle = await this.resolveColorStyleReference(semanticColorName);
+      if (colorStyle && "setFillStyleIdAsync" in node) {
+        await node.setFillStyleIdAsync(colorStyle.id);
+        console.log(`\u2705 Applied color style "${semanticColorName}" to node (as style reference)`);
+        return true;
+      }
+      const rgb = this.resolveSemanticColor(semanticColorName);
+      if (rgb && "fills" in node) {
+        node.fills = [this.createSolidPaint(rgb)];
+        console.log(`\u2705 Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
+        return true;
+      }
+      return false;
+    }
+  };
+  // Static storage for Color Styles scanned from the design system
+  FigmaRenderer.cachedColorStyles = null;
+
+  // src/core/design-system-scanner-service.ts
+  var DesignSystemScannerService = class {
+    /**
+     * Main scanning function - scans all pages for components and Color Styles
+     */
+    static async scanDesignSystem(progressCallback) {
+      console.log("\u{1F50D} Starting comprehensive design system scan with Color Styles...");
+      try {
+        progressCallback == null ? void 0 : progressCallback({ current: 0, total: 100, status: "Initializing comprehensive scan..." });
+        const scanSession = await ComponentScanner.scanDesignSystem();
+        progressCallback == null ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles with renderer..." });
+        FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
+        progressCallback == null ? void 0 : progressCallback({ current: 100, total: 100, status: "Comprehensive scan complete!" });
+        return scanSession;
+      } catch (e) {
+        console.error("\u274C Critical error in comprehensive design system scan:", e);
+        throw e;
+      }
+    }
+    /**
+     * Legacy method for backward compatibility - returns only components
+     */
+    static async scanComponents(progressCallback) {
+      const session = await this.scanDesignSystem(progressCallback);
+      return session.components;
+    }
+    /**
+     * Scan only Color Styles without components
+     */
+    static async scanColorStyles() {
+      console.log("\u{1F3A8} Scanning only Color Styles...");
+      try {
+        const colorStyles = await ComponentScanner.scanFigmaColorStyles();
+        FigmaRenderer.setColorStyles(colorStyles);
+        return colorStyles;
+      } catch (e) {
+        console.error("\u274C Error scanning Color Styles:", e);
+        throw e;
+      }
+    }
+    // Remove the old implementation below and replace with legacy support
+    static async legacyScanImplementation(progressCallback) {
+      console.log("\u{1F50D} Starting legacy design system scan...");
+      const components = [];
+      try {
+        await figma.loadAllPagesAsync();
+        console.log("\u2705 All pages loaded");
+        const totalPages = figma.root.children.length;
+        let currentPage = 0;
+        progressCallback == null ? void 0 : progressCallback({ current: 0, total: totalPages, status: "Initializing scan..." });
+        for (const page of figma.root.children) {
+          currentPage++;
+          const pageStatus = `Scanning page: "${page.name}" (${currentPage}/${totalPages})`;
+          console.log(`\u{1F4CB} ${pageStatus}`);
+          progressCallback == null ? void 0 : progressCallback({
+            current: currentPage,
+            total: totalPages,
+            status: pageStatus
+          });
+          try {
+            const allNodes = page.findAll((node) => {
+              if (node.type === "COMPONENT_SET") {
+                return true;
+              }
+              if (node.type === "COMPONENT") {
+                return !!(node.parent && node.parent.type !== "COMPONENT_SET");
+              }
+              return false;
+            });
+            console.log(`\u2705 Found ${allNodes.length} main components on page "${page.name}"`);
+            for (const node of allNodes) {
+              try {
+                if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
+                  const componentInfo = await ComponentScanner.analyzeComponent(node);
+                  if (componentInfo) {
+                    componentInfo.pageInfo = {
+                      pageName: page.name,
+                      pageId: page.id,
+                      isCurrentPage: page.id === figma.currentPage.id
+                    };
+                    components.push(componentInfo);
+                  }
+                }
+              } catch (e) {
+                console.error(`\u274C Error analyzing component "${node.name}":`, e);
+              }
+            }
+          } catch (e) {
+            console.error(`\u274C Error scanning page "${page.name}":`, e);
+          }
+        }
+        progressCallback == null ? void 0 : progressCallback({
+          current: totalPages,
+          total: totalPages,
+          status: `Scan complete! Found ${components.length} components`
+        });
+        console.log(`\u{1F389} Design system scan complete! Found ${components.length} unique components.`);
+        return components;
+      } catch (e) {
+        console.error("\u274C Critical error in design system scan:", e);
+        throw e;
+      }
+    }
+    /**
+     * Generate LLM prompt with components and color styles
+     */
+    static generateLLMPrompt(components, colorStyles) {
+      return ComponentScanner.generateLLMPrompt(components, colorStyles);
+    }
+    /**
+     * Analyzes a single component to extract metadata and variants
+     * @deprecated Use ComponentScanner.analyzeComponent instead
+     */
+    static analyzeComponent(comp) {
+      const name = comp.name;
+      const suggestedType = this.guessComponentType(name.toLowerCase());
+      const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+      const textLayers = this.findTextLayers(comp);
+      let variants = [];
+      let variantDetails = {};
+      if (comp.type === "COMPONENT_SET") {
+        const variantProps = comp.variantGroupProperties;
+        if (variantProps) {
+          variants = Object.keys(variantProps);
+          Object.entries(variantProps).forEach(([propName, propInfo]) => {
+            if (propInfo.values && propInfo.values.length > 0) {
+              variantDetails[propName] = [...propInfo.values].sort();
+              console.log(`\u2705 Found variant property: ${propName} with values: [${propInfo.values.join(", ")}]`);
+            }
+          });
+          console.log(`\u{1F3AF} Variant details for "${comp.name}":`, variantDetails);
+        }
+      }
+      return {
+        id: comp.id,
+        name,
+        suggestedType,
+        confidence,
+        variants: variants.length > 0 ? variants : void 0,
+        variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
+        textLayers: textLayers.length > 0 ? textLayers : void 0,
+        isFromLibrary: false
+      };
+    }
+    /**
+     * Intelligent component type detection based on naming patterns
+     */
+    static guessComponentType(name) {
+      var _a;
+      const patterns = {
+        "icon-button": /icon.*button|button.*icon/i,
+        "upload": /upload|file.*drop|drop.*zone|attach/i,
+        "form": /form|captcha|verification/i,
+        "context-menu": /context-menu|context menu|contextual menu|options menu/i,
+        "modal-header": /modal-header|modal header|modalstack|modal_stack/i,
+        "list-item": /list-item|list item|list_item|list[\s\-_]*row|list[\s\-_]*cell/i,
+        "appbar": /appbar|app-bar|navbar|nav-bar|header|top bar|page header/i,
+        "dialog": /dialog|dialogue|popup|modal(?!-header)/i,
+        "list": /list(?!-item)/i,
+        "navigation": /nav|navigation(?!-bar)/i,
+        "header": /h[1-6]|title|heading(?! bar)/i,
+        "button": /button|btn|cta|action/i,
+        "input": /input|field|textfield|text-field|entry/i,
+        "textarea": /textarea|text-area|multiline/i,
+        "select": /select|dropdown|drop-down|picker/i,
+        "checkbox": /checkbox|check-box/i,
+        "radio": /radio|radiobutton|radio-button/i,
+        "switch": /switch|toggle/i,
+        "slider": /slider|range/i,
+        "searchbar": /search|searchbar|search-bar/i,
+        "tab": /tab|tabs|tabbar|tab-bar/i,
+        "breadcrumb": /breadcrumb|bread-crumb/i,
+        "pagination": /pagination|pager/i,
+        "bottomsheet": /bottomsheet|bottom-sheet|drawer/i,
+        "sidebar": /sidebar|side-bar/i,
+        "snackbar": /snack|snackbar|toast|notification/i,
+        "alert": /alert/i,
+        "tooltip": /tooltip|tip|hint/i,
+        "badge": /badge|indicator|count/i,
+        "progress": /progress|loader|loading|spinner/i,
+        "skeleton": /skeleton|placeholder/i,
+        "card": /card|tile|block|panel/i,
+        "avatar": /avatar|profile|user|photo/i,
+        "image": /image|img|picture/i,
+        "video": /video|player/i,
+        "icon": /icon|pictogram|symbol/i,
+        "text": /text|label|paragraph|caption|copy/i,
+        "link": /link|anchor/i,
+        "container": /container|wrapper|box|frame/i,
+        "grid": /grid/i,
+        "divider": /divider|separator|delimiter/i,
+        "spacer": /spacer|space|gap/i,
+        "fab": /fab|floating|float/i,
+        "chip": /chip|tag/i,
+        "actionsheet": /actionsheet|action-sheet/i,
+        "chart": /chart|graph/i,
+        "table": /table/i,
+        "calendar": /calendar|date/i,
+        "timeline": /timeline/i,
+        "gallery": /gallery|carousel/i,
+        "price": /price|cost/i,
+        "rating": /rating|star/i,
+        "cart": /cart|basket/i,
+        "map": /map|location/i,
+        "code": /code|syntax/i,
+        "terminal": /terminal|console/i
+      };
+      const priorityPatterns = [
+        "icon-button",
+        "upload",
+        "form",
+        "context-menu",
+        "modal-header",
+        "list-item",
+        "appbar",
+        "dialog",
+        "snackbar",
+        "bottomsheet",
+        "actionsheet",
+        "searchbar",
+        "fab",
+        "breadcrumb",
+        "pagination",
+        "skeleton",
+        "textarea",
+        "checkbox",
+        "radio",
+        "switch",
+        "slider",
+        "tab",
+        "navigation",
+        "tooltip",
+        "badge",
+        "progress",
+        "avatar",
+        "chip",
+        "stepper",
+        "chart",
+        "table",
+        "calendar",
+        "timeline",
+        "gallery",
+        "rating"
+      ];
+      for (const type of priorityPatterns) {
+        if ((_a = patterns[type]) == null ? void 0 : _a.test(name)) return type;
+      }
+      for (const type in patterns) {
+        if (patterns.hasOwnProperty(type) && !priorityPatterns.includes(type)) {
+          if (patterns[type].test(name)) return type;
+        }
+      }
+      return "unknown";
+    }
+    /**
+     * Calculates confidence score for component type detection
+     */
+    static calculateConfidence(name, suggestedType) {
+      if (suggestedType === "unknown") return 0.1;
+      if (name.toLowerCase() === suggestedType.toLowerCase()) return 0.95;
+      if (name.includes(suggestedType)) return 0.9;
+      if (name.toLowerCase().includes(suggestedType + "-") || name.toLowerCase().includes(suggestedType + "_")) return 0.85;
+      return 0.7;
+    }
+    /**
+     * Finds and catalogs text layers within a component
+     */
+    static findTextLayers(comp) {
+      const textLayers = [];
+      try {
+        const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant : comp;
+        if (nodeToAnalyze && "findAll" in nodeToAnalyze) {
+          const allNodes = nodeToAnalyze.findAll((node) => node.type === "TEXT");
+          allNodes.forEach((node) => {
+            if (node.type === "TEXT" && node.name) {
+              const textNode = node;
+              textLayers.push(textNode.name);
+              try {
+                const chars = textNode.characters || "[empty]";
+                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
+              } catch (charError) {
+                console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.error(`Error finding text layers in "${comp.name}":`, e);
+      }
+      return textLayers;
+    }
+    /**
+     * Save scan results to Figma storage - supports full scan session with color styles
+     */
+    static async saveScanResults(components, colorStyles) {
+      try {
+        const scanSession = {
+          components,
+          colorStyles: colorStyles || void 0,
+          scanTime: Date.now(),
+          version: "2.0.0",
+          fileKey: figma.fileKey || figma.root.id
+        };
+        await figma.clientStorage.setAsync("design-system-scan", scanSession);
+        await figma.clientStorage.setAsync("last-scan-results", components);
+        const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+        console.log(`\u{1F4BE} Saved ${components.length} components and ${colorStylesCount} color styles with session data`);
+      } catch (error) {
+        console.error("\u274C Error saving scan results:", error);
+        try {
+          await figma.clientStorage.setAsync("last-scan-results", components);
+          console.log("\u{1F4BE} Fallback save successful");
+        } catch (fallbackError) {
+          console.warn("\u26A0\uFE0F Could not save scan results:", fallbackError);
+        }
+      }
+    }
+    /**
+     * Save complete scan session including color styles
+     */
+    static async saveScanSession(scanSession) {
+      try {
+        await figma.clientStorage.setAsync("design-system-scan", scanSession);
+        await figma.clientStorage.setAsync("last-scan-results", scanSession.components);
+        const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+        console.log(`\u{1F4BE} Saved complete scan session: ${scanSession.components.length} components and ${colorStylesCount} color styles`);
+      } catch (error) {
+        console.error("\u274C Error saving scan session:", error);
+        throw error;
+      }
+    }
+    /**
+     * Get component ID by type for UI generation
+     */
+    static async getComponentIdByType(type) {
+      const searchType = type.toLowerCase();
+      const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+      if (scanResults && Array.isArray(scanResults)) {
+        const matchingComponent = scanResults.find(
+          (comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7
+        );
+        if (matchingComponent) return matchingComponent.id;
+        const nameMatchingComponent = scanResults.find(
+          (comp) => comp.name.toLowerCase().includes(searchType)
+        );
+        if (nameMatchingComponent) return nameMatchingComponent.id;
+      }
+      console.log(`\u274C Component ID for type "${type}" not found`);
+      return null;
+    }
+    /**
+     * Get saved scan results from storage
+     */
+    static async getSavedScanResults() {
+      try {
+        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+        return scanResults || null;
+      } catch (error) {
+        console.error("\u274C Error getting saved scan results:", error);
+        return null;
+      }
+    }
+    /**
+     * Get scan session data
+     */
+    static async getScanSession() {
+      try {
+        const scanSession = await figma.clientStorage.getAsync("design-system-scan");
+        return scanSession || null;
+      } catch (error) {
+        console.error("\u274C Error getting scan session:", error);
+        return null;
+      }
+    }
+    /**
+     * Update component type manually
+     */
+    static async updateComponentType(componentId, newType) {
+      try {
+        const scanResults = await figma.clientStorage.getAsync("last-scan-results");
+        if (scanResults && Array.isArray(scanResults)) {
+          let componentName = "";
+          const updatedResults = scanResults.map((comp) => {
+            if (comp.id === componentId) {
+              componentName = comp.name;
+              return __spreadProps(__spreadValues({}, comp), { suggestedType: newType, confidence: 1 });
+            }
+            return comp;
+          });
+          await this.saveScanResults(updatedResults);
+          return { success: true, componentName };
+        }
+        return { success: false };
+      } catch (error) {
+        console.error("\u274C Error updating component type:", error);
+        return { success: false };
+      }
+    }
+    /**
+     * Clear all scan data
+     */
+    static async clearScanData() {
+      try {
+        await figma.clientStorage.setAsync("design-system-scan", null);
+        await figma.clientStorage.setAsync("last-scan-results", null);
+        console.log("\u2705 Scan data cleared");
+      } catch (error) {
+        console.error("\u274C Error clearing scan data:", error);
+      }
+    }
+  };
 
   // src/ai/gemini-api.ts
   var _GeminiAPI = class _GeminiAPI {
@@ -7462,9 +4752,6 @@ IMPORTANT: Respond with valid JSON only. No explanation or additional text.` : "
       if (item.properties) {
         this.validateProperties(item.properties, `${path}.properties`, warnings);
       }
-      if (item.visibilityOverrides || item.iconSwaps) {
-        this.validateVisibilityOverrides(item, path, errors, warnings);
-      }
       if (item.items && Array.isArray(item.items)) {
         item.items.forEach((nestedItem, index) => {
           this.validateItem(nestedItem, `${path}.items[${index}]`, errors, warnings);
@@ -7492,73 +4779,6 @@ IMPORTANT: Respond with valid JSON only. No explanation or additional text.` : "
           path,
           suggestion: 'Move variant properties like "Condition", "Leading" into a variants object'
         });
-      }
-    }
-    /**
-     * Validate visibility overrides structure and node IDs
-     */
-    validateVisibilityOverrides(item, path, errors, warnings) {
-      if (item.visibilityOverrides) {
-        if (typeof item.visibilityOverrides !== "object") {
-          errors.push({
-            code: "INVALID_VISIBILITY_OVERRIDES_TYPE",
-            message: "visibilityOverrides must be an object",
-            path: `${path}.visibilityOverrides`,
-            severity: "medium",
-            fixable: false
-          });
-        } else {
-          Object.entries(item.visibilityOverrides).forEach(([nodeId, visible]) => {
-            if (typeof visible !== "boolean") {
-              errors.push({
-                code: "INVALID_VISIBILITY_VALUE",
-                message: `Visibility value for node ${nodeId} must be boolean`,
-                path: `${path}.visibilityOverrides.${nodeId}`,
-                severity: "medium",
-                fixable: true
-              });
-            }
-            if (!nodeId.match(/^\d+:\d+$/)) {
-              warnings.push({
-                code: "INVALID_NODE_ID_FORMAT",
-                message: `Node ID ${nodeId} may not be valid Figma node ID`,
-                path: `${path}.visibilityOverrides.${nodeId}`,
-                suggestion: 'Use format like "10:5622" from design system componentInstances'
-              });
-            }
-          });
-        }
-      }
-      if (item.iconSwaps) {
-        if (typeof item.iconSwaps !== "object") {
-          errors.push({
-            code: "INVALID_ICON_SWAPS_TYPE",
-            message: "iconSwaps must be an object",
-            path: `${path}.iconSwaps`,
-            severity: "medium",
-            fixable: false
-          });
-        } else {
-          Object.entries(item.iconSwaps).forEach(([nodeId, iconName]) => {
-            if (typeof iconName !== "string") {
-              errors.push({
-                code: "INVALID_ICON_NAME_TYPE",
-                message: `Icon name for node ${nodeId} must be string`,
-                path: `${path}.iconSwaps.${nodeId}`,
-                severity: "medium",
-                fixable: true
-              });
-            }
-            if (!nodeId.match(/^\d+:\d+$/)) {
-              warnings.push({
-                code: "INVALID_NODE_ID_FORMAT",
-                message: `Node ID ${nodeId} may not be valid Figma node ID`,
-                path: `${path}.iconSwaps.${nodeId}`,
-                suggestion: 'Use format like "10:5622" from design system componentInstances'
-              });
-            }
-          });
-        }
       }
     }
     /**
@@ -9014,28 +6234,6 @@ Native Element Patterns
   }
 }
 
-// Native Text with Text Style (when provided by UX Designer)
-{
-  "type": "native-text",
-  "text": "Account Settings",
-  "properties": {
-    "textStyle": "Heading 1",
-    "colorStyleName": "Primary/primary90",
-    "horizontalSizing": "FILL"
-  }
-}
-
-// Native Text with Both Text Style and Manual Override
-{
-  "type": "native-text",
-  "text": "Quick action",
-  "properties": {
-    "textStyle": "Body Text",
-    "color": {"r": 0.2, "g": 0.2, "b": 0.2},
-    "horizontalSizing": "FILL"
-  }
-}
-
 // Native Circle with Media Content
 {
   "type": "native-circle",
@@ -9128,65 +6326,7 @@ Advanced Conditional Behavior
   }
 }
 
-\u{1F527} CRITICAL: Full-Width vs Standard Layout Strategy
-
-When user requests "full-width", "edge-to-edge", or "hero" images/backgrounds:
-\u274C NEVER use root container padding - it prevents true full-width
-\u2705 ALWAYS use nested container strategy with zero root padding
-
-\u274C WRONG - Standard Layout (prevents full-width):
-{
-  "layoutContainer": {
-    "paddingLeft": 16,      // \u274C Blocks full-width elements
-    "paddingRight": 16,     // \u274C Blocks full-width elements
-    "items": [
-      {"type": "image"}     // \u274C Can't reach screen edges
-    ]
-  }
-}
-
-\u2705 CORRECT - Full-Width Layout Strategy:
-{
-  "layoutContainer": {
-    "paddingLeft": 0,       // \u2705 Allows true full-width
-    "paddingRight": 0,      // \u2705 Allows true full-width
-    "paddingTop": 0,
-    "paddingBottom": 0,
-    "itemSpacing": 0,       // \u2705 No gaps between sections
-    "items": [
-      {
-        "type": "layoutContainer",
-        "name": "Hero Section",    // \u2705 Full-width section
-        "layoutMode": "VERTICAL",
-        "paddingLeft": 0,          // \u2705 Edge-to-edge
-        "paddingRight": 0,         // \u2705 Edge-to-edge
-        "items": [
-          {"type": "image"}        // \u2705 Reaches screen edges
-        ]
-      },
-      {
-        "type": "layoutContainer", 
-        "name": "Content Section", // \u2705 Padded content section
-        "layoutMode": "VERTICAL",
-        "paddingLeft": 16,         // \u2705 Content padding
-        "paddingRight": 16,        // \u2705 Content padding
-        "paddingTop": 16,
-        "paddingBottom": 16,
-        "itemSpacing": 16,
-        "items": [
-          {"type": "text"},         // \u2705 Properly padded content
-          {"type": "button"}
-        ]
-      }
-    ]
-  }
-}
-
-\u{1F3AF} Layout Strategy Decision Tree:
-- User mentions "full-width", "edge-to-edge", "hero", "cover" \u2192 Use nested containers
-- Regular content layout \u2192 Use standard padding strategy
-
-Proper Layout Container Structure (Standard Content)
+Proper Layout Container Structure
 
 {
   "layoutContainer": {
@@ -9235,13 +6375,6 @@ Color Format: ALWAYS preserve colorStyleName when provided by UX Designer
 - NEVER convert colorStyleName to RGB - preserve the style reference
 {"colorStyleName": "Primary/primary80"}
 {"color": {"r": 0.1, "g": 0.1, "b": 0.1}}
-
-Text Style Format: ALWAYS preserve textStyle when provided by UX Designer
-- When UX Designer provides textStyle: Include it in properties object
-- When UX Designer provides manual properties: Use fontSize, fontWeight, etc.
-- NEVER convert textStyle to manual properties - preserve the style reference
-{"textStyle": "Heading 1"}
-{"fontSize": 24, "fontWeight": "bold"}
 
 Template Variables: Use \${variableName} for component IDs that need resolution
 {"componentNodeId": "\${settingsItemId}"}
@@ -10705,9 +7838,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
   };
 
   // code.ts
-  init_component_property_engine();
-  init_component_scanner();
-  init_json_migrator();
   var validationEngine;
   async function initializeAIPipeline() {
     try {
@@ -10847,17 +7977,11 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       const currentFileKey = figma.fileKey || figma.root.id;
       if (savedScan && savedScan.components && savedScan.components.length > 0) {
         if (savedScan.fileKey === currentFileKey) {
-          const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-          const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
-          console.log(`\u2705 Design system loaded: ${savedScan.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles`);
+          console.log(`\u2705 Design system loaded: ${savedScan.components.length} components`);
           figma.ui.postMessage({
             type: "saved-scan-loaded",
             components: savedScan.components,
-            colorStyles: savedScan.colorStyles,
-            textStyles: savedScan.textStyles,
-            scanTime: savedScan.scanTime,
-            colorStylesCount,
-            textStylesCount
+            scanTime: savedScan.scanTime
           });
         } else {
           console.log("\u2139\uFE0F Scan from different file, clearing cache");
@@ -10876,22 +8000,19 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
   }
   async function handleScanCommand() {
     try {
-      figma.notify("\u{1F50D} Scanning design system with color styles and text styles...", { timeout: 3e4 });
+      figma.notify("\u{1F50D} Scanning design system with color styles...", { timeout: 3e4 });
       const scanSession = await ComponentScanner.scanDesignSystem();
       await DesignSystemScannerService.saveScanSession(scanSession);
       await ComponentPropertyEngine.initialize();
       const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-      const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
       figma.ui.postMessage({
         type: "scan-results",
         components: scanSession.components,
         colorStyles: scanSession.colorStyles,
-        textStyles: scanSession.textStyles,
         scanTime: scanSession.scanTime,
-        colorStylesCount,
-        textStylesCount
+        colorStylesCount
       });
-      figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles and initialized systematic engine!`);
+      figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
       if (scanSession.components.length > 0) {
         const sampleComponent = scanSession.components.find((c) => c.suggestedType === "tab") || scanSession.components[0];
         ComponentPropertyEngine.debugSchema(sampleComponent.id);
@@ -10965,11 +8086,28 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       }
     });
     figma.ui.onmessage = async (msg) => {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       console.log("\u{1F4E8} Message from UI:", msg.type);
       switch (msg.type) {
         case "test-migration":
           handleMigrationTest();
+          break;
+        case "generate-ui-from-json":
+          try {
+            const layoutData = JSON.parse(msg.payload);
+            const newFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
+            if (newFrame) {
+              figma.ui.postMessage({
+                type: "ui-generated-success",
+                frameId: newFrame.id,
+                generatedJSON: layoutData
+              });
+            }
+          } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            figma.notify("JSON parsing error: " + errorMessage, { error: true });
+            figma.ui.postMessage({ type: "ui-generation-error", error: errorMessage });
+          }
           break;
         // ... (rest of the file)
         // ENHANCED: API-driven UI generation with validation
@@ -11150,21 +8288,18 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           break;
         case "scan-design-system":
           try {
-            figma.notify("\u{1F50D} Scanning design system with color styles and text styles...", { timeout: 3e4 });
+            figma.notify("\u{1F50D} Scanning design system with color styles...", { timeout: 3e4 });
             const scanSession = await DesignSystemScannerService.scanDesignSystem();
             await DesignSystemScannerService.saveScanSession(scanSession);
             const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-            const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
             figma.ui.postMessage({
               type: "scan-results",
               components: scanSession.components,
               colorStyles: scanSession.colorStyles,
-              textStyles: scanSession.textStyles,
               scanTime: scanSession.scanTime,
-              colorStylesCount,
-              textStylesCount
+              colorStylesCount
             });
-            figma.notify(`\u2705 Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles!`, { timeout: 3e3 });
+            figma.notify(`\u2705 Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3e3 });
           } catch (error) {
             console.error("Scan failed:", error);
             const errorMessage = error instanceof Error ? error.message : String(error);
@@ -11173,6 +8308,45 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
               error: errorMessage
             });
             figma.notify("Scan failed. Check console for details.", { error: true });
+          }
+          break;
+        case "test-color-styles":
+          try {
+            console.log("\u{1F3A8} Testing color styles scanning...");
+            const colorStyles = await ComponentScanner.scanFigmaColorStyles();
+            const totalCount = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+            figma.ui.postMessage({
+              type: "color-styles-result",
+              colorStyles,
+              count: totalCount
+            });
+            figma.notify(`\u2705 Found ${totalCount} color styles`, { timeout: 2e3 });
+          } catch (error) {
+            console.error("\u274C Color styles scan failed:", error);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            figma.ui.postMessage({
+              type: "color-styles-error",
+              error: errorMessage
+            });
+            figma.notify("\u274C Color styles scan failed", { error: true });
+          }
+          break;
+        case "generate-llm-prompt":
+          try {
+            const scanSession = await DesignSystemScannerService.getScanSession();
+            if (scanSession && ((_a = scanSession.components) == null ? void 0 : _a.length)) {
+              const llmPrompt = DesignSystemScannerService.generateLLMPrompt(
+                scanSession.components,
+                scanSession.colorStyles
+              );
+              figma.ui.postMessage({ type: "llm-prompt-generated", prompt: llmPrompt });
+            } else {
+              figma.notify("Scan components first", { error: true });
+            }
+          } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            console.error("\u274C Error generating LLM prompt:", errorMessage);
+            figma.notify("Error generating prompt", { error: true });
           }
           break;
         case "update-component-type":
@@ -11291,7 +8465,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
                 designSystemUsed: result.designSystemUsed,
                 componentsAvailable: result.componentsAvailable
               });
-              if ((_a = result.finalResult) == null ? void 0 : _a.generatedJSON) {
+              if ((_b = result.finalResult) == null ? void 0 : _b.generatedJSON) {
                 console.log("\u{1F3A8} Rendering UI from pipeline JSON...");
                 const newFrame = await FigmaRenderer.generateUIFromDataDynamic(result.finalResult.generatedJSON);
                 figma.ui.postMessage({
@@ -11310,7 +8484,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
                   type: "pipeline-success-no-render",
                   result: {
                     pipelineStats: result.aiUsageStats,
-                    content: (_b = result.finalResult) == null ? void 0 : _b.content,
+                    content: (_c = result.finalResult) == null ? void 0 : _c.content,
                     executionTime: result.executionTime,
                     stagesCompleted: result.stages.length
                   }
@@ -11413,8 +8587,8 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           break;
         case "render-json-direct":
           try {
-            const { json, source: source2, forceRender } = msg.payload;
-            console.log("\u{1F3A8} Rendering JSON directly from:", source2);
+            const { json, source } = msg.payload;
+            console.log("\u{1F3A8} Rendering JSON directly from:", source);
             let renderData = json;
             if (json.layoutContainer && json.layoutContainer.items) {
               renderData = __spreadProps(__spreadValues({}, json.layoutContainer), {
@@ -11422,34 +8596,14 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
               });
             }
             console.log("\u{1F527} Transformed JSON for rendering:", renderData);
-            const validation = FigmaRenderer.validateLayoutData(renderData);
-            if (validation.warnings.length > 0) {
-              console.warn("\u26A0\uFE0F Layout validation warnings:", validation.warnings);
-            }
-            if (!validation.valid) {
-              console.error("\u274C Layout validation failed:", validation.errors);
-              figma.ui.postMessage({
-                type: "validation-error",
-                errors: validation.errors,
-                warnings: validation.warnings,
-                source: source2
-              });
-              if (forceRender) {
-                console.warn("\u26A0\uFE0F Force render flag set - attempting render despite errors...");
-                figma.notify("Attempting render with error recovery...", { timeout: 2e3 });
-              } else {
-                figma.notify(`Layout validation failed: ${validation.errors[0]}`, { error: true });
-                return;
-              }
-            }
-            console.log("\u{1F527} JSON has items?", !!renderData.items, "Count:", (_c = renderData.items) == null ? void 0 : _c.length);
+            console.log("\u{1F527} JSON has items?", !!renderData.items, "Count:", (_d = renderData.items) == null ? void 0 : _d.length);
             console.log("\u{1F527} JSON layoutMode:", renderData.layoutMode);
             console.log("\u{1F527} JSON properties:", {
               itemSpacing: renderData.itemSpacing,
               paddingTop: renderData.paddingTop,
               primaryAxisSizingMode: renderData.primaryAxisSizingMode
             });
-            const newFrame = await FigmaRenderer.generateUIFromDataSystematic(renderData, figma.currentPage);
+            const newFrame = await FigmaRenderer.generateUIFromDataDynamic(renderData);
             console.log("\u{1F527} Generated frame:", newFrame, "ID:", newFrame == null ? void 0 : newFrame.id);
             if (newFrame) {
               figma.ui.postMessage({
@@ -11457,12 +8611,10 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
                 result: {
                   frameId: newFrame.id,
                   generatedJSON: json,
-                  source: source2,
-                  validationWarnings: validation.warnings
+                  source
                 }
               });
-              const warningText = validation.warnings.length > 0 ? ` (${validation.warnings.length} warnings)` : "";
-              figma.notify(`\u2705 ${source2} JSON rendered successfully${warningText}!`, { timeout: 3e3 });
+              figma.notify(`\u2705 ${source} JSON rendered successfully!`, { timeout: 3e3 });
             } else {
               throw new Error("Failed to create frame");
             }
@@ -11471,26 +8623,51 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
             const errorMessage = error instanceof Error ? error.message : String(error);
             figma.ui.postMessage({
               type: "json-render-error",
-              error: errorMessage,
-              source: source || "unknown"
+              error: errorMessage
             });
             figma.notify(`\u274C JSON render failed: ${errorMessage}`, { error: true });
+          }
+          break;
+        case "get-debug-log":
+          try {
+            console.log("\u{1F4C4} Retrieving debug log from storage...");
+            const debugData = await figma.clientStorage.getAsync("pipeline-debug-log-latest");
+            if (debugData && debugData.content) {
+              console.log(`\u2705 Debug log found: ${debugData.lines} lines, ${debugData.chars} chars`);
+              figma.ui.postMessage({
+                type: "debug-log-result",
+                success: true,
+                content: debugData.content,
+                runId: debugData.runId,
+                lines: debugData.lines,
+                chars: debugData.chars,
+                timestamp: debugData.timestamp
+              });
+            } else {
+              console.log("\u26A0\uFE0F No debug log found in storage");
+              figma.ui.postMessage({
+                type: "debug-log-result",
+                success: false,
+                message: "No debug log found. Run the pipeline first."
+              });
+            }
+          } catch (error) {
+            console.error("\u274C Error retrieving debug log:", error);
+            figma.ui.postMessage({
+              type: "debug-log-result",
+              success: false,
+              message: `Failed to retrieve debug log: ${error.message}`
+            });
           }
           break;
         case "get-saved-scan":
           try {
             const savedScan = await DesignSystemScannerService.getScanSession();
             if (savedScan && savedScan.components && savedScan.fileKey === figma.root.id) {
-              const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-              const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
               figma.ui.postMessage({
                 type: "saved-scan-loaded",
                 components: savedScan.components,
-                colorStyles: savedScan.colorStyles,
-                textStyles: savedScan.textStyles,
-                scanTime: savedScan.scanTime,
-                colorStylesCount,
-                textStylesCount
+                scanTime: savedScan.scanTime
               });
             } else {
               figma.ui.postMessage({ type: "no-saved-scan" });

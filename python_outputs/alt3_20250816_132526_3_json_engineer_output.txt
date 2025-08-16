@@ -1,0 +1,93 @@
+```json
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "height": 667,
+  "paddingTop": {
+    "type": "VARIABLE_ALIAS",
+    "id": "VariableID:spacing-lg"
+  },
+  "paddingBottom": {
+    "type": "VARIABLE_ALIAS",
+    "id": "VariableID:spacing-lg"
+  },
+  "itemSpacing": {
+    "type": "VARIABLE_ALIAS",
+    "id": "VariableID:spacing-md"
+  },
+  "children": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "paddingHorizontal": {
+        "type": "VARIABLE_ALIAS",
+        "id": "VariableID:spacing-lg"
+      },
+      "children": [
+        {
+          "type": "component",
+          "componentNodeId": "CompID:Logo"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "My App",
+            "fontSize": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:font-size-xl"
+            },
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:text-primary"
+            }
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "HORIZONTAL"
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingHorizontal": {
+        "type": "VARIABLE_ALIAS",
+        "id": "VariableID:spacing-lg"
+      },
+      "children": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This is some descriptive text about my app. It should wrap nicely.",
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:text-secondary"
+            }
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 300,
+            "height": 150,
+            "cornerRadius": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:radius-md"
+            },
+            "fill": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:fill-primary"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "CompID:Button"
+        }
+      ]
+    }
+  ]
+}
+```

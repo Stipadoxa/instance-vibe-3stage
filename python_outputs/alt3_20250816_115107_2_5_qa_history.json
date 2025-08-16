@@ -1,0 +1,32 @@
+[
+  {
+    "iteration": 1,
+    "issues": [
+      "itemSpacing of root container is 0, should be 16 or another valid value.",
+      "Padding values of root container are not all 0.",
+      "Content container has padding values, should be 0."
+    ],
+    "changes": [
+      "Changed itemSpacing of root container from 0 to 16.",
+      "Changed paddingTop, paddingBottom, paddingLeft, and paddingRight of root container to 0.",
+      "Changed paddingTop, paddingBottom, paddingLeft, and paddingRight of the content layoutContainer to 0."
+    ]
+  },
+  {
+    "iteration": 2,
+    "issues": [
+      "Component Validation:  The `iconSwaps` property is not part of the design system schema for the AppBar component (\"10:5620\").",
+      "Component Validation: The AppBar component is missing variant \"Elevation\": \"on-scroll\".",
+      "Component Validation: The `iconSwaps` property is not defined in the design system for component \"10:5620\".  The IDs used for icon swaps should match the `componentInstances` IDs within the component definition.",
+      "Component Validation:  \"arrow-dropdown\" and \"bookmark\"  are not valid componentNodeIds.",
+      "Text Element Validation:  No issues.",
+      "Layout Structure Validation: No issues.",
+      "Property Name Validation: No issues."
+    ],
+    "changes": [
+      "Added \"Elevation\": \"on-scroll\" to the appbar component's variants.",
+      "Removed the `iconSwaps` property from the AppBar component.",
+      "Added visibilityOverrides for \"10:5636\" to handle the visibility of the empty Label text layer."
+    ]
+  }
+]

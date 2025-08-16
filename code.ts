@@ -271,17 +271,11 @@ async function initializeSession() {
     
     if (savedScan && savedScan.components && savedScan.components.length > 0) {
       if (savedScan.fileKey === currentFileKey) {
-        const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-        const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
-        console.log(`✅ Design system loaded: ${savedScan.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles`);
+        console.log(`✅ Design system loaded: ${savedScan.components.length} components`);
         figma.ui.postMessage({ 
           type: 'saved-scan-loaded', 
           components: savedScan.components,
-          colorStyles: savedScan.colorStyles,
-          textStyles: savedScan.textStyles,
-          scanTime: savedScan.scanTime,
-          colorStylesCount: colorStylesCount,
-          textStylesCount: textStylesCount
+          scanTime: savedScan.scanTime 
         });
       } else {
         console.log("ℹ️ Scan from different file, clearing cache");
@@ -305,9 +299,9 @@ async function initializeSession() {
 
 async function handleScanCommand() {
   try {
-    figma.notify("🔍 Scanning design system with color styles and text styles...", { timeout: 30000 });
+    figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
     
-    // Use comprehensive scanner that includes components, color styles, and text styles
+    // Use comprehensive scanner that includes both components and color styles
     const scanSession = await ComponentScanner.scanDesignSystem();
     
     // Save complete scan session using the new method
@@ -317,20 +311,17 @@ async function handleScanCommand() {
     await ComponentPropertyEngine.initialize();
     
     const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-    const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
     
     // Send scan results to UI (same as manual scan)
     figma.ui.postMessage({ 
       type: 'scan-results', 
       components: scanSession.components,
       colorStyles: scanSession.colorStyles,
-      textStyles: scanSession.textStyles,
       scanTime: scanSession.scanTime,
-      colorStylesCount: colorStylesCount,
-      textStylesCount: textStylesCount
+      colorStylesCount: colorStylesCount
     });
     
-    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles and initialized systematic engine!`);
+    figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles and initialized systematic engine!`);
     
     // Optional: Show debug info for a sample component
     if (scanSession.components.length > 0) {
@@ -397,9 +388,6 @@ async function initializePlugin() {
   }
 }
 
-
-
-
 async function main() {
   console.log("🚀 AIDesigner plugin started");
   figma.showUI(__html__, { width: 400, height: 720 });
@@ -429,6 +417,23 @@ figma.ui.onmessage = async (msg: any) => {
     switch (msg.type) {
         case 'test-migration':
             handleMigrationTest();
+            break;
+        case 'generate-ui-from-json':
+            try {
+                const layoutData = JSON.parse(msg.payload);
+                const newFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
+                if (newFrame) {
+                    figma.ui.postMessage({ 
+                        type: 'ui-generated-success', 
+                        frameId: newFrame.id, 
+                        generatedJSON: layoutData 
+                    });
+                }
+            } catch (e: any) {
+                const errorMessage = e instanceof Error ? e.message : String(e);
+                figma.notify("JSON parsing error: " + errorMessage, { error: true });
+                figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
+            }
             break;
 // ... (rest of the file)
 
@@ -472,7 +477,6 @@ figma.ui.onmessage = async (msg: any) => {
                 figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
             }
             break;
-
 
 
         // NEW: Standalone JSON validation
@@ -637,7 +641,7 @@ figma.ui.onmessage = async (msg: any) => {
 
         case 'scan-design-system':
             try {
-                figma.notify("🔍 Scanning design system with color styles and text styles...", { timeout: 30000 });
+                figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
                 
                 // Use comprehensive scanner from DesignSystemScannerService
                 const scanSession = await DesignSystemScannerService.scanDesignSystem();
@@ -646,20 +650,17 @@ figma.ui.onmessage = async (msg: any) => {
                 await DesignSystemScannerService.saveScanSession(scanSession);
                 
                 const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-                const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
                 
                 // Send scan results to UI (what the UI expects)
                 figma.ui.postMessage({ 
                     type: 'scan-results', 
                     components: scanSession.components,
                     colorStyles: scanSession.colorStyles,
-                    textStyles: scanSession.textStyles,
                     scanTime: scanSession.scanTime,
-                    colorStylesCount: colorStylesCount,
-                    textStylesCount: textStylesCount
+                    colorStylesCount: colorStylesCount
                 });
                 
-                figma.notify(`✅ Scanned ${scanSession.components.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles!`, { timeout: 3000 });
+                figma.notify(`✅ Scanned ${scanSession.components.length} components and ${colorStylesCount} color styles!`, { timeout: 3000 });
             } catch (error) {
                 console.error("Scan failed:", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
@@ -674,7 +675,51 @@ figma.ui.onmessage = async (msg: any) => {
             }
             break;
 
+        case 'test-color-styles':
+            try {
+                console.log("🎨 Testing color styles scanning...");
+                const colorStyles = await ComponentScanner.scanFigmaColorStyles();
+                
+                // Count total color styles across all categories
+                const totalCount = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
+                
+                figma.ui.postMessage({ 
+                    type: 'color-styles-result', 
+                    colorStyles: colorStyles,
+                    count: totalCount
+                });
+                
+                figma.notify(`✅ Found ${totalCount} color styles`, { timeout: 2000 });
+                
+            } catch (error) {
+                console.error("❌ Color styles scan failed:", error);
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                figma.ui.postMessage({ 
+                    type: 'color-styles-error', 
+                    error: errorMessage 
+                });
+                figma.notify("❌ Color styles scan failed", { error: true });
+            }
+            break;
 
+        case 'generate-llm-prompt':
+            try {
+                const scanSession = await DesignSystemScannerService.getScanSession();
+                if (scanSession && scanSession.components?.length) {
+                    const llmPrompt = DesignSystemScannerService.generateLLMPrompt(
+                        scanSession.components, 
+                        scanSession.colorStyles
+                    );
+                    figma.ui.postMessage({ type: 'llm-prompt-generated', prompt: llmPrompt });
+                } else {
+                    figma.notify("Scan components first", { error: true });
+                }
+            } catch (e: any) {
+                const errorMessage = e instanceof Error ? e.message : String(e);
+                console.error("❌ Error generating LLM prompt:", errorMessage);
+                figma.notify("Error generating prompt", { error: true });
+            }
+            break;
 
         case 'update-component-type':
             const { componentId, newType } = msg.payload;
@@ -961,7 +1006,7 @@ figma.ui.onmessage = async (msg: any) => {
 
         case 'render-json-direct':
             try {
-                const { json, source, forceRender } = msg.payload;
+                const { json, source } = msg.payload;
                 console.log('🎨 Rendering JSON directly from:', source);
                 
                 // Transform JSON structure if needed (3-stage pipeline uses layoutContainer wrapper)
@@ -975,35 +1020,6 @@ figma.ui.onmessage = async (msg: any) => {
                 }
                 
                 console.log('🔧 Transformed JSON for rendering:', renderData);
-                
-                // Validate layout data before rendering
-                const validation = FigmaRenderer.validateLayoutData(renderData);
-                
-                if (validation.warnings.length > 0) {
-                    console.warn('⚠️ Layout validation warnings:', validation.warnings);
-                }
-                
-                if (!validation.valid) {
-                    console.error('❌ Layout validation failed:', validation.errors);
-                    
-                    // Send detailed error to UI
-                    figma.ui.postMessage({
-                        type: 'validation-error',
-                        errors: validation.errors,
-                        warnings: validation.warnings,
-                        source: source
-                    });
-                    
-                    // If forceRender flag is set, try anyway
-                    if (forceRender) {
-                        console.warn('⚠️ Force render flag set - attempting render despite errors...');
-                        figma.notify('Attempting render with error recovery...', { timeout: 2000 });
-                    } else {
-                        figma.notify(`Layout validation failed: ${validation.errors[0]}`, { error: true });
-                        return;
-                    }
-                }
-                
                 console.log('🔧 JSON has items?', !!renderData.items, 'Count:', renderData.items?.length);
                 console.log('🔧 JSON layoutMode:', renderData.layoutMode);
                 console.log('🔧 JSON properties:', {
@@ -1012,8 +1028,8 @@ figma.ui.onmessage = async (msg: any) => {
                     primaryAxisSizingMode: renderData.primaryAxisSizingMode
                 });
                 
-                // Try to render the JSON with systematic validation
-                const newFrame = await FigmaRenderer.generateUIFromDataSystematic(renderData, figma.currentPage);
+                // Try to render the JSON
+                const newFrame = await FigmaRenderer.generateUIFromDataDynamic(renderData);
                 
                 console.log('🔧 Generated frame:', newFrame, 'ID:', newFrame?.id);
                 
@@ -1023,13 +1039,11 @@ figma.ui.onmessage = async (msg: any) => {
                         result: {
                             frameId: newFrame.id,
                             generatedJSON: json,
-                            source: source,
-                            validationWarnings: validation.warnings
+                            source: source
                         }
                     });
                     
-                    const warningText = validation.warnings.length > 0 ? ` (${validation.warnings.length} warnings)` : '';
-                    figma.notify(`✅ ${source} JSON rendered successfully${warningText}!`, { timeout: 3000 });
+                    figma.notify(`✅ ${source} JSON rendered successfully!`, { timeout: 3000 });
                 } else {
                     throw new Error('Failed to create frame');
                 }
@@ -1040,29 +1054,61 @@ figma.ui.onmessage = async (msg: any) => {
                 
                 figma.ui.postMessage({
                     type: 'json-render-error',
-                    error: errorMessage,
-                    source: source || 'unknown'
+                    error: errorMessage
                 });
                 
                 figma.notify(`❌ JSON render failed: ${errorMessage}`, { error: true });
             }
             break;
 
+        case 'get-debug-log':
+            try {
+                console.log('📄 Retrieving debug log from storage...');
+                
+                // Try to get the latest debug log
+                const debugData = await figma.clientStorage.getAsync('pipeline-debug-log-latest');
+                
+                if (debugData && debugData.content) {
+                    console.log(`✅ Debug log found: ${debugData.lines} lines, ${debugData.chars} chars`);
+                    
+                    figma.ui.postMessage({
+                        type: 'debug-log-result',
+                        success: true,
+                        content: debugData.content,
+                        runId: debugData.runId,
+                        lines: debugData.lines,
+                        chars: debugData.chars,
+                        timestamp: debugData.timestamp
+                    });
+                } else {
+                    console.log('⚠️ No debug log found in storage');
+                    
+                    figma.ui.postMessage({
+                        type: 'debug-log-result',
+                        success: false,
+                        message: 'No debug log found. Run the pipeline first.'
+                    });
+                }
+                
+            } catch (error) {
+                console.error('❌ Error retrieving debug log:', error);
+                
+                figma.ui.postMessage({
+                    type: 'debug-log-result',
+                    success: false,
+                    message: `Failed to retrieve debug log: ${error.message}`
+                });
+            }
+            break;
         
         case 'get-saved-scan':
             try {
                 const savedScan = await DesignSystemScannerService.getScanSession();
                 if (savedScan && savedScan.components && savedScan.fileKey === figma.root.id) {
-                    const colorStylesCount = savedScan.colorStyles ? Object.values(savedScan.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-                    const textStylesCount = savedScan.textStyles ? savedScan.textStyles.length : 0;
                     figma.ui.postMessage({ 
                         type: 'saved-scan-loaded', 
                         components: savedScan.components,
-                        colorStyles: savedScan.colorStyles,
-                        textStyles: savedScan.textStyles,
-                        scanTime: savedScan.scanTime,
-                        colorStylesCount: colorStylesCount,
-                        textStylesCount: textStylesCount
+                        scanTime: savedScan.scanTime 
                     });
                 } else {
                     figma.ui.postMessage({ type: 'no-saved-scan' });
