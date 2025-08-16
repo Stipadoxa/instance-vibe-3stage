@@ -1080,43 +1080,15 @@ export class ComponentScanner {
             textStyleId = node.textStyleId || undefined;
             boundTextStyleId = node.boundTextStyleId || undefined;
             
-            // Resolve style name using pre-built lookup map (fast and reliable)
+            // Resolve style name using pre-built lookup map (exactly like paintStyleName)
             if (textStyleId) {
               textStyleName = this.textStyleMap.get(textStyleId);
               if (!textStyleName) {
-                // Try multiple ID format variations
+                // Try format variations similar to paintStyleId approach
                 const baseId = textStyleId.split(',')[0];
                 const mapFormatId = baseId + ',';
                 
-                // Try exact Map format first (most likely)
-                textStyleName = this.textStyleMap.get(mapFormatId);
-                if (textStyleName) {
-                  console.log(`✅ Found text style using map format: "${textStyleName}"`);
-                } else {
-                  // Try base ID without comma
-                  textStyleName = this.textStyleMap.get(baseId);
-                  if (textStyleName) {
-                    console.log(`✅ Found text style using base ID: "${textStyleName}"`);
-                  } else {
-                    // Try finding by hash substring match
-                    for (const [mapId, styleName] of this.textStyleMap) {
-                      if (mapId.includes(baseId.replace('S:', ''))) {
-                        textStyleName = styleName;
-                        console.log(`✅ Found text style using hash match: "${textStyleName}"`);
-                        break;
-                      }
-                    }
-                  }
-                }
-                
-                if (!textStyleName) {
-                  // Reduce spam - only log once per unique ID
-                  if (!this.loggedMissingIds) this.loggedMissingIds = new Set();
-                  if (!this.loggedMissingIds.has(textStyleId)) {
-                    console.warn(`Text style ID not found: ${textStyleId.substring(0, 20)}...`);
-                    this.loggedMissingIds.add(textStyleId);
-                  }
-                }
+                textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
               }
             }
           } catch (e) {
