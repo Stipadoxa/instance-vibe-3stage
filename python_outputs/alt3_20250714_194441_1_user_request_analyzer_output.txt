@@ -1,0 +1,27 @@
+Domain & Context
+Domain:  Business/SaaS domain, specifically user account management within a mobile application (Cars45 auction).
+User Type: Registered users of the Cars45 mobile app managing their account settings and preferences.  This includes both individual users and those with business accounts.
+Platform Impact: Mobile platform necessitates a concise, touch-friendly interface with clear visual hierarchy due to screen size limitations.  Users may be in distracting environments, requiring simple navigation and clear feedback.
+
+User Requirements
+Primary Goals: Modify account details (personal and business), manage notification preferences, and securely logout.
+Secondary Goals: Access help information regarding account settings, understand the meaning of "Verified ID" badge.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings options from the reference image are present and accessible, navigation is intuitive, and all interactive elements meet minimum tap target sizes.
+
+Content Requirements
+Critical:  Personal details (changeable), business details (changeable), access to Cars45 auction (toggle), "Verified ID" badge (with explanation), change phone number, change email, change language, disable chats, disable feedback, manage notifications, change password, delete account, log out.
+Supporting:  Clear visual indication of active/inactive states for toggles.
+Contextual:  Error messages for invalid input (e.g., email format).
+
+Structural & Component Directives
+* Layout: Vertical list of settings options as shown in the reference image, with top and bottom app navigation bars.
+* Components:  Use existing app components for list items, toggles, and navigation.  Each list item should clearly indicate the setting and provide a method of modification (e.g., tap to open a new screen for more detailed settings, toggle for on/off options).
+* Styling: Match the existing app's styling guidelines and the visual style demonstrated in the reference image, paying attention to color schemes and typography.
+
+Screen Requirements
+Primary Actions: Modify settings, logout.
+Secondary Actions: Access help/information for specific settings (e.g., "What is it?").
+Screen States: Default state (all settings displayed), loading state (if any asynchronous operations are involved), error states (for invalid input).
+Feedback Needs: Clear visual indication of changes saved, loading indicators for long-running operations, error messages for invalid inputs.
+

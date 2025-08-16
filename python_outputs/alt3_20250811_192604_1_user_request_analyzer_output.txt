@@ -1,0 +1,37 @@
+```json
+{
+  "userRequest": "Design a mobile app screen for booking an appointment with a doctor.  It should show the doctor's name, specialty, available times, and a button to book.",
+  "domainAnalysis": {
+    "primaryDomain": "Appointment & Calendar",
+    "platform": "mobile",
+    "context": "Healthcare appointment booking"
+  },
+  "contentSpecification": {
+    "screenPurpose": "Allow users to select an available time slot for an appointment with a specific doctor.",
+    "primaryContent": {
+      "actualHeading": "Dr. Evelyn Reed",
+      "coreDataDisplayed": "Family Medicine | Available Times",
+      "primaryActionLabels": ["Book Appointment"]
+    },
+    "supportingContent": {
+      "topNavigationLabels": ["Back to Search", "Filters"],
+      "bottomNavigationLabels": ["Home", "Search", "Calendar", "Profile"],
+      "secondaryActionLabels": ["View Doctor Profile"],
+      "statusMessages": ["Appointments available next week"],
+      "contextualLabels": ["Time Slots", "Duration"]
+    },
+    "actualUIContent": {
+      "realData": [
+        {"time": "Monday, October 23, 2:00 PM", "available": true},
+        {"time": "Monday, October 23, 3:00 PM", "available": true},
+        {"time": "Tuesday, October 24, 10:00 AM", "available": false},
+        {"time": "Tuesday, October 24, 11:00 AM", "available": true},
+        {"time": "Wednesday, October 25, 9:00 AM", "available": true}
+      ],
+      "microcopyText": ["Tap a time slot to select", "30-minute appointment duration"],
+      "emptyStateText": "No appointments available for this doctor at the moment.",
+      "notificationText": ["Appointment booked successfully!", "Something went wrong. Please try again later."]
+    }
+  }
+}
+```

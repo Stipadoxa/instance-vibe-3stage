@@ -1,0 +1,111 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout prioritizes a vertical scrolling structure, placing the most crucial information—the product image, title, price, and description—at the top for immediate visibility.  This follows the user's primary goal of quickly assessing the product.  The 'Contact Seller' button is given significant prominence, strategically placed for easy access.  Secondary information (seller details, similar products) is positioned below to avoid cluttering the primary view.",
+    "userFlowReasoning": "The user flow focuses on a linear progression. Users first see the product image and key details, then proceed to the description, and finally, take the primary action of contacting the seller. Secondary actions, like viewing seller information or similar products, are presented as options for further engagement.",
+    "componentChoices": "The 'appbar' component provides a standard top navigation bar with a back button. A large 'image' component showcases the product.  'text' components with appropriate text styles are used for the title, price, and description to maintain consistent visual hierarchy.  A prominent 'button' component facilitates the 'Contact Seller' action. These choices leverage the Design System for consistency and efficiency.",
+    "visualHierarchy": "Visual hierarchy is established through a combination of component size, placement, and styling. The large product image immediately attracts attention.  The title and price utilize larger text styles for prominence. The description uses a smaller text style for readability.  The 'Contact Seller' button is styled with a primary color and clear call to action to emphasize its importance."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Product Details",
+          "subheadline": "",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "items": [
+          {
+            "type": "image",
+            "componentNodeId": "10:7816",
+            "properties": {
+              "variants": {
+                "Type": "1 image"
+              },
+              "image": "REPLACE_WITH_PRODUCT_IMAGE_URL"
+            },
+            "styleInfo": {
+              "backgroundColor": {
+                "type": "SOLID",
+                "color": "#f2f2f2",
+                "opacity": 1
+              }
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Product Title",
+              "textStyle": "Headline/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "$19.99",
+              "textStyle": "Title/Large",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Product Description",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Contact Seller",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

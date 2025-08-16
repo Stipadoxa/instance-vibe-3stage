@@ -1,0 +1,113 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs referenced below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure.  The search bar occupies the full width at the top. The filter button is placed to the right of the search bar. Product cards are arranged in a grid layout, providing optimal use of screen space.  Horizontal spacing between grid items is 16px and vertical spacing is 16px.  Each product card uses a `horizontalSizing` of "AUTO" to allow for variable widths based on the product title length, maintaining a responsive layout.
+
+
+3. **User Flow Reasoning:** The user first encounters the search bar to input their query. The filter button allows them to refine results. The grid of product cards enables efficient browsing of results, enabling them to easily view multiple products simultaneously.  Clicking on a product card will lead to the product details page.
+
+
+4. **Component Choices:** 
+    * **Search Bar:** I chose `10:12086` (search-field) as it provides the full-width input field required for the search bar. Alternatives were not considered as this was the only full-width search component available in the Design System.
+    * **Filter Button:**  I chose `10:3907` (Button) with variants {"Size": "Medium", "Type": "Filled", "Color": "Green", "State": "Default"} as it’s a standard button style suitable for filtering. The "Text" type and other colors were not considered as the "Green" color scheme best fits a filter button's function.
+    * **Product Card:** I chose `147:3743` (product card) as it provides the necessary structure to display the product image, title, price, and rating.  No alternatives were considered as this was the only available "card" type component to fulfill the requirements.
+
+
+5. **Component Gaps:** The design system lacks a dedicated grid layout component for arranging the product cards. To address this, I'll use a `native-layout-grid` within the design specification to achieve the grid structure.  This approach utilizes a native element but allows flexible component-based styling of the individual product cards within the grid. This provides a flexible and responsive grid layout whilst being adaptable to different screen sizes while aligning to the design's needs.
+
+6. **Visual Hierarchy:** Prominence is established through the size and position of the search bar at the top. The product cards are given equal prominence through consistent sizing and spacing within the grid layout.  The filter button is a secondary element, and thus is less prominent in size and color scheme.
+
+7. **Variant Selection Rationale:** The `10:3907` (Button) component's "Medium" size was chosen for readability and optimal tap target. The "Filled" Type provides clear visual feedback. The "Green" color is used as it is conventional for Filter buttons.  "Default" State is set as it is the standard state for an inactive button.
+
+8. **Native Element Justification:**  A `native-layout-grid` is used to create the product card grid. No suitable component from the design system fulfills this layout function. `native-layout-grid` provides an essential layout functionality that enables grid structure and responsive behavior that no other component in the design system offers.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:12086",
+            "variants": {
+              "Device": "Mobile",
+              "State": "default"
+            },
+            "horizontalSizing": "FILL"
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-layout-grid",
+        "properties": {
+          "columns": 2,
+          "columnSpacing": 16,
+          "rowSpacing": 16,
+          "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16
+        },
+        "items": [
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            }
+          },
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            }
+          },
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            }
+          },
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

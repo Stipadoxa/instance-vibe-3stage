@@ -1,0 +1,164 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Used Figma component IDs provided in the designer's JSON.  'appbar', 'list-item', 'switch', and 'button' components were selected based on their suitability for the design requirements and consistency with Figma's design system.",
+    "styleApplication": "Text styles are applied consistently within each component instance.  The 'Body/Medium' text style is used for all list items, following the designer's specification.  The 'Error/error50' color style is applied to the logout button, as specified.",
+    "designSystemMapping": "Mapped designer specifications directly to Figma components. Component properties (headline, supporting text, trailing-icon, etc.) were mapped to corresponding Figma properties.  Color styles and text styles were directly used from the design system.",
+    "variantDecisions": "Variants were selected according to the design specifications. For the list items, appropriate variants are selected based on the presence of trailing icons or supporting text.  'switch' components use the default variant, and the button's size and style are defined explicitly."
+  }
+}
+---RATIONALE_SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "paddingBottom": 16,
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "Trailing supporting text": "Active"
+          },
+          "componentInstances": [
+            {
+              "type": "switch",
+              "componentNodeId": "10:9912",
+              "properties": {
+                "variants": {
+                  "Selected": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "Trailing supporting text": "What is it?"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats"
+          },
+          "componentInstances": [
+            {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback"
+          },
+          "componentInstances": [
+            {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently"
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Log out",
+            "colorStyleName": "Error/error50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Bottom navigation",
+      "componentNodeId": "10:4724"
+    }
+  ]
+}

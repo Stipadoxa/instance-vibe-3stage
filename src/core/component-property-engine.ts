@@ -349,6 +349,14 @@ export class ComponentPropertyEngine {
   }
 
   static validateAndProcessProperties(componentId: string, rawProperties: any): PropertyValidationResult {
+    console.log('🔍 PROPERTY ENGINE - Schema lookup:', {
+      componentId,
+      rawProperties,
+      hasSchema: this.componentSchemas.has(componentId),
+      totalSchemas: this.componentSchemas.size,
+      allSchemaIds: Array.from(this.componentSchemas.keys())
+    });
+    
     const schema = this.componentSchemas.get(componentId);
     
     if (!schema) {
@@ -545,7 +553,7 @@ export class ComponentPropertyEngine {
     
     const debugFrame = figma.createFrame();
     debugFrame.name = `Debug: ${schema.name}`;
-    debugFrame.resize(400, 600);
+    debugFrame.resize(400, 812);
     debugFrame.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 0.95 } }];
     
     await figma.loadFontAsync({ family: "Inter", style: "Bold" });

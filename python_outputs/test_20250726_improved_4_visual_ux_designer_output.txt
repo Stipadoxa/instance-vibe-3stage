@@ -1,0 +1,74 @@
+```json
+{
+  "analysis": {
+    "visualEvidence": [
+      "Screenshot shows '100+' badges inline with notification text, reducing scanability and potentially obscuring important information.",
+      "The subtitle 'subtitle' under 'Notifications' is unclear and doesn't provide useful information."
+    ],
+    "designSystemValidation": {
+      "availableVariants": {},
+      "validationErrors": []
+    }
+  },
+  "assessment": {
+    "passed": false,
+    "score": 70,
+    "issues": [
+      "'100+' badges are inline with notification text, reducing scannability (visual evidence: screenshot shows '100+' overlapping notification text).",
+      "Unclear subtitle 'subtitle' provides no useful information (visual evidence: screenshot shows a placeholder subtitle)."
+    ],
+    "recommendImprovement": true,
+    "reasoning": "Score 70 < 75 threshold AND specific visual problems documented"
+  },
+  "improvedLayoutData": {
+    "layoutContainer": {
+      "name": "Notifications Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO"
+    },
+    "items": [
+      {
+        "type": "notification-item", 
+        "componentNodeId": "notification-item-id", 
+        "properties": {
+          "title": "New Message",
+          "subtitle": "You have received a new message",
+          "trailing": "Badge",
+          "badgeText": "100+",
+          "icon": "message-icon"
+        }
+      },
+      {
+        "type": "notification-item",
+        "componentNodeId": "notification-item-id",
+        "properties": {
+          "title": "Meeting Reminder",
+          "subtitle": "Team meeting in 30 minutes",
+          "trailing": "Badge",
+          "badgeText": "100+",
+          "icon": "calendar-icon"
+        }
+      },
+      {
+        "type": "notification-item",
+        "componentNodeId": "notification-item-id",
+        "properties": {
+          "title": "System Update",
+          "subtitle": "App updated to version 2.1.0",
+          "trailing": "Badge",
+          "badgeText": "100+",
+          "icon": "update-icon"
+        }
+      }
+    ]
+  }
+}
+```
+
+**Note:**  This response assumes the existence of a `notification-item` component type within the design system, along with variants for `trailing` (allowing a badge),  `badgeText`, and icon properties. The specific component IDs and property names would need to be adjusted to match the actual design system data.  The `improvedLayoutData` provides a structural improvement by separating the badge from the main text, addressing the scannability issue.  The placeholder subtitle "subtitle" is removed as it's not informative.  Additional improvements may be needed depending on the actual design system provided.

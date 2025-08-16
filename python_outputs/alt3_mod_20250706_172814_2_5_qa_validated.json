@@ -1,0 +1,72 @@
+{
+  "layoutContainer": {
+    "name": "Screen with Button",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "headline": "Title",
+        "subheadline": "subtitle",
+        "Settings": "Settings"
+      },
+      "visibilityOverrides": {
+        "10:5636": false
+      }
+    },
+    {
+      "type": "content",
+      "layoutGrow": 1,
+      "items": [
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": {
+                "textStyle": "Title/Medium",
+                "flexFillRequired": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "variants": {
+          "Device": "Mobile"
+        },
+        "label": [
+          "Home",
+          "Saved",
+          "Sell",
+          "Sell",
+          "Profile"
+        ]
+      }
+    }
+  ]
+}

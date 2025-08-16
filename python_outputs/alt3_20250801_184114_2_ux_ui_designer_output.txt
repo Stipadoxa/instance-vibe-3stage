@@ -1,0 +1,126 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout follows a vertical structure, placing input fields above the buttons and the footnote at the bottom. This arrangement is intuitive and common for login forms, ensuring ease of use.",
+    "userFlowReasoning": "The user flow is straightforward: users enter their email and password, then click \"Sign in\". If there's an error, they receive clear instructions on how to correct it. The \"Sign up\" button provides an alternative path for new users.",
+    "componentChoices": "I chose the \"10:8492 text input\" component for the email and password fields over \"10:8619 text area\" and  \"10:12086 search-field\" because input fields are standard for short text entries like email addresses and passwords. Textarea is inappropriate for single-line input and search-field is not designed for credential entry.  The design system clearly shows distinct visual patterns for input components.",
+    "visualHierarchy": "Visual hierarchy is established through vertical spacing between sections and the use of typography.  Headings have more prominent sizes compared to body text, and buttons are visually distinct elements, using size and color to stand out.",
+    "variantSelectionRationale": "For the \"Sign in\" button (10:3907), I selected the \"Type: Filled\", \"Size: Large\", \"Color: Green\", and \"State: Default\" variants instead of other options because a filled, large button with a strong color offers maximum prominence and clear visual feedback, ensuring that it stands out against the background and other elements. The default state indicates it's ready for user interaction.  The design system illustrates these options for primary actions.",
+    "nativeElementJustification": "With moment significance of 0.7 and first_touch journey position, this login screen warrants expressive treatment. Native gradient backgrounds and decorative shapes create a memorable first impression while component-based interactions ensure reliability. The pre-filled email field serves to subtly personalize the experience.  This aligns with Pattern 2: Onboarding & First Touch."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 320,
+          "height": 200,
+          "fill": {
+            "type": "LINEAR",
+            "stops": [
+              {
+                "color": "primary-50",
+                "position": 0
+              },
+              {
+                "color": "primary-10",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 24,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 60,
+          "height": 60,
+          "fill": "primary-5",
+          "cornerRadius": 30,
+          "marginLeft": 200,
+          "marginTop": -20
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "label-text": "Your e-mail",
+          "placeholder-text": "123@example.ua"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "error"
+        },
+        "textLayers": {
+          "label-text": "Your password",
+          "supporting-text": "Please enter your password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Sign in"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Sign up"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "By continuing you agree to the Policy and Rules",
+          "fontSize": 11,
+          "fontWeight": "400",
+          "alignment": "center",
+          "color": "primary-500",
+          "horizontalSizing": "FILL"
+        }
+      }
+    ]
+  }
+}
+```

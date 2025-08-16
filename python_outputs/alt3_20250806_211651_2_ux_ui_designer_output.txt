@@ -1,0 +1,188 @@
+SECTIONS:
+
+logo: [Contains the CraftMart logo (optional, to be specified with dimensions and style) to reinforce branding and provide visual identity for the app.]
+
+form: [Contains email and password input fields, a login button, and a "Forgot Password?" link. This section facilitates user authentication and access to the marketplace.]
+
+links: [Includes "Create Account" link to guide new users to the registration process and "Terms of Service" and "Privacy Policy" links for legal compliance and transparency.]
+
+
+DESIGN RATIONALE:
+
+Component Inventory Verification: I have verified all component references against the provided design system data.
+
+Section Planning: The login screen follows the "Login" page type pattern from the SECTION PATTERNS.  It prioritizes a clear and concise login form, with secondary actions and links placed below to maintain a clean visual hierarchy.  The logo sits at the top to establish branding.
+
+Layout Decisions: The layout uses a vertical arrangement for the sections: logo at the top (Level 1 container with top padding),  form in the center (Level 1 container with padding), and links at the bottom (Level 1 container with padding).  This arrangement is intuitive and follows a common login screen pattern. Level 1 containers use `horizontalSizing: "FILL"` to span the full width of the screen (414px). All nested elements (Level 2+) within these containers will auto-size to their content.
+
+User Flow Reasoning: The user flow is straightforward. The user sees the logo, enters their email and password, clicks "Sign In," and is taken to the marketplace. If they forget their password, they click the "Forgot Password?" link. If they are new users, they click "Create Account".
+
+Component Choices: I chose the `10:8492` ("text input") component for email and password fields because it provides a standard input experience.  For the login button, I selected the `10:3907` ("Button") component for its clear call to action.  The "Forgot Password?" link will be a standard native `<a>` tag styled appropriately.  This was a suitable option over creating a custom button or using other input field types. The create account link will be a native `<a>` tag as well.
+
+Component Gaps: The design system does not provide a single component for the complete login form. The `10:8492` text input does not handle password masking natively. Thus a native text input component will need to be created and styled accordingly.
+
+
+Visual Hierarchy:  The visual hierarchy is established through size, spacing, and color. The "Sign In" button is the most prominent element, with larger text size and primary color.  The input fields are clearly defined. The secondary links are smaller and use a lighter, secondary color.
+
+
+Variant Selection Rationale: For the "Sign In" button (`10:3907`), I've chosen the "Filled" type and "Large" size for maximum visual impact and improved tap target area. The default state is used.  For the text input fields, I'll be using the "Filled" type and leaving the states as default, while applying the password masking using native methods.
+
+Native Element Justification:  A native `<a>` element was used for the "Forgot Password?", "Create Account", "Terms of Service", and "Privacy Policy" links because these actions require a URL and navigating to another view, functionalities not inherently supported by the available components.
+
+
+DESIGN SPECIFICATION:
+
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 150,
+              "height": 50,
+              "fill": {
+                "type": "SOLID",
+                "color": {
+                  "r": 1,
+                  "g": 1,
+                  "b": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 0,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "label-text": "Email Address",
+              "placeholder-text": "your.email@example.com",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "label-text": "Password",
+              "placeholder-text": "********",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Sign In",
+              "variants": {
+                "Type": "Filled",
+                "Size": "Large",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Forgot Password?",
+              "textColor": "Neutral/neutral50",
+              "fontSize": 14,
+              "fontWeight": 400,
+              "textDecoration": "underline"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Create Account",
+              "textColor": "Neutral/neutral50",
+              "fontSize": 14,
+              "fontWeight": 400,
+              "textDecoration": "underline"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "horizontalSizing": "FILL",
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Terms of Service",
+              "textColor": "Neutral/neutral50",
+              "fontSize": 12,
+              "fontWeight": 400,
+              "textDecoration": "underline"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "text": "Privacy Policy",
+              "textColor": "Neutral/neutral50",
+              "fontSize": 12,
+              "fontWeight": 400,
+              "textDecoration": "underline"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,115 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical `layoutContainer` for a clear top-to-bottom flow of notification settings.  Each setting is presented as a `list-item` component, providing a consistent structure and visual hierarchy.  Item spacing within each `list-item` and between list items is set to provide sufficient visual breathing room for readability.
+
+3. **User Flow Reasoning:** Users can easily scan the list of notifications, toggle the switches to their preferred state, and implicitly save changes (assuming the changes save automatically).  The descriptive text associated with each toggle provides clear context and guidance to the users' actions.
+
+4. **Component Choices:** I chose the `list-item` component (ID: 10:10214) as the core building block to display each notification type because it is the most appropriate component to present paired labels and toggle switches. This is a much more structured and user-friendly method than other less appropriate choices ( such as using multiple `layoutContainers` or building a custom layout).
+
+5. **Component Gaps:** The design system lacks a pre-built setting for a combined label and toggle switch in a `list-item` component, while the `list-item` component supports switches in the `leading` and/or `trailing` variant properties. Therefore, I leverage the `switch` component (ID: 10:9912) within the `list-item` component to achieve the desired functionality.  This provides a clean, integrated user interface.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the consistent use of `list-item` components.  The headline text of each item is given prominence, and any supporting text has secondary visual weight. The spacing, consistent use of typography styles for labels and supporting text, contribute to this.
+
+7. **Variant Selection Rationale:** For the `list-item` component, I use the "Leading: Switch" variant to position the toggle switch directly next to each notification label.  This placement is highly intuitive and efficient.  Other options (such as "Trailing: Switch") would require more visual separation between labels and toggles, which can result in less user-friendly arrangement. For the `switch` component itself, variants will be set to reflect appropriate states (selected, unselected) for each notification.
+
+8. **Native Element Justification:** No native elements are necessary as the provided Design System components are adequate, even if they require a strategic combination to fully solve the problem.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "textLayers": {
+              "Headline": "Push Notifications"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "textLayers": {
+              "Headline": "Email Alerts"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "textLayers": {
+              "Headline": "SMS Updates"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "textLayers": {
+              "Headline": "Promotional Offers"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Save Changes"
+        }
+      }
+    ]
+  }
+}
+```

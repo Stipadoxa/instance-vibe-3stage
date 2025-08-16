@@ -1,0 +1,89 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The component IDs (10:7816 and 10:3907) are assumed to represent a pre-existing Image component and a Button component from the design system, respectively.  These IDs were directly used from the input layout data.",
+    "styleApplication": "Text styles ('Title/Medium' and 'Body/Medium') and color styles ('Neutral/neutral90' and 'Primary/primary50') are applied as specified in the input, maintaining consistency with the design system.",
+    "designSystemMapping": "The input directly specifies components and styles from the design system.  The implementation mirrors this mapping to ensure fidelity.",
+    "variantDecisions": "Button variants (Size: Large, Type: Filled, State: Default, Color: Green) are used as specified in the input. The image component uses a '1 image' variant to signify that a single image will be displayed."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH",
+    "items": [
+      {
+        "type": "image",
+        "componentNodeId": "10:7816",
+        "properties": {
+          "variants": {
+            "Type": "1 image"
+          },
+          "imageSrc": "https://example.com/product_image.jpg"
+        },
+        "width": 375,
+        "height": 250
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Info",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "text": "Product Title",
+            "properties": {
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "text": "$19.99",
+            "properties": {
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Primary/primary50",
+              "horizontalSizing": "FILL",
+              "textAutoResize": "HEIGHT",
+              "layoutAlign": "STRETCH",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "Action": "Buy Now",
+          "colorStyleName": "Primary/primary50"
+        }
+      }
+    ]
+  }
+}
+```

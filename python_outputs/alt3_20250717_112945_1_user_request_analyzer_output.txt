@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with clear touch targets and easily navigable sections.  Screen real estate is limited.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage preferences, securely log out.
+Secondary Goals: Understand the meaning of less clear settings (e.g., "Verified ID badge"), easily find specific settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if:  All settings from the reference image are included, using existing app components; top and bottom navigation bars are implemented; touch targets meet minimum size requirements; all content is clearly labeled and organized.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Access to Cars45 auction (toggle), "Verified ID" badge (info link), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" explanatory text for "Verified ID" badge.
+Contextual:  Success/failure messages after saving changes, loading indicators during actions like password changes.
+
+
+Structural & Component Directives
+* Layout:  Single column list of settings.  Each setting is a row in the list.  Top and bottom app navigation bars are present.
+* Components: Use existing app components for list items, toggles, buttons and text input fields.  The visual style should match the reference image.
+* Styling: Styling should match the reference image and the existing app design system.
+
+
+Screen Requirements
+Primary Actions:  Modify settings, save changes, log out, access additional information (e.g., "What is it?").
+Secondary Actions: None explicitly shown in the reference image, but potentially help/support links could be considered.
+Screen States: Default state, loading state (when saving changes or accessing additional information), error state (for invalid inputs or failures), success state (after successful changes).
+Feedback Needs: Clear visual indication of changes saved, loading indicators for ongoing actions, error messages clearly indicating problems.

@@ -1,0 +1,178 @@
+```json
+{
+  "DESIGN_RATIONALE": {
+    "Component Verification": "All component IDs have been verified against the provided DESIGN_SYSTEM_DATA.",
+    "Layout Strategy": "A mobile-first approach is used, starting with a 375px viewport.  The main layout is vertical, following a Header-Content-Footer structure. Spacing is consistent using 16px padding and 8px-16px item spacing within containers.  Layout direction is determined semantically based on the content relationship (primary-supplementary vs. primary-descriptive).",
+    "User Experience Logic": "The user flow prioritizes clear information display and easy contact with the seller.  High-quality images are prominent.  Key information (price, condition) is immediately visible.  Clear calls to action ('Contact Seller', 'Add to Cart') are provided.",
+    "Component Selection": "Components are selected based on their suggestedType matching the required functionality.  For example, the 'Button' component (10:3907) is used for calls to action, and a layoutContainer is used for creating sections.  The 'product card' (147:3743) would be highly suitable if available, with adjustments to fit the provided specifications.",
+    "Gap Analysis": "The design system lacks a carousel component, a specifications table component, and possibly a suitable seller profile component.  These are implemented using native-rectangle containers and native-text elements.",
+    "Hierarchy Decisions": "A clear visual hierarchy is established using typography (Headline/Large for the product title, Title/Medium for key information, Body/Medium for descriptions) and spacing.  The layout is primarily vertical for mobile, promoting a clear top-to-bottom flow of information.  However, horizontal layouts are used for peer elements such as specifications.",
+    "Variant Rationale": "Component variants are selected based on best fit to the context.  For instance, buttons will use 'Filled' style and appropriate size and color variants as defined in the design system.  Specific variant choices are noted in the `DESIGN_SPECIFICATION` below.",
+    "Native Element Justification": "Native elements are used for image carousels, specifications tables, and to add styling to containers that are not adequately supported by the design system components.  This is essential due to the API constraints; layout is managed by parent layoutContainers."
+  },
+  "DESIGN_SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Product Page - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 812,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Header Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "paddingTop": 32,
+          "paddingBottom": 16,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "2019 MacBook Pro 13-inch - Space Gray - Excellent Condition",
+                "textStyle": "Headline/Large",
+                "color": "primary-500"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "name": "Price Row",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 8,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "$850",
+                    "textStyle": "Title/Large",
+                    "color": "primary-500"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "10:3907",
+                  "properties": {
+                    "horizontalSizing": "AUTO",
+                    "Size": "Medium",
+                    "Type": "Filled",
+                    "State": "Default",
+                    "Color": "Green",
+                    "Action": "Add to Cart"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Image Carousel",
+          "layoutMode": "HORIZONTAL",
+          "layoutWrap": "WRAP",
+          "itemSpacing": 8,
+          "items": [
+            {"type": "native-rectangle", "properties": {"width": 100, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+            {"type": "native-rectangle", "properties": {"width": 100, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+            {"type": "native-rectangle", "properties": {"width": 100, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+            {"type": "native-rectangle", "properties": {"width": 100, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+            {"type": "native-rectangle", "properties": {"width": 100, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}}
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Seller Info Section",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 12,
+          "items": [
+            {"type": "native-circle", "properties": {"width": 64, "height": 64, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Doe",
+                    "textStyle": "Title/Medium",
+                    "color": "neutral-500"
+                  }
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "5-star rating, 12 reviews",
+                    "textStyle": "Label/Small",
+                    "color": "neutral-500"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This 2019 MacBook Pro is in excellent condition. It has been meticulously cared for and comes with the original box and charger. It has 16GB RAM and a 512GB SSD. Battery health is at 90%. See pictures for minor scratches on the bottom.",
+            "textStyle": "Body/Medium",
+            "color": "neutral-500"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Specifications Table",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {"type": "native-text", "properties": {"content": "Processor: Intel Core i5"}},
+            {"type": "native-text", "properties": {"content": "RAM: 16GB"}},
+            {"type": "native-text", "properties": {"content": "Storage: 512GB SSD"}},
+            {"type": "native-text", "properties": {"content": "Battery Health: 90%"}}
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Actions Section",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "primary-500",
+                "Action": "Contact Seller"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "primary-500",
+                "Action": "View Seller Profile"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```

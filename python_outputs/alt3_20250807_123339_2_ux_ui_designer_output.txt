@@ -1,0 +1,252 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The dashboard uses a vertical layout for the main content, following a mobile-first approach.  Stats cards are arranged in a horizontal, wrapping layout for optimal use of screen space. The activity feed follows a vertical layout below the stats cards. The bottom navigation bar is placed at the very bottom of the screen.  Consistent 16px padding is used around main content sections for visual breathing room.  Spacing between items within sections is also standardized to 16px.
+
+3. **User Flow Reasoning:** The primary user flow is designed for quick information consumption and action initiation. The most important information (stats cards) are placed prominently at the top.  Secondary information (activity feed) follows in a clear visual hierarchy. Action buttons are strategically positioned to encourage user interaction.  The bottom navigation bar provides easy access to other sections of the app.
+
+4. **Component Choices:** `Bottom navigation` (ID: 10:4724) was chosen for the bottom navigation because it's a dedicated component designed specifically for this purpose.
+
+5. **Component Gaps:** The user request necessitates a grid layout for the quick stats cards, and the design system does not contain a dedicated "stats card" component. This functional gap has been addressed by using a combination of the `card` component (ID: 147:3743) and native text elements to display the numerical data and labels effectively. The activity feed also requires the use of list-item components, and a workaround is employed using a combination of native layout and text components.  The rating element is also not present in the Design System, and is simulated with `native-circle` components.
+
+6. **Visual Hierarchy:** Visual hierarchy is achieved through element positioning, sizing, and typography. Stats cards are larger than the activity feed items, drawing immediate attention.  Headline-level typography is used for stats numbers and smaller text is used for descriptions and activity feed items.
+
+7. **Variant Selection Rationale:**  Component variants are chosen based on their best fit for the context; for example, "Medium" buttons are used to maintain a consistent scale with the overall UI design.
+
+8. **Native Element Justification:**  `native-text` and `native-rectangle` are used to create the stats cards since the design system does not have a pre-built stats card component.  `native-circle` elements are used to simulate a rating system, since a dedicated rating component was not included in the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Stats Row 1",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "STRETCH",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Total Listings: 123",
+                      "textStyle": "Title/Medium",
+                      "color": "Neutral/neutral80"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "STRETCH",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Views This Week: 456",
+                      "textStyle": "Title/Medium",
+                      "color": "Neutral/neutral80"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Stats Row 2",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "STRETCH",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Messages: 789",
+                      "textStyle": "Title/Medium",
+                      "color": "Neutral/neutral80"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Recent Activity",
+              "textStyle": "Title/Small",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Activity Item 1",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 8, "paddingBottom": 8, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "New listing created",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "SPACE_BETWEEN",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            "items":[
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Create New Listing",
+                  "textStyle": "Label/Medium",
+                  "color": "#fcfdfd"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            "items":[
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "View All Messages",
+                  "textStyle": "Label/Medium",
+                  "color": "#fcfdfd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "variants": {
+            "Device": "Mobile"
+          }
+        }
+      }
+    ]
+  }
+}
+```

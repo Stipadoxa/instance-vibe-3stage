@@ -1,0 +1,158 @@
+{
+  "type": "layoutContainer",
+  "name": "Product Detail Page - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "backgroundColor": "White/white100",
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 16,
+  "paddingTop": 20,
+  "paddingBottom": 20,
+  "paddingLeft": 16,
+  "paddingRight": 16,
+  "items": [
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "2020 MacBook Pro 13-inch - Space Gray - Excellent Condition",
+        "textStyle": "Headline/Large",
+        "color": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "horizontalSizing": "FILL",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "$850",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary50"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Price is firm.",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50"
+              }
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Condition",
+            "Supporting text": "Excellent (minor scratches on the casing)"
+          },
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "properties": {
+            "images": []
+          },
+          "variants": {
+            "Type": "2+ images"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "properties": {
+                "imageUrl": "[John Doe Avatar URL]"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe (5-star rating, 12 reviews)",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral90"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used 2020 MacBook Pro 13-inch in Space Gray. Excellent condition with minor cosmetic scratches on the back. Includes original charger. Specs: 16GB RAM, 512GB SSD, Intel Core i5. Battery health 95%.",
+            "textStyle": "Body/Large",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "horizontalSizing": "FILL",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Add to Cart"
+          },
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          }
+        }
+      ]
+    }
+  ]
+}

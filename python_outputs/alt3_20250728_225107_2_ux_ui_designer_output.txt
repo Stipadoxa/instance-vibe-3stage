@@ -1,0 +1,136 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to prioritize the display of notifications in a scrollable list.  The app bar is placed at the top for user information and screen title, and the bottom navigation bar is at the bottom for easy access to other app sections.  This follows standard mobile UI conventions for information delivery screens.",
+    "userFlowReasoning": "The primary user flow is to quickly scan the list of notifications.  Tapping on a notification item will lead to a detail view (not implemented here but implied).",
+    "componentChoices": "I chose the `appbar` (id: 10:5620) for the top bar because it provides a clear container for user information and the screen title. I chose the `list-item` (id: 10:10214) component for displaying each notification because it supports leading and trailing elements (allowing for avatars and timestamps), and multiple lines of text within the notification body.  I considered `snackbar` (id: 10:3856) for the notifications but rejected it due to its short-form nature, unsuitable for the detailed content required for each notification.  `Tabs` (10:7852) were also considered but not appropriate for a simple notification list; it's designed for navigation between distinct views.",
+    "visualHierarchy": "The visual hierarchy emphasizes the notification list as the primary focus of the screen.  The app bar and bottom navigation bar are secondary elements with less visual prominence, ensuring clarity and scannability for the user.",
+    "variantSelectionRationale": "For the `appbar`, I chose `Mode: Light` as it provides better readability for notifications against a light background.  For the `list-item`, I opted for a `Condition: 2-line` to accommodate the title and description text layers, and `Leading: Avatar` to display user avatars for better visual recognition and identification of the notification source. `Show supporting text: true` was chosen because the specification included a description. `Trailing: None` was chosen for now for simplicity, but could be modified in the future.  Alternatives for `Leading` such as `Icon` were rejected as the requirements explicitly mention `Avatar` and `Image` for each notification"
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 new"
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Emma Thompson mentioned you",
+          "Supporting text": "Great point about the user retention metrics in today's meeting!",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "New message from David Lee",
+          "Supporting text": "Hey! Checking in on the project update.",
+          "Trailing supporting text": "15m ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Payment Received",
+          "Supporting text": "Order #1234 has been successfully paid.",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Meeting Request from John Smith",
+          "Supporting text": "Meeting scheduled for tomorrow at 10:00 AM",
+          "Trailing supporting text": "3h ago"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Avatar",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Account Update",
+          "Supporting text": "Your profile information has been updated.",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,6 +1,9 @@
-import { BaseRole } from './BaseRole';
-import { PromptLoader } from '../PromptLoader';
-export class JSONEngineerRole extends BaseRole {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JSONEngineerRole = void 0;
+const BaseRole_1 = require("./BaseRole");
+const PromptLoader_1 = require("../PromptLoader");
+class JSONEngineerRole extends BaseRole_1.BaseRole {
     constructor(geminiClient, debugLogger) {
         super();
         this.geminiClient = geminiClient;
@@ -10,7 +13,7 @@ export class JSONEngineerRole extends BaseRole {
         var _a, _b, _c, _d, _e;
         this.safeLog('JSONEngineer execute started', { inputStage: input.metadata.stage });
         try {
-            const prompt = await PromptLoader.loadPrompt('json-engineer');
+            const prompt = await PromptLoader_1.PromptLoader.loadPrompt('json-engineer');
             this.safeLog('Prompt loaded', { promptLength: prompt.length });
             // Prepare context from UI Designer output
             const context = `Previous Stage Output (${input.metadata.stage}):\n${input.content}`;
@@ -154,3 +157,4 @@ export class JSONEngineerRole extends BaseRole {
         return null; // This would be set by the execute method
     }
 }
+exports.JSONEngineerRole = JSONEngineerRole;

@@ -1,0 +1,156 @@
+```json
+{
+  "components": [
+    {
+      "id": "10:7773",
+      "name": "avatar / big",
+      "suggestedType": "avatar",
+      "confidence": 0.9,
+      "variants": {
+        "Photo": "Yes"
+      }
+    },
+    {
+      "id": "10:8619",
+      "name": "text area",
+      "suggestedType": "text",
+      "confidence": 0.9,
+      "variants": {
+        "Platform": "Android+Web",
+        "Type": "Filled",
+        "State": "Enabled"
+      },
+      "textLayers": {
+        "label-text": "Bio"
+      }
+    },
+    {
+      "id": "10:3907",
+      "name": "Button",
+      "suggestedType": "button",
+      "confidence": 0.95,
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Medium",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "textLayers": {
+        "Action": "Follow"
+      }
+    },
+    {
+      "id": "10:3907",
+      "name": "Button",
+      "suggestedType": "button",
+      "confidence": 0.95,
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Medium",
+        "Type": "Outlined",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "textLayers": {
+        "Action": "Message"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "1,487",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "275",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "112",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "1 image"
+          },
+          "properties": {
+            "image": "post1.jpg"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "1 image"
+          },
+          "properties": {
+            "image": "post2.jpg"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "1 image"
+          },
+          "properties": {
+            "image": "post3.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+**SECTIONS:**
+
+1. **header**: Contains the `avatar / big` component displaying Anika Sharma's profile picture,  `native-text` elements for her name (@anika_sharma), and  `text area` component for her bio.  This section provides the core visual identity and introductory information.
+2. **stats**: This section uses a `layoutContainer` with `layoutMode: HORIZONTAL` to display follower, following, and posts counts using three separate `native-text` components.  It provides a quick overview of Anika's social media presence.
+3. **content**:  This section uses a `layoutContainer` with `layoutMode: VERTICAL` to show Anika's posts.  Each post is represented by `IMAGES` component instances displaying the post images.
+
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Section Planning:** The section blueprint follows the `Profile` pattern: header, stats, content.  The header establishes visual identity, stats give a quick overview, and content showcases the user's posts.  This structure provides a clear and concise profile view that meets user expectations for a social media profile page.
+
+3. **Layout Decisions:**  A vertical layout is used to organize the sections logically. The header section takes full width, followed by the stats and posts.  The `horizontalSizing` property is used to make sure elements occupy the entire width of their container. Consistent padding (16px) is applied to the content sections to provide visual breathing room.
+
+4. **User Flow Reasoning:** The user sees Anika's profile picture and bio at the top, then quickly grasps her activity level through the stats. The main content area displays her posts, allowing scrolling through her content.  Actions such as "Follow" and "Message" are clearly presented.
+
+5. **Component Choices:** I chose `avatar / big` for the profile picture over `avatar  / stack` and `avatar / single` because it best represents a prominent profile image.  The `text area` component is used for the bio because it allows for multi-line text input.  The "Follow" button is a `Filled` button for visual emphasis, whereas the "Message" button is `Outlined` as a secondary action.
+
+6. **Component Gaps:** No significant component gaps were identified. All required elements were accommodated using available components.
+
+7. **Visual Hierarchy:** Visual hierarchy is established through size and placement. The large profile picture and name are prominent at the top.  The stats are secondary and are positioned before the main content, which is more detailed.
+
+8. **Variant Selection Rationale:** The `avatar / big` component uses the "Photo: Yes" variant to display Anika's profile picture. The `text area` component is set to `Type: Filled` for a more integrated look. Buttons use the `Size: Medium`, `Type: Filled` for primary and `Type:Outlined` for secondary actions. These choices ensure visual consistency and clarity within the design system.
+
+9. **Native Element Justification:**  None were used; all elements were implemented using components from the Design System.

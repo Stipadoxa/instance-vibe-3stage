@@ -1,0 +1,74 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column vertical stack, suitable for mobile screens with limited real estate.  Elements are ordered based on priority: username/email, password, login button, then secondary actions (social logins and password recovery).  This vertical flow is intuitive and minimizes scrolling.",
+    "userFlowReasoning": "The user flow is straightforward. Users input their credentials, tap the Login button, and receive feedback accordingly (success, error, or loading indicator). Secondary actions (social logins and password recovery) are provided below the primary login action, making them easily accessible but not distracting.",
+    "componentChoices": "I chose component ID '10:8492' (text input) for the username/email and password fields, and component ID '10:3907' (button) for the login button.  I chose '10:8492' over '10:8619' (text area) because text inputs are appropriate for single-line text entries. '10:8492' provides placeholder text and real-time validation features. I chose '10:3907' (Button) over other components like '10:10076' (context-menu), and '147:3743' (product card) because it’s the standard button component for primary actions.  '10:3907' offers various size and color options to highlight the primary action.",
+    "visualHierarchy": "The login button ('10:3907') is visually prominent with its color and size set to be more prominent than other elements, guiding the user's primary interaction. Other secondary elements like social login buttons and links have a lower visual weight, reflecting their secondary importance.",
+    "variantSelectionRationale": "For the input fields ('10:8492'), I chose 'Type=Filled', 'State=Enabled' to provide visual feedback and clarity.  Alternatives like 'Type=Empty' would lack visual feedback, and 'State=Disabled' would prevent user interaction. The login button ('10:3907') uses 'Size=Large', 'Type=Filled', 'Color=Green', 'State=Default' to emphasize its primary action nature and provide a positive visual cue.  Other states like 'Disabled' or 'Pressed' are only applied dynamically based on user interaction or loading conditions."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Email or Username"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Forgot Password?"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,178 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 32,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Welcome back to CraftMart!",
+              "textStyle": "Headline/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Sign in to access your favorite crafts, sellers, and your saved items.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Form Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Type": "Filled",
+              "State": "enabled",
+              "label-text": "Email Address",
+              "placeholder-text": "your.email@example.com"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Type": "Filled",
+              "State": "enabled",
+              "label-text": "Password",
+              "placeholder-text": "********"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Forgot Password Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot Password?",
+                  "textStyle": "Body/Small",
+                  "color": "Tertiary/tertiary90",
+                  "alignment": "left"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Primary/primary50",
+              "Action": "Sign in"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Footer Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Create Account",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral50",
+                  "alignment": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**DESIGN RATIONALE:**
+
+1. **Component Verification:** All component IDs (`10:8492`, `10:3907`) for input fields and buttons are verified in `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Strategy:** A mobile-first approach is used.  The screen is divided into three logical sections: Header, Form, and Footer.  `layoutContainer` is used to create these sections and manage spacing using padding and itemSpacing.  Vertical layout is used for the main structure and horizontal layout for the Forgot Password row and the footer.
+
+3. **User Experience Logic:** Standard login form flow. Email and password inputs are above the login button.  A "Forgot Password?" link provides an accessible way for users to recover their credentials. A "Create Account" link at the bottom encourages new users to sign up.
+
+4. **Component Selection:** The `DESIGN_SYSTEM_DATA` provides pre-built components for input fields (`text input`) and buttons (`Button`), ensuring consistency and adherence to the design system. These components are used because they have the required styling, functionality, and accessibility features.
+
+5. **Gap Analysis:** No significant gaps were identified. The design system contains components to satisfy all functional needs.
+
+6. **Hierarchy Decisions:**  The "Welcome back" headline is visually prominent using `Headline/Large` style. The form fields and button are centrally aligned for better visual balance. The footer contains secondary actions.
+
+7. **Variant Rationale:** The "Filled" variant is used for input fields to provide clear visual feedback to users. The "Large", "Filled", and "Default" variants are used for the Sign In button for optimal size and clarity.
+
+
+8. **Native Element Justification:**  Native text elements (`native-text`) are used for the header text and footer text because they only display content.  No custom layout properties are needed for these elements.
+
+

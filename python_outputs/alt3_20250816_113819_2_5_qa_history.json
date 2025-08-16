@@ -1,0 +1,48 @@
+[
+  {
+    "iteration": 1,
+    "issues": [
+      "- Component 10:3907 (Button) is missing variant \"Lines\"",
+      "- Component 10:3907 (Button) has a `componentId` property instead of `componentNodeId` in its `componentInstances` array.",
+      "- Component 10:3907 (Button) uses \"Action\" instead of \"properties.Action\" for the text layer",
+      "- Component 10:4724 (Bottom navigation) has incorrect text color in styleInfo, should be \"#415661\"",
+      "- Component 24:10352 (avatar / stack) uses incorrect id format",
+      "- Component 10:7773 (avatar / big) has an opacity value for backgroundColor that is not precisely represented in the design system data",
+      "- Component 10:7805 (Badge) is missing `internalPadding` values which are defined in the design system",
+      "- Component 10:7816 (IMAGES) has a visible:false  `componentInstances` item without visibilityOverrides",
+      "- Several components have id instead of componentNodeId.",
+      "-  The inner layout container has padding values."
+    ],
+    "changes": [
+      "- Added \"Lines\":\"One line\" to Button component variants in two places",
+      "- Changed \"componentId\" to \"componentNodeId\" in the Button component's `componentInstances` array.",
+      "- Wrapped \"Action\" text property in a \"properties\" object for Button components.",
+      "- Changed Bottom navigation's `styleInfo.textColor.color` to \"#415661\".",
+      "- Changed componentNodeId \"24:10344\" to \"10:7805\" in avatar / stack.",
+      "- Changed backgroundColor opacity in avatar / big to \"0.3\"",
+      "- Added `internalPadding` to Badge component.",
+      "- Added visibilityOverrides for componentNodeId \"10:7819\" in IMAGES component",
+      "- Added `properties` object to all native-text elements.",
+      "- Removed padding from the inner layout container."
+    ]
+  },
+  {
+    "iteration": 2,
+    "issues": [
+      "- Component 10:7816 (IMAGES) is missing \"Type\" variant.",
+      "- Component 10:7816 (IMAGES) has a visible: false componentInstances item without visibilityOverrides.  While a fix was attempted, it's incomplete as it didn't address the missing variant.",
+      "- Several components are missing visibilityOverrides for invisible text layers.  (Specifically, \"10:5636\" in \"10:5620\" and \"10:10018\" in \"10:10010\").",
+      "- Component `147:3743` (\"product card\") has incorrect `componentNodeId` format.  The `id` field should be in \"number:number\" format.",
+      "- Component `147:3743` (\"product card\") `componentInstances` uses incorrect `componentNodeId` format."
+    ],
+    "changes": [
+      "- Added \"Type\": \"2+ images\" variant to component 10:7816.",
+      "- Added visibilityOverrides: { \"10:7818\": true } to component 10:7816.",
+      "- Added visibilityOverrides: { \"10:5636\": false } to component 10:5620.",
+      "- Added visibilityOverrides: { \"10:10018\": false } to component 10:10010.",
+      "- Changed `componentNodeId` \"147:3743\" to a valid format (e.g., \"10:1234\",  choose a valid ID from the design system or a placeholder.  I cannot arbitrarily create a new ID).  This requires choosing an appropriate existing component ID.   A placeholder is used below,  replace with an actual valid ID from the design system if needed.",
+      "-  Corrected  `componentNodeId` format within the `componentInstances` array of  `componentNodeId`  \"10:1234\" (placeholder).  This also requires replacing placeholders with valid IDs.",
+      "**Note:**  The JSON is incomplete without valid replacement IDs for `147:3743` and its nested components.  You must replace the placeholders (\"10:1234\") with actual IDs that exist in the `DESIGN_SYSTEM_DATA`.  This is crucial for accurate validation.  The choice of specific replacement IDs will depend on the intended design."
+    ]
+  }
+]

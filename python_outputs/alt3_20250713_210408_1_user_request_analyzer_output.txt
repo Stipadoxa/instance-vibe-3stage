@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear, concise options and large touch targets.  Limited screen real estate requires efficient information architecture.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage preferences, securely logout.
+Secondary Goals: Access help/support resources related to settings.  Understand the meaning of less clear settings options (e.g., "Verified ID" badge).
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included using the provided design system,  touch targets meet minimum size requirements, navigation is intuitive and clear.
+
+Content Requirements
+Critical: Personal details (editing), Business details (editing), Access to Cars45 auction (toggle on/off),  "Verified ID" badge (explanation), Change phone number, Change email, Change language, Disable chats (toggle on/off), Disable Feedback (toggle on/off), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Help/support links for any setting requiring clarification.
+Contextual:  Error messages for invalid inputs, confirmation dialogs for destructive actions (account deletion).
+
+Structural & Component Directives
+* Layout:  A single-column list view, similar to the reference image, using components from the provided design system.
+* Components: List items for each setting, toggles for on/off settings,  navigation component (back button), potentially section headers for grouping related settings.
+* Styling: Consistent with the provided design system.  Follow the color scheme and visual hierarchy shown in the reference image,  incorporating existing components and styles where possible.
+
+
+Screen Requirements
+Primary Actions: Access/modify a setting, logout.
+Secondary Actions: Access help/support resources.
+Screen States: Default state, loading state (if applicable), error states, confirmation dialogs for destructive actions.
+Feedback Needs: Visual feedback for successful setting changes, clear confirmation messages for actions (logout, account deletion), clear error messages for invalid inputs.

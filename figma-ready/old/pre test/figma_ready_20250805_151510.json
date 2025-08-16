@@ -1,0 +1,180 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Stats Cards",
+      "layoutMode": "HORIZONTAL",
+      "layoutGrow": 1,
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "counterAxisSizingMode": "AUTO",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 64,
+                "height": 64,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FIT"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "123",
+                "textStyle": "Title/Medium",
+                "color": "Primary/primary50",
+                "alignment": "center",
+                "layoutAlign": "STRETCH"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "counterAxisSizingMode": "AUTO",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 64,
+                "height": 64,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FIT"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "456",
+                "textStyle": "Title/Medium",
+                "color": "Primary/primary50",
+                "alignment": "center",
+                "layoutAlign": "STRETCH"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "counterAxisSizingMode": "AUTO",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 64,
+                "height": 64,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FIT"
+                },
+                "cornerRadius": 8
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "789",
+                "textStyle": "Title/Medium",
+                "color": "Primary/primary50",
+                "alignment": "center",
+                "layoutAlign": "STRETCH"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Activity Feed",
+      "layoutMode": "VERTICAL",
+      "layoutGrow": 1,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Recent Activity",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral80",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Actions",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "Create Listing"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "View Messages"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "properties": {
+        "Label": [
+          "Home",
+          "Saved",
+          "Sell",
+          "Messages",
+          "Profile"
+        ]
+      }
+    }
+  ]
+}

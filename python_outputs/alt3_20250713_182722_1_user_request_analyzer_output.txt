@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a streamlined settings page with clear and concise options, large touch targets, and minimal scrolling.  The design should be easily navigable with one hand.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, control privacy settings.
+Secondary Goals: Understand the meaning of less common settings (e.g., "Verified ID" badge), easily find and update personal information, securely manage account access (password change, account deletion).
+User Constraints: Small screen size, touch-only interaction, potential distractions, limited attention span.
+Ready for handoff if: All settings from the reference image are included, using existing design system components;  navigation is intuitive and clear; touch targets meet minimum size requirements; and all settings have clear labels and descriptions.
+
+Content Requirements
+Critical: Personal details (name, address, potentially profile picture), business details (if applicable), notification settings, language selection, password change, account deletion, log out.
+Supporting:  "Verified ID" badge explanation, contact support link (if applicable).
+Contextual:  Status indicators (e.g., "Active" for Cars45 auction access),  confirmation dialogs for potentially destructive actions (e.g., account deletion).
+
+Structural & Component Directives
+* Layout:  A vertical list of settings, similar to the reference image, using the provided design system's list components.  Each setting should have a clear label and (where applicable) a toggle, value display, or navigation arrow.  The header should include a "Settings" title and a back button.
+* Components: Use existing components from the design system (lists, toggles, buttons, etc.)  Status indicators should be visually distinct. The design should include a consistent navigation pattern throughout the app for user familiarity.
+* Styling: Adhere to the color palette and visual styles of the existing design system.  Maintain visual consistency with other areas of the application.
+
+Screen Requirements
+Primary Actions:  Modify settings (toggling, editing values), navigate to sub-pages (e.g.,  for personal details).
+Secondary Actions: Access help/support, view explanations of settings.
+Screen States:  Default state, loading state (if any settings require loading data), confirmation dialogs.
+Feedback Needs:  Clear visual feedback when a setting is changed (e.g., toggle switch changes, updated values displayed immediately), loading indicators, confirmation messages after an action is completed.

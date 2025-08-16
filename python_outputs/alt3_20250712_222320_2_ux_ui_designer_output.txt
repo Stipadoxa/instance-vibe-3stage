@@ -1,0 +1,335 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical list to maximize screen real estate on mobile devices.  Sections are clearly demarcated with headers for improved scannability and intuitive navigation.  Consistent spacing (24px) between items ensures readability and comfortable touch targets.",
+    "userFlowReasoning": "The user flow is straightforward and linear.  Settings are grouped logically (Personal, Business) with editable fields for modification.  Secondary actions (password change, notification management) are presented as links to avoid cluttering the main settings screen. Confirmation dialog is used for Delete Account to prevent accidental actions.",
+    "componentChoices": "The `appbar` component provides clear back navigation.  `list-item` components are used to display settings with appropriate input controls (text fields, toggles, select). A `Button` component is used for the logout action.  The design system components are chosen for their existing styling and appropriate interactive states. The `dialog` component is used for delete account confirmation.",
+    "visualHierarchy": "Visual hierarchy is established through section headers (larger `Title` text style), setting labels (`Label` text style), and input controls.  The logout button is visually distinct as a primary action.  Consistent use of neutral colors for backgrounds and text ensures readability."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Personal Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Name",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Enter your name",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Phone Number",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Enter your phone number",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Email",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Enter your email",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Business Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Company Name",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "label-text": "Enter your company name",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Language",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "select",
+          "componentNodeId": "10:10010",
+          "properties": {
+            "Overline": "Select Language",
+            "variants": {
+              "Platform": "Android+Web",
+              "State": "Filled"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "variants": {
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "switch",
+          "componentNodeId": "10:9912",
+          "properties": {
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "variants": {
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      },
+      "componentInstances": [
+        {
+          "type": "switch",
+          "componentNodeId": "10:9912",
+          "properties": {
+            "variants": {
+              "Selected": "false",
+              "State": "enabled",
+              "Icon": "false"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Manage Notifications",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "dialog",
+      "componentNodeId": "10:12230",
+      "properties": {
+        "header": "Delete Account",
+        "body": "Are you sure you want to delete your account permanently? This action cannot be undone.",
+        "variants": {
+          "Platform": "Android"
+        }
+      },
+      "componentInstances": [
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Cancel",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Outlined",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Delete",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

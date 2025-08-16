@@ -1,0 +1,66 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single vertical stack, prioritizing a clear and concise presentation suitable for mobile.  The image is placed at the top to immediately capture attention, followed by essential information (title, price) in descending order of importance.  Sufficient spacing is used between elements to ensure readability and prevent visual clutter.",
+    "userFlowReasoning": "The user flow is straightforward: view product image, read title and price, then directly initiate purchase through a prominent 'Buy' button.  This minimizes steps and reduces cognitive load, crucial for mobile users. Secondary actions (comparing products, adding to wishlist) are implied and could be implemented in future iterations.",
+    "componentChoices": "The 'IMAGES' component is used for the product image to leverage the design system's pre-defined aspect ratio for mobile.  Text components, styled using appropriate text styles from the Design System, display the title and price with optimal readability. A 'Button' component, using the 'Green' color variant, provides a clear and visually distinct call to action.",
+    "visualHierarchy": "Visual hierarchy is established through size and position. The image is the largest element, followed by the title (larger font size), price (medium font size), and button (visually distinct color and shape)."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Listing Card",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "properties": {
+        "variants": {
+          "Type": "1 image"
+        },
+          "imageSource": "https://via.placeholder.com/350x350"
+      },
+      "width": 350,
+      "height": 350
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Product Title",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "$29.99",
+        "textStyle": "Label/Medium",
+        "colorStyleName": "Primary/primary50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "variants": {
+          "Size": "Medium",
+          "Type": "Filled",
+          "Color": "Green",
+          "State": "Default"
+        },
+        "Action": "Buy"
+      }
+    }
+  ]
+}
+```

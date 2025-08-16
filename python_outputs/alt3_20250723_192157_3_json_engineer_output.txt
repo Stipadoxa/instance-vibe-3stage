@@ -1,0 +1,106 @@
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs were selected based on the design system's components that best matched the UI requirements.  Specifically, `text-input` components were used for email and password fields, a `button` component for the primary Sign In action and secondary social login options, and a `link` component for the 'Forgot Password?' functionality. These choices ensure consistency with the design system and provide the necessary functionality.",
+    "styleApplication": "Text styles were not explicitly applied to components like buttons and text inputs as these components have built-in styling. Variants were used to control the appearance, such as 'Primary' and 'Secondary' button types. Placeholder text is managed within the component properties.",
+    "designSystemMapping": "The design system's components were directly mapped to the UI elements. For instance, the 'text-input' component in the design system corresponds to the email and password input fields, providing a seamless translation. The component structure reflects the specified layout and functionality, aligning with design system best practices.",
+    "variantDecisions": "Variants were used to differentiate the appearance of buttons and text inputs based on their function and state. For example, the primary Sign In button uses the 'Primary' variant for visual prominence, while the social login buttons employ the 'Secondary' variant to distinguish them visually.  Input component variants manage placeholder states. This consistent approach improves visual hierarchy and user comprehension.",
+    "nestedComponentHandling": "No nested components were detected in the provided design specification. All components were simple, allowing for straightforward mapping and the use of array properties where appropriate (not needed in this case)."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 24,
+        "paddingBottom": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "items": [
+          {
+            "type": "text-input",
+            "componentNodeId": "1902:3230",
+            "properties": {
+              "placeholder": "Email",
+              "variants": {
+                "State": "placeholder"
+              }
+            }
+          },
+          {
+            "type": "text-input",
+            "componentNodeId": "1989:4040",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "State": "placeholder",
+                "Right icon": "open"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Sign In",
+              "variants": {
+                "Type": "Primary",
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "1271:11783",
+            "properties": {
+              "text": "Forgot Password?",
+              "variants": {
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Google",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Continue with Facebook",
+              "variants": {
+                "Type": "Secondary",
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

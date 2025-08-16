@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear touch targets due to limited screen real estate and potential for interruptions.
+
+User Requirements
+Primary Goals: Access and modify personal and business details, manage communication preferences, change account security settings, and terminate the account.
+Secondary Goals: Easily locate specific settings options, receive clear confirmation upon changes.
+User Constraints: Limited screen size, touch-only interaction, potential for interruptions, need for clear and concise information.
+Ready for handoff if: All listed settings are accessible, each setting's action is clearly indicated, and the screen is navigable within 3 taps from any setting.
+
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear labels for each setting,  confirmation messages for successful changes, error messages for failed changes.
+Contextual: Loading indicators for actions that take time (e.g., changing password).
+
+
+Structural & Component Directives
+* Layout: Vertical list for settings items.  Top app bar and bottom app bar.
+* Components: Top app bar (with back button), List items (each with setting name and action indicator, possibly a switch for toggles), Bottom app bar (may contain a "Save" button if changes require explicit saving).
+* Styling: Consistent with overall app styling.
+
+
+Screen Requirements
+Primary Actions: Modify settings (various actions depending on the specific setting), log out, delete account.
+Secondary Actions: None explicitly stated, potentially a "Save Changes" button if changes aren't automatically saved.
+Screen States: Default (settings displayed), Loading (while processing a request), Success (confirmation after a successful action), Error (indicating a failed action).
+Feedback Needs: Confirmation messages after changes, error messages for invalid inputs or failed actions, loading indicators for long-running actions.

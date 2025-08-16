@@ -1,0 +1,67 @@
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "properties": {
+        "variants": {
+          "Type": "1 image"
+        },
+        "image": "product-image-url"
+      },
+      "width": 327,
+      "height": 245,
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "native-text",
+      "text": "Product Title",
+      "properties": {
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "$19.99",
+      "properties": {
+        "textStyle": "Title/Small",
+        "colorStyleName": "Primary/primary50",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "Color": "Green",
+          "State": "Default"
+        },
+        "Action": "Buy Now"
+      }
+    }
+  ]
+}

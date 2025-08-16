@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise, touch-friendly interface with clear visual hierarchy and large tap targets.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage preferences, securely logout.
+Secondary Goals: Easily understand setting options, receive clear feedback on changes, access help resources for specific settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings from the reference image are included, using provided design system components;  navigation is intuitive and clear; tap targets meet minimum size requirements; visual hierarchy reflects importance of settings.
+
+Content Requirements
+Critical: Personal details (editable), business details (editable), access to Cars45 auction (toggle), "Verified ID" badge (info tooltip), Change phone number (input field), Change email (input field), Change language (dropdown), Disable chats (toggle), Disable Feedback (toggle), Manage notifications (navigation to a separate screen), Change password (navigation to a separate screen), Delete my account permanently (confirmation prompt), Log out (button).
+Supporting:  "What is it?" tooltip for "Verified ID" badge.
+Contextual: Success/error messages after saving changes, loading indicators during data updates.
+
+Structural & Component Directives
+* Layout:  List view, single column, top-to-bottom arrangement of settings.  Each setting uses a list item component from the provided design system.  Items may include right-aligned toggles or text indicating active/inactive status.
+* Components: Header component (with back button and "Settings" title), list items for each setting from the provided design system, each with appropriate label and either an input field, a toggle, or navigation to another screen.  Use existing design system components for input fields, toggles, and any additional required elements.
+* Styling:  Adhere to the color scheme and visual style of the provided design system, referencing the example image for layout and hierarchy cues.
+
+Screen Requirements
+Primary Actions:  Tap on a setting to modify it.
+Secondary Actions: Access the "What is it?" tooltip.
+Screen States: Default state, loading state (e.g., while saving changes), error state (e.g., invalid input).
+Feedback Needs: Confirmation of successful setting changes, clear error messages for invalid inputs, loading indicators.

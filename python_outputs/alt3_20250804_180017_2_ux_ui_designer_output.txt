@@ -1,0 +1,171 @@
+**DESIGN RATIONALE**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The user profile page employs a vertical layout (`layoutMode`: "VERTICAL") for a clear top-to-bottom flow of information.  Each section (personal information, password, shipping address) is contained within its own vertical layout container with `itemSpacing`: 16 for visual breathing room.  The padding is set to 16px on all sides of these inner containers for comfortable spacing from the edges.  Full-width text inputs (`horizontalSizing`: "FILL") are used to maximize screen real estate.
+
+3. **User Flow Reasoning:**  The user flow prioritizes a clear and intuitive editing experience.  Sections are grouped logically, and each editable field is clearly labeled.  A "Save Changes" button is prominently placed at the bottom to confirm user actions.
+
+4. **Component Choices:** I chose the `10:8492` ("text input") component for name, email, and address fields over a potential `native-text` approach because the `text input` component provides built-in input handling, placeholder text, and error state management, streamlining development.  For the password field, I will use the `10:8619` ("text area") component to facilitate secure password entry in a limited space.  The `10:3907` ("Button") component is used for the "Save Changes" button to leverage existing style and accessibility features from the design system.
+
+5. **Component Gaps:** The design system lacks a comprehensive user profile component to neatly encapsulate all user information and editing features. To address this, I will combine existing components (text inputs, text area, buttons, dividers) within a vertical layout to create the desired structure. This approach enables consistent styling with the design system components while meeting the functionality needs.
+
+
+6. **Visual Hierarchy:**  The visual hierarchy is established through clear section headings (using `native-text` with appropriate text styles from the design system), consistent spacing, and the prominent placement of the "Save Changes" button at the end. The larger headline text for the section title is visually prominent.
+
+7. **Variant Selection Rationale:** For the "Save Changes" button (component ID: `10:3907`), I chose the `"Size": "Medium"`, `"Type": "Filled"`, and `"Color": "Green"` variants, and `"State": "Default"`. This size is appropriate for most screens and interactions. The filled button type is used for its emphasis on the action, and the green color provides positive feedback. The default state ensures that the button is ready for user interaction.
+
+8. **Native Element Justification:**  While the design system provides text input and button components,  section headers and visual dividers to create clean separations between different fields. `native-text` elements are used for section headings and potentially for error messages (if the input component doesn't handle this adequately). `10:8459` ("Divider") components are used to visually separate sections for better readability.
+
+
+**DESIGN SPECIFICATION**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Profile Information",
+          "textStyle": "Headline/Medium",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "AUTO"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 8, "paddingBottom": 8, "paddingLeft": 0, "paddingRight": 0,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties":{
+              "labelText": "Name",
+              "placeholderText": "Enter your name"
+            },
+            "horizontalSizing": "FILL"
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties":{
+              "labelText": "Email",
+              "placeholderText": "Enter your email"
+            },
+            "horizontalSizing": "FILL"
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Password",
+          "textStyle": "Headline/Medium",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "AUTO"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 8, "paddingBottom": 8, "paddingLeft": 0, "paddingRight": 0,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:8619",
+            "variants": {
+              "Platform": "Android+Web",
+              "Type": "Filled",
+              "State": "Enabled"
+            },
+            "properties":{
+              "labelText": "Password"
+            },
+            "horizontalSizing": "FILL"
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Shipping Address",
+          "textStyle": "Headline/Medium",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "AUTO"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 8, "paddingBottom": 8, "paddingLeft": 0, "paddingRight": 0,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties":{
+              "labelText": "Address",
+              "placeholderText": "Enter your address"
+            },
+            "horizontalSizing": "FILL"
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Save Changes"
+        }
+      }
+    ]
+  }
+}
+```

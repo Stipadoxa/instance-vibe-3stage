@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Authentication domain for mobile application access.
+User Type: Mobile application users attempting to log in or sign up.
+Platform Impact: Mobile users require a streamlined, touch-friendly interface optimized for small screens and potentially unreliable network conditions.  They may be in distracting environments.
+
+User Requirements
+Primary Goals: Authenticate securely and efficiently to access the application.
+Secondary Goals: Utilize convenient login options (e.g., social logins), recover forgotten credentials if necessary, create a new account if needed.
+User Constraints: Limited screen real estate, touch-only interaction, potential for interruptions, varying network connectivity.
+Ready for handoff if:  All primary and secondary actions are present, clear error handling is implemented, and touch targets meet minimum size guidelines (as per design system).  The visual design adheres to the provided reference image while using the specified components.
+
+Content Requirements
+Critical: Email address/username input field, password input field (or secure alternative), primary login button ("Continue" button),  clear visual indication of login method (e.g., "Log in or sign up").
+Supporting: "Continue with Google," "Continue with Apple" buttons (or other relevant social login options), Password recovery/reset mechanism (link or button), "or" visual separator between credential and social login options.  "Passwords" label above keyboard.
+Contextual: Error messages for invalid credentials, loading indicator during authentication, success confirmation screen (redirect or visual feedback).
+
+Structural & Component Directives
+* Layout:  Vertical layout mirroring the reference image, with clear visual separation between input fields, buttons, and social login options.  On-screen keyboard, as shown in the reference image.
+* Components:  Utilize existing components from the design system for input fields, buttons, and social login integrations.  Adhere to the visual style guide presented in the reference image.
+* Styling:  Match the color scheme, typography, and overall visual style of the reference image while maintaining design system consistency.
+
+Screen Requirements
+Primary Actions:  Login with email/username and password, Login with Google, Login with Apple.
+Secondary Actions:  Password recovery, create a new account (if appropriate based on application design).
+Screen States: Default state (showing input fields), loading state (indicating authentication in progress), error state (displaying clear error messages), success state (redirecting to the application or showing confirmation message).
+Feedback Needs: Real-time validation for email format (if applicable), clear error messages for login failures, loading indicators during authentication.

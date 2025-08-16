@@ -1,0 +1,94 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The input JSON specified 'image', 'text', and 'button' components.  These are standard Figma components and are assumed to be available in the design system.  No specific component IDs were provided, so generic component types are used.",
+    "styleApplication": "Text styles ('Headline/Large', 'Title/Medium', 'Body/Medium') and color styles ('Neutral/neutral90', 'Primary/primary90', 'Neutral/neutral80') are directly applied as specified in the input. These are assumed to exist within the design system and provide consistent styling.",
+    "designSystemMapping": "The input directly maps design elements to component types and styles. There's no need for intermediate mapping. The mapping is straightforward, with text components using text styles and color styles for consistency.",
+    "variantDecisions": "No component variants were specified in the input JSON. All components are used in their default configurations. No specific variant selections were necessary."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "image",
+      "properties": {
+        "source": "productImageURL",
+        "width": 327,
+        "height": 245,
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Product Title",
+      "properties": {
+        "textStyle": "Headline/Large",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "$129.99",
+      "properties": {
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Primary/primary90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Product Description",
+      "properties": {
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral80",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Seller: John Doe",
+      "properties": {
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral80",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left"
+      }
+    },
+    {
+      "type": "button",
+      "properties": {
+        "text": "Contact Seller",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Primary/primary90",
+        "horizontalSizing": "FILL"
+      }
+    }
+  ]
+}
+```

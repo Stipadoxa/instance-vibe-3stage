@@ -1,0 +1,210 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout employs a vertical structure for a clear top-to-bottom flow of information.  The image gallery uses a horizontal `layoutContainer` with `layoutWrap: "WRAP"` to accommodate multiple images responsively.  Section dividers (`10:8459`) are used to create visual separation between sections, improving readability.  Full-width elements, such as the hero image, utilize `"horizontalSizing": "FILL"` to maximize screen real estate.
+
+3. **User Flow Reasoning:** The user flow starts with visually prominent product images, followed by essential information (title, price, condition). Seller details and ratings enhance trust.  The product description offers more in-depth information, and the "Contact Seller" button provides a clear call to action.
+
+4. **Component Choices:**  
+    * **Image Gallery:** I used a `layoutContainer` for image gallery instead of a custom image component because no suitable image gallery component was available in the design system.  This provides a flexible and responsive way to display multiple images.
+    * **"Contact Seller" Button:** `10:3907` (Button) was chosen over using a native rectangle because it provides built-in button styling and interaction states (hover, pressed, etc.), improving the overall user experience.
+
+5. **Component Gaps:** The design system lacks a dedicated star rating component.  Therefore, I've implemented a workaround using five instances of the `635:4752` (icon/star) component, each representing a star. This approach ensures a visually recognizable rating system, and allows the user to understand the level of rating provided.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through a combination of size, position, and color.  The product title and price are displayed prominently at the top, using larger text sizes (`S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b`). Images are set at a higher scale, and color variations (like the primary green for the price) guide attention effectively.
+
+7. **Variant Selection Rationale:** For the "Contact Seller" button (`10:3907`), I chose the `Size: "Medium"` and `Color: "Green"` variants to strike a balance between visual prominence and conciseness.  The "Medium" size is appropriate for mobile screens, while the "Green" color signifies a positive action.
+
+8. **Native Element Justification:** There is no component for displaying a simple product description in the provided design system. A `native-text` element was used to accommodate the free-form text of the product description which ensures that the user can input their own product information.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "height": 200,
+          "cornerRadius": 8,
+          "fill": {
+            "type": "IMAGE",
+            "scaleMode": "FILL"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "IMAGE",
+                "scaleMode": "FILL"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Used Laptop Title",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦150,000",
+          "textStyle": "Title/Medium",
+          "color": "Primary/primary50",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Good Condition",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:7798",
+            "variants": {
+              "Type": "Photo"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Seller Name",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 4,
+        "items": [
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            }
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            }
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            }
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "full"
+            }
+          },
+          {
+            "type": "component",
+            "id": "635:4752",
+            "variants": {
+              "Star": "half"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Description...",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left",
+          "height": 100
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

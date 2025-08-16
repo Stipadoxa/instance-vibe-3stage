@@ -1,0 +1,198 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below are verified to exist in the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical layout for the notification settings. Each notification type is represented as a separate list item (`10:10214`), providing a clear visual separation and hierarchy.  Items are spaced using the default `itemSpacing` of 16 defined within each list container. Consistent padding is used for visual breathing room. The `horizontalSizing` property is not used for list items as the component handles its own width.
+
+3. **User Flow Reasoning:** Users can easily scan and toggle each notification type on or off using the provided switches. Clear descriptive text accompanies each toggle, enhancing understanding. The visual separation of items further aids readability and management.
+
+4. **Component Choices:** I chose the `switch` component (`10:9912`) for toggling notifications because it's a standard, well-understood UI element for boolean settings. I considered using checkboxes (`10:9586`), but switches are more suitable for the on/off nature of notifications and are better design convention for notification settings in this context. Radio buttons (`10:9825`) were not considered as they are not appropriate for an independent on/off setting of different notification types.
+
+5. **Component Gaps:** The design system lacks a pre-built "Notification Settings" component or a component that directly integrates toggle switches with descriptive text within a list item.  Therefore, I used a combination of `10:10214` (List Item) and `10:9912` (Switch) components, coupled with `native-text` elements for descriptive text. This approach provides a clean, efficient, and user-friendly way to manage notifications within the constraints of the design system.
+
+6. **Visual Hierarchy:** The primary visual hierarchy is established through the vertical arrangement of list items. Each list item provides equal visual weight, with clear labels and distinct toggle switches.
+
+7. **Variant Selection Rationale:**  For the `switch` component, I've chosen the `State: enabled` variant consistently across all switches for a more interactive and intuitive feel.  The `Selected: true/false` variants will be dynamically controlled based on user interaction and preference storage. The `Icon: false` is used to maintain a cleaner aesthetic, and no other icon is relevant to the notification type in this instance.  For the `list-item` component, variants will be `Leading: Switch` and `Trailing: None` consistently, adapting the `Condition` variant based on the length of the notification description.
+
+8. **Native Element Justification:**  Native `native-text` elements are used to display the descriptive text for each notification type within each list item because the `10:10214` (List Item) component requires text content and does not offer a specialized text styling that is distinct from other elements. This approach ensures that the text is clearly associated with the corresponding toggle switch.
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Push Notifications",
+                  "textStyle": "Title/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive push notifications for important updates.",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Email Alerts",
+                  "textStyle": "Title/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive email notifications for important updates.",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "SMS Updates",
+                  "textStyle": "Title/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive SMS notifications for important updates.",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Switch",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Promotional Offers",
+                  "textStyle": "Title/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive notifications about promotional offers.",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:9912",
+                "variants": {
+                  "Selected": "false",
+                  "State": "enabled",
+                  "Icon": "false"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

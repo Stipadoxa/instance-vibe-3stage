@@ -1,0 +1,261 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs referenced below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout prioritizes a vertical flow, mirroring typical e-commerce product detail pages.  The hero image section is full-width to maximize visual impact.  Product details are organized into clearly labeled sections for easy scanning. Seller information is placed below the product details to maintain focus on the product.
+
+3. **User Flow Reasoning:** Users should first see the product images and key information (title, price).  Then, they can explore details, seller information, and finally, contact the seller.
+
+4. **Component Choices:** I chose the `product card` component (ID: 147:3743)  to display the product information concisely and consistently with the design system.
+
+5. **Component Gaps:** The design system lacks a dedicated component for displaying a seller rating. I used a combination of the `native-text` element for the rating score and text description, and the `avatar` component (ID: 10:7773) for the seller's profile picture.  The `native-rectangle` component is used as an image placeholder for multiple images.
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through size, spacing, and typography. The product title and price are the largest elements, followed by the image gallery and section headers. Smaller text sizes are used for descriptions and less crucial information.
+
+7. **Variant Selection Rationale:** For the "Contact Seller" button (component ID: 10:3907), I selected the `Size:Medium`, `Type:Filled`, `State:Default`, `Color:Green` variants.  This provides a clear, prominent call-to-action that aligns with the design system’s established button styles.
+
+8. **Native Element Justification:** `native-text` elements are used for the product title, price, description, seller details, and specifications because these require custom styling options beyond the scope of existing text components within the design system.  `native-rectangle` components are used as image placeholders.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Image Gallery",
+            "layoutMode": "HORIZONTAL",
+            "layoutWrap": "WRAP",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {"type": "native-rectangle", "properties": {"width": 150, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+              {"type": "native-rectangle", "properties": {"width": 150, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}},
+              {"type": "native-rectangle", "properties": {"width": 150, "height": 100, "fill": {"type": "IMAGE", "scaleMode": "FILL"}}}
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Dell XPS 13 9310 - Used",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "STRETCH"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$850.00",
+              "textStyle": "Headline/Medium",
+              "color": "Primary/primary50",
+              "alignment": "left",
+              "horizontalSizing": "MIN"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Details",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Condition: Excellent - Minor cosmetic wear on the bottom edge, fully functional.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "STRETCH"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Specifications: Intel Core i7-1165G7 Processor, 16GB RAM, 512GB SSD, 13.4-inch FHD+ Touchscreen Display",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "STRETCH"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Included: Laptop, Original Charger",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "STRETCH"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Information",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:7773",
+            "properties": {
+              "width": 48,
+              "height": 48,
+              "variants": {
+                "Photo": "Yes"
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Seller Details",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 4,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "STRETCH",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "John Smith",
+                  "textStyle": "Body/Medium",
+                  "color": "Neutral/neutral90",
+                  "alignment": "left",
+                  "horizontalSizing": "STRETCH"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Member since 2018, 4.9 rating (120+ reviews)",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left",
+                  "horizontalSizing": "STRETCH"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Description Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Excellent condition used Dell XPS 13 9310 laptop. Runs smoothly and has been meticulously maintained. Perfect for students or professionals on the go.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left",
+              "horizontalSizing": "STRETCH"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

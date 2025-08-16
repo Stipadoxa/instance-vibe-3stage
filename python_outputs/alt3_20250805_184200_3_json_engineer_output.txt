@@ -1,0 +1,145 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:12086",
+          "variants": {
+            "Device": "Mobile",
+            "State": "default"
+          },
+          "horizontalSizing": "FILL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "Action": "Filter"
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "layoutWrap": "WRAP",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "147:3743",
+          "variants": {
+            "view": "grid",
+            "type": "normal"
+          },
+          "width": 160,
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "height": 160,
+                "cornerRadius": 8,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Product Title",
+                "textStyle": "Title/Medium",
+                "color": "Neutral/neutral90"
+              },
+              "layoutAlign": "STRETCH",
+              "horizontalSizing": "FILL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "₦10,000",
+                "textStyle": "Label/Medium",
+                "color": "Primary/primary50"
+              },
+              "layoutAlign": "STRETCH",
+              "horizontalSizing": "FILL"
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 4,
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "variants": {
+                    "Star": "full"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "variants": {
+                    "Star": "full"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "variants": {
+                    "Star": "full"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "variants": {
+                    "Star": "half"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "variants": {
+                    "Star": "empty"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```

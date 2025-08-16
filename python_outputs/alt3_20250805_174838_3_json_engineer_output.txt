@@ -1,0 +1,206 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 128,
+            "height": 128,
+            "cornerRadius": 64,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Name",
+            "placeholder-text": "Enter your name"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Email",
+            "placeholder-text": "Enter your email"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Address",
+            "placeholder-text": "Enter your address"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8619",
+          "variants": {
+            "Platform": "Android+Web",
+            "Type": "Filled",
+            "State": "Enabled"
+          },
+          "properties": {
+            "label-text": "Password"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Order History",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90"
+          },
+          "layoutAlign": "STRETCH",
+          "horizontalSizing": "FILL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "layoutWrap": "WRAP",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "properties": {
+                "Headline": "Order #1234",
+                "Supporting text": "2023-10-26"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "properties": {
+                "Headline": "Order #5678",
+                "Supporting text": "2023-11-15"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 4,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Average Rating:",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral90"
+          },
+          "layoutAlign": "STRETCH",
+          "horizontalSizing": "FILL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "635:4752",
+          "variants": {
+            "Star": "full"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "635:4752",
+          "variants": {
+            "Star": "full"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "635:4752",
+          "variants": {
+            "Star": "full"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "635:4752",
+          "variants": {
+            "Star": "half"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "635:4752",
+          "variants": {
+            "Star": "empty"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

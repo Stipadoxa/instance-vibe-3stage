@@ -1,0 +1,154 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided JSON uses `appbar` and `listItem` components from the Figma design system, as specified in the input.  These are standard components for creating headers and vertically scrollable lists of settings, respectively. The `layoutContainer` is used for overall layout management and section grouping.",
+    "styleApplication": "Text styles (`textStyle`) and color styles (`colorStyleName`) are applied directly to the `listItem` components as specified.  The `appbar` also uses a color style for its headline.  These styles are assumed to be defined within the Figma design system and are applied to maintain consistency with the design specifications.",
+    "designSystemMapping": "The mapping between the UI Designer's specifications and the Figma components is direct. Each `listItem` corresponds to a setting in the UI, and the `appbar` acts as the screen's header.  No interpretation or transformation was necessary beyond resolving component node IDs and applying the color and text styles.",
+    "variantDecisions": "No component variants were explicitly specified in the input.  The standard `listItem` component variant is assumed."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Cars45 Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "colorStyleName": "Primary/primary50",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "Supporting text": "Active",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral80"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "Trailing supporting text": "What is it?",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral80"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Body/Medium"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

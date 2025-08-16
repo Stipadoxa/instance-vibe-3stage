@@ -1,0 +1,140 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Welcome back to CraftMart!",
+            "textStyle": "Headline/Large",
+            "color": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Sign in to access your favorite handmade crafts and connect with talented artisans.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "label": "Email Address",
+                "placeholder": "your.email@example.com",
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "label": "Password",
+                "placeholder": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+                "Type": "Filled",
+                "State": "enabled"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "10:9586",
+                  "properties": {
+                    "Type": "Unselected",
+                    "State": "enabled"
+                  }
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Remember me",
+                    "textStyle": "Label/Medium",
+                    "color": "Neutral/neutral50"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "horizontalSizing": "FILL",
+            "Action": "Sign In",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Primary/primary50"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Forgot Password?",
+                "textStyle": "Label/Medium",
+                "color": "Primary/primary50",
+                "alignment": "left"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Create Account",
+                "textStyle": "Label/Medium",
+                "color": "Primary/primary50",
+                "alignment": "right"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

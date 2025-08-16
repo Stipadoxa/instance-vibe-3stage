@@ -1,0 +1,137 @@
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs were selected based on the provided design system, ensuring consistency and reusability.  The `appbar`, `input`, `button`, `link`, and `text` components were chosen to match the UI design specifications.",
+    "styleApplication": "Text styles are applied based on the design system's predefined styles for consistency and maintainability.  Variants of components are selected according to design specifications.",
+    "designSystemMapping": "The design system data was used to identify and use the exact property names for each component, ensuring correct rendering and preventing conflicts.",
+    "variantDecisions": "Variants such as `Filled`, `Outlined`, `Large`, `Medium` are used for buttons to match the design specifications.  Input fields utilize `Filled` and `enabled` states.  The `appbar` uses `Light`, `Default`, and `flat` variants.",
+    "nestedComponentHandling": "Nested components were handled by ensuring that no textLayers arrays were used for nested structures.  Single properties were used instead for consistent text mapping.",
+    "textPropertyMapping": "User text was mapped to exact schema property names like `placeholder`, `text`, and utilizing component-specific property names to avoid conflicts. The `textStyle` property was only applied to native text elements."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Sign In",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 24,
+      "paddingTop": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Email",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "input",
+          "componentNodeId": "10:8492",
+          "properties": {
+            "placeholder-text": "Password",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            }
+          }
+        },
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Default": "Log In",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Default": "Continue with Google",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Medium",
+                  "Type": "Outlined",
+                  "State": "Default",
+                  "Color": "Green"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Default": "Continue with Facebook",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Medium",
+                  "Type": "Outlined",
+                  "State": "Default",
+                  "Color": "Green"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "properties": {
+            "text": "Forgot Password?"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "text": "By logging in, you agree to our Terms & Conditions.",
+            "textStyle": "Caption/Small",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        }
+      ]
+    }
+  ]
+}

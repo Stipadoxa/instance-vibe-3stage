@@ -1,0 +1,66 @@
+```json
+{
+  "layoutContainer": {
+    "name": "WelcomeScreen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 20,
+    "paddingTop": 80,
+    "paddingBottom": 80,
+    "paddingLeft": 20,
+    "paddingRight": 20,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "WelcomeMessageContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Welcome to our app",
+          "properties": {
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "alignment": "center",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "ButtonContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 20,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Get Started",
+            "variants": {
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

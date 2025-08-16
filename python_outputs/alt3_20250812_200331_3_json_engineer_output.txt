@@ -1,0 +1,160 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details Page - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "backgroundColor": "White/white100",
+  "itemSpacing": 16,
+  "paddingTop": 16,
+  "paddingBottom": 16,
+  "paddingLeft": 16,
+  "paddingRight": 16,
+  "primaryAxisSizingMode": "AUTO",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "2020 MacBook Pro 13-inch - Space Gray - Excellent Condition",
+        "textStyle": "Headline/Large",
+        "color": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$850",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition: Excellent (Minor scratches on the bottom casing)",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral80"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:7816",
+      "variants": {
+        "Type": "2+ images"
+      },
+      "properties": {
+        "imageUrls": ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg"]
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7773",
+          "variants": {
+            "Photo": "Yes"
+          },
+          "properties": {
+            "imageUrl": "seller_profile.jpg"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe",
+                "textStyle": "Title/Medium",
+                "color": "Neutral/neutral90"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4130",
+              "variants": {
+                "Style": "Filled"
+              },
+              "properties": {
+                "rating": 4.8,
+                "reviewCount": 12
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "This 2020 MacBook Pro 13-inch in Space Gray is in excellent condition. It has been meticulously maintained and is ready for its next owner. Includes original charger. Specs: 16GB RAM, 512GB SSD, Intel Core i5 processor. Battery health: 92%.",
+        "textStyle": "Body/Large",
+        "color": "Neutral/neutral80"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "Color": "Primary/primary50"
+          },
+          "tooltip": "Message the seller to ask questions or negotiate the price."
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Add to Cart"
+          },
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "Color": "Primary/primary50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Listed 3 days ago",
+        "textStyle": "Caption/Small",
+        "color": "Neutral/neutral50"
+      }
+    }
+  ]
+}
+```

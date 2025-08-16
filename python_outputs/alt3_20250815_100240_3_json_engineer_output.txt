@@ -1,0 +1,263 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Detail - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "backgroundColor": "White/white100",
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "2015 MacBook Pro 13\" - Excellent Condition"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default"
+      },
+      "iconSwaps": {
+        "leading-icon": "back"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 80,
+                "height": 80,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL",
+                  "imageUrl": "image_url_1.jpg"
+                }
+              },
+              "_constraintWidth": 80,
+              "_parentLayout": "HORIZONTAL"
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 80,
+                "height": 80,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL",
+                  "imageUrl": "image_url_2.jpg"
+                }
+              },
+              "_constraintWidth": 80,
+              "_parentLayout": "HORIZONTAL"
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 80,
+                "height": 80,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL",
+                  "imageUrl": "image_url_3.jpg"
+                }
+              },
+              "_constraintWidth": 80,
+              "_parentLayout": "HORIZONTAL"
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 80,
+                "height": 80,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL",
+                  "imageUrl": "image_url_4.jpg"
+                }
+              },
+              "_constraintWidth": 80,
+              "_parentLayout": "HORIZONTAL"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$450",
+            "textStyle": "Headline/Medium",
+            "color": "Primary/primary50"
+          },
+          "_constraintWidth": 375 - 32,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition: Excellent (Minor scratches on the bottom casing)",
+            "textStyle": "Body/Medium"
+          },
+          "_constraintWidth": 375 - 32,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 40,
+                "height": 40,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL",
+                  "imageUrl": "seller_profile_picture.jpg"
+                }
+              },
+              "_constraintWidth": 40,
+              "_parentLayout": "HORIZONTAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe (5.0 rating, 12 reviews)",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 375 - 32 - 40,
+              "_parentLayout": "HORIZONTAL"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used 2015 MacBook Pro 13-inch. Excellent condition, minor scratches on the bottom. Includes original charger. Battery health: 85%. Runs smoothly. Selling due to upgrade.",
+            "textStyle": "Body/Large"
+          },
+          "_constraintWidth": 375 - 32,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Specifications:",
+            "textStyle": "Title/Medium"
+          },
+          "_constraintWidth": 375 - 32,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Processor: 2.7 GHz Intel Core i5",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 375 - 32,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "RAM: 8GB",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 375 - 32,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Storage: 256GB SSD",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 375 - 32,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Operating System: macOS Monterey",
+                "textStyle": "Body/Medium"
+              },
+              "_constraintWidth": 375 - 32,
+              "_parentLayout": "VERTICAL"
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Size": "Large",
+            "Type": "Filled",
+            "Color": "Green",
+            "State": "Default"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "View Seller Profile",
+            "textStyle": "Body/Medium",
+            "color": "Primary/primary50"
+          },
+          "_constraintWidth": 375 - 32,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Listing Updated: 3 hours ago",
+            "textStyle": "Caption/Small"
+          },
+          "_constraintWidth": 375 - 32,
+          "_parentLayout": "VERTICAL"
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

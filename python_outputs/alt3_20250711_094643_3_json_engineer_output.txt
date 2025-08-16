@@ -1,0 +1,103 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 20,
+    "paddingTop": 40,
+    "paddingBottom": 40,
+    "paddingLeft": 20,
+    "paddingRight": 20,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "text": "Welcome",
+      "properties": {
+        "textStyle": "Heading 1",
+        "colorStyleName": "Primary/primary90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "center"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Your e-mail",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Password",
+        "variants": {
+          "Type": "Filled",
+          "State": "error"
+        },
+        "supporting-text": "Please enter your password",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign in",
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign up",
+        "variants": {
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "By continuing you agree to the Policy and Rules",
+      "properties": {
+        "textStyle": "Caption",
+        "colorStyleName": "Neutral/neutral80",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "center"
+      }
+    }
+  ]
+}
+```

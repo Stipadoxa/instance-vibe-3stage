@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Settings management within a mobile application context, potentially related to an auction or marketplace (Cars45 mentioned).
+User Type: Mobile app users who need to manage their account settings, personal information, and preferences.
+Platform Impact: Mobile users require a simple, intuitive interface with clear visual hierarchy and large touch targets due to smaller screen sizes and touch-based interaction.  Limited screen real estate necessitates prioritizing key settings.
+
+User Requirements
+Primary Goals: Access and modify personal and account settings, manage notification preferences, update contact information, securely logout.
+Secondary Goals: Understand the meaning of badges or status indicators ("Verified ID"), easily access help or information about specific settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions during use, limited attention span.
+Ready for handoff if: All settings from the reference image are included using the designated app components, navigation is present (top and bottom), touch targets meet minimum size requirements, and visual hierarchy prioritizes most frequently accessed settings.
+
+Content Requirements
+Critical: Personal details (name, contact information), business details (if applicable), notification settings, language selection, password change, account deletion option, logout option, access to Cars45 auction (status indicator).
+Supporting:  "Verified ID" badge explanation, links to help or support documentation for individual settings.
+Contextual:  Status indicators for features (e.g., "Active" for auction access).
+
+Structural & Component Directives
+* Layout:  Vertical list of settings, similar to the reference image, with each setting presented as a row.
+* Components:  Use existing app components for list items, buttons (e.g., for toggles and navigation), and other UI elements.
+* Styling:  Maintain visual consistency with the app's established style guide, adhering to existing color palettes and typography.  Use color-coding and visual cues for active/inactive states.
+
+Screen Requirements
+Primary Actions: Select a setting to modify, initiate password change, delete account, log out.
+Secondary Actions: Access detailed information about a setting ("What is it?"), navigate to other app sections through top and bottom navigation.
+Screen States: Default state (displaying all settings), loading state (if any settings require server calls), error state (if changes fail).
+Feedback Needs: Clear visual indication of which settings have been updated, confirmation messages for successful actions, error messages for failed actions.

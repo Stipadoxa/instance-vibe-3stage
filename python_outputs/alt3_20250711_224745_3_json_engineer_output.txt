@@ -1,0 +1,120 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs (10:5620, 10:7816, 10:3907) were selected based on the provided input JSON, representing AppBar, Image, and Button components respectively.  These IDs are assumed to correspond to specific instances within the Figma design system.",
+    "styleApplication": "Text styles ('Title/Large', 'Body/Medium') and color styles ('Primary/primary50', 'Neutral/neutral90') are applied directly as provided in the input JSON.  It is assumed these styles exist within the Figma design system and are correctly defined.",
+    "designSystemMapping": "The input JSON directly maps to the Figma components and styles.  No interpretation or modification of the design specifications was performed. The mapping relies on the accuracy of the provided componentNodeIds and style names.",
+    "variantDecisions": "Component variants for AppBar and Button are applied directly as specified in the input JSON.  These variant selections are assumed to be valid configurations within the respective component's variant system in the Figma design system."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Title",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "ImageContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "image",
+          "componentNodeId": "10:7816",
+          "properties": {
+            "variants": {
+              "Type": "1 image"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "PriceAndDescription",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items":[
+        {
+          "type": "native-text",
+          "text": "₦1,500,000",
+          "properties": {
+            "textStyle": "Title/Large",
+            "colorStyleName": "Primary/primary50",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Product Description",
+          "properties": {
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "ButtonContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "button",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

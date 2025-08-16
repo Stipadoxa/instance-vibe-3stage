@@ -1,0 +1,84 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 32,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "TEST 2: Vertical vs Horizontal Comparison",
+            "textStyle": "Headline/Large",
+            "color": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Same properties applied to vertical layout (should work).",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 0,
+      "paddingBottom": 32,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Forgot Password?",
+                "textStyle": "Body/Small",
+                "color": "Tertiary/tertiary90",
+                "alignment": "left"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

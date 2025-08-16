@@ -1,0 +1,115 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement to present product information in a clear, sequential manner.  The image carousel occupies the top portion for visual prominence, followed by product details and the CTA button.",
+    "userFlowReasoning": "The user swipes through images to explore the product, then reviews the description, specifications, and price.  The prominent 'Contact Seller' button provides a clear pathway to initiate contact if interested.",
+    "componentChoices": "I chose the `10:7816` (IMAGES) component for the product image carousel because it supports multiple images and swiping gestures, enhancing the user experience compared to static image components like a simple image. It's more engaging than a simple image display (no alternative found in the design system that supports swiping).  The `10:3907` (Button) is selected for the CTA as it provides the best interaction pattern for the action needed.",
+    "visualHierarchy": "The image carousel is given the most visual prominence, followed by the title and price.  Product details are structured using clear headings and bullet points. The 'Contact Seller' button is highlighted through color and size.",
+    "variantSelectionRationale": "For the Button component, I selected the `Size: Large` and `Color: Green` variants to make it prominent and visually appealing for a direct conversion path. While other sizes and colors are available, the large green button provides the best call to action.  I chose a default state of the button to make sure there is no confusion with the other states.",
+    "nativeElementJustification": "With moment significance of 0.6 and decision_points journey position, this product detail screen warrants enhanced treatment. A subtle background gradient with native-rectangle and a decorative shape native-circle adds visual interest without distracting from the key information and interaction elements. This enhances visual appeal while maintaining a clean layout for better readability and conversion."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": {
+            "type": "LINEAR_GRADIENT",
+            "stops": [
+              { "color": "primary-10", "offset": 0 },
+              { "color": "primary-5", "offset": 1 }
+            ]
+          },
+          "cornerRadius": 12
+        }
+      },
+      {
+        "id": "10:7816",
+        "type": "image",
+        "variants": {
+          "Type": "2+ images"
+        },
+        "properties": {
+          "images": [
+            { "url": "image1.jpg" },
+            { "url": "image2.jpg" },
+            { "url": "image3.jpg" }
+          ]
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "alignment": "start",
+          "color": "neutral-90"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦ 10,000",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "alignment": "start",
+          "color": "primary-50"
+        }
+      },
+      {
+        "id": "10:8619",
+        "type": "text",
+        "variants": {
+          "Platform": "Android+Web",
+          "Type": "Filled",
+          "State": "Enabled"
+        },
+        "properties": {
+          "labelText": "Product Description",
+          "content": "This is a detailed description of the product. It includes key features, specifications, and benefits."
+        }
+      },
+      {
+        "type": "native-circle",
+        "properties": {
+          "width": 40,
+          "height": 40,
+          "fill": "secondary-50",
+          "cornerRadius": 20
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

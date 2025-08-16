@@ -1,0 +1,67 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 8,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notifications",
+        "subheadline": "Recent activity",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "User 1",
+            "Supporting text": "New message received at 10:00 AM",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Image",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            }
+          },
+          "repeats": 5
+        }
+      ]
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "\u270f\ufe0f Label": [
+          "Home",
+          "Saved",
+          "Sell",
+          "Chat",
+          "Profile"
+        ],
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column, vertically scrolling design, optimized for mobile screens.  This prioritizes efficient use of limited screen real estate and supports mobile vertical scrolling behavior.",
+    "userFlowReasoning": "The user flow is straightforward: The user enters their credentials, taps the login button, and is either redirected to the app content upon successful authentication or presented with an error message if the credentials are invalid. A password recovery link provides an alternative path if needed.  Terms and Conditions are indicated in a footnote.",
+    "componentChoices": "I chose the 'text input' (id: 10:8492) component for the username/email and password fields because it offers the functionality needed for text input with placeholder text and clear visual feedback. I chose the 'button' (id: 10:3907) for the primary login action because it's a standard and highly recognizable component suitable for this primary action. I also considered using a 'chip' (id: 10:8132) which is not as visually prominent for a primary action. The 'text' component (id: 24:10333) provides a straightforward solution for the T&C footnote.  A snackbar (id: 10:3856) is used to communicate error messages or successful login feedback.",
+    "visualHierarchy": "Visual hierarchy is established by the size and styling of the button. The primary 'Log In' button uses prominent sizing and the primary green color from the Design System, making it the most visually prominent element on the screen. Other elements like the password recovery link use a lower-contrast color, distinguishing them as secondary actions.",
+    "variantSelectionRationale": "For the 'button' component, I chose 'Size: Medium', 'Type: Filled', and 'Color: Green'  instead of 'Small' or 'Outlined' for the primary login button because a medium, filled button offers a good balance between visual prominence and approachability, while the primary green color highlights its importance.  For the 'text input' components, I chose 'Type: Filled' and 'State: enabled' because filled inputs provide a cleaner, more visually defined input area. The enabled state ensures the inputs are interactive.  For the snackbar, 'Lines: One line' and 'Action: True' are chosen to keep the message concise and provide a means of closing the notification."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email",
+          "label-text": null,
+          "supporting-text": null,
+          "counter": null
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password",
+          "label-text": null,
+          "supporting-text": null,
+          "counter": null
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Log In"
+        }
+      },
+      {
+        "id": "24:10333",
+        "suggestedType": "text",
+        "textLayers": {
+          "POPULAR": "By logging in, you agree to our Terms & Conditions."
+        }
+      },
+      {
+        "id": "10:3856",
+        "suggestedType": "snackbar",
+        "variants": {
+          "Action": "True",
+          "Close affordance": "True",
+          "Longer action": "False",
+          "Lines": "One line"
+        },
+        "textLayers": {
+          "Supporting text": "Incorrect username or password"
+        }
+      }
+    ]
+  }
+}
+```

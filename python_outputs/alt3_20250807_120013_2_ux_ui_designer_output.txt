@@ -1,0 +1,286 @@
+```json
+{
+  "DESIGN RATIONALE": {
+    "Component Inventory Verification": "All component IDs have been manually checked against the provided `DESIGN_SYSTEM_DATA`.",
+    "Layout Decisions": "The layout prioritizes a vertical flow, starting with a hero image gallery, followed by product details (title, price, condition), seller information (profile picture and rating), a description, and finally, a 'Contact Seller' button.  Padding and spacing are consistent with Pattern A for full-width content and Pattern B for horizontal layouts of images.",
+    "User Flow Reasoning": "The user flow is designed to be linear and intuitive. The most important information (images, title, price) is presented first, followed by progressively less critical details. The 'Contact Seller' button is placed at the end to encourage users to view all product information before reaching out.",
+    "Component Choices": "I chose the `product card` (147:3743) component for its image gallery capability. Although it includes additional elements not directly needed (like price and rating), they are easily managed by setting property values in the design specification.  The 'Contact Seller' button will be a `Button` component (10:3907).",
+    "Component Gaps": "The design system lacks a dedicated image gallery and star rating component. I've implemented these using `native-rectangle` for the image placeholders in a horizontal `layoutContainer` and five `native-circle` elements for the star rating.",
+    "Visual Hierarchy": "Visual hierarchy is established through: 1. Size and placement of elements, with the hero image gallery being the largest and most prominent; 2. Typography:  `Headline/Large` for the title, `Title/Medium` for the price, and `Body/Medium` for the description; 3. Color: Primary colors for key information (price, button) and neutral colors for supporting text.",
+    "Variant Selection Rationale": "For the `Button` component (10:3907), I selected the `Size: Medium`, `Type: Filled`, `State: Default`, and `Color: Green` variants to ensure a clear and prominent call to action. ",
+    "Native Element Justification": "Native elements were used to create the image gallery and star rating system due to the lack of appropriate components in the design system. `native-rectangle` with image fills efficiently provides the image gallery, while `native-circle` elements create the star rating, ensuring the user requirements are met."
+  },
+  "DESIGN SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Used Laptop Detail - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 600,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Hero Image Gallery",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 100,
+                "height": 100,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 100,
+                "height": 100,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 100,
+                "height": 100,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 8,
+                "horizontalSizing": "AUTO"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Product Details",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "paddingTop": 20,
+          "paddingBottom": 20,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "2023 MacBook Pro 16\"",
+                "textStyle": "Headline/Large",
+                "color": "Neutral/neutral90",
+                "alignment": "left",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "₦1,200,000",
+                "textStyle": "Title/Medium",
+                "color": "Primary/primary50",
+                "alignment": "left",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Good Condition - Minor Scratches",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50",
+                "alignment": "left",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Seller Information",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 12,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "CENTER",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 40,
+                "height": 40,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 20,
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe",
+                "textStyle": "Title/Small",
+                "color": "Neutral/neutral90",
+                "alignment": "left",
+                "horizontalSizing": "AUTO"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "name": "Rating",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 2,
+              "paddingTop": 0,
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "primaryAxisSizingMode": "AUTO",
+              "counterAxisSizingMode": "AUTO",
+              "horizontalSizing": "AUTO",
+              "layoutAlign": "CENTER",
+              "items": [
+                {
+                  "type": "native-circle",
+                  "properties": {
+                    "width": 12,
+                    "height": 12,
+                    "fill": "Primary/primary50"
+                  }
+                },
+                {
+                  "type": "native-circle",
+                  "properties": {
+                    "width": 12,
+                    "height": 12,
+                    "fill": "Primary/primary50"
+                  }
+                },
+                {
+                  "type": "native-circle",
+                  "properties": {
+                    "width": 12,
+                    "height": 12,
+                    "fill": "Primary/primary50"
+                  }
+                },
+                {
+                  "type": "native-circle",
+                  "properties": {
+                    "width": 12,
+                    "height": 12,
+                    "fill": "Primary/primary50"
+                  }
+                },
+                {
+                  "type": "native-circle",
+                  "properties": {
+                    "width": 12,
+                    "height": 12,
+                    "fill": "Neutral/neutral50"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Description",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "paddingTop": 20,
+          "paddingBottom": 20,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "This is a detailed description of the used laptop. It includes specifications, condition details, and any other relevant information.",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral50",
+                "alignment": "left",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Contact Seller Button",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "paddingTop": 20,
+          "paddingBottom": 20,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Medium",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green"
+                },
+                "textLayers": {
+                  "Action": "Contact Seller"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```

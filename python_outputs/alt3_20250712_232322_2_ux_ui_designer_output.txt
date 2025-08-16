@@ -1,0 +1,70 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized in a single vertical column to optimize for mobile screen real estate.  The main product image is placed at the top for immediate visual impact, followed by key information (price, title, description, location) in descending order of importance.  Sufficient spacing is used between elements for readability and visual breathing room.",
+    "userFlowReasoning": "The user flow prioritizes quick access to essential product information and the primary action of contacting the seller. Secondary actions, like viewing more images, are provided, but are less prominent to avoid cluttering the interface.  The layout guides the user's eye naturally down the page, facilitating easy consumption of information.",
+    "componentChoices": "Standard UI components are used to ensure familiarity and ease of use:  Images are displayed prominently, text elements are clear and concise, and the 'Contact Seller' button is a clear, prominent CTA.",
+    "visualHierarchy": "Visual hierarchy is established using font sizes, spacing, and visual prominence of elements.  The main product image is the largest element, followed by the price (with bold font), title, description, and then location.  Secondary actions are less visually prominent, maintaining a clear focus on the primary task of contacting the seller."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Details Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "image",
+      "properties": {
+        "source": "product_image.jpg",
+        "width": 327,
+        "height": 200
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "$3,825",
+        "textStyle": "Headline/Large",
+        "colorStyleName": "Primary/primary90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Spacious 1-Bedroom in New York",
+        "textStyle": "Title/Medium"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Beautifully renovated 1-bedroom apartment in the heart of New York City.  Features modern kitchen, updated bathroom, and ample closet space.",
+        "textStyle": "Body/Medium"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "New York, NY",
+        "textStyle": "Body/Small"
+      }
+    },
+    {
+      "type": "button",
+      "properties": {
+        "text": "Contact Seller",
+        "textStyle": "Button/Large",
+        "colorStyleName": "Primary/primary90"
+      }
+    }
+  ]
+}
+```

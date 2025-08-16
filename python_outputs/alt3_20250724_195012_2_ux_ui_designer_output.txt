@@ -1,0 +1,458 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer output clearly specifies a \"Settings management\" domain, focusing on user preferences and account configuration within a mobile application. This aligns perfectly with the Settings domain type.",
+    "layoutDecisions": "A vertical list-based layout is chosen to mirror the provided reference image and to optimize for mobile users with limited screen real estate. This ensures a concise, easily navigable experience with minimal scrolling.",
+    "userFlowReasoning": "The user flow prioritizes primary actions (editing details, toggling settings, account deletion, logout) and secondary actions (help/info links). This mirrors the reference image's visual hierarchy.  Navigation is intuitive. Settings are presented as list items.",
+    "componentChoices": "The `list-item` component (ID: 230:3931) is the core element due to its suitability for settings navigation. `appbar` components (ID: 118:1617) are used for top navigation, providing space for a back button and screen title.  `switch` components (ID: 81:1231) are used for toggles and `link` components for information links. Other components are used as needed.",
+    "visualHierarchy": "Visual hierarchy is achieved through the vertical list structure.  The most critical settings are placed towards the top for quicker access.  Clear visual cues, such as arrows and switches, enhance usability.",
+    "variantSelectionRationale": "The `Trailing` variant of `list-item` is set to `Switch` for boolean settings like \"Access to Cars45 auction\" and \"Disable chats.\"  The `Trailing` variant is set to `Icon` for settings that lead to additional detail screens ('Personal details', 'Business details', 'Change phone number', etc.).  This distinction aids mobile users in understanding each item's interaction behavior."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Settings Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "appbar",
+          "componentNodeId": "118:1617",
+          "properties": {
+            "Title": "Settings",
+            "variants": {
+              "Leading": "Icon",
+              "LeadingText": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Settings Content",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "layoutAlign": "STRETCH",
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "paddingTop": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "items": [
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Personal details",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Business details",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Access to Cars45 auction",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Switch",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "\"Verified ID\" badge",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Info",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Change phone number",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Change email",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Change language",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Disable chats",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Switch",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Disable Feedback",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Switch",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Manage notifications",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Change password",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Delete my account permanently",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "230:3931",
+              "properties": {
+                "Title": "Log out",
+                "variants": {
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": false,
+                  "Show supporting text": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "appbar",
+          "componentNodeId": "116:1662",
+          "properties": {
+            "variants": {
+              "Amount": "2",
+              "Style": "Text + Icon"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "118:1617",
+        "properties": {
+          "Title": "Settings",
+          "variants": {
+            "Leading": "Icon",
+            "LeadingText": "None",
+            "Trailing": "None"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Personal details",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Business details",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Access to Cars45 auction",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "\"Verified ID\" badge",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Info",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change phone number",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change email",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change language",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Disable chats",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Disable Feedback",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Manage notifications",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Change password",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Delete my account permanently",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "Icon",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "230:3931",
+            "properties": {
+              "Title": "Log out",
+              "variants": {
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": false,
+                "Show supporting text": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "appbar",
+        "componentNodeId": "116:1662",
+        "properties": {
+          "variants": {
+            "Amount": "2",
+            "Style": "Text + Icon"
+          }
+        }
+      }
+    ]
+  }
+}
+```

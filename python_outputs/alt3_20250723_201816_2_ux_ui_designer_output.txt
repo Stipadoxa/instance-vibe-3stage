@@ -1,0 +1,130 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer clearly specifies an \"Authentication domain\" for a mobile application.  This informs the design to prioritize a streamlined, form-based layout optimized for touch interaction and limited screen real estate.",
+    "layoutDecisions": "A single-column vertical layout is used to maximize screen real estate and provide a clear, linear user flow.  Components are arranged with sufficient spacing to ensure tap targets are large enough for touch input and to avoid visual clutter.",
+    "userFlowReasoning": "The user flow focuses on successful authentication as the primary goal.  Secondary actions (social login, password recovery) are provided for alternative paths. Error handling and feedback mechanisms ensure a smooth user experience.",
+    "componentChoices": "The core components are \"input\" (for username/email and password), \"button\" (for login and social actions), and \"link\" (for password recovery). These components are all standard form elements suitable for the authentication domain.",
+    "visualHierarchy": "Visual hierarchy is achieved through component size and spacing. The primary login button is given more visual weight with potential use of a larger size variant.  Less critical elements like the terms and conditions footnote are smaller and placed at the bottom.",
+    "variantSelectionRationale": "Variants are selected to reinforce the mobile context.  For instance, button variants will be used to emphasize the primary login button.  Input variants will provide email validation where applicable and password masking. Social login buttons will leverage pre-built components if available in the design system to ensure consistency."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Authentication Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingBottom": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "input",
+            "componentNodeId": "1902:3230",
+            "properties": {
+              "placeholder": "Email",
+              "variants": {
+                "State": "placeholder",
+                "Type": "Email"
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "1989:4040",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "State": "placeholder",
+                "Type": "Password",
+                "Right icon": "open"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "1748:2883",
+            "properties": {
+              "text": "Login",
+              "variants": {
+                "Type": "Primary",
+                "Size": "Large",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "1271:11783",
+            "properties": {
+              "text": "Forgot Password?",
+              "variants": {
+                "Configuration": "Text",
+                "State": "Default"
+              }
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "button",
+                "componentNodeId": "1748:2883",
+                "properties": {
+                  "text": "Continue with Google",
+                  "variants": {
+                    "Type": "Secondary",
+                    "Size": "Medium",
+                    "State": "Default"
+                  }
+                }
+              },
+              {
+                "type": "button",
+                "componentNodeId": "1748:2883",
+                "properties": {
+                  "text": "Continue with Facebook",
+                  "variants": {
+                    "Type": "Secondary",
+                    "Size": "Medium",
+                    "State": "Default"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Terms and Conditions",
+              "textStyle": "Caption/Small",
+              "colorStyleName": "Grayscale/gray"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

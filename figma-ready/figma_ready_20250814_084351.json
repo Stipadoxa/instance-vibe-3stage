@@ -1,0 +1,77 @@
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "horizontalSizing": "FILL",
+  "primaryAxisSizingMode": "AUTO",
+  "counterAxisSizingMode": "FIXED",
+  "layoutAlign": "STRETCH",
+  "itemSpacing": 8,
+  "paddingTop": 24,
+  "paddingBottom": 24,
+  "paddingLeft": 16,
+  "paddingRight": 16,
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Product Title",
+            "textStyle": "Headline",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "color": "#000000",
+            "alignment": "LEFT"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:5620",
+          "properties": {
+            "headline": "Product Details"
+          },
+          "variants": {
+            "size": "large",
+            "theme": "light"
+          },
+          "visibilityOverrides": {
+            "10:5622": false,
+            "10:5625": true
+          },
+          "iconSwaps": {
+            "10:5622": "bookmark"
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": 343,
+        "height": 200,
+        "fill": {
+          "type": "IMAGE",
+          "scaleMode": "FILL"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Product Description",
+        "textStyle": "Body",
+        "fontSize": 16,
+        "fontWeight": "normal",
+        "color": "#000000",
+        "alignment": "LEFT"
+      }
+    }
+  ]
+}

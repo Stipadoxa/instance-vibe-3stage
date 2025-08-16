@@ -1,0 +1,184 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., `10:5620` for appbar, `10:10214` for listItem, `10:9912` for switch) are directly used as provided in the input layout data.  These IDs are assumed to correspond to specific components in the design system.",
+    "styleApplication": "Text styles ('Body/Medium') and color styles (e.g., 'Neutral/neutral90', 'Primary/primary50') are applied as specified in the input data.  It is assumed that these styles are defined within the design system and will be correctly resolved by the Figma plugin.",
+    "designSystemMapping": "The input layout already maps design elements to Figma components and styles.  The JSON translation directly reflects this mapping.",
+    "variantDecisions": "ListItem component variants are inferred based on the presence of `Trailing` properties. If a switch component (`10:9912`) is provided as a Trailing property, it's assumed to require the 'Trailing: Icon' variant.  Otherwise, variants are assumed as needed based on the presence of additional properties like \"Trailing supporting text\"."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Primary/primary50"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing-text": "Active",
+            "colorStyleName": "Neutral/neutral30"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing-text": "What is it?",
+            "colorStyleName": "Neutral/neutral30"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out",
+            "textStyle": "Body/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bottomnavigation",
+      "componentNodeId": "10:4724"
+    }
+  ]
+}
+```

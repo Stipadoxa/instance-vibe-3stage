@@ -1,0 +1,129 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided JSON uses existing component IDs (appBar, scrollList, notificationItem, bottomNavigationBar).  These IDs are assumed to represent pre-defined components within the Figma design system.  If these IDs do not exist, the plugin will fail.  Component IDs were used where specified in the input JSON.",
+    "styleApplication": "Style information (backgroundColor, textColor) is included within each component's styleInfo property.  The plugin is responsible for correctly applying these styles to the rendered components.  Direct color values are used (#FFFFFF, #000000).  If color style names were provided instead of RGB values, exact color style names would be used.",
+    "designSystemMapping": "The input JSON directly maps to components within the Figma design system.  The structure mirrors the design layout, with an appBar at the top, a scrollList containing notificationItems, and a bottomNavigationBar at the bottom.  The notificationItems utilize pre-defined properties: image, title, subtitle, timestamp.",
+    "variantDecisions": "No component variants are explicitly defined in the input JSON.  If the notificationItem, appBar, or bottomNavigationBar components support variants, the plugin would need to handle them based on further provided configurations or defaults."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "items": [
+      {
+        "type": "appBar",
+        "componentNodeId": "appBar",
+        "properties": {
+          "title": "Notifications"
+        },
+        "styleInfo": {
+          "backgroundColor": {
+            "type": "SOLID",
+            "color": "#FFFFFF",
+            "opacity": 1
+          },
+          "textColor": {
+            "type": "SOLID",
+            "color": "#000000",
+            "opacity": 1
+          }
+        }
+      },
+      {
+        "type": "scrollList",
+        "componentNodeId": "scrollList",
+        "items": [
+          {
+            "type": "notificationItem",
+            "componentNodeId": "notificationItem",
+            "properties": {
+              "image": {
+                "url": "placeholder.jpg"
+              },
+              "title": "New Message from John Doe",
+              "subtitle": "Check out this cool thing!",
+              "timestamp": "10:00 AM"
+            },
+            "styleInfo": {
+              "backgroundColor": {
+                "type": "SOLID",
+                "color": "#FFFFFF",
+                "opacity": 1
+              },
+              "textColor": {
+                "type": "SOLID",
+                "color": "#000000",
+                "opacity": 1
+              }
+            }
+          },
+          {
+            "type": "notificationItem",
+            "componentNodeId": "notificationItem",
+            "properties": {
+              "image": {
+                "url": "placeholder.jpg"
+              },
+              "title": "App Update Available",
+              "subtitle": "Version 2.0 is here!",
+              "timestamp": "9:30 AM"
+            },
+            "styleInfo": {
+              "backgroundColor": {
+                "type": "SOLID",
+                "color": "#FFFFFF",
+                "opacity": 1
+              },
+              "textColor": {
+                "type": "SOLID",
+                "color": "#000000",
+                "opacity": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "bottomNavigationBar",
+        "componentNodeId": "bottomNavigationBar",
+        "properties": {
+          "tabs": [
+            {
+              "label": "Home"
+            },
+            {
+              "label": "Profile"
+            },
+            {
+              "label": "Settings"
+            }
+          ]
+        },
+        "styleInfo": {
+          "backgroundColor": {
+            "type": "SOLID",
+            "color": "#FFFFFF",
+            "opacity": 1
+          },
+          "textColor": {
+            "type": "SOLID",
+            "color": "#000000",
+            "opacity": 1
+          }
+        }
+      }
+    ]
+  }
+}
+```

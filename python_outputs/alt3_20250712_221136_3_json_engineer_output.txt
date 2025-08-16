@@ -1,0 +1,375 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs used (e.g., `10:5620` for appbar, `10:10214` for list-item, `10:8492` for text input) were selected directly from the provided design specification.  These IDs correspond to specific components within the design system, ensuring consistency and accurate rendering.",
+    "styleApplication": "Text styles ('Title/Medium', 'Body/Medium') and color styles ('Neutral/neutral90') are applied as specified in the design specification to maintain design system consistency.  The color style names are directly used to reference the predefined colors within the design system.",
+    "designSystemMapping": "The design system components (appbar, list-item, text input, select, divider, button, dialog) are mapped directly to their corresponding Figma component IDs.  All properties and variants specified within the input are faithfully translated into the JSON output.",
+    "variantDecisions": "Component variants (e.g., appbar variants for Mode, Type, and Elevation, text input variants for Type and State, switch variants for Selected, State, and Icon) are selected based on the design specification's requirements.  These choices ensure that the components render according to the specified design variations."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Account Settings",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Personal Details Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal Details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Edit Name",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "list-item",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "Headline": "Edit Name",
+                  "Supporting text": "Your full name",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Neutral/neutral90"
+                },
+                "componentInstances": [
+                  {
+                    "type": "text input",
+                    "componentNodeId": "10:8492",
+                    "properties": {
+                      "label-text": "Full Name",
+                      "variants": {
+                        "Type": "Filled",
+                        "State": "enabled"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Edit Phone Number",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "list-item",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "Headline": "Edit Phone Number",
+                  "Supporting text": "Your phone number",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Neutral/neutral90"
+                },
+                "componentInstances": [
+                  {
+                    "type": "text input",
+                    "componentNodeId": "10:8492",
+                    "properties": {
+                      "label-text": "Phone Number",
+                      "variants": {
+                        "Type": "Filled",
+                        "State": "enabled"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Edit Email",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "list-item",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "Headline": "Edit Email",
+                  "Supporting text": "Your email address",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Neutral/neutral90"
+                },
+                "componentInstances": [
+                  {
+                    "type": "text input",
+                    "componentNodeId": "10:8492",
+                    "properties": {
+                      "label-text": "Email Address",
+                      "variants": {
+                        "Type": "Filled",
+                        "State": "enabled"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Change Language",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "list-item",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "Headline": "Change Language",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Neutral/neutral90"
+                },
+                "componentInstances": [
+                  {
+                    "type": "select",
+                    "componentNodeId": "10:10010",
+                    "properties": {
+                      "Overline": "Language",
+                      "variants": {
+                        "Platform": "Android+Web",
+                        "State": "Filled"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "componentNodeId": "10:8459",
+        "properties": {
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Account Settings Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Account Settings",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change Password",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete My Account",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "componentNodeId": "10:8459",
+        "properties": {
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Notifications Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Notifications",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Disable Chats",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "list-item",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "Headline": "Disable Chats",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Neutral/neutral90"
+                },
+                "componentInstances": [
+                  {
+                    "type": "switch",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Disable Feedback",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "list-item",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "Headline": "Disable Feedback",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Neutral/neutral90"
+                },
+                "componentInstances": [
+                  {
+                    "type": "switch",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage Notifications",
+              "textStyle": "Body/Medium",
+              "colorStyleName": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Log Out",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          }
+        }
+      },
+      {
+        "type": "dialog",
+        "componentNodeId": "10:12230",
+        "properties": {
+          "header": "Confirm Account Deletion",
+          "body": "Are you sure you want to delete your account? This action is irreversible.",
+          "variants": {
+            "Platform": "Android"
+          }
+        },
+        "componentInstances": [
+          {
+            "type": "Button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Cancel",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Text",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "Button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Delete Account",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

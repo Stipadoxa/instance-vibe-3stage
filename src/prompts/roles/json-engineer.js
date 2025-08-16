@@ -486,6 +486,40 @@ Native Element Patterns
   }
 }
 
+// Native Text with Color Style Name (when provided by UX Designer)
+{
+  "type": "native-text",
+  "text": "Welcome Back!",
+  "properties": {
+    "fontSize": 24,
+    "fontWeight": "bold",
+    "colorStyleName": "Primary/primary80",
+    "horizontalSizing": "FILL"
+  }
+}
+
+// Native Text with Text Style (when provided by UX Designer)
+{
+  "type": "native-text",
+  "text": "Account Settings",
+  "properties": {
+    "textStyle": "Heading 1",
+    "colorStyleName": "Primary/primary90",
+    "horizontalSizing": "FILL"
+  }
+}
+
+// Native Text with Both Text Style and Manual Override
+{
+  "type": "native-text",
+  "text": "Quick action",
+  "properties": {
+    "textStyle": "Body Text",
+    "color": {"r": 0.2, "g": 0.2, "b": 0.2},
+    "horizontalSizing": "FILL"
+  }
+}
+
 // Native Circle with Media Content
 {
   "type": "native-circle",
@@ -578,7 +612,65 @@ Advanced Conditional Behavior
   }
 }
 
-Proper Layout Container Structure
+🔧 CRITICAL: Full-Width vs Standard Layout Strategy
+
+When user requests "full-width", "edge-to-edge", or "hero" images/backgrounds:
+❌ NEVER use root container padding - it prevents true full-width
+✅ ALWAYS use nested container strategy with zero root padding
+
+❌ WRONG - Standard Layout (prevents full-width):
+{
+  "layoutContainer": {
+    "paddingLeft": 16,      // ❌ Blocks full-width elements
+    "paddingRight": 16,     // ❌ Blocks full-width elements
+    "items": [
+      {"type": "image"}     // ❌ Can't reach screen edges
+    ]
+  }
+}
+
+✅ CORRECT - Full-Width Layout Strategy:
+{
+  "layoutContainer": {
+    "paddingLeft": 0,       // ✅ Allows true full-width
+    "paddingRight": 0,      // ✅ Allows true full-width
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "itemSpacing": 0,       // ✅ No gaps between sections
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Hero Section",    // ✅ Full-width section
+        "layoutMode": "VERTICAL",
+        "paddingLeft": 0,          // ✅ Edge-to-edge
+        "paddingRight": 0,         // ✅ Edge-to-edge
+        "items": [
+          {"type": "image"}        // ✅ Reaches screen edges
+        ]
+      },
+      {
+        "type": "layoutContainer", 
+        "name": "Content Section", // ✅ Padded content section
+        "layoutMode": "VERTICAL",
+        "paddingLeft": 16,         // ✅ Content padding
+        "paddingRight": 16,        // ✅ Content padding
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "itemSpacing": 16,
+        "items": [
+          {"type": "text"},         // ✅ Properly padded content
+          {"type": "button"}
+        ]
+      }
+    ]
+  }
+}
+
+🎯 Layout Strategy Decision Tree:
+- User mentions "full-width", "edge-to-edge", "hero", "cover" → Use nested containers
+- Regular content layout → Use standard padding strategy
+
+Proper Layout Container Structure (Standard Content)
 
 {
   "layoutContainer": {
@@ -621,8 +713,19 @@ Native Elements: Use text at root level + properties object for styling
 Component Elements: Use properties object for all content and variants
 {"type": "list-item", "properties": {"text": "Content", "variants": {}}}
 
-Color Format: Always use RGB object format
+Color Format: ALWAYS preserve colorStyleName when provided by UX Designer
+- When UX Designer provides colorStyleName: Include it in properties object
+- When UX Designer provides color object: Use RGB format
+- NEVER convert colorStyleName to RGB - preserve the style reference
+{"colorStyleName": "Primary/primary80"}
 {"color": {"r": 0.1, "g": 0.1, "b": 0.1}}
+
+Text Style Format: ALWAYS preserve textStyle when provided by UX Designer
+- When UX Designer provides textStyle: Include it in properties object
+- When UX Designer provides manual properties: Use fontSize, fontWeight, etc.
+- NEVER convert textStyle to manual properties - preserve the style reference
+{"textStyle": "Heading 1"}
+{"fontSize": 24, "fontWeight": "bold"}
 
 Template Variables: Use \${variableName} for component IDs that need resolution
 {"componentNodeId": "\${settingsItemId}"}

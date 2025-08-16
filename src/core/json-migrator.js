@@ -1,5 +1,8 @@
+"use strict";
 // src/core/json-migrator.ts
-export class JSONMigrator {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JSONMigrator = void 0;
+class JSONMigrator {
     static migrateToSystematic(originalJSON) {
         if (originalJSON.items) {
             originalJSON.items = this.traverseAndMerge(originalJSON.items);
@@ -59,3 +62,4 @@ export class JSONMigrator {
         return newItems;
     }
 }
+exports.JSONMigrator = JSONMigrator;

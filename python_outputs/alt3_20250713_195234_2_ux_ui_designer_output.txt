@@ -1,0 +1,186 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column list view, mirroring the provided reference image. This approach prioritizes readability and ease of navigation on smaller mobile screens.  Each setting is presented as a distinct list item, ensuring clear separation and reducing visual clutter. The use of consistent spacing between list items (16px) enhances visual organization and scannability.",
+    "userFlowReasoning": "The user flow is straightforward: users scroll through the list of settings, tap on a setting to modify its value (if applicable), and use switches for togglable settings.  Navigational cues (right-pointing arrows) indicate where further actions or information are available. The \"What is it?\" links provide supplementary information for unclear settings.  This approach promotes a smooth and intuitive user experience.",
+    "componentChoices": "The `listItem` component is the primary building block, accommodating various setting types.  For actions, `button` components are used. Toggles leverage `switch` components.  The `badge` component displays the \"Verified ID\" status.  The selection of these components is based on their established patterns and suitability for the specified user interactions.",
+    "visualHierarchy": "Visual hierarchy is achieved through a combination of spacing, typography, and color.  Section headings (Personal details, Business details) use a slightly larger font size and a distinct color (Primary/primary50) to establish prominence.  Settings are displayed with a consistent text style (Body/Medium), and semantic cues are used for active states and other feedback mechanisms.  This approach ensures that the most critical information (settings) is clearly and easily understood."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Personal details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Primary/primary50",
+              "Trailing": {
+                "type": "icon",
+                "properties": {
+                  "iconName": "arrow_forward"
+                }
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Business details",
+              "textStyle": "Title/Medium",
+              "Trailing": {
+                "type": "icon",
+                "properties": {
+                  "iconName": "arrow_forward"
+                }
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "textStyle": "Body/Medium",
+              "Trailing": {
+                "type": "text",
+                "properties": {
+                  "text": "Active",
+                  "textStyle": "Body/Medium",
+                  "colorStyleName": "Primary/primary50"
+                }
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "textStyle": "Body/Medium",
+              "Trailing": {
+                "type": "text",
+                "properties": {
+                  "text": "What is it?",
+                  "textStyle": "Caption/Small",
+                  "colorStyleName": "Neutral/neutral50"
+                }
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "textStyle": "Body/Medium",
+              "Leading": {
+                "type": "switch",
+                "componentNodeId": "10:9912"
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable Feedback",
+              "textStyle": "Body/Medium",
+              "Leading": {
+                "type": "switch",
+                "componentNodeId": "10:9912"
+              }
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "listItem",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "textStyle": "Body/Medium"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

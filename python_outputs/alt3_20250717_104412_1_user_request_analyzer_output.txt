@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain, specifically user account management within a mobile application (Cars45 auction).
+User Type: Registered users of the Cars45 mobile application needing to manage their account settings and preferences.  These users may be buyers or sellers.
+Platform Impact: Mobile users need a concise and intuitive settings page with clear touch targets due to limited screen real estate and reliance on touch input.  Interruptions are possible, so information needs to be easily scannable.
+
+User Requirements
+Primary Goals:  Modify account information (personal and business details), manage notification preferences, and securely log out.
+Secondary Goals: Access help information, understand account status ("Verified ID" badge), manage communication preferences (disable chats/feedback).
+User Constraints: Limited screen space on mobile devices, reliance on touch input, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included, using existing app components. Top and bottom navigation bars are implemented, and touch targets meet minimum size requirements.
+
+
+Content Requirements
+Critical:  Personal details section, business details section, access to Cars45 auction toggle, "Verified ID" badge with explanation, change phone number, change email, change language, disable chats toggle, disable feedback toggle, manage notifications, change password, delete account option, log out.
+Supporting:  Clear visual indicators for toggles (active/inactive).
+Contextual:  "What is it?" explanation for "Verified ID" badge.
+
+
+Structural & Component Directives
+* Layout:  Vertical list of settings options, following the layout pattern of the reference image.
+* Components:  Use existing app components for list items, toggles, and navigation.
+* Styling:  Adhere to existing app styling guidelines.
+
+Screen Requirements
+Primary Actions: Access and modify individual setting options (e.g., changing phone number, toggling chats).
+Secondary Actions: Accessing the "What is it?" explanation for the "Verified ID" badge.
+Screen States: Default state, potentially loading states for certain actions (e.g., saving changes).
+Feedback Needs:  Confirmation of changes saved, clear visual indicators for toggle states.

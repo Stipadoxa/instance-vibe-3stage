@@ -1,0 +1,137 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications, with the top bar at the top and bottom navigation at the bottom. This vertical arrangement ensures a clear and easy-to-scan feed for mobile users.",
+    "userFlowReasoning": "Users can view recent notifications, understand the content, and quickly assess their importance.  Further design decisions would determine explicit actions like marking notifications as read or dismissing them, and feedback cues for read/unread status and loading states.",
+    "componentChoices": "I chose component id \"10:10214\" (List item) for the notification items over component id \"10:3856\" (snackbar) and component id \"147:3743\" (product card) because it offers the necessary flexibility to display multiple text fields (title, description, timestamp) and a leading image (avatar).  The snackbar is unsuitable for displaying extensive information, and the product card does not have the appropriate information architecture for notifications. The list item allows for a clean, consistent presentation of each notification.",
+    "visualHierarchy": "The visual hierarchy will be established through font sizes and spacing. Titles will have the largest font size, followed by descriptions and then timestamps. Avatars will be placed prominently at the start of each notification item.",
+    "variantSelectionRationale": "For the \"10:10214\" (List item) component, I selected the \"Condition\" variant as \"3-line+\" to handle the title, description, and timestamp.  The \"Leading\" variant is set to \"Image\" to accommodate the user avatar, fulfilling a critical user requirement. \"Trailing\" is set to \"None\" as no explicit trailing actions are immediately specified.  \"Show overline\" is set to \"False\", and \"Show supporting text\" is set to \"True\" as supporting text in notifications can enhance readability. I rejected the \"1-line\" and \"2-line\" variants due to insufficient capacity for the required content.  Alternatives like using multiple single-line components or creating a custom component were considered but rejected due to the design system compliance requirements.",
+    "contentAnalysisReasoning": "Content analysis revealed that each notification requires a user avatar, notification title, description, and timestamp.  The content density is assessed as high because of these multiple elements. User avatars, titles, and descriptions were prioritized as critical elements, with the timestamp acting as supplementary information."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "5 unread"
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Emma Thompson mentioned you",
+          "Supporting text": "Check out her latest post!",
+          "Trailing supporting text": "2m ago"
+        },
+        "variants": {
+          "Condition": "3-line+",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "New message from John Smith",
+          "Supporting text": "Reply to his message now!",
+          "Trailing supporting text": "Yesterday"
+        },
+        "variants": {
+          "Condition": "3-line+",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Group Meeting Reminder",
+          "Supporting text": "Don't forget the meeting at 3pm!",
+          "Trailing supporting text": "1h ago"
+        },
+        "variants": {
+          "Condition": "3-line+",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "Sarah Chen shared a photo",
+          "Supporting text": "See what she shared with the group!",
+          "Trailing supporting text": "10m ago"
+        },
+        "variants": {
+          "Condition": "3-line+",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "props": {
+          "Headline": "New post from Jane Doe",
+          "Supporting text": "Check out her latest travel photos!",
+          "Trailing supporting text": "30m ago"
+        },
+        "variants": {
+          "Condition": "3-line+",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        },
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

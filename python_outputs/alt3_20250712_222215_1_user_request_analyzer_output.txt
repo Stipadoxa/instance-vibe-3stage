@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear touch targets and minimal scrolling.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify personal and business details, manage notification preferences, securely change account credentials, and log out of the application.
+Secondary Goals:  Easily disable features (chats and feedback), delete account (carefully guided process).
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, users may be unfamiliar with some settings.
+Ready for handoff if: All settings are clearly labeled and accessible, actions are confirmed before execution (especially account deletion), top and bottom app bars are implemented, and touch targets meet minimum size requirements.
+
+
+Content Requirements
+Critical: Personal details (view and edit), business details (view and edit), change phone number, change email, change language, change password, log out.
+Supporting: Disable chats, disable feedback, manage notifications.
+Contextual:  Confirmation dialog before account deletion, success/error messages for setting changes, loading indicators during data saving.
+
+
+Structural & Component Directives
+* Layout: Vertical list of settings items.  Items should be grouped logically (e.g., Personal, Business, Account).
+* Components: Top app bar (with back button), list items (each with label and potentially a right-pointing arrow or toggle), bottom app bar (potentially with a save button if settings are not auto-saved).
+* Styling: Consistent with overall app styling guidelines.
+
+
+Screen Requirements
+Primary Actions: Modify settings, log out.
+Secondary Actions:  Navigate to detailed views for specific settings (e.g., Manage Notifications).
+Screen States: Default state, loading state (when saving changes), success state (after saving changes), error state (if changes fail).
+Feedback Needs:  Clear visual cues for successful setting changes, appropriate loading indicators, informative error messages.

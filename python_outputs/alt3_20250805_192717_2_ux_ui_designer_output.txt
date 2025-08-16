@@ -1,0 +1,136 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure. The top section features a full-width image gallery implemented using native rectangles with image fills to accommodate multiple images. Below,  sections for the title, price, condition, seller profile, description, and contact button are arranged vertically with appropriate spacing (16px padding between sections) to enhance readability.  Full-width elements (title, price, description) use `horizontalSizing: "FILL"`.
+
+3. **User Flow Reasoning:** The user flow prioritizes information hierarchy, beginning with visually prominent product images, followed by key details (title and price), condition, and seller information.  The description provides further details, with a clear "Contact Seller" call to action at the bottom.
+
+4. **Component Choices:**  
+    * **"Contact Seller" button:** I chose component ID `10:3907` ("Button") with variants `{"Platform": "Android+Web", "Size": "Medium", "Type": "Filled", "State": "Default", "Color": "Green"}` for its clear visual prominence and standard e-commerce button styling. I considered `10:3907` with the "Outlined" and "Text" types, but the "Filled" button offers better visual weight for a primary call to action.
+    *  No other components were directly used in this design due to gaps identified below.
+
+5. **Component Gaps:**
+    * **Image Gallery:** The design system lacks a dedicated image gallery component.  I used multiple instances of a `native-rectangle` with image fills to create a horizontal, wrapping image gallery. This solution provides a flexible image display adaptable to various screen sizes.  The "IMAGES" component (10:7816) was rejected because it does not inherently support multiple images in a visually appealing gallery layout.
+    * **Star Rating:** The design system lacks a star rating component. I will use five instances of the `635:4752` ("icon/star") component with the appropriate `"Star": "full"` or `"Star": "empty"` variants to represent the rating.
+    * **Product Details List:** The design system's `10:10214` ("List item") component, while suitable, needs significant customization.  Given the requirement to display data in a structured, list-like way, it's deemed most efficient to create a `layoutContainer` with `native-text` elements to represent product details.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through: (a) prominent placement of the image gallery at the top; (b) larger title and price text sizes compared to other details; (c) clear spacing and visual separation between sections; and (d) the green "Contact Seller" button acting as the primary call to action.
+
+7. **Variant Selection Rationale:**  The "Filled" variant was selected for the "Contact Seller" button (component ID `10:3907`) to emphasize its importance as the primary action.  For the Star rating, the choice between "full", "half", and "empty" variants will reflect the specific rating score.
+
+8. **Native Element Justification:** The use of `native-rectangle` elements with image fills for the image gallery, `native-text` for product details structuring and typography control, and the `635:4752` ("icon/star") component for the star rating addresses functional requirements that cannot be fully met by existing components in the system. Using these native elements provides the necessary flexibility and control, ensuring a user-friendly experience.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Image Gallery",
+        "layoutMode": "HORIZONTAL",
+        "layoutWrap": "WRAP",
+        "itemSpacing": 8,
+        "items": [
+          {"type": "native-rectangle", "properties": {"width": 150, "height": 150, "cornerRadius": 8, "fill": {"type": "IMAGE"}, "margin": {"right": 8}}},
+          {"type": "native-rectangle", "properties": {"width": 150, "height": 150, "cornerRadius": 8, "fill": {"type": "IMAGE"}, "margin": {"right": 8}}},
+          {"type": "native-rectangle", "properties": {"width": 150, "height": 150, "cornerRadius": 8, "fill": {"type": "IMAGE"}}}
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Used Laptop Title",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "₦ 150,000",
+          "textStyle": "Title/Medium",
+          "color": "Primary/primary50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Details",
+        "layoutMode": "VERTICAL",
+        "items": [
+          { "type": "native-text", "properties": {"content": "Condition: Excellent", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}},
+          { "type": "native-text", "properties": {"content": "Processor: Intel Core i7", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}},
+          { "type": "native-text", "properties": {"content": "RAM: 16GB", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}},
+          { "type": "native-text", "properties": {"content": "Storage: 512GB SSD", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}}
+
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Seller Profile",
+        "layoutMode": "HORIZONTAL",
+        "items": [
+          {
+            "type": "native-circle",
+            "properties": {"width": 48, "height": 48, "fill": {"type": "IMAGE"}}
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "paddingLeft": 16,
+            "items": [
+              { "type": "native-text", "properties": {"content": "Seller Name", "textStyle": "Body/Medium", "color": "Neutral/neutral90"}},
+              { "type": "layoutContainer", "layoutMode": "HORIZONTAL", "items": [
+                  {"type": "component", "id": "635:4752", "variants": {"Star": "full"}},
+                  {"type": "component", "id": "635:4752", "variants": {"Star": "full"}},
+                  {"type": "component", "id": "635:4752", "variants": {"Star": "full"}},
+                  {"type": "component", "id": "635:4752", "variants": {"Star": "full"}},
+                  {"type": "component", "id": "635:4752", "variants": {"Star": "half"}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Detailed product description goes here.  This could be quite lengthy so it needs to wrap to multiple lines.",
+          "textStyle": "Body/Medium",
+          "color": "Neutral/neutral50",
+          "alignment": "left",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

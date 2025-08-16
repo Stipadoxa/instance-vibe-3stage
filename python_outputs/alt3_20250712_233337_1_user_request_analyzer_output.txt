@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management and settings
+User Type: Mobile app users needing to configure account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear touch targets and minimal scrolling.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Understand the meaning of "Verified ID" badge, easily log out of the application, delete account if needed.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions during use.
+Ready for handoff if: All settings are clearly labelled and accessible, navigation is intuitive, and all interactive elements meet minimum touch target sizes as defined in the design system.  The visual style matches the provided reference image while using existing components from the provided design system.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable),  Change phone number (editable), Change email (editable), Change language (editable), Manage notifications (link to a separate screen), Change password (link to a separate screen), Log out button, Delete my account permanently button.
+Supporting: Access to Cars45 auction (toggle switch indicating active/inactive status), "Verified ID" badge with tooltip/explanation.
+Contextual:  Error messages for invalid inputs, loading indicators where appropriate (e.g., during password change).
+
+Structural & Component Directives
+*   Layout:  Single column list of settings, similar to the provided reference image. Each setting should be represented as a list item with appropriate styling and navigation cues from the design system.
+*   Components:  Use pre-existing list item components from the design system. Utilize toggle switches for boolean settings (e.g., Access to Cars45 auction).  Implement buttons for actions requiring confirmation (Delete account).
+*   Styling: Use the color palette, typography, and overall visual style consistent with the reference image and design system.  Ensure visual hierarchy is clear (e.g., using appropriate visual weight and spacing).  The "Verified ID" badge should mirror the style in the reference image, if that component exists in the design system.
+
+Screen Requirements
+Primary Actions:  Navigate to and edit individual settings, log out, delete account.
+Secondary Actions: Access tooltip for "Verified ID" badge.
+Screen States: Default state showing all settings, loading states during data updates (e.g., password change), error states for invalid inputs.
+Feedback Needs: Confirmation messages for successful updates, clear error messages for failed operations, loading indicators during asynchronous operations.

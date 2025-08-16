@@ -1,0 +1,301 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is designed to be a vertical list, similar to the reference image,  to optimize for mobile screen real estate and intuitive navigation. Each setting option is presented as a row in the list for easy scanning and selection.",
+    "userFlowReasoning": "Users can tap on a setting option to access/modify it.  Tapping \"Log out\" will initiate the logout process.  Tapping \"What is it?\" will provide additional information.  A clear visual hierarchy guides users through the settings options.",
+    "componentChoices": "I chose `231:4151` (List) over `230:3931` (List) and `277:3078` (Card) because it best facilitates a simple, scrollable list structure suitable for mobile settings. Cards would be too bulky and space-inefficient. A single List component allows for better overall management of items.",
+    "visualHierarchy": "The visual hierarchy is established through the use of clear labels and consistent spacing.  Important settings (primary goals) are presented earlier in the list, while secondary settings are placed after. Text size and weight also help to distinguish primary and secondary information.",
+    "variantSelectionRationale": "I selected \"Left Item = Icon + Text\" for the List component's Left Item variant and \"Right Item = Text + Icon\" for the List component's Right Item variant to ensure consistent visual representation of icons and labels. This choice is based on the layout shown in the reference image, and balances visual consistency and screen real estate."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "118:1617",
+        "type": "appbar",
+        "variants": {
+          "Content": "Title + Secondary Text"
+        },
+        "textLayers": {
+          "Title": "Settings",
+          "Label": ""
+        }
+      },
+      {
+        "id": "231:4151",
+        "type": "list",
+        "items": [
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Personal details"
+            },
+            "componentInstances": [
+              {
+                "id": "130:7350",
+                "type": "unknown"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Business details"
+            },
+            "componentInstances": [
+              {
+                "id": "130:7350",
+                "type": "unknown"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Access to Cars45 auction"
+            },
+            "componentInstances": [
+              {
+                "id": "81:1231",
+                "type": "switch",
+                "variants": {
+                  "State": "Selected",
+                  "Text Side": "Left"
+                },
+                "textLayers": {
+                  "Placeholder": "Active"
+                }
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "\"Verified ID\" badge"
+            },
+            "componentInstances": [
+              {
+                "id": "130:6248",
+                "type": "badge"
+              },
+              {
+                "id": "104:1571",
+                "type": "tooltip",
+                "variants": {
+                  "Position": "Right"
+                },
+                "textLayers": {
+                  "This is a Tooltip": "What is it?"
+                }
+              }
+
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Change phone number"
+            },
+            "componentInstances": [
+              {
+                "id": "64:1101",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Change email"
+            },
+            "componentInstances": [
+              {
+                "id": "64:1101",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Change language"
+            },
+            "componentInstances": [
+              {
+                "id": "255:9235",
+                "type": "select"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Disable chats"
+            },
+            "componentInstances": [
+              {
+                "id": "81:1231",
+                "type": "switch",
+                "variants": {
+                  "State": "Default",
+                  "Text Side": "Left"
+                },
+                "textLayers": {
+                  "Placeholder": "Inactive"
+                }
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Disable Feedback"
+            },
+            "componentInstances": [
+              {
+                "id": "81:1231",
+                "type": "switch",
+                "variants": {
+                  "State": "Default",
+                  "Text Side": "Left"
+                },
+                "textLayers": {
+                  "Placeholder": "Inactive"
+                }
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Manage notifications"
+            },
+            "componentInstances": [
+              {
+                "id": "64:1101",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Change password"
+            },
+            "componentInstances": [
+              {
+                "id": "64:1101",
+                "type": "input"
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Delete my account permanently"
+            },
+            "componentInstances": [
+              {
+                "id": "34:1219",
+                "type": "button",
+                "variants": {
+                  "Size": "Medium",
+                  "State": "Default",
+                  "Content": "Only Icons",
+                  "Style": "Filled"
+                }
+              }
+            ]
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Icon + Text"
+            },
+            "textLayers": {
+              "Title": "Log out"
+            },
+            "componentInstances": [
+              {
+                "id": "34:1219",
+                "type": "button",
+                "variants": {
+                  "Size": "Medium",
+                  "State": "Default",
+                  "Content": "Only Icons",
+                  "Style": "Filled"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "116:2019",
+        "type": "appbar"
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,271 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Hero Image Gallery",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 100,
+            "height": 100,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8,
+            "horizontalSizing": "AUTO"
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 100,
+            "height": 100,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8,
+            "horizontalSizing": "AUTO"
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 100,
+            "height": 100,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8,
+            "horizontalSizing": "AUTO"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Details",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2023 MacBook Pro 16\"",
+            "textStyle": "Headline/Large",
+            "color": "Neutral/neutral90",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "₦1,200,000",
+            "textStyle": "Title/Medium",
+            "color": "Primary/primary50",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Good Condition - Minor Scratches",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Seller Information",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 12,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "CENTER",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 40,
+            "height": 40,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 20,
+            "horizontalSizing": "AUTO"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "John Doe",
+            "textStyle": "Title/Small",
+            "color": "Neutral/neutral90",
+            "alignment": "left",
+            "horizontalSizing": "AUTO"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Rating",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 2,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "AUTO",
+          "layoutAlign": "CENTER",
+          "items": [
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 12,
+                "height": 12,
+                "fill": "Primary/primary50"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 12,
+                "height": 12,
+                "fill": "Primary/primary50"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 12,
+                "height": 12,
+                "fill": "Primary/primary50"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 12,
+                "height": 12,
+                "fill": "Primary/primary50"
+              }
+            },
+            {
+              "type": "native-circle",
+              "properties": {
+                "width": 12,
+                "height": 12,
+                "fill": "Neutral/neutral50"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Description",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This is a detailed description of the used laptop. It includes specifications, condition details, and any other relevant information.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "left",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Contact Seller Button",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "Action": "Contact Seller"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

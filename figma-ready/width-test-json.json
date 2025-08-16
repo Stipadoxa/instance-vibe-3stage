@@ -1,0 +1,210 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Test 1: Basic FILL",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This container should be 375px wide (FILL)",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Test 2: FIXED counter axis with FILL",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This has FIXED counter axis + FILL",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Test 3: Explicit width (343px)",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "width": 343,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "This has explicit width: 343px",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Test 4: Properties wrapper",
+      "properties": {
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      },
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Sizing in properties object",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Test 5: Nested containers",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Nested child",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 40,
+                "height": 40,
+                "fill": {
+                  "type": "SOLID",
+                  "color": "#007AFF"
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Nested container test",
+                "textStyle": "Body/Medium",
+                "color": "Neutral/neutral90"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Test 6: No horizontalSizing",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "No horizontalSizing property",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Test 7: Only horizontalSizing",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Only horizontalSizing, no layoutAlign",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          }
+        }
+      ]
+    }
+  ]
+}

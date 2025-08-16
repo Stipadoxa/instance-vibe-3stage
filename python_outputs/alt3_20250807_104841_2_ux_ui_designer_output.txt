@@ -1,0 +1,283 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs referenced below have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout uses a vertical structure for a clear top-to-bottom flow of notification categories.  Each category is a separate section with consistent padding for visual breathing room.  The toggle switch and descriptive text are placed side-by-side within each list item for immediate clarity.  A divider is used between categories for improved visual separation.
+
+3. **User Flow Reasoning:** Users scan the list to find notification types. Tapping a toggle switch directly updates the notification preference.  No explicit save button is needed; changes are assumed to be saved implicitly.
+
+4. **Component Choices:** I chose the `10:10214` ("List item") component to display each notification setting.  It provides a clean container for text and the toggle switch.  Alternatives like creating a custom layout with native elements would be less efficient and deviate from design system standards.
+
+5. **Component Gaps:** The design system lacks a pre-built list item that directly integrates with the `10:9912` ("switch") component. I addressed this by using the existing "List item" component and placing the switch inside it. This provides a clean and consistent user interface.
+
+
+6. **Visual Hierarchy:** The visual hierarchy is established through a combination of consistent spacing, clear typography, and dividers separating different notification types. The headline text (notification type) is larger and more prominent than the supporting text (description).
+
+
+7. **Variant Selection Rationale:** For the List Item component (`10:10214`), I selected the following variants: `Condition: 2-line`, `Leading: None`, `Trailing: Switch`. This gives adequate space for the description text, aligns with the user flow, and provides the necessary functionality.  Other variants were not needed.  For the switch component (`10:9912`), the variants "State: enabled" and "Selected: false" were initially chosen for a clean initial state. The selected state is handled dynamically.
+
+8. **Native Element Justification:**  No native elements were needed; all functionality is fulfilled with existing verified components.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Notification Category: Push Notifications",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "horizontalSizing": "FILL",
+                  "Overline": "",
+                  "Headline": "Push Notifications",
+                  "Supporting text": "Receive push notifications for important updates.",
+                  "Trailing supporting text": ""
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8459",
+            "properties": {
+              "variants": {
+                "Position": "horizontal",
+                "Type": "full-width"
+              },
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Category: Email Alerts",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "horizontalSizing": "FILL",
+                  "Overline": "",
+                  "Headline": "Email Alerts",
+                  "Supporting text": "Receive email alerts for important information.",
+                  "Trailing supporting text": ""
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8459",
+            "properties": {
+              "variants": {
+                "Position": "horizontal",
+                "Type": "full-width"
+              },
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Category: SMS Updates",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "horizontalSizing": "FILL",
+                  "Overline": "",
+                  "Headline": "SMS Updates",
+                  "Supporting text": "Receive SMS updates for time-sensitive information.",
+                  "Trailing supporting text": ""
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8459",
+            "properties": {
+              "variants": {
+                "Position": "horizontal",
+                "Type": "full-width"
+              },
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Category: Promotional Offers",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Condition": "2-line",
+                    "Leading": "None",
+                    "Trailing": "Switch",
+                    "Show overline": "False",
+                    "Show supporting text": "True"
+                  },
+                  "horizontalSizing": "FILL",
+                  "Overline": "",
+                  "Headline": "Promotional Offers",
+                  "Supporting text": "Receive notifications about special offers and promotions.",
+                  "Trailing supporting text": ""
+                },
+                "items": [
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "Selected": "false",
+                        "State": "enabled",
+                        "Icon": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

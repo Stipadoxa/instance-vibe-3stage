@@ -1,0 +1,132 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs used in this design have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to guide the user through the login process step-by-step.  The email and password fields are placed above the login button to create a clear visual hierarchy. The "Forgot Password?" link is placed below the login button for easy access.  Consistent padding (16px horizontal, 20px vertical) is used around content sections for visual breathing room.
+
+3. **User Flow Reasoning:** The user flow is straightforward: enter email, enter password, and click "Login". If the user forgets their password, they can easily click the "Forgot Password?" link.  This follows a common and intuitive pattern for login screens.
+
+4. **Component Choices:** I chose the `Button` component (ID: `10:3907`) for the login button because it provides the necessary interactive element with visual feedback.  I selected `input` (ID: `10:8492`) for the email and password fields as it provides built-in secure input capabilities for passwords.
+
+5. **Component Gaps:** The design system does not include a dedicated "Forgot Password" link component. To address this, I used a `native-text` element styled as a link with appropriate color and underlining.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through vertical placement of elements (email, password, button, link), using larger font sizes for primary elements (Headline for titles, larger text input fields) and a clear call to action button (`Button` component with the prominent green color) compared to smaller typography for secondary elements such as "Forgot password".
+
+7. **Variant Selection Rationale:** For the login button, I've used the following variants: `Platform: "Android+Web"`, `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, `Color: "Green"`.  A filled button is a common convention for primary calls to action. Medium size ensures the button is visible and easy to tap. The Green color is utilized to highlight its importance to the user. The default state is used in the initial state of the screen.
+
+8. **Native Element Justification:**  A `native-text` component is used to implement the "Forgot Password?" link because no suitable link component exists within the design system.  It's styled to visually resemble a typical link for intuitive user interaction.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Email Address"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Password"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Platform": "Android+Web",
+                    "Size": "Medium",
+                    "Type": "Filled",
+                    "State": "Default",
+                    "Color": "Green"
+                  },
+                  "textLayers": {
+                    "Action": "Login"
+                  }
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot Password?",
+                  "textStyle": "Body/Small",
+                  "color": "primary-500",
+                  "alignment": "center",
+                  "horizontalSizing": "AUTO",
+                  "underline": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,146 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Your e-mail",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "value": "123@example.ua"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Password",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Please enter your password",
+      "properties": {
+        "fontSize": 14,
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "left",
+        "colorStyleName": "Semantic/error"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign in",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign up",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Agreement Text",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 4,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "By continuing you agree to the ",
+          "properties": {
+            "fontSize": 14,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left",
+            "colorStyleName": "Neutral/neutral80"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Policy",
+          "properties": {
+            "fontSize": 14,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left",
+            "colorStyleName": "Primary/primary80",
+            "textStyle": {
+              "underline": true
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "text": " and ",
+          "properties": {
+            "fontSize": 14,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left",
+            "colorStyleName": "Neutral/neutral80"
+          }
+        },
+        {
+          "type": "native-text",
+          "text": "Rules",
+          "properties": {
+            "fontSize": 14,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left",
+            "colorStyleName": "Primary/primary80",
+            "textStyle": {
+              "underline": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```

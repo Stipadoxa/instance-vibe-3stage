@@ -1,0 +1,139 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": "FILL",
+        "height": 200,
+        "fill": "Primary/primary10",
+        "cornerRadius": 12,
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "image",
+      "componentNodeId": "10:7816",
+      "variants": {
+        "Type": "1 image"
+      },
+      "properties": {
+        "source": "product_image_url",
+        "width": "FILL",
+        "height": 200,
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "textStyleId": "S:8d2787d397335fc175d63cc376afc3b07db2b3d6",
+      "properties": {
+        "content": "Product Title",
+        "fontSize": 22,
+        "fontWeight": "medium",
+        "color": "Neutral/neutral90",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "textStyleId": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+      "properties": {
+        "content": "\u20a6 10,000",
+        "fontSize": 16,
+        "fontWeight": "medium",
+        "color": "Primary/primary50",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "avatar",
+      "componentNodeId": "24:10352",
+      "properties": {
+        "source": "seller_avatar_url",
+        "size": "Medium"
+      }
+    },
+    {
+      "type": "native-text",
+      "textStyleId": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+      "properties": {
+        "content": "Seller Name",
+        "fontSize": 16,
+        "fontWeight": "medium",
+        "color": "Neutral/neutral90",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "textStyleId": "S:3486672d1bb9d7016d952df516f06c2d33af40b7",
+      "properties": {
+        "content": "Location",
+        "fontSize": 14,
+        "fontWeight": "medium",
+        "color": "Neutral/neutral50",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Large",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Default": "Contact Seller",
+        "onPress": "contactSeller"
+      }
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "properties": {
+        "items": [
+          {
+            "label": "Home",
+            "icon": "home"
+          },
+          {
+            "label": "Saved",
+            "icon": "bookmark"
+          },
+          {
+            "label": "Sell",
+            "icon": "add_box"
+          },
+          {
+            "label": "Chat",
+            "icon": "chat"
+          },
+          {
+            "label": "Profile",
+            "icon": "person"
+          }
+        ]
+      }
+    }
+  ]
+}

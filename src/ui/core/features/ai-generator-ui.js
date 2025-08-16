@@ -311,6 +311,10 @@ export class AIGeneratorUI {
             window.messageHandler.register('session-cleared', () => {
                 this.startFresh();
             });
+
+            window.messageHandler.register('design-feedback-result', (msg) => {
+                this.handleDesignFeedbackResult(msg.feedback);
+            });
         }
     }
 
@@ -1085,7 +1089,7 @@ export class AIGeneratorUI {
     /**
      * Handle successful UI generation
      */
-    handleUIGeneratedSuccess(generatedJSON, frameId) {
+    async handleUIGeneratedSuccess(generatedJSON, frameId) {
         this.clearStatus();
         this.enterIterationMode(generatedJSON, frameId);
         if (this.elements.userPrompt) {

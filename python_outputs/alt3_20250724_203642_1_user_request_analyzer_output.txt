@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a streamlined settings page with clear, concise options and large, touchable elements.  Limited screen real estate necessitates efficient information architecture.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage preferences, control app behavior.
+Secondary Goals: Understand the meaning of less-obvious settings; easily locate specific settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings from the reference image are included, using existing app components; navigation is clear and intuitive; touch targets meet minimum size requirements; and the overall design follows the provided visual style guide and maintains consistency with the app's design system.
+
+Content Requirements
+Critical: Personal details, Business details, Access to Cars45 auction (with active/inactive toggle), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear section headers and visual separators to improve readability.
+Contextual:  "What is it?" explanations for settings that may not be self-explanatory (e.g., "Verified ID" badge).
+
+Structural & Component Directives
+* Layout:  Single column list of settings, using existing app components for each setting (as per design system). Top and bottom app navigation bars are included.
+* Components:  Each setting is represented as a row in the list; each row includes a setting label and, if applicable, a secondary element like a toggle, value display, or secondary action (e.g., "What is it?" link).  Existing app components must be used, following design specifications.
+* Styling:  The overall styling should align with the reference image and the app's existing design system.
+
+Screen Requirements
+Primary Actions:  Navigating to different setting sections, toggling settings (on/off), initiating a setting change (e.g., changing email).
+Secondary Actions: Accessing further information on a setting via "What is it?" link (where applicable).
+Screen States: Default state (settings list displayed), loading state (if applicable, during certain actions like changing a password), success state (after successfully changing a setting), and error states (if any setting changes fail).
+Feedback Needs:  Visual indicators for changes (e.g., toggles showing on/off), confirmation messages on successful setting updates, clear and concise error messages indicating reasons for failure.

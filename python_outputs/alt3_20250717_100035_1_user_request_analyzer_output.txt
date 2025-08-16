@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with large touch targets due to screen size limitations.  Interruptions are more likely, so the design needs to be easy to use even in short interactions.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, log out securely.
+Secondary Goals: Update personal and business information, understand account status (e.g., "Verified ID" badge).
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings options from the reference image are included and accessible, top and bottom navigation bars are implemented, and all interactive elements meet minimum touch target sizes.
+
+Content Requirements
+Critical:  All settings options shown in the reference image (Personal details, Business details, Access to Cars45 auction, "Verified ID" badge, Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out).  "What is it?" explanations for unclear settings.
+Supporting:  Status indicators (e.g., "Active" for Cars45 auction access).
+Contextual:  Error messages and loading indicators as appropriate.
+
+Structural & Component Directives
+* Layout:  A vertically scrolling list of settings options, similar to the reference image. Top and bottom app navigation bars are present.  Each setting option occupies one row.
+* Components:  Use existing app components for list items, navigation bars, and buttons.  Each setting option should use the app's standard list item component.  The "What is it?"  should be implemented as a tooltip or a modal popup triggered by a tap on the relevant text.
+* Styling:  Follow the existing app's style guide and color scheme. Maintain consistent visual hierarchy and visual style shown in the reference image.
+
+Screen Requirements
+Primary Actions:  Navigate to specific settings, activate/deactivate settings (e.g., chats, feedback, Cars45 auction), initiate account deletion, log out.
+Secondary Actions:  View detailed information about settings (e.g., via tooltip/modal for "What is it?").
+Screen States: Default state, loading state (if applicable, e.g., when saving changes), confirmation dialog for account deletion.
+Feedback Needs:  Visual feedback on settings changes (e.g., toggles, checkmarks).  Clear confirmation messages after actions are completed.  Appropriate error messages when changes fail.

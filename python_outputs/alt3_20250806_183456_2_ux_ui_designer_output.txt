@@ -1,0 +1,236 @@
+```json
+SECTIONS:
+1. essentials: Contains the page title and description to set the context for managing notification preferences.
+2. settingsList: Presents a list of notification types, each with a toggle switch for on/off control and descriptive text explaining the notification type.
+3. actions: Contains the primary "Save Changes" button to confirm the user's notification preferences.
+
+DESIGN RATIONALE:
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+2. **Section Planning:** The section blueprint follows a common settings page pattern, prioritizing clear labeling and easy toggling of notification preferences. The "essentials" section provides context, "settingsList" contains the core settings, and "actions" provides a clear confirmation step for saving changes.  This addresses the user's request directly.
+3. **Layout Decisions:** A vertical layout is used to present information sequentially, enhancing readability and usability on mobile devices.  The "essentials" section is at the top, followed by the "settingsList" using a vertical list with clear spacing between each item. The "actions" section is placed at the bottom for easy access.  Level 1 containers (essentials, settingsList, actions) utilize `horizontalSizing: "FILL"` to occupy the full width.   Individual list items within "settingsList" will have natural sizing.
+4. **User Flow Reasoning:** Users first see the page title and description. Then, they can easily toggle each notification type on or off using the toggle switches. Finally, they tap the "Save Changes" button to confirm their settings. The clear visual hierarchy and intuitive interaction pattern facilitate efficient setting management.
+5. **Component Choices:** I chose the `10:9912` (switch) component for toggling notifications because it's a standard, user-familiar component for binary state changes. I considered using `10:9586` (checkboxes), but the switch is more intuitive for a simple on/off setting and better visually fits the design system style.
+6. **Component Gaps:** No component gaps were encountered.  The design system provides all necessary components.
+7. **Visual Hierarchy:** Visual hierarchy is established through clear section divisions and consistent typography.  The page title is the largest text, followed by the notification type labels, then the descriptive text. Toggle switches are visually prominent next to the labels. The "Save Changes" button is clearly distinct at the bottom.
+8. **Variant Selection Rationale:** For the `10:9912` (switch) component, I selected the `"Selected"` variant dynamically based on the initial state of each notification type from the input data ("on" or "off").  The `"State"` variant is implicitly "enabled" for all switches, as they are all interactive. The `"Icon"` variant remains as "false" to keep it simple.
+9. **Native Element Justification:** No native elements were necessary beyond the basic `native-text` for labels and descriptions, as the design system contains appropriate components.
+
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Manage how you receive updates from Acme Corp.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "left"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 12,
+            "horizontalSizing": "FILL",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Push Notifications",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "true",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive instant alerts on your mobile device.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Email Alerts",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "false",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Get important updates and summaries to your inbox.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "SMS Updates",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "false",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Receive critical alerts via text message (may incur charges).",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Promotional Offers",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "variants": {
+                      "Selected": "true",
+                      "State": "enabled",
+                      "Icon": "false"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Stay informed about special deals and discounts.",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "justifyContent": "flex-end",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Medium",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green"
+                },
+                "textLayers": {
+                  "Action": "Save Changes"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "You can change these settings at any time.",
+              "textStyle": "Caption/Small",
+              "color": "Neutral/neutral50",
+              "alignment": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

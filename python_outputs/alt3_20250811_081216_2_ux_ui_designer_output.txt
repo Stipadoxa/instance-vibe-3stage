@@ -1,0 +1,245 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "App Bar",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 32,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Headline/Large",
+              "color": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Manage how you receive updates from ShopSphere.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification Items",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 12,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "layoutContainer",
+                "name": "Notification Item 1",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "horizontalSizing": "FILL",
+                "layoutAlign": "STRETCH",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Push Notifications",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "Selected": "true",
+                      "State": "enabled"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "layoutContainer",
+                "name": "Notification Item 2",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "horizontalSizing": "FILL",
+                "layoutAlign": "STRETCH",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Email Alerts",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "Selected": "false",
+                      "State": "enabled"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "layoutContainer",
+                "name": "Notification Item 3",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "horizontalSizing": "FILL",
+                "layoutAlign": "STRETCH",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "SMS Updates",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "Selected": "true",
+                      "State": "enabled"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "layoutContainer",
+                "name": "Notification Item 4",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 16,
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "horizontalSizing": "FILL",
+                "layoutAlign": "STRETCH",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Promotional Offers",
+                      "textStyle": "Body/Medium",
+                      "color": "Neutral/neutral90"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "Selected": "false",
+                      "State": "enabled"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "You can change these settings at any time.",
+              "textStyle": "Caption/Small",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Actions Container",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "paddingLeft": 16,
+            "paddingRight": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "END",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "Platform": "Android+Web",
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Primary/primary50",
+                  "Action": "Save Changes"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**DESIGN RATIONALE:**
+
+1. **Component Verification:** All component IDs (`10:9912` for switch, `10:3907` for button) are verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Strategy:** A mobile-first approach is used, employing a vertical layout for the main content and horizontal layouts for the notification items and action buttons.  Consistent padding and spacing are used to ensure visual clarity.
+
+3. **User Experience Logic:** The user can easily toggle notification types on/off using the provided toggle switches.  Clear descriptive text explains each notification type.  Saving changes is done with a primary action button at the bottom of the screen.
+
+4. **Component Selection:** The `10:9912` switch component is ideal for its simple on/off functionality and visual appeal. The `10:3907` button component provides a clear call to action.  These components are preferred over native elements because they adhere to the design system guidelines.
+
+5. **Gap Analysis:**  No gaps were found requiring native elements. The design system components meet all the requirements for functionality and visual presentation.
+
+6. **Hierarchy Decisions:**  The app bar title is visually prominent with larger typography. Notification items are grouped together with consistent spacing. The Save Changes button is clearly separated as the primary action.
+
+7. **Variant Rationale:** The `10:9912` switch uses the "enabled" state for all switches. "Selected" variant is toggled between "true" and "false" depending on the notification type's initial state. The Button uses “Large”, “Filled”, and “Primary” styles for clear visual distinction.
+
+8. **Native Element Justification:** Native elements are only used for text (`native-text`),  providing simple content display for titles, descriptions, and notification labels.  No native elements are used for layout or interaction.

@@ -1,0 +1,142 @@
+{
+  "layoutContainer": {
+    "name": "Notifications Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Notifications",
+          "subheadline": "5 unread",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          },
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "NotificationListContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "list-item",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "image": {
+                "src": "placeholder-image-1.jpg",
+                "altText": "Notification Image 1"
+              },
+              "title": "Notification Title 1",
+              "subtitle": "Notification Subtitle 1",
+              "timestamp": "10:00 AM",
+              "variants": {
+                "view": "list",
+                "type": "normal"
+              },
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "image": {
+                "src": "placeholder-image-2.jpg",
+                "altText": "Notification Image 2"
+              },
+              "title": "Notification Title 2",
+              "subtitle": "Notification Subtitle 2",
+              "timestamp": "9:30 AM",
+              "variants": {
+                "view": "list",
+                "type": "normal"
+              },
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "image": {
+                "src": "placeholder-image-3.jpg",
+                "altText": "Notification Image 3"
+              },
+              "title": "Notification Title 3",
+              "subtitle": "Notification Subtitle 3",
+              "timestamp": "9:00 AM",
+              "variants": {
+                "view": "list",
+                "type": "normal"
+              },
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "image": {
+                "src": "placeholder-image-4.jpg",
+                "altText": "Notification Image 4"
+              },
+              "title": "Notification Title 4",
+              "subtitle": "Notification Subtitle 4",
+              "timestamp": "8:30 AM",
+              "variants": {
+                "view": "list",
+                "type": "normal"
+              },
+              "colorStyleName": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "147:3743",
+            "properties": {
+              "image": {
+                "src": "placeholder-image-5.jpg",
+                "altText": "Notification Image 5"
+              },
+              "title": "Notification Title 5",
+              "subtitle": "Notification Subtitle 5",
+              "timestamp": "8:00 AM",
+              "variants": {
+                "view": "list",
+                "type": "normal"
+              },
+              "colorStyleName": "Neutral/neutral90"
+            }
+          }
+        ]
+      },
+      {
+        "type": "navigation",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "Label": ["Home", "Profile", "Settings"],
+          "variants": {
+            "Device": "Mobile"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      }
+    ]
+  }
+}

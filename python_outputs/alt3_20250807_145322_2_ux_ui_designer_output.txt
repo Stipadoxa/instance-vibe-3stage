@@ -1,0 +1,213 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have manually verified all component IDs against the provided `DESIGN_SYSTEM_DATA`.  All referenced components exist within the provided data.
+
+2. **Layout Decisions:** The layout prioritizes a vertical flow, starting with quick stats cards in a horizontal row for immediate information access. The recent activity feed follows, utilizing a vertical list for chronological presentation. Action buttons are positioned below the feed for clear call-to-actions. Bottom navigation is placed at the very bottom for consistent mobile navigation.  Spacing is maintained using the standard `itemSpacing` of 16px within content containers, and padding is applied to main sections for visual breathing room.
+
+3. **User Flow Reasoning:** The user flow is designed to provide a quick overview of key metrics (listings, views, messages) followed by recent activity, then prominent actions to manage their listings and messages. The bottom navigation provides access to other parts of the seller dashboard.
+
+4. **Component Choices:** I chose the `product card` component (`147:3743`) for the quick stats cards because it provides a visually appealing and easily digestible format for numerical data.  While there isn't a dedicated "stats card" component, the `product card` adapts well with minor modifications to text content.
+
+5. **Component Gaps:** The design system lacks a dedicated component for a recent activity feed that supports different content types (listings, messages). I created a workaround using the `List item` component (`10:10214`) within a vertical `layoutContainer`.
+
+
+6. **Visual Hierarchy:** Visual hierarchy is established through size, spacing, and color. The headline is displayed using a larger `native-text` with appropriate heading styling to capture immediate attention.  The stats cards are clearly separated to guide the eye, and the activity feed is below the cards to emphasize importance. Action buttons have a distinct visual prominence compared to the feed items.
+
+7. **Variant Selection Rationale:** For the buttons ("Create New Listing", "View All Messages"), I used the `Button` component (`10:3907`) with variants: `Platform: "Android+Web"`, `Size: "Medium"`, `Type: "Filled"`, `State: "Default"`, `Color: "Green"`.  Filled buttons are more prominent, conveying a primary action, fitting the call-to-action nature of these elements.
+
+8. **Native Element Justification:**  To display the numerical data (total listings, views, messages) within each stat card, I utilized `native-text` components, allowing for precise control over typography and color within the constraints of the card component.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Stats Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "items":[
+                  { "type": "native-text", "properties": { "content": "Total Listings: 15", "textStyle": "Title/Medium", "color": "Neutral/neutral50", "horizontalSizing": "AUTO" } },
+                  { "type": "native-rectangle", "properties": { "width": 64, "height": 64, "fill": { "type": "IMAGE", "scaleMode": "FILL" } } }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "items":[
+                  { "type": "native-text", "properties": { "content": "Views This Week: 275", "textStyle": "Title/Medium", "color": "Neutral/neutral50", "horizontalSizing": "AUTO" } },
+                  { "type": "native-rectangle", "properties": { "width": 64, "height": 64, "fill": { "type": "IMAGE", "scaleMode": "FILL" } } }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "147:3743",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "view": "grid",
+                    "type": "normal"
+                  }
+                },
+                "items":[
+                  { "type": "native-text", "properties": { "content": "Unread Messages: 3", "textStyle": "Title/Medium", "color": "Neutral/neutral50", "horizontalSizing": "AUTO" } },
+                  { "type": "native-rectangle", "properties": { "width": 64, "height": 64, "fill": { "type": "IMAGE", "scaleMode": "FILL" } } }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            },
+            "items": [
+              { "type": "native-text", "properties": { "content": "New listing added", "textStyle": "Body/Medium", "color": "Neutral/neutral50", "horizontalSizing": "AUTO" } }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "False"
+              }
+            },
+            "items": [
+              { "type": "native-text", "properties": { "content": "Message received from buyer", "textStyle": "Body/Medium", "color": "Neutral/neutral50", "horizontalSizing": "AUTO" } }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "SPACE_BETWEEN",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            "items":[
+              { "type": "native-text", "properties": { "content": "Create New Listing", "textStyle": "Label/Medium", "color": "Neutral/neutral90", "horizontalSizing": "AUTO" } }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            "items":[
+              { "type": "native-text", "properties": { "content": "View All Messages", "textStyle": "Label/Medium", "color": "Neutral/neutral90", "horizontalSizing": "AUTO" } }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "variants": {
+            "Device": "Mobile"
+          }
+        }
+      }
+    ]
+  }
+}
+```

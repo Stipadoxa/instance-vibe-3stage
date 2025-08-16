@@ -1,0 +1,231 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement to present the notification list efficiently on a mobile screen.  Item spacing is minimized for compactness. Top and bottom padding are set to zero to maximize available space.",
+    "userFlowReasoning": "The user flow is straightforward: the user views the notification list, and taps a notification item to view details.  There is an optional dismiss action which can be implemented in future iterations. Navigation is handled by the bottom navigation bar.",
+    "componentChoices": "I chose the 'appbar' (id: 10:5620) for the top bar, the 'list-item' (id: 10:10214) for each notification item, and the 'Bottom navigation' (id: 10:4724) for the bottom navigation bar.  I considered using a 'snackbar' (id: 10:3856) for the notification items, but it is not suitable for displaying multiple lines of content and its intended use-case is for shorter messages.  The 'card' (id: 147:3743) component could also display the information, but list-item provides a cleaner and simpler solution better suited for displaying multiple items in a list.",
+    "visualHierarchy": "Visual hierarchy is established through font sizes and weights.  The notification title ('Headline' text style) is the most prominent, followed by the description ('Body/Medium' text style), and finally the timestamp ('Caption/Small' text style).",
+    "variantSelectionRationale": "For the appbar, I chose Mode='Light', Type='Default', and Elevation='flat' because the default style is the most appropriate for a notification screen, with no special elevation needed in the default state. For the list-item, I chose Condition='2-line', Leading='Image' (id: 10:7773), and Trailing='None' for the default variant to represent the user avatar and lack of other visual elements. Show overline and Show supporting text are set to 'False' to maintain a clean look. I selected the 'Image' variant for leading icon because this is clearly needed to show the user avatar for each notification.  The 'None' variant for Trailing was selected as there is no need for additional elements here."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items":[
+          {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "type": "text",
+            "text": "Notification Title 1"
+          },
+          {
+            "id": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+            "type": "text",
+            "text": "Notification Description 1"
+          },
+          {
+            "id": "S:fa25503cb2164e444d7547fff9bc01765f752c1b",
+            "type": "text",
+            "text": "10:00 AM"
+          }
+
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items":[
+          {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "type": "text",
+            "text": "Notification Title 2"
+          },
+          {
+            "id": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+            "type": "text",
+            "text": "Notification Description 2"
+          },
+          {
+            "id": "S:fa25503cb2164e444d7547fff9bc01765f752c1b",
+            "type": "text",
+            "text": "10:30 AM"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items":[
+          {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "type": "text",
+            "text": "Notification Title 3"
+          },
+          {
+            "id": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+            "type": "text",
+            "text": "Notification Description 3"
+          },
+          {
+            "id": "S:fa25503cb2164e444d7547fff9bc01765f752c1b",
+            "type": "text",
+            "text": "11:00 AM"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items":[
+          {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "type": "text",
+            "text": "Notification Title 4"
+          },
+          {
+            "id": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+            "type": "text",
+            "text": "Notification Description 4"
+          },
+          {
+            "id": "S:fa25503cb2164e444d7547fff9bc01765f752c1b",
+            "type": "text",
+            "text": "11:30 AM"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "items":[
+          {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "type": "text",
+            "text": "Notification Title 5"
+          },
+          {
+            "id": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+            "type": "text",
+            "text": "Notification Description 5"
+          },
+          {
+            "id": "S:fa25503cb2164e444d7547fff9bc01765f752c1b",
+            "type": "text",
+            "text": "12:00 PM"
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

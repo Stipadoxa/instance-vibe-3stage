@@ -1,0 +1,26 @@
+Domain & Context
+Domain: E-commerce domain focusing on product display and purchase initiation.
+User Type: Mobile shoppers browsing product listings.
+Platform Impact: Mobile users need concise information, large tappable areas, and a streamlined purchasing process.  Screen real estate is limited, requiring prioritization of essential information.
+
+User Requirements
+Primary Goals: Quickly view product details (image, title, price), initiate purchase.
+Secondary Goals:  Potentially view product ratings/reviews (if space allows), access additional product information (e.g., via a "details" link).
+User Constraints: Limited screen space, reliance on touch input, potential for interruptions during browsing.
+Ready for handoff if:  Image is prominent, title is clear and concise, price is easily readable, "Buy" button is large and clearly distinguishable, and all elements have sufficient tappable areas.
+
+Content Requirements
+Critical: Product image, product title, product price, "Buy" button.
+Supporting:  Short product description (if space allows),  ratings/reviews (if space allows).
+Contextual:  "Out of Stock" message if applicable, loading indicator while fetching product data.
+
+Structural & Component Directives
+* Layout: Single vertical column layout for optimal use of limited screen space
+* Components:  Image (responsive sizing), Title (clear and concise), Price (prominently displayed), Buy Button (large, clear call to action)
+* Styling:  Consistent with overall app style guide.  Price should be visually distinct.
+
+Screen Requirements
+Primary Actions: Add to cart/Buy now.
+Secondary Actions: View details (potentially), view similar products (potentially, depending on design).
+Screen States: Default state, "Out of Stock" state, loading state.
+Feedback Needs:  Visual confirmation of adding to cart/purchase initiation, clear error messages (if applicable).

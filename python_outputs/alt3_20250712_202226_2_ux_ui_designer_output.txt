@@ -1,0 +1,122 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized vertically to optimize for mobile screen real estate. The search bar is placed at the top for immediate access, followed by filter chips for refinement, and finally, product cards in a vertically scrollable list.  Consistent spacing (24px) between elements ensures readability and visual separation.",
+    "userFlowReasoning": "The user flow is straightforward: search, filter, browse products.  The primary action is selecting a product card; secondary actions are filtering and searching.  A clear visual hierarchy guides the user through the process.",
+    "componentChoices": "The `appbar` component is used for the top bar, containing a `search-field`. `filter-chip` components are used for filtering options, and `product card` components display product information.  These components are chosen for their suitability to the e-commerce domain and their availability in the design system.",
+    "visualHierarchy": "Visual hierarchy is achieved through size, spacing, and color. The search bar and product titles are prominent, while filters and supplementary information have a secondary visual weight. Color styles from the design system (e.g., Primary, Secondary, Neutral) maintain consistency and brand identity."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Search Results Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "variants": {
+          "Mode": "Light",
+          "Type": "search-field",
+          "Elevation": "flat"
+        },
+        "headline": "Search Results",
+        "subheadline": "100+ Results Found"
+      }
+    },
+    {
+      "type": "chip",
+      "componentNodeId": "10:8132",
+      "properties": {
+        "variants": {
+          "Style": "unselected",
+          "State": "enabled"
+        },
+        "label-text": "Price"
+      }
+    },
+    {
+      "type": "chip",
+      "componentNodeId": "10:8132",
+      "properties": {
+        "variants": {
+          "Style": "unselected",
+          "State": "enabled"
+        },
+        "label-text": "Brand"
+      }
+    },
+    {
+      "type": "chip",
+      "componentNodeId": "10:8132",
+      "properties": {
+        "variants": {
+          "Style": "unselected",
+          "State": "enabled"
+        },
+        "label-text": "Category"
+      }
+    },
+    {
+      "type": "card",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "variants": {
+          "view": "list",
+          "type": "normal"
+        },
+        "#title": "Product Title 1",
+        "#price": "19.99",
+        "image": {
+          "url": "image_url_1",
+          "width": 100,
+          "height": 100
+        }
+      }
+    },
+    {
+      "type": "card",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "variants": {
+          "view": "list",
+          "type": "normal"
+        },
+        "#title": "Product Title 2",
+        "#price": "29.99",
+        "image": {
+          "url": "image_url_2",
+          "width": 100,
+          "height": 100
+        }
+      }
+    },
+    {
+      "type": "card",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "variants": {
+          "view": "list",
+          "type": "normal"
+        },
+        "#title": "Product Title 3",
+        "#price": "39.99",
+        "image": {
+          "url": "image_url_3",
+          "width": 100,
+          "height": 100
+        }
+      }
+    }
+  ]
+}
+```

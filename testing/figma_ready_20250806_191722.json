@@ -1,0 +1,279 @@
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Your Seller Dashboard",
+        "subheadline": "Manage your listings, track performance, and connect with buyers.",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "layoutAlign": "STRETCH",
+          "cornerRadius": 8,
+          "backgroundColor": "Neutral/neutral5",
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Total Listings",
+                "textStyle": "Label/Medium",
+                "textColor": "Neutral/neutral50",
+                "fontSize": 14,
+                "fontWeight": 400
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "17",
+                "textStyle": "Headline/Large",
+                "textColor": "Primary/primary50",
+                "fontSize": 24,
+                "fontWeight": 700
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "layoutAlign": "STRETCH",
+          "cornerRadius": 8,
+          "backgroundColor": "Neutral/neutral5",
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Views This Week",
+                "textStyle": "Label/Medium",
+                "textColor": "Neutral/neutral50",
+                "fontSize": 14,
+                "fontWeight": 400
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "342",
+                "textStyle": "Headline/Large",
+                "textColor": "Primary/primary50",
+                "fontSize": 24,
+                "fontWeight": 700
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "layoutAlign": "STRETCH",
+          "cornerRadius": 8,
+          "backgroundColor": "Neutral/neutral5",
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "New Messages",
+                "textStyle": "Label/Medium",
+                "textColor": "Neutral/neutral50",
+                "fontSize": 14,
+                "fontWeight": 400
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "3",
+                "textStyle": "Headline/Large",
+                "textColor": "Primary/primary50",
+                "fontSize": 24,
+                "fontWeight": 700
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Create New Listing",
+            "variants": {
+              "Size": "Large",
+              "Type": "Filled",
+              "Color": "Green",
+              "State": "Default"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "View All Messages",
+            "variants": {
+              "Size": "Medium",
+              "Type": "Filled",
+              "Color": "Green",
+              "State": "Default"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Recent Activity",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "True",
+          "Show supporting text": "True"
+        }
+      },
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Listing \"Vintage Leather Jacket\" received a new message from buyer JohnDoe123.",
+            "Supporting text": "View message",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Listing \"Handcrafted Wooden Table\" received 2 new views.",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            }
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Listing \"Stylish Modern Sofa\" was marked as sold.",
+            "Supporting text": "View listing",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "variants": {
+          "Device": "Mobile"
+        }
+      },
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Dashboard",
+            "textStyle": "Label/Medium",
+            "textColor": "Primary/primary50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Listings",
+            "textStyle": "Label/Medium",
+            "textColor": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Messages",
+            "textStyle": "Label/Medium",
+            "textColor": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Profile",
+            "textStyle": "Label/Medium",
+            "textColor": "Neutral/neutral50"
+          }
+        }
+      ]
+    }
+  ]
+}

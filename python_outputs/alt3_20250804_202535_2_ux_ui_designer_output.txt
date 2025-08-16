@@ -1,0 +1,141 @@
+**DESIGN RATIONALE**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical layout container (`layoutMode: "VERTICAL"`) to arrange the notification settings in a clear, top-to-bottom flow. Each notification type (push, email, SMS, promotional) is presented as a separate `list-item` component, providing a consistent visual structure.  A `Divider` component is placed between each list item to enhance visual separation.  Item spacing is minimal to conserve space and maintain a clean look.
+
+3. **User Flow Reasoning:** The user flow is straightforward.  Users scan the list of notification types, toggle the switches on or off according to their preferences, and then (implicitly) a save action (not explicitly defined in the request) would presumably persist these changes. The clear visual hierarchy and consistent use of toggle switches simplify the interaction.
+
+4. **Component Choices:** I chose the `list-item` component (ID: `10:10214`) for each notification setting because it provides a clear structure with an area for the descriptive text and a separate area for the toggle switch. I considered using a `filter-chip` (ID: `10:8132`) for each setting, but decided against it due to its design not well-suited to the on/off toggle functionality that is central to the notification settings.  Another possibility would have been native elements which would have required more customisation and less consistency.
+
+5. **Component Gaps:** The design system lacks a built-in, readily adaptable component for the combined text and toggle switch. The closest equivalent would be a custom component combining elements from the design system. Instead, I opted for the `list-item` component as a base to achieve the desired visual structure. I included a toggle switch (`type: "component", id: "10:9912"`) directly within each list item via its "Leading" variant to create a compact and intuitive interface.
+
+6. **Visual Hierarchy:**  Visual hierarchy is established through vertical arrangement, with the more important notification types (push, email, SMS) appearing first, and the less important one (promotional) last. The consistent use of list items and dividers enhances readability. The primary text is using the "primary" style.
+
+7. **Variant Selection Rationale:** For the `list-item` component, I chose the `Leading: "Switch"` variant to seamlessly integrate the toggle switch with the descriptive text.  `Trailing` and `Show supporting text` are set to `None` and `True` respectively for clarity and conciseness. Other variants ("Condition", "Show overline") are not relevant to the design context and thus set to "1-line" and "False" respectively. The `switch` component has "Selected" variant left at its default value of "false", as that's an interactive element controlled by the user and the initial state is off by default.
+
+8. **Native Element Justification:**  No native elements were needed. All the required functionality is easily accomplished by selecting the relevant components from the design system and leveraging its variants.
+
+
+**DESIGN SPECIFICATION**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "leading"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "Switch",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Headline": "Push Notifications",
+                  "Supporting text": "Receive push notifications for important updates."
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:8459",
+                "variants": {
+                  "Position": "horizontal",
+                  "Type": "full-width"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "Switch",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Headline": "Email Alerts",
+                  "Supporting text": "Receive email alerts for important updates."
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:8459",
+                "variants": {
+                  "Position": "horizontal",
+                  "Type": "full-width"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "Switch",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Headline": "SMS Updates",
+                  "Supporting text": "Receive SMS updates for important updates."
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:8459",
+                "variants": {
+                  "Position": "horizontal",
+                  "Type": "full-width"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "Switch",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Headline": "Promotional Offers",
+                  "Supporting text": "Receive notifications about promotional offers."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

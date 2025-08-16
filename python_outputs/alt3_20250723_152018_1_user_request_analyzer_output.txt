@@ -1,0 +1,26 @@
+Domain & Context
+Domain:  Business/SaaS domain, specifically user account management within a mobile application (Cars45 auction).
+User Type: Users of the Cars45 auction mobile app needing to manage their account settings and preferences.
+Platform Impact: Mobile users require a concise, touch-friendly interface with clear visual hierarchy due to limited screen real estate.  Navigation must be intuitive and easily accessible.
+
+User Requirements
+Primary Goals:  Modify account information (personal and business details), manage notification preferences,  control app settings (e.g., language, chat).
+Secondary Goals: Access help resources ("What is it?"), securely log out of the app.  Understand account status (e.g., "Active" status).
+User Constraints: Limited screen size on mobile devices, reliance on touch interaction, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included and clearly labeled, using existing app components. Top and bottom navigation bars are implemented.  All touch targets meet minimum size requirements for mobile.
+
+Content Requirements
+Critical:  Personal details section, business details section, access to Cars45 auction toggle, "Verified ID" badge status and explanation link, change phone number option, change email option, change language option, disable chats toggle, disable feedback toggle, manage notifications option, change password option, delete account option, log out option.
+Supporting:  "What is it?" explanation for "Verified ID" badge.
+Contextual:  Error messages for invalid inputs (e.g., email format), success messages after changes are saved.
+
+Structural & Component Directives
+*   Layout: List view of settings options similar to the reference image. Top and bottom app navigation bars are included.
+*   Components: Use existing app components for list items (including appropriate styling and interactive elements), toggles, and buttons.
+*   Styling: Consistent with the existing app's visual style guide.
+
+Screen Requirements
+Primary Actions: Tap on a setting to modify it (navigate to a new screen if needed for more complex settings like "Personal details" or "Business details"). Tap to toggle on/off settings. Tap to initiate account deletion or logout.
+Secondary Actions: Access "What is it?" explanations.
+Screen States: Default state showing all settings, loading state while saving changes, error states for invalid inputs, success states after changes are saved.
+Feedback Needs: Clear visual indicators of changes (e.g., checkmarks, updated status),  loading indicators during save operations, and clear error messages.

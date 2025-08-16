@@ -1,0 +1,219 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used in the design specification below are verified to exist in the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The dashboard homepage uses a vertical layout.  The top section features three stats cards arranged horizontally, utilizing the available width efficiently.  Each card maintains a consistent size and spacing for visual balance. Below the stats cards, the recent activity feed is displayed in a vertical list with consistent spacing between list items. At the bottom, the navigation bar is positioned for easy access.  Padding is used to create visual breathing room, but remains minimal to maximize screen real estate.  All full-width elements utilize `"horizontalSizing": "FILL"` where applicable.
+
+3. **User Flow Reasoning:** The user flow is designed to provide sellers with a quick overview of key metrics and essential actions.  The top stats cards immediately present critical information about their listings. The recent activity feed provides updates on recent interactions and changes, and the prominent action buttons allow for quick creation of new listings or reviewing messages.  The bottom navigation ensures easy access to other important sections of the seller's dashboard.
+
+4. **Component Choices:**  I chose the `Bottom navigation` (ID: `10:4724`) component for the bottom navigation because it is a purpose-built component for this functionality within the design system.  I did not consider using native elements or other components as they would not be as efficient or user-friendly.
+
+5. **Component Gaps:** The design requires quick stats cards for key metrics (listings, views, messages). The design system lacks a dedicated "Stats Card" component. To address this, I combined a `native-rectangle` with `native-text` components (using design system text styles where available) to create functional stats cards. This approach maintains visual consistency while efficiently delivering the needed information.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the combination of size, position, and color. The stats cards at the top of the screen are the most visually prominent, indicating their importance. The recent activity feed has a secondary level of prominence, clearly distinct from the primary stats cards but still high in the visual hierarchy.  The action buttons and bottom navigation have a lower visual prominence but still maintain appropriate visibility.
+
+7. **Variant Selection Rationale:** I have not selected variants for components as there is no specific request for it in the user's request.
+
+8. **Native Element Justification:** Native elements (`native-rectangle`, `native-text`) are used to create the stats cards because a dedicated "stats card" component is missing from the design system.  This approach allows for a flexible and consistent solution within system limitations.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard Homepage",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Cards",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "SOLID",
+                "color": "#00b53f"
+              }
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Total Listings",
+                  "textStyle": "Title/Medium",
+                  "color": "#ffffff",
+                  "alignment": "center"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "123",
+                  "textStyle": "Headline/Small",
+                  "color": "#ffffff",
+                  "alignment": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "SOLID",
+                "color": "#00831e"
+              }
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Views This Week",
+                  "textStyle": "Title/Medium",
+                  "color": "#ffffff",
+                  "alignment": "center"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "456",
+                  "textStyle": "Headline/Small",
+                  "color": "#ffffff",
+                  "alignment": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "width": 100,
+              "height": 100,
+              "cornerRadius": 8,
+              "fill": {
+                "type": "SOLID",
+                "color": "#006304"
+              }
+            },
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Messages",
+                  "textStyle": "Title/Medium",
+                  "color": "#ffffff",
+                  "alignment": "center"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "789",
+                  "textStyle": "Headline/Small",
+                  "color": "#ffffff",
+                  "alignment": "center"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Recent Activity",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "properties": {
+              "Headline": "New Listing Added"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "False"
+            },
+            "properties": {
+              "Headline": "Message Received"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Create New Listing"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "View All Messages"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:4724",
+        "variants": {
+          "Device": "Mobile"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,212 @@
+{
+  "implementationRationale": {
+    "componentSelection": "TopBar/Android and BottomBar/iOS components selected for top and bottom navigation. List-item component reused for consistency across settings.  Component Node IDs reflect the designer's specification.",
+    "styleApplication": "Text styles are applied through the component properties (Headline, Supporting text) to leverage the built-in styling of the list-item component.  Color styles are mapped directly from the design specifications.  Native text elements are not used to avoid textStyle conflicts.",
+    "designSystemMapping": "Components selected map directly to the design system provided by the designer.  The design system ensures a consistent look and feel across the application.",
+    "variantDecisions": "Variants are selected to accurately reflect the functionality of each list item.  Trailing icons are used for settings requiring navigation to a secondary screen. The switch variant is used for toggle settings. 'Info' variant used for help text.  No trailing element is used for destructive actions like account deletion."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "TopBar/Android",
+      "componentNodeId": "1424:10009",
+      "properties": {
+        "Title": "Settings",
+        "variants": {
+          "Right action": "No action"
+        },
+        "colorStyleName": "Neutral/black"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Personal details",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Accent/green"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Business details",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "variants": {
+              "Trailing": "Switch",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "variants": {
+              "Trailing": "Info",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Change phone number",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Change email",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Change language",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Disable chats",
+            "variants": {
+              "Trailing": "Switch",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "variants": {
+              "Trailing": "Switch",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Manage notifications",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Change password",
+            "variants": {
+              "Trailing": "Icon",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Delete my account permanently",
+            "variants": {
+              "Trailing": "None",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "1902:3471",
+          "properties": {
+            "Headline": "Log out",
+            "variants": {
+              "Trailing": "None",
+              "Condition": "1-line"
+            },
+            "colorStyleName": "Neutral/black"
+          }
+        }
+      ]
+    },
+    {
+      "type": "BottomBar / iOS",
+      "componentNodeId": "2798:8633",
+      "properties": {
+        "variants": {
+          "Розділ": "Головна"
+        },
+        "colorStyleName": "Neutral/gray"
+      }
+    }
+  ]
+}

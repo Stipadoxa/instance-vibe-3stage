@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain, specifically user account management within a mobile application (Cars45 auction).
+User Type: Registered users of the Cars45 mobile application needing to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with clear touch targets and minimal scrolling.  Limited screen real estate necessitates efficient information architecture.
+
+User Requirements
+Primary Goals: Access and modify personal and business details; manage account preferences (notifications, chats); manage security settings (password, account deletion); log out of the application.
+Secondary Goals:  Understand the meaning of "Verified ID" badge; easily access support/help resources.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions during use, limited attention span.
+Ready for handoff if: All settings options from the reference image are present and functional, navigation is intuitive and consistent with the app's design system, all interactive elements meet minimum touch target sizes, and text is legible.
+
+Content Requirements
+Critical: Personal details section (editable fields for relevant information), Business details section (editable fields for relevant information), Access to Cars45 auction toggle (Active/Inactive state), "Verified ID" badge section with explanation, Change phone number option, Change email option, Change language option, Disable chats toggle, Disable Feedback toggle, Manage notifications option, Change password option, Delete my account permanently option, Log out option.
+Supporting:  Clear visual indicators of active/inactive toggles.
+Contextual: Error messages for invalid inputs, loading indicators for actions that require server-side processing, confirmation dialogs before irreversible actions (e.g., deleting an account).
+
+Structural & Component Directives
+* Layout:  List-based layout similar to the reference image; top and bottom app navigation bars as specified.
+* Components:  Use existing app components (as specified); each setting option should be presented as a row in a list, including labels and appropriate interactive elements (e.g., text fields, toggles).  Right-aligned indicators for status (e.g., "Active," "What is it?").
+* Styling:  Adhere to the existing app's color scheme and styling guidelines (as informed by the reference image).
+
+Screen Requirements
+Primary Actions:  Tap on a setting option to access/modify it; tap "Log out."
+Secondary Actions:  Tap "What is it?" for clarifications; navigate to help/support.
+Screen States: Default state (all settings displayed), loading state (when updating information), error state (if an error occurs during modification), success state (after successful modification).
+Feedback Needs: Clear visual indicators of changes made (e.g., checkmarks), informative error messages, loading indicators for long-running operations.
+

@@ -1,0 +1,169 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs used in this design have been verified against the provided `DESIGN_SYSTEM_DATA`.  No custom components were created.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to guide the user through the form fields sequentially.  The primary title and description are placed at the top for immediate context.  Spacing between elements is consistent (16px) for visual clarity and readability.  The form fields are grouped to create a visual separation between the form and the action buttons.
+
+3. **User Flow Reasoning:** The user flow is designed to be straightforward: the user is presented with a clear title and description, followed by the email and password fields. Upon completing the form, the user is encouraged to click the prominent "Log In" button.  Secondary actions such as "Create Account" and "Forgot Password?" are clearly positioned below.
+
+4. **Component Choices:** The `10:3907` (Button) component was chosen for the "Log In" button due to its prominent design and accessibility features.  The `10:8492` (text input) component was chosen for its wide usage and its built-in error handling functionality.
+
+5. **Component Gaps:** The design system does not provide a dedicated component for creating a visually appealing login screen.  The design utilizes existing components to create the necessary layout.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the use of typography, spacing, and color. The title ("Welcome back to CraftMart!") uses a larger font size and heavier weight than other text elements. Form fields are visually distinct.
+
+7. **Variant Selection Rationale:** For the Button component (`10:3907`), the "Filled", "Large", "Default", and "Green" variants were selected. This is a common and highly visible variant for primary call-to-action buttons. For the Input fields (`10:8492`), the "Filled" and "enabled" variants were selected to make them visually distinctive and functional.
+
+8. **Native Element Justification:** No native elements were needed because the required functionality could be achieved with existing components from the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 32,
+        "paddingBottom": 24,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Welcome back to CraftMart!",
+              "textStyle": "Headline/Large",
+              "alignment": "center"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Log in to your account to access your favorite handmade goods, connect with artisans, and manage your orders.",
+              "textStyle": "Body/Medium",
+              "alignment": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Form",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 24,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "label-text": "Email Address",
+              "placeholder-text": "youremail@example.com",
+              "State": "enabled"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "label-text": "Password",
+              "placeholder-text": "********",
+              "State": "enabled"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 0,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Action": "Log In",
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Secondary Actions",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "AUTO",
+            "layoutAlign": "MIN",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Forgot password?",
+                  "textStyle": "Label/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Create an account",
+                  "textStyle": "Label/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,147 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical stack for the appbar and settings list.  The list items are vertically stacked with dividers for visual separation.",
+    "userFlowReasoning": "Users will see settings categories in a list.  Tapping a category will open a detail view (not included in this specification).",
+    "componentChoices": "I chose the `10:10214` (List item) component for displaying settings because it provides a clear structure for presenting options with overline text and supporting text.  I considered `147:3743` (product card), but it's visually inappropriate for settings; and `10:7852` (Tabs),  but it's not suitable for a settings list with potential expansion for each item.",
+    "componentGaps": "User request requires a settings page, but the design system lacks a dedicated settings page component. I used the Appbar (`10:5620`) and a list of List Items (`10:10214`) to create the structure. This provides a flexible and easily navigable settings page.",
+    "visualHierarchy": "The app bar provides primary visual prominence. Settings categories are presented in a clear list with distinct visual separation (dividers).",
+    "variantSelectionRationale": "For the app bar, I selected `Mode: Light`, `Type: Default`, `Elevation: flat`. The default app bar is ideal for this settings context, with a flat elevation to maintain a clean look. For the list items, I chose `Condition: 1-line`, `Leading: Icon`, `Trailing: None`, `Show overline: True`, `Show supporting text: False`. This keeps the design clean and focuses on the setting label while keeping the leading icon for visual clarity.",
+    "nativeElementJustification": "No native elements were needed. All functional requirements could be met using existing components."
+  }
+}
+```
+
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "componentId": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "headline": {
+            "content": "Settings",
+            "textStyle": "Headline/Medium"
+          },
+          "trailingIcon1": {
+            "visible": false
+          },
+          "trailingIcon2": {
+            "visible": true,
+            "icon": "settings"
+          }
+        }
+      },
+      {
+        "componentId": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "True",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Overline": {
+            "content": "Notifications",
+            "textStyle": "Label/Medium",
+            "color": "neutral-50"
+          },
+          "Headline": {
+            "content": "Manage your notification preferences",
+            "textStyle": "Body/Medium",
+            "color": "neutral-90"
+          },
+          "LeadingIcon": {
+            "icon": "notifications"
+          }
+        }
+      },
+      {
+        "componentId": "10:8459",
+        "type": "divider",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "componentId": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "True",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Overline": {
+            "content": "Privacy",
+            "textStyle": "Label/Medium",
+            "color": "neutral-50"
+          },
+          "Headline": {
+            "content": "Control your privacy settings",
+            "textStyle": "Body/Medium",
+            "color": "neutral-90"
+          },
+          "LeadingIcon": {
+            "icon": "lock"
+          }
+        }
+      },
+      {
+        "componentId": "10:8459",
+        "type": "divider",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "componentId": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "True",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Overline": {
+            "content": "Account",
+            "textStyle": "Label/Medium",
+            "color": "neutral-50"
+          },
+          "Headline": {
+            "content": "Manage your account details",
+            "textStyle": "Body/Medium",
+            "color": "neutral-90"
+          },
+          "LeadingIcon": {
+            "icon": "account_circle"
+          }
+        }
+      }
+    ]
+  }
+}
+```

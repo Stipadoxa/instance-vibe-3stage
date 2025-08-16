@@ -1,0 +1,149 @@
+```
+## 🔍 MANDATORY DEBUG ANALYSIS
+
+**INPUT FORMAT DETECTION:**
+Format Type: [FORMAT A (direct)]
+Contains "improvedLayoutData": [NO]
+
+**DATA EXTRACTION:**
+Layout Source: [input.layoutContainer] 
+Component Count: [7]
+First Component ID: [10:5620]
+First Text Content: [Notifications]
+
+**CONTENT VALIDATION:**
+Real Content Found: ["Notifications", "5 unread", "Emma Thompson mentioned you", "Check out her latest post!", "2m ago", "New message from John Smith", "He wants to discuss the project", "Yesterday", "Meeting Reminder", "Team meeting at 3PM today", "1h ago", "Sarah Chen shared a photo", "View her new post!", "30m ago", "Order Confirmation", "Your order has been shipped!", "10m ago", "Home", "Search", "Profile", "Settings", "More"]
+Generic Templates Found: []
+Template Risk: [LOW]
+
+**PROCESSING COMMITMENT:**
+Will use extracted content: [YES]
+Will avoid templates: [YES]
+Ready to proceed: [YES]
+```
+
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Notifications",
+        "subheadline": "5 unread"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Emma Thompson mentioned you",
+        "Supporting text": "Check out her latest post!",
+        "Trailing supporting text": "2m ago"
+      },
+      "variants": {
+        "Condition": "2-line",
+        "Leading": "Image",
+        "Trailing": "None",
+        "Show overline": "False",
+        "Show supporting text": "True"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "New message from John Smith",
+        "Supporting text": "He wants to discuss the project",
+        "Trailing supporting text": "Yesterday"
+      },
+      "variants": {
+        "Condition": "2-line",
+        "Leading": "Image",
+        "Trailing": "None",
+        "Show overline": "False",
+        "Show supporting text": "True"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Meeting Reminder",
+        "Supporting text": "Team meeting at 3PM today",
+        "Trailing supporting text": "1h ago"
+      },
+      "variants": {
+        "Condition": "2-line",
+        "Leading": "Image",
+        "Trailing": "None",
+        "Show overline": "False",
+        "Show supporting text": "True"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Sarah Chen shared a photo",
+        "Supporting text": "View her new post!",
+        "Trailing supporting text": "30m ago"
+      },
+      "variants": {
+        "Condition": "2-line",
+        "Leading": "Image",
+        "Trailing": "None",
+        "Show overline": "False",
+        "Show supporting text": "True"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Order Confirmation",
+        "Supporting text": "Your order has been shipped!",
+        "Trailing supporting text": "10m ago"
+      },
+      "variants": {
+        "Condition": "2-line",
+        "Leading": "Image",
+        "Trailing": "None",
+        "Show overline": "False",
+        "Show supporting text": "True"
+      }
+    },
+    {
+      "type": "navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": [
+          "Home",
+          "Search",
+          "Profile",
+          "Settings",
+          "More"
+        ]
+      },
+      "variants": {
+        "Device": "Mobile"
+      }
+    }
+  ]
+}
+```

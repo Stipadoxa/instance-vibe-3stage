@@ -1,0 +1,157 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized in a single column for optimal vertical scrolling on mobile.  Sections are separated with dividers for clarity and visual organization.  Top-level elements (profile, notifications, logout) are placed at the top for immediate accessibility.",
+    "userFlowReasoning": "The user flow is linear, following a top-down approach.  Users can easily view and edit their profile, manage notifications, and log out.  A help link provides additional support. Error handling is implicitly included through the design system's error handling capabilities for input fields and buttons.",
+    "componentChoices": "Components are selected from the Design System to ensure consistency.  A single-column layout with dividers provides clear separation.  The switch component handles notifications, and a destructive button (with red styling from the design system) provides clear visual feedback for the logout action.  Text input components allow for profile edits. A link represents the help functionality.",
+    "visualHierarchy": "Visual hierarchy is established through the use of headings (Title/Medium style), clear spacing between sections, dividers, and component placement.  The most prominent actions (Edit Profile, Toggle Notifications, Logout) are situated at the top. Less important elements like version number and help are positioned at the bottom."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Settings Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 24,
+      "paddingBottom": 24,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "width": 375
+    },
+    "items": [
+      {
+        "type": "text",
+        "properties": {
+          "text": "Profile",
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Name",
+          "placeholder-text": "Enter your name",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral50"
+        }
+      },
+      {
+        "type": "input",
+        "componentNodeId": "10:8492",
+        "properties": {
+          "label-text": "Email",
+          "placeholder-text": "Enter your email",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "colorStyleName": "Neutral/neutral50"
+        }
+      },
+      {
+        "type": "divider",
+        "componentNodeId": "10:8459",
+        "properties": {
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          },
+          "colorStyleName": "Neutral/neutral10"
+        }
+      },
+      {
+        "type": "text",
+        "properties": {
+          "text": "Notifications",
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90"
+        }
+      },
+      {
+        "type": "switch",
+        "componentNodeId": "10:9912",
+        "properties": {
+          "variants": {
+            "Selected": "false",
+            "State": "enabled",
+            "Icon": "false"
+          },
+          "colorStyleName": "Primary/primary50"
+        }
+      },
+      {
+        "type": "divider",
+        "componentNodeId": "10:8459",
+        "properties": {
+          "variants": {
+            "Position": "horizontal",
+            "Type": "full-width"
+          },
+          "colorStyleName": "Neutral/neutral10"
+        }
+      },
+      {
+        "type": "text",
+        "properties": {
+          "text": "Logout",
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Secondary/secondary90"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "Action": "Logout",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "styleInfo": {
+            "fills": [
+              {
+                "type": "SOLID",
+                "color": "#fc2533",
+                "opacity": 1
+              }
+            ],
+            "primaryColor": {
+              "type": "SOLID",
+              "color": "#fc2533",
+              "opacity": 1
+            },
+            "textColor": {
+              "type": "SOLID",
+              "color": "#fcfdfd",
+              "opacity": 1
+            }
+          }
+        }
+      },
+      {
+        "type": "text",
+        "properties": {
+          "text": "App Version: 1.0.0",
+          "textStyle": "Caption/Small",
+          "colorStyleName": "Neutral/neutral50"
+        }
+      },
+      {
+        "type": "text",
+        "properties": {
+          "text": "Need help?",
+          "textStyle": "Caption/Small",
+          "colorStyleName": "Neutral/neutral50"
+        }
+      }
+    ]
+  }
+}
+```

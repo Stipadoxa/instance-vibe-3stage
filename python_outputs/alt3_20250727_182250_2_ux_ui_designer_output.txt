@@ -1,0 +1,143 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical layoutMode for the main container, placing the appbar at the top, the notification list in the center, and the bottom navigation at the bottom.  Item spacing is set to 0 for a clean look. Padding is also set to 0 on all sides of the root container.",
+    "userFlowReasoning": "The user flow is straightforward: the user sees a list of notifications, taps on a notification to view details (implied navigation), and can navigate to other sections using the bottom navigation bar.",
+    "componentChoices": "I chose the '10:10214' list-item component for the notification items because it provides a flexible layout for displaying multiple lines of text, an avatar, and a timestamp. I considered using the '10:3856' snackbar, but it's not appropriate for a full notification list; it's better suited for short, transient messages. Similarly, the '147:3743' product card is not ideal, lacking the required structure for notifications. The list-item allows for clear visual separation and organization of notification information.",
+    "visualHierarchy": "Visual hierarchy is established through typography and spacing. Notification titles are presented using a larger font size than descriptions to prioritize key information. Timestamps have a smaller font size, placing them at a lower hierarchy level.  The user avatar, placed to the leading of each item, also contributes to easy scanning and item distinction.",
+    "variantSelectionRationale": "For the '10:10214' list-item component, I chose the 'Condition: 2-line', 'Leading: Image', 'Trailing: None', 'Show overline: False', and 'Show supporting text: True' variants.  I rejected 'Condition: 1-line' because many notifications will likely have both titles and descriptions.  'Trailing: Icon' was rejected because there's no immediately apparent secondary action for each notification, and including an icon would clutter the design.  'Show overline' was set to false as this was not specified in the requirements. The ‘Show supporting text’ variant is set to true to accommodate the description of each notification."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "textLayers": {
+          "headline": "Notifications",
+          "subheadline": ""
+        }
+      },
+      {
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 0,
+        "paddingRight": 0,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "items": [
+          {
+            "id": "10:10214",
+            "type": "list-item",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Image",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Notification Title 1",
+              "Supporting text": "Notification Description 1"
+            }
+          },
+          {
+            "id": "10:10214",
+            "type": "list-item",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Image",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Notification Title 2",
+              "Supporting text": "Notification Description 2"
+            }
+          },
+          {
+            "id": "10:10214",
+            "type": "list-item",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Image",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Notification Title 3",
+              "Supporting text": "Notification Description 3"
+            }
+          },
+          {
+            "id": "10:10214",
+            "type": "list-item",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Image",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Notification Title 4",
+              "Supporting text": "Notification Description 4"
+            }
+          },
+          {
+            "id": "10:10214",
+            "type": "list-item",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "Image",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "textLayers": {
+              "Headline": "Notification Title 5",
+              "Supporting text": "Notification Description 5"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

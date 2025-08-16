@@ -1,0 +1,73 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications, with the app bar at the top and bottom navigation at the bottom. This approach prioritizes a clear and concise presentation of information within the limited screen real estate of a mobile application.",
+    "userFlowReasoning": "The primary user flow is viewing a list of notifications.  Tapping a notification item will (in a future iteration) lead to a detailed view of that specific notification. Bottom navigation provides access to other application sections.",
+    "componentChoices": "I chose the \"appbar\" (id: 10:5620) component for the top bar, the \"list-item\" (id: 10:10214) component for each notification item, and the \"Bottom navigation\" (id: 10:4724) component for the bottom navigation.  I selected these components over alternatives like \"snackbar\" (id: 10:3856) for the top bar (because snackbars are for transient messages, not persistent UI elements like a header) and  \"card\" (id: 147:3743) for the notification items (cards are generally used for more self-contained units of content), and \"tabs\" (id: 10:7852) for bottom navigation (because tabs imply switching between distinct views within the same domain and bottom nav is for top-level navigation). The selected components are suitable for their respective content and interaction patterns.",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear visual distinctions between the UI elements.  The app bar is positioned at the top with larger text sizes and a consistent background color, immediately conveying its importance. Notification items follow, with consistent styling and ample spacing, and bottom navigation is placed at the very bottom.",
+    "variantSelectionRationale": "For the appbar, I chose \"Mode\": \"Light\" because it provides better contrast and visibility. For the list-item, I selected \"Condition\": \"2-line\", \"Leading\": \"Image\", \"Trailing\": \"None\", \"Show overline\": \"False\", and \"Show supporting text\": \"True\".  These variants allow for display of the user avatar and notification description in multiple lines as needed. The absence of \"Trailing\" elements and \"Overline\" maintain a streamlined design.  I rejected using \"Leading\": \"Icon\"  because the user avatar serves a similar visual purpose.  The supporting text displays the notification timestamp."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 8,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "Recent activity"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "User 1",
+          "Supporting text": "New message received at 10:00 AM",
+          "Trailing supporting text": "10:00 AM"
+        },
+        "repeats": 5
+      },
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "props": {
+          "✏️ Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Chat",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,223 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 64,
+            "height": 64,
+            "cornerRadius": 32,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            }
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Username",
+            "textStyle": "Headline/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Order History",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "True"
+          },
+          "properties": {
+            "headline": "Order #12345",
+            "Supporting text": "Order placed on 2023-10-26"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "True"
+          },
+          "properties": {
+            "headline": "Order #67890",
+            "Supporting text": "Order placed on 2023-11-15"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Address",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Street Address"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "City"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Zip Code"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Password",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Current Password",
+            "type": "password"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "New Password",
+            "type": "password"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "label-text": "Confirm Password",
+            "type": "password"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Medium",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Save Changes"
+      }
+    }
+  ]
+}

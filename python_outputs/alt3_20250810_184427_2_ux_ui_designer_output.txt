@@ -1,0 +1,205 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs referenced in the design specification below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to organize content logically.  The form elements are grouped together for clarity.  Spacing between elements uses the design system's default 16px spacing for consistency.
+
+3. **User Flow Reasoning:**  The user flow is straightforward: the user sees a welcome message, enters their credentials, and then clicks the "Sign In" button.  The "Forgot Password?" and "Create Account" links provide secondary actions for users who need them.
+
+4. **Component Choices:** The `Button` component (ID: `10:3907`) was chosen for the "Sign In" button because it provides a clear call to action and adheres to the design system's established button styles.  The `input` component (ID: `10:8492`) was chosen for the email and password fields due to its built-in validation and accessibility features.
+
+5. **Component Gaps:** The design system lacks a dedicated "Login Screen" component.  Therefore, I have constructed the login screen using a combination of readily available and verified components, ensuring compliance with the system's guidelines.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through typography.  The title "Welcome Back!" utilizes a larger, bolder text style than the form labels to convey importance and visual separation.
+
+7. **Variant Selection Rationale:**  The "Sign In" button uses the `10:3907` component with variants `{"Platform": "Android+Web", "Size": "Large", "Type": "Filled", "State": "Default", "Color": "Green"}` for visual prominence and clarity. The input fields use `10:8492` with the "Filled" type to ensure the user input is clearly visible.
+
+8. **Native Element Justification:**  Native text elements (`native-text`) are used for the title, description, labels, and links to render text efficiently.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 32,
+        "paddingBottom": 24,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Welcome Back!",
+              "textStyle": "Headline/Large",
+              "color": "Primary/primary50",
+              "alignment": "center"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Sign in to access your account and start shopping.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Form",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Email Field",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 4,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Email Address",
+                  "textStyle": "Label/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "placeholder-text": "your.email@example.com",
+                  "State": "enabled",
+                  "Type": "Filled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Password Field",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 4,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Password",
+                  "textStyle": "Label/Medium",
+                  "color": "Neutral/neutral50"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "placeholder-text": "********",
+                  "State": "enabled",
+                  "Type": "Filled"
+                }
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Action": "Sign In",
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Forgot Password?",
+              "textStyle": "Label/Medium",
+              "color": "Neutral/neutral50",
+              "alignment": "right"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Footer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 24,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Create Account",
+              "textStyle": "Label/Medium",
+              "color": "Primary/primary50",
+              "alignment": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

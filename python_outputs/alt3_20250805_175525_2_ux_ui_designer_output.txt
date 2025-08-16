@@ -1,0 +1,94 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The login screen uses a vertical layout to naturally guide the user down the form.  Each input field and the button are given ample spacing (16px) for visual clarity and to prevent a cramped feel. The "Forgot Password" link is positioned below the login button, maintaining a logical flow.  The `horizontalSizing: "FILL"` property ensures that all input fields span the full width of their containers, consistent with standard mobile form design.
+
+3. **User Flow Reasoning:** The user flow is straightforward and intuitive.  The user first enters their email, then their password, and finally clicks the "Login" button.  The "Forgot Password" link provides a clear escape route if the user needs to reset their credentials.
+
+4. **Component Choices:**
+    * **Email Input Field:** I chose the `text input` component (ID: `10:8492`) for both email and password fields because it provides a clear and concise form element with built-in placeholder text and feedback mechanisms for the user.  I considered using a custom `native-text` element for the input fields, but the `text input` component offers more user-friendly features out-of-the-box, like autocorrect and secure input for passwords. It offers superior usability compared to a plain `native-text` element. I didn't need the Label since placeholders already exist in the component.
+    * **Password Input Field:** The `text input` component handles password security natively. No need to implement manual secure input handling through native elements.
+    * **Login Button:** I chose the `Button` component (ID: `10:3907`) because it's a standard component in the design system. I used the Filled variant in Green for high visibility and positive reinforcement. Alternatives like outlined or text buttons were less suitable here. I could have potentially built this from native rectangles, but the button component offers a much more polished visual style.
+    * **Forgot Password Link:**  I chose a `native-text` element for the "Forgot Password?" link because the design system doesn't offer a dedicated hyperlink component. This allows me to style the link appropriately and trigger a navigation action when tapped.
+
+5. **Component Gaps:** The design system lacks a dedicated "login screen" component and a "Forgot Password" link component.  For the "Forgot Password?" link, I used a `native-text` element styled as a link to create a semantic equivalent and functionality. This is a simple and effective workaround, fully compliant with the renderer's capabilities.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through component sizing, spacing, and color. The input fields have a clear visual grouping. The Login button has higher visual weight due to its size and color. The "Forgot Password" link has a lower visual weight but remains distinct by using a visually separate element, providing clear visual separation in the structure.
+
+7. **Variant Selection Rationale:**
+    * **Login Button:** I chose the `Color: Green` variant for the Login button to improve visual prominence and to suggest a positive action. This enhances the user experience by making the most crucial component of the form stand out.
+    * **Input Fields:**  I selected the enabled state for both input fields and the default state for the button.
+
+8. **Native Element Justification:** A native text element was used for the “Forgot Password?” link because a hyperlink component was not found in the provided design system. The native text element can easily achieve the required styling and functionality.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Marketplace Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32, "paddingBottom": 32, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:8492",
+        "name": "Email Input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "properties": {
+          "placeholder-text": "Email Address",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "name": "Password Input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "properties": {
+          "placeholder-text": "Password",
+          "isPassword": true,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "name": "Login Button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Login",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "name": "Forgot Password Link",
+        "properties": {
+          "content": "Forgot Password?",
+          "textStyle": "Body/Small",
+          "color": "Tertiary/tertiary50",
+          "alignment": "center",
+          "horizontalSizing": "FILL"
+        }
+      }
+    ]
+  }
+}
+```

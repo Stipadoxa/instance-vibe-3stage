@@ -1,0 +1,102 @@
+```
+## 🔍 MANDATORY DEBUG ANALYSIS
+
+**INPUT FORMAT DETECTION:**
+Format Type: [FORMAT A (direct)]
+Contains "improvedLayoutData": [NO]
+
+**DATA EXTRACTION:**
+Layout Source: [input.layoutContainer] 
+Component Count: [5]
+First Component ID: [10:8492]
+First Text Content: [Username or Email]
+
+**CONTENT VALIDATION:**
+Real Content Found: ["Username or Email", "Password", "Login", "Forgot Password?", "By logging in, you agree to our Terms and Conditions"]
+Generic Templates Found: []
+Template Risk: [LOW]
+
+**PROCESSING COMMITMENT:**
+Will use extracted content: [YES]
+Will avoid templates: [YES]
+Ready to proceed: [YES]
+```
+
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "enabled"
+      },
+      "properties": {
+        "placeholder-text": "Username or Email",
+        "label-text": "Username or Email"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "enabled"
+      },
+      "properties": {
+        "placeholder-text": "Password",
+        "label-text": "Password"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Large",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Login"
+      }
+    },
+    {
+      "type": "text",
+      "componentNodeId": "10:8619",
+      "variants": {
+        "Platform": "Android+Web",
+        "Type": "Empty",
+        "State": "Enabled"
+      },
+      "properties": {
+        "label-text": "Forgot Password?"
+      }
+    },
+    {
+      "type": "text",
+      "componentNodeId": "10:8619",
+      "variants": {
+        "Platform": "Android+Web",
+        "Type": "Empty",
+        "State": "Enabled"
+      },
+      "properties": {
+        "label-text": "By logging in, you agree to our Terms and Conditions"
+      }
+    }
+  ]
+}
+```

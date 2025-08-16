@@ -1,0 +1,156 @@
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Page - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Header Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 32,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7773",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "variants": {
+                    "Photo": "Yes"
+                  }
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "layoutMode": "VERTICAL",
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "@johndoe",
+                      "textStyle": "Headline/Medium",
+                      "color": "primary-500"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Bio placeholder",
+                      "textStyle": "Body/Medium",
+                      "color": "neutral-50"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Followers: 0",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Following: 0",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 0,
+        "paddingBottom": 32,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Posts Feed",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 16,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Placeholder Post 1",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Placeholder Post 2",
+                  "textStyle": "Body/Medium",
+                  "color": "neutral-50"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "designRationale": {
+    "componentVerification": "All component IDs are verified against the provided DESIGN_SYSTEM_DATA.",
+    "layoutStrategy": "Mobile-first approach using a vertical layout for the main structure. Spacing is consistent and utilizes the design system's default padding values.",
+    "userExperienceLogic": "The user profile page follows a straightforward top-down approach with the header containing profile information and social metrics and a content section dedicated to the user's posts.",
+    "componentSelection": "Components are chosen based on their semantic meaning and alignment with the design system. For instance, the 'avatar' component is used for the profile picture, ensuring visual consistency across the platform.",
+    "gapAnalysis": "The 'Posts Feed' is implemented with native-text components as placeholders, awaiting the integration of the actual post display functionality.",
+    "hierarchyDecisions": "Visual hierarchy is established through typography sizes (Headline/Medium for username) and component placement.  Important information is prominently displayed at the top.",
+    "variantRationale": "The 'avatar' component's 'Photo' variant is set to 'Yes' to clearly indicate the intended function of displaying a user's photo.",
+    "nativeElementJustification": "Native text components are used as placeholders for the posts feed in the absence of specific post display components within the DESIGN_SYSTEM_DATA. These will be replaced with fully functional post components once available."
+  }
+}
+```

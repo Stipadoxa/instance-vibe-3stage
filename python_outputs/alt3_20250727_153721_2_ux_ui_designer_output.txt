@@ -1,0 +1,103 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is designed vertically to optimize screen real estate on mobile devices.  Components are stacked in order of importance, with primary actions (login button) placed prominently.",
+    "userFlowReasoning": "The user flow is straightforward: enter credentials, tap 'Login,' or utilize social login options. Password recovery is offered as a secondary action for forgotten credentials.  Terms and Conditions are shown for compliance.  Error messages are anticipated based on invalid inputs, providing appropriate feedback for user correction.",
+    "componentChoices": "I chose '10:8492' (text input) for username/email and password fields, '10:3907' (button) for the primary login button, and '10:10214' (list item) for the password recovery link and T&C footnote because these components provide the necessary functionality and visual appeal for a mobile authentication screen.  '10:8619' (text area) would be too large for the required short text inputs;  '147:3743' (product card) is not appropriate for this context. The selected components are lightweight and efficient for the mobile interface. ",
+    "visualHierarchy": "Visual hierarchy is established through component placement (primary button is most prominent), font sizes (primary text is larger), and color (primary actions use the primary color palette).",
+    "variantSelectionRationale": "For the input fields ('10:8492'), I selected 'Type=Filled', 'State=Enabled' to provide visual clarity and immediate feedback to the user. For the login button ('10:3907'), I chose 'Size=Medium', 'Type=Filled', 'Color=Green', 'State=Default' to create a prominent call to action. The green color aligns with the primary color scheme. For the password recovery link and the T&C footnote ('10:10214'), I opted for 'Leading=None', 'Trailing=None', 'Show overline=False', and 'Show supporting text=False' for a clean, minimal design. This avoids visual clutter on the mobile screen.  I rejected using 'Leading=Icon' or 'Trailing=Icon' variants because the visual references did not include any of these elements, and they are unnecessary for simple text links within the context of a login screen."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "type": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email",
+          "label-text": "",
+          "supporting-text": "",
+          "counter": ""
+        }
+      },
+      {
+        "id": "10:8492",
+        "type": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password",
+          "label-text": "",
+          "supporting-text": "",
+          "counter": ""
+        }
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "Forgot Password?",
+          "Supporting text": "",
+          "Trailing supporting text": ""
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Overline": "",
+          "Headline": "By signing in, you agree to our Terms & Conditions",
+          "Supporting text": "",
+          "Trailing supporting text": ""
+        }
+      }
+    ]
+  }
+}
+```

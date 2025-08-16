@@ -1,0 +1,28 @@
+Domain & Context
+Domain:  Business/SaaS domain, specifically user account management within a mobile application context (Cars45 auction likely implies an auction platform).
+User Type: Registered users of the Cars45 mobile app needing to manage their account settings and preferences.  This includes both personal and business users.
+Platform Impact: Mobile users need a concise, intuitive settings page with clear, easily tappable options. Screen real estate is limited; therefore, information architecture is crucial.  Touch interaction is primary, and interruptions are possible.
+
+User Requirements
+Primary Goals: Access and modify account settings (personal and business details), manage notification preferences, and securely log out.
+Secondary Goals:  Understand the meaning of "Verified ID" badge, easily change contact information and language preferences, disable features like chats and feedback.
+User Constraints: Limited screen space on mobile devices, reliance on touch input, potential for interruptions (calls, messages), need for clear and concise information presentation.
+Ready for handoff if: All settings options from the reference image are included, using the specified components, top and bottom navigation bars are implemented, and all interactive elements have sufficient tap targets for mobile usability.
+
+Content Requirements
+Critical: Personal details (potentially editable), business details (potentially editable), access to Cars45 auction (status indicator), "Verified ID" badge (with explanation), change phone number, change email, change language, disable chats, disable feedback, manage notifications, change password, delete account, log out.
+Supporting:  A clear explanation of the "Verified ID" badge.
+Contextual:  Status indicators (e.g., "Active" for auction access), error messages for failed actions (e.g., password change), confirmation dialogs before deleting the account.
+
+
+Structural & Component Directives
+* Layout:  Single column list of settings options, as shown in the reference image.  Top and bottom app navigation bars (existing app components to be used).
+* Components:  List items for each setting option, using the app's existing list item component.  Right-aligned status indicators and action indicators where applicable (like the ">" or "What is it?" elements in the reference image).
+* Styling:  Consistent with the existing app's style guide.  Follow the visual hierarchy and color schemes established by the reference image.
+
+
+Screen Requirements
+Primary Actions:  Tap on a settings option to modify it.
+Secondary Actions: Access the explanation of "Verified ID" badge (if applicable), confirm account deletion.
+Screen States:  Default state (showing all settings options), loading state (if any settings option requires asynchronous operation), error states (if an action fails), confirmation dialogs (e.g., before deleting an account).
+Feedback Needs:  Clear visual indication of which settings have been changed.  Loading indicators for asynchronous operations. Error messages that are concise and actionable. Confirmation messages after successful actions.

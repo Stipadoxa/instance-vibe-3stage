@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management and settings configuration.  Specific context is a mobile application likely related to auctions or a similar marketplace.
+User Type: Mobile users of the Cars45 auction app managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear actions and minimal input. Touch interaction is primary, screen real estate is limited, and users may be multitasking or in distracting environments.
+
+User Requirements
+Primary Goals: Modify account settings (personal and business details, contact information, language), manage notification preferences, review account status (e.g., "Verified ID" badge, auction access), and securely log out.
+Secondary Goals: Access help/information related to account settings.  Conveniently delete their account.
+User Constraints: Limited screen space on mobile device, reliance on touch input, potential for interruptions, and users may be unfamiliar with certain settings.
+Ready for handoff if: All settings options from the reference image are implemented using the provided design system components,  navigation is clear and intuitive, and all interactive elements have appropriately sized touch targets.  Error handling is considered for actions such as password change and account deletion.
+
+Content Requirements
+Critical:  All settings options shown in the reference image ("Personal details", "Business details", "Access to Cars45 auction", "Verified ID" badge, "Change phone number", "Change email", "Change language", "Disable chats", "Disable Feedback", "Manage notifications", "Change password", "Delete my account permanently", "Log out").  Each option should clearly indicate its function.
+Supporting:  "What is it?" explanatory text for unclear settings (e.g., "Verified ID" badge).
+Contextual:  Status indicators (e.g., "Active" for auction access), confirmation dialogs for potentially destructive actions (e.g., account deletion), loading indicators for asynchronous operations (e.g., password change).
+
+Structural & Component Directives
+* Layout:  List-based layout, similar to the reference image, using the provided design system components for list items.  A single column vertical list is recommended for optimal mobile usability.
+* Components: Use list components from the provided design system to display settings options. Utilize standard components for toggles (e.g., for "Disable chats" and "Disable Feedback"), input fields (for "Change phone number" and "Change email"), and a modal component for confirmation dialogs.  Employ the provided design system's button component for actions like "Log out".
+* Styling:  Adhere to the provided design system's color palette and typography.  Consistent use of spacing and padding will be dictated by the design system.
+
+
+Screen Requirements
+Primary Actions:  Access individual settings pages for modification (tapping on settings options), "Log out", "Delete my account permanently".
+Secondary Actions: Access help/information links (e.g., "What is it?").
+Screen States: Default state (displaying the settings list), loading state (while performing operations), success/failure state (after performing an operation), and confirmation dialog state (before performing potentially destructive operations).
+Feedback Needs: Clear visual indicators for successful and unsuccessful operations, loading indicators for time-consuming operations, status updates for settings (e.g., displaying whether chats are enabled/disabled).
+

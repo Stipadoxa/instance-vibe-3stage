@@ -1,0 +1,42 @@
+## STAGE 1: UNDERSTAND THE REQUEST
+
+1. This request belongs to the **E-commerce** domain, specifically focusing on displaying seller information within a marketplace.
+2. The platform context is **unclear**, though the design could apply to both mobile and desktop.  We will default to mobile in Stage 3.
+3. The user wants to create a compact display of seller information, including an avatar and rating, to be used within a larger product listing or search result interface.
+
+
+## STAGE 2: GENERATE CORE CONTENT
+
+**Main Screen Purpose**: To quickly display key information about a seller within a product listing or search results, allowing users to easily identify and assess the trustworthiness of the seller before engaging with their products.
+
+**Required Information & Actions**:
+
+*   **Heading**:  (Not applicable for a row; the heading would exist at a higher level in the UI)
+*   **Key Information Blocks**:
+    *   **Avatar Image**: A square image (e.g., 50x50px) of the seller's profile picture.  Example:  `<img src="https://example.com/seller_avatar.jpg" alt="Seller Avatar">`
+    *   **Seller Name**: The seller's business name or username. Example: "Artisan Crafts Co."
+    *   **Seller Rating**: A star rating (e.g., 4.8 out of 5 stars) with the number of reviews in parentheses. Example: "⭐⭐⭐⭐.8 (1234 Reviews)"
+*   **Primary & Secondary Actions**:  (No primary or secondary actions are specified in the user's request for this individual row. Actions would likely be at a higher level, such as viewing the seller's store.)
+*   **Required Status Indicators**: None explicitly required for this row.
+
+
+**Content Examples (for multiple seller rows):**
+
+| Avatar Image     | Seller Name            | Seller Rating      |
+|-----------------|------------------------|---------------------|
+| [Avatar Image 1] | "EcoFriendly Goods"    | ⭐⭐⭐⭐⭐ (876 Reviews) |
+| [Avatar Image 2] | "Handmade Happiness"   | ⭐⭐⭐⭐.2 (345 Reviews) |
+| [Avatar Image 3] | "Tech Gadgets Galore" | ⭐⭐⭐⭐.9 (12 Reviews) |
+
+
+**What to show when no data:**  If a seller lacks a profile picture, display a generic placeholder avatar image. If a seller has no ratings, display "No Reviews Yet".
+
+
+## STAGE 3: ADD NAVIGATION
+
+Since the user request doesn't specify a complete app, we'll assume a mobile app context and provide minimal, contextually relevant navigation within the broader application flow.  This row is not a standalone screen and requires broader context, such as a product listing page, to function effectively.
+
+**For Mobile Apps**:
+
+*   **Top navigation**: Not applicable to this specific row. The back button would be managed at the product list level.
+*   **Bottom navigation**:  This would be determined by the broader app structure and could include tabs like "Home," "Explore," "Cart," and "Profile."  The exact tabs would depend on the overall app design and features.

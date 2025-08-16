@@ -1,0 +1,131 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs referenced below have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The login screen uses a vertically stacked layout (`VERTICAL` layoutMode) to present information in a clear, sequential order.  Padding is applied to inner containers (`Content Section`) to create visual breathing room around the form elements.  The "Forgot Password?" link is placed below the login button for easy access.
+
+3. **User Flow Reasoning:** The user is presented with email and password fields, then a clear call to action ("Login" button). If they forget their password, a secondary action ("Forgot Password?") provides a path to recovery. This is a standard, intuitive login flow.
+
+4. **Component Choices:** I chose the `text input` component (ID: `10:8492`) for the email and password fields, and the `Button` component (ID: `10:3907`) for the login button because these components provide the necessary input and interactive elements. These components also adhere to the Design System specifications.
+
+5. **Component Gaps:** The design system lacks a dedicated component for a "Forgot Password?" link. This is a standard functional requirement for login screens. I created a workaround using a `native-text` element styled as a hyperlink (using `textStyle` from `DESIGN_SYSTEM_DATA` or manually if needed) to mimic this functionality.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through a combination of spacing and typography. The input labels are visually separated from the fields using spacing.  The "Login" button is the most prominent element due to its size and color, guiding the user's primary action.
+
+7. **Variant Selection Rationale:** For the `Button` component, I chose the `variants` to be `{"Platform": "Android+Web", "Size": "Large", "Type": "Filled", "State": "Default", "Color": "Green"}`  to ensure a visually appealing and prominent call to action.  The `Size: Large` variant helps to make the button stand out while the `Type: Filled` variant is used for positive actions.  `State: Default` signifies the initial state.
+
+8. **Native Element Justification:**  I used `native-text` for the "Forgot Password?" link because no suitable component in `DESIGN_SYSTEM_DATA` exists that fulfills the functional requirements of a clickable link. This native element allows for the required styling and behavior.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Email Address"
+                  }
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "variants": {
+                    "Type": "Filled",
+                    "State": "enabled"
+                  },
+                  "textLayers": {
+                    "placeholder-text": "Password"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Component Wrapper",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "END",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "horizontalSizing": "AUTO",
+                  "variants": {
+                    "Platform": "Android+Web",
+                    "Size": "Large",
+                    "Type": "Filled",
+                    "State": "Default",
+                    "Color": "Green"
+                  },
+                  "textLayers": {
+                    "Action": "Login"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Forgot password?",
+              "textStyle": "Body/Small",
+              "color": "secondary-500",
+              "alignment": "center",
+              "horizontalSizing": "AUTO"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

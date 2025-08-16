@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a streamlined settings page with clear, concise options and intuitive navigation, using touch interactions. Limited screen real estate requires efficient information architecture.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences, and control notification settings.  Log out of the application.
+Secondary Goals:  Understand the meaning of “Verified ID” badge, easily find and use account deletion options.
+User Constraints: Small screen size, touch-only interaction, potential for distractions.
+Ready for handoff if: All settings options from the reference image are included and clearly labeled, using existing app components; navigation is intuitive and top and bottom navigation bars are implemented; touch targets are appropriately sized.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Access to Cars45 auction (toggle), “Verified ID” badge (with explanation), Change phone number (editable), Change email (editable), Change language (selection), Disable chats (toggle), Disable Feedback (toggle), Manage notifications (link to dedicated screen), Change password (link to dedicated screen), Delete my account permanently (confirmation required), Log out.
+Supporting:  Clear visual indicators of active/inactive settings (e.g., toggle switches, active/inactive labels).
+Contextual:  Error messages for invalid input; confirmation dialogs for critical actions (account deletion).
+
+Structural & Component Directives
+* Layout:  List view of settings options, similar to reference image, with top and bottom navigation bars.
+* Components:  Use existing app components for list items, toggles, and text input fields.  Navigation bars should use existing app styles.
+* Styling:  Adhere to the existing app's color scheme and typography as shown in the reference image.
+
+
+Screen Requirements
+Primary Actions:  Modify settings, log out.
+Secondary Actions: Access detailed views for password change and notification management.
+Screen States: Default (all settings displayed), Loading (briefly while saving changes).
+Feedback Needs:  Visual confirmation of changes saved (e.g., a checkmark or brief success message).  Clear error messages for invalid input.
+

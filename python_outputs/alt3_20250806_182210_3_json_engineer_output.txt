@@ -1,0 +1,157 @@
+```json
+{
+  "layoutContainer": {
+    "name": "CraftMart Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "height": 60,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Your marketplace for handcrafted goods",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50",
+            "alignment": "center"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 12,
+          "horizontalSizing": "FILL",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "properties": {
+                "label-text": "Email Address",
+                "placeholder-text": "your.email@example.com"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "properties": {
+                "label-text": "Password",
+                "placeholder-text": "********"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "properties": {
+                "Action": "Sign In"
+              },
+              "horizontalSizing": "FILL"
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "justifyContent": "flex-end",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Forgot Password?",
+                    "textStyle": "Label/Small",
+                    "color": "Neutral/neutral50",
+                    "alignment": "right",
+                    "textStyle": "Label/Small",
+                    "color": "Tertiary/tertiary90"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "justifyContent": "center",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Create Account",
+                    "textStyle": "Label/Small",
+                    "color": "Neutral/neutral50",
+                    "alignment": "center",
+                    "textStyle": "Label/Small",
+                    "color": "Primary/primary50"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "justifyContent": "space-between",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Terms of Service",
+                "textStyle": "Label/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "left"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Privacy Policy",
+                "textStyle": "Label/Small",
+                "color": "Neutral/neutral50",
+                "alignment": "right"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```

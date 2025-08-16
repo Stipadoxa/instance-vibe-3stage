@@ -1,4 +1,7 @@
-export class BaseRole {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseRole = void 0;
+class BaseRole {
     constructor(logger) {
         this.logger = logger;
         this.safeLog('BaseRole initialized');
@@ -14,3 +17,4 @@ export class BaseRole {
         }
     }
 }
+exports.BaseRole = BaseRole;

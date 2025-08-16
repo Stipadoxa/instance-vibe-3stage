@@ -1,0 +1,32 @@
+[
+  {
+    "iteration": 1,
+    "issues": [
+      "layoutContainer.paddingTop, layoutContainer.paddingBottom, layoutContainer.paddingLeft, layoutContainer.paddingRight are not 0.",
+      "Component Validation:  Missing bottom navigation in root container's items array.",
+      "Component Validation: Missing top navigation in root container's items array.",
+      "Layout Structure Validation: Content container is missing.  layoutGrow:1 is missing."
+    ],
+    "changes": [
+      "Added top and bottom navigation components to the items array.",
+      "Added a \"content\" item to the layout with layoutGrow: 1 to act as the middle container.",
+      "Corrected padding values in layoutContainer to 0.",
+      "Added visibilityOverrides for empty text layers in appbar.",
+      "Corrected componentNodeId to componentNodeId (no change needed, already correct in this case).",
+      "Added missing text properties for appbar (\"headline\", \"subheadline\", \"Settings\").  Note that \"Label\" was set to visibility false in the original data; no change required."
+    ]
+  },
+  {
+    "iteration": 2,
+    "issues": [
+      "- Text Element Validation:  The \"button\" component is missing `flexFillRequired: true` in its properties.",
+      "- Text Element Validation: The \"button\" component's \"Action\" text layer is missing a textStyle.",
+      "- Property Name Validation: The \"button\" component should have text properties inside a \"properties\" object."
+    ],
+    "changes": [
+      "- Added `flexFillRequired: true` to the button's properties.",
+      "- Added `\"properties\": { ... }` object and  `textStyle: \"Title/Medium\"` to the button's Action text.",
+      "- Changed `\"\\u270f\\ufe0f Label\"` to `\"label\"` in the bottom navigation properties to match the design system.  This preserves the design intent but corrects the property name."
+    ]
+  }
+]

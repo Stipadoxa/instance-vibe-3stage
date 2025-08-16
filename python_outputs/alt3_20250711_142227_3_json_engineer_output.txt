@@ -1,0 +1,97 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "Component IDs from the input were used directly where provided.  For components without IDs (text elements),  `native-text` was selected as the appropriate Figma component.",
+    "styleApplication": "Text styles and color styles were applied as specified in the input JSON.  The `colorStyleName` property was used directly where provided to maintain consistency with the design system.",
+    "designSystemMapping": "The design system's components and styles were mapped directly to the input specifications.  No interpretation or modification of the design choices was performed.",
+    "variantDecisions": "Component variants were selected based on the 'variants' property provided in the input.  Where no variants were specified, default variants were assumed."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "text": "Welcome Back!",
+      "properties": {
+        "textStyle": "Headline/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "center"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "label-text": "Username or Email",
+        "placeholder-text": "Enter your username or email",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "label-text": "Password",
+        "placeholder-text": "Enter your password",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "type": "password"
+      }
+    },
+    {
+      "type": "checkbox",
+      "componentNodeId": "10:9586",
+      "properties": {
+        "label-text": "Remember me",
+        "textStyle": "Body/Small",
+        "colorStyleName": "Neutral/neutral50"
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Login",
+        "textStyle": "Label/Large",
+        "colorStyleName": "Primary/primary50",
+        "variants": {
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Forgot Password?",
+      "properties": {
+        "textStyle": "Caption/Small",
+        "colorStyleName": "Neutral/neutral50",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "right"
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,187 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical layout for the main content, placing the appbar at the top, followed by product images and details.  Spacing is consistent with the design system's default values.",
+    "userFlowReasoning": "The user flow is designed for a straightforward product detail view. The user can easily view product information and navigate back or add the item to their cart.",
+    "componentChoices": "I chose the `appbar` (10:5620) component for the header over `snackbar` (10:3856) and `Bottom navigation` (10:4724) because it's the standard component for top-level page headers. Snackbars are for transient messages, while bottom navigation is for primary screen navigation. The `appbar` provides the needed headline and trailing icons for a product detail view.",
+    "componentGaps": "User request requires a carousel component for product images but the design system lacks this component. I created a carousel-like experience using auto-layout horizontal scroll with multiple `IMAGES` components (10:7816). This allows viewing multiple product photos while maintaining semantic meaning.  There is also no dedicated component for displaying product attributes in a list format, therefore I used list item components (10:10214) to achieve the functionality.",
+    "visualHierarchy": "The product title is the most prominent element in the `appbar`. Price and description use the appropriate heading and body text styles defined in the system.",
+    "variantSelectionRationale": "For the `appbar`, I chose `Mode: Light` as it is suitable for the background color of the page. I set `Elevation: flat` as the page needs not to display any elevation. I set `Type: Default` for the main header and selected `trailingIcon1: visible = false` as the back button is unnecessary in this context.  I chose `trailingIcon2: visible = true` and `icon = bookmark` to provide the save/bookmark action which is contextually relevant on the product detail page. For list items, I selected `Condition: 2-line` to properly show product attributes and its values.",
+    "nativeElementJustification": "User request requires high quality product images with a smooth scrolling experience, exceeding the capabilities of the single image component. Native image elements within a horizontally scrolling auto-layout provides the needed functionality and UX benefit."
+  }
+}
+```
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "appbar",
+        "id": "10:5620",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "headline": {
+            "content": "Smartphone Name",
+            "textStyle": "Headline/Large"
+          },
+          "subheadline": {
+            "content": "Subtitle",
+            "textStyle": "Body/Medium"
+          },
+          "leadingIcon1": {
+            "visible": true,
+            "icon": "arrow"
+          },
+          "trailingIcon1": {
+            "visible": false
+          },
+          "trailingIcon2": {
+            "visible": true,
+            "icon": "bookmark"
+          }
+        }
+      },
+      {
+        "type": "auto-layout",
+        "layoutMode": "HORIZONTAL",
+        "items": [
+          {
+            "type": "native-image",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "src": "productImage1.jpg"
+            }
+          },
+          {
+            "type": "native-image",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "src": "productImage2.jpg"
+            }
+          },
+          {
+            "type": "native-image",
+            "properties": {
+              "width": 150,
+              "height": 150,
+              "src": "productImage3.jpg"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Product Description",
+          "textStyle": "Body/Medium",
+          "color": "neutral-50"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Price: $999",
+          "textStyle": "Title/Medium",
+          "color": "primary-50"
+        }
+      },
+      {
+        "type": "list-item",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": {
+            "content": "RAM",
+            "textStyle": "Label/Medium"
+          },
+          "Supporting text": {
+            "content": "8GB",
+            "textStyle": "Body/Small"
+          }
+        }
+      },
+      {
+        "type": "list-item",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": {
+            "content": "Storage",
+            "textStyle": "Label/Medium"
+          },
+          "Supporting text": {
+            "content": "128GB",
+            "textStyle": "Body/Small"
+          }
+        }
+      },
+      {
+        "type": "list-item",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": {
+            "content": "Camera",
+            "textStyle": "Label/Medium"
+          },
+          "Supporting text": {
+            "content": "12MP",
+            "textStyle": "Body/Small"
+          }
+        }
+      },
+       {
+        "type": "button",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": {
+            "content": "Add to Cart",
+            "textStyle": "Body/Medium"
+          }
+        }
+      }
+    ]
+  }
+}
+```

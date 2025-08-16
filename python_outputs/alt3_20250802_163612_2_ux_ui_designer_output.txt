@@ -1,0 +1,162 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically, prioritizing the product images at the top, followed by product details and seller information. This arrangement follows a common e-commerce pattern for product detail pages, ensuring users easily find key information.",
+    "userFlowReasoning": "Users will first see the product images, then glance at the title and price, before scrolling down for more seller details and finally contacting the seller if interested. This flow is intuitive and directs the user to the desired action.",
+    "componentChoices": "I chose the `image` component (10:7816) for the product images instead of using multiple individual image components or a native image carousel, due to the lack of a carousel component in the design system. The `text` component (24:10333) was used for title and price, seller information; the `avatar` component (24:10352) for the seller's avatar; the `button` component (10:3907) for the 'Contact Seller' CTA; and the `appbar` component (10:5620) for top navigation.  These choices are semantically appropriate and provide the necessary functionality within the given design system constraints.",
+    "componentGaps": "User request requires an image carousel, but the design system lacks this component. I created a carousel-like experience using a vertical container with multiple `image` components (10:7816). This approach allows for multiple product images while maintaining a clean and functional design, albeit without the native carousel's swipe gestures.",
+    "visualHierarchy": "Visual hierarchy is established through size, color, and position. The product images are given prominent placement at the top, while the title and price are presented in a larger font size than other text elements. The 'Contact Seller' button is styled with the primary color (#00b53f) and a filled button style to increase its prominence and guide the user to the conversion point.",
+    "variantSelectionRationale": "For the 'Contact Seller' button (10:3907), I selected the `Size: Large`, `Type: Filled`, `Color: Green`, and `State: Default` variants because a large, visually prominent button is essential for a high-impact CTA in this conversion-critical context. The green color reinforces a positive association with action. The default state assumes the button is always active.",
+    "nativeElementJustification": "With moment significance of 0.75 and the emotional intent to 'impress, guide, convert', this product detail page warrants expressive treatment. A native-rectangle with a subtle gradient background (#e1dffb to #b8b3f6) enhances the visual appeal of the hero section, creating visual depth and a more sophisticated look to complement the product image.  This aligns with the design system's color palette while adding a unique visual touch to the experience."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "appbar",
+        "id": "10:5620",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "properties": {
+          "headline": "Product Title",
+          "subheadline": "Short Description"
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 200,
+          "fill": {
+            "type": "GRADIENT_LINEAR",
+            "stops": [
+              {
+                "position": 0,
+                "color": "#e1dffb"
+              },
+              {
+                "position": 1,
+                "color": "#b8b3f6"
+              }
+            ]
+          },
+          "cornerRadius": 12
+        },
+        "items": [
+          {
+            "type": "image",
+            "id": "10:7816",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "source": "product_image_1"
+            }
+          },
+          {
+            "type": "image",
+            "id": "10:7816",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "source": "product_image_2"
+            }
+          },
+          {
+            "type": "image",
+            "id": "10:7816",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "source": "product_image_3"
+            }
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "24:10333",
+        "properties": {
+          "content": "Product Title",
+          "fontSize": 22,
+          "fontWeight": "500",
+          "alignment": "left",
+          "color": "neutral-90"
+        }
+      },
+      {
+        "type": "text",
+        "id": "24:10333",
+        "properties": {
+          "content": "$199.99",
+          "fontSize": 16,
+          "fontWeight": "500",
+          "alignment": "left",
+          "color": "primary-50"
+        }
+      },
+      {
+        "type": "avatar",
+        "id": "24:10352",
+        "variants": {},
+        "properties": {
+          "source": "seller_avatar"
+        }
+      },
+      {
+        "type": "text",
+        "id": "24:10333",
+        "properties": {
+          "content": "Seller Name",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "alignment": "left",
+          "color": "neutral-50"
+        }
+      },
+      {
+        "type": "text",
+        "id": "24:10333",
+        "properties": {
+          "content": "Location",
+          "fontSize": 12,
+          "fontWeight": "400",
+          "alignment": "left",
+          "color": "neutral-50"
+        }
+      },
+      {
+        "type": "button",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

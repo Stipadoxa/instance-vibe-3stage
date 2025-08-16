@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings screen with clear touch targets due to limited screen real estate and potential interruptions.
+
+User Requirements
+Primary Goals: Access and modify personal and business account details, manage notification preferences, and securely log out.
+Secondary Goals: Change account settings, disable features, manage privacy options, delete account.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, need for clear and concise information.
+Ready for handoff if: All settings options are clearly listed, actions are easily accessible with appropriately sized touch targets, and the top and bottom app bars are implemented.
+
+Content Requirements
+Critical: Personal details (editable), Business details (editable), Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear labels for each setting,  help/information icons for unclear settings.
+Contextual: Confirmation dialog before deleting the account, success/error messages after saving changes.
+
+Structural & Component Directives
+* Layout:  Vertical list of settings options. Top app bar with app title or back button. Bottom app bar (if applicable, potentially navigation or action buttons).
+* Components:  Each setting should be represented by a list item with a label and potentially a value (e.g., current phone number).  Each list item should lead to a detail screen (except for Log Out and Delete Account).  Use appropriate input fields for editable settings (e.g., text input for phone number and email, dropdown for language).
+* Styling:  Consistent with overall app styling guidelines.  Clear visual separation between list items.
+
+Screen Requirements
+Primary Actions: Modify settings, Log out, Delete Account
+Secondary Actions:  Access help/information for individual settings.
+Screen States: Default state, loading state (if applicable, e.g., while saving changes), error state (if applicable).
+Feedback Needs: Clear visual indication of saved changes, loading indicators during long operations, error messages for invalid inputs.

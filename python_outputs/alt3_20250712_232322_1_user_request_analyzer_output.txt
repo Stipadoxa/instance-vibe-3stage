@@ -1,0 +1,27 @@
+Domain & Context
+Domain: E-commerce domain specifically for classified mobile ads, focusing on product listings.
+User Type: Mobile users browsing and considering purchasing products through classified ads.  They are likely looking for specific items and comparing options quickly.
+Platform Impact: Mobile users need concise product information, large tap targets, and quick access to key details.  Screen real estate is limited, requiring prioritization of content.
+
+User Requirements
+Primary Goals: View product details quickly, assess product value (price and condition), initiate contact with the seller.
+Secondary Goals: View additional product images, save product for later, report suspicious listings.
+User Constraints: Small screen size, touch-only interaction, potential for slow network connections, limited attention span.
+Ready for handoff if: All critical content is clearly visible, tap targets are sufficiently large, and the primary action (contact seller) is prominent.
+
+Content Requirements
+Critical: Main product image, price, title, short description, location (if relevant).
+Supporting: Additional product images (carousel or gallery), seller rating/reviews (if applicable), number of views/impressions.
+Contextual:  Error messages (e.g., loading failure), loading indicators, “saved” status if user has previously saved the item.
+
+Structural & Component Directives
+* Layout: Single-column layout, scrolling vertically. Image at top.
+* Components: Top navigation bar (back button and potentially search icon), large product image at the top, clear price display (likely prominent font size and color), title (below image, concise and descriptive), description (below title, potentially truncated with "read more"), location/area of product (below description, clear and concise), "Contact Seller" button (prominent Call-To-Action).
+* Styling: Use a visual style similar to the reference image, employing clear visual hierarchy, sufficient spacing, and consistent font sizes. Use of a color palette that’s visually appealing and easy to read against the background. Consider a color scheme that is consistent with other app screens.
+
+Screen Requirements
+Primary Actions: Contact seller.
+Secondary Actions: View more images, save product.
+Screen States: Default state (all content loaded), loading state (image loading or network request), error state (e.g., "Image not loaded").
+Feedback Needs: Loading indicators for images and network requests, success messages after successful actions (e.g., "Product saved").
+

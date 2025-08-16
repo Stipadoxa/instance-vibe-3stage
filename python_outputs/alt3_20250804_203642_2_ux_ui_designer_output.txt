@@ -1,0 +1,111 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout uses a vertical list (`layoutMode: "VERTICAL"`) to present each notification setting.  Each setting is a `list-item` component, providing a clear visual separation and hierarchy. Consistent `itemSpacing` of 16px is used between list items for readability.  Padding is applied within each list item for visual breathing room.
+
+3. **User Flow Reasoning:** The user can easily toggle each notification type on or off using the switch component. The descriptive text next to each switch clarifies the notification type.  The simple, clear structure supports a straightforward and efficient user flow.
+
+4. **Component Choices:** I chose the `list-item` component (ID: 10:10214) for each notification setting because it provides built-in support for leading and trailing elements (the switch and descriptive text respectively).  This is superior to using a simple `layoutContainer` for each setting because it provides a consistent and visually appealing layout which is already implemented and consistent with the design system. I did consider using the `checkbox` (10:9586) component, but the design system's switch (10:9912) better represents the on/off nature of the notification settings with its visual style.
+
+5. **Component Gaps:** The design system lacks a ready-made component that combines a `switch` and a text label within a single list item structure for this specific use case. Therefore, I used a combination approach (Strategy A) utilizing the `list-item` component (10:10214) with a leading `switch` (10:9912) and a headline label within the `list-item`'s built-in text layers.  This approach provides a clean, consistent interface while adhering to the design system's elements.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the vertical layout.  Each list item has equal visual weight. The primary focus is on the notification type and its on/off status, with this being made more clear through the list item's layout that clearly shows these elements.
+
+7. **Variant Selection Rationale:** For the `switch` component (10:9912), I selected the `"State": "enabled"` variant because the switches should always be interactive. The `"Selected": "false"` or `"Selected": "true"` variants will be dynamically adjusted based on the user's preferences. For the `list-item` component (10:10214), I used `"Leading": "Switch"` and `"Trailing": "None"` as appropriate for the use case.
+
+8. **Native Element Justification:** No native elements were required as the design system offered sufficient components to fulfill the user's requests.
+
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "Push Notifications",
+          "leadingComponentVariants": {
+            "Selected": "false",
+            "State": "enabled",
+            "Icon": "false"
+          }
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "Email Alerts",
+          "leadingComponentVariants": {
+            "Selected": "false",
+            "State": "enabled",
+            "Icon": "false"
+          }
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "SMS Updates",
+          "leadingComponentVariants": {
+            "Selected": "false",
+            "State": "enabled",
+            "Icon": "false"
+          }
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "properties": {
+          "Headline": "Promotional Offers",
+          "leadingComponentVariants": {
+            "Selected": "false",
+            "State": "enabled",
+            "Icon": "false"
+          }
+        }
+      }
+    ]
+  }
+}
+```

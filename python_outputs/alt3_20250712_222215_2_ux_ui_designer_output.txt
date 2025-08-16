@@ -1,0 +1,207 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout employs a vertical list to accommodate the mobile screen's limited vertical space.  Settings are grouped logically into Personal, Business, and Account sections using dividers to enhance visual organization and navigation.  Consistent spacing of 24 pixels between items ensures sufficient padding and visual separation for comfortable touch interaction.",
+    "userFlowReasoning": "The user flow prioritizes essential settings for easy access, mirroring the user's likely order of interaction.  Less critical settings are placed further down the list, minimizing the need for excessive scrolling.  Account deletion is preceded by a confirmation dialog to prevent accidental actions. Error handling is implemented for smooth user experience in case of any failures. This is made clear and accessible through the use of clear success and error message components.",
+    "componentChoices": "The design utilizes the 'appbar' component for top and bottom navigation, providing a consistent app experience and touch target sizing for back buttons, as well as the 'list-item' component for settings. The selection of components balances functionality and visual consistency with the app's design guidelines.",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear section headers, text styles, and component sizes.  Main settings items have larger text styles and prominent labels, creating visual prominence for primary actions, and sub-settings have a less dominant look."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Personal Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Name",
+        "Supporting text": "John Doe",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Phone Number",
+        "Supporting text": "+1 555-123-4567",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Email",
+        "Supporting text": "john.doe@example.com",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Business Details",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Company",
+        "Supporting text": "Acme Corp",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      }
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Account Settings",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Change Password",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Language",
+        "Supporting text": "English",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Notifications",
+        "variants": {
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Chats",
+        "variants": {
+          "Leading": "switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:10214",
+      "properties": {
+        "Headline": "Disable Feedback",
+        "variants": {
+          "Leading": "switch",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    }
+  ]
+}
+```

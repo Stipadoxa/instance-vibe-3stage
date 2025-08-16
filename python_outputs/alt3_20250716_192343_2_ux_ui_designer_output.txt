@@ -1,0 +1,288 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout prioritizes a clear and efficient user flow. Social logins are placed prominently at the top, encouraging quicker registration.  Form fields follow in a vertical stack for easy scannability.  The 'Create Account' button is positioned at the bottom for clear call to action.",
+    "userFlowReasoning": "The user journey is designed to be straightforward.  Users can choose either social login or manual form entry.  Input validation and error messages ensure users receive immediate feedback.  Upon successful account creation, a confirmation message is displayed.",
+    "componentChoices": "The design leverages existing components for consistency.  'Button' components are used for both social login and account creation.  'text input' components are used for form fields.  The 'text' component is used for disclaimers and links.",
+    "visualHierarchy": "Visual hierarchy is established through component size, spacing, and placement.  Social login buttons are larger, while form fields and disclaimers are smaller.  Consistent spacing ensures readability and separation of elements.",
+    "variantSelectionRationale": "Variants are selected to enhance usability and visual appeal.  Large buttons are used for primary actions (social logins and account creation).  Form fields use the 'Filled' variant for better contrast and input clarity.  Text is styled using appropriate text styles to match hierarchy and importance."
+  }
+}
+---RATIONALE-SEPARATOR---
+```
+```json
+{
+  "layoutContainer": {
+    "name": "User Registration",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Create Account",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Registration Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "items": [
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Continue with Google",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "styleInfo": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": "#00b53f",
+                    "opacity": 1
+                  }
+                ],
+                "primaryColor": {
+                  "type": "SOLID",
+                  "color": "#00b53f",
+                  "opacity": 1
+                },
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#fcfdfd",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Continue with Facebook",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "styleInfo": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": "#00b53f",
+                    "opacity": 1
+                  }
+                ],
+                "primaryColor": {
+                  "type": "SOLID",
+                  "color": "#00b53f",
+                  "opacity": 1
+                },
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#fcfdfd",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder-text": "Email address",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "styleInfo": {
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#6c8ea0",
+                  "opacity": 1
+                },
+                "backgroundColor": {
+                  "type": "SOLID",
+                  "color": "#ffffff",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder-text": "Password",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "styleInfo": {
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#6c8ea0",
+                  "opacity": 1
+                },
+                "backgroundColor": {
+                  "type": "SOLID",
+                  "color": "#ffffff",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Avoid disclosing your password to anyone",
+              "textStyle": "Caption/Small",
+              "colorStyleName": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder-text": "First name",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "styleInfo": {
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#6c8ea0",
+                  "opacity": 1
+                },
+                "backgroundColor": {
+                  "type": "SOLID",
+                  "color": "#ffffff",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder-text": "Last name",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "styleInfo": {
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#6c8ea0",
+                  "opacity": 1
+                },
+                "backgroundColor": {
+                  "type": "SOLID",
+                  "color": "#ffffff",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "10:8492",
+            "properties": {
+              "placeholder-text": "Phone number",
+              "variants": {
+                "Type": "Filled",
+                "State": "enabled"
+              },
+              "styleInfo": {
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#6c8ea0",
+                  "opacity": 1
+                },
+                "backgroundColor": {
+                  "type": "SOLID",
+                  "color": "#ffffff",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Action": "Create an account",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "styleInfo": {
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "color": "#00b53f",
+                    "opacity": 1
+                  }
+                ],
+                "primaryColor": {
+                  "type": "SOLID",
+                  "color": "#00b53f",
+                  "opacity": 1
+                },
+                "textColor": {
+                  "type": "SOLID",
+                  "color": "#fcfdfd",
+                  "opacity": 1
+                }
+              }
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "By continuing you agree to the Terms and Conditions and Privacy Policy",
+              "textStyle": "Caption/Small",
+              "colorStyleName": "Neutral/neutral50"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

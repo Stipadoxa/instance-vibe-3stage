@@ -1,0 +1,109 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical structure to guide the user down the page.  The hero section is given ample space at the top for maximum visual impact, followed by sections of decreasing prominence to maintain visual flow.",
+    "userFlowReasoning": "The user flow is linear, starting with the hero section, followed by key features, benefits, testimonials and ending with a clear call to action to sign up for a free trial.",
+    "componentChoices": "I chose the 'product card' component (id: 147:3743) for showcasing features because it offers a visually appealing and information-rich way to present product highlights. I considered using 'list item' (id: 10:10214) but it lacks the visual appeal of a card, and 'text' (id: 24:10333) wouldn't provide enough visual structure. The reference shows how 'product card' effectively uses images and text concisely, while others are either too simple or too cluttered.",
+    "visualHierarchy": "Visual hierarchy is established through size, contrast, and position. The hero section is the largest and most visually prominent, followed by the feature section, then benefits, and finally, the CTA and social proof, creating a clear flow.",
+    "variantSelectionRationale": "For the CTA button (id: 10:3907), I chose the 'Size:Large', 'Type:Filled', and 'Color:Green' variants.  I considered 'Medium' and 'Outlined' but felt 'Large' would be more noticeable and the filled style would better represent the urgency for the free trial. The green color aligns with the brand's success and growth ethos.  The visual reference shows the 'Large Filled Green' button’s more striking presence compared to the smaller or outlined alternatives.",
+    "nativeElementJustification": "With moment significance of 0.9 and first_touch journey position, and an emotional intent to impress and convert, this landing page warrants expressive treatment.  Native gradient backgrounds and decorative shapes are used to create a memorable first impression, while systematically designed components ensure usability and reliability."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "E-commerce Landing Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": 400,
+          "fill": {
+            "type": "LINEAR_GRADIENT",
+            "stops": [
+              {"color": "#00b53f", "position": 0},
+              {"color": "#6ccc7b", "position": 1}
+            ]
+          },
+          "cornerRadius": 12
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Your SaaS Product Name",
+          "fontSize": 48,
+          "fontWeight": "bold",
+          "alignment": "center",
+          "color": "#ffffff",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Your Compelling Tagline",
+          "fontSize": 24,
+          "fontWeight": "normal",
+          "alignment": "center",
+          "color": "#ffffff",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-circle",
+        "properties": {
+          "width": 80,
+          "height": 80,
+          "fill": "#00831e"
+        }
+      },
+      {
+        "id": "147:3743",
+        "suggestedType": "card",
+        "variants": {
+          "view": "grid",
+          "type": "normal"
+        },
+        "items": [
+          {
+            "type": "image",
+            "properties": {
+              "source": "feature-image1.jpg"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "content": "Key Feature 1"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Start Free Trial"
+        }
+      }
+    ]
+  }
+}
+```

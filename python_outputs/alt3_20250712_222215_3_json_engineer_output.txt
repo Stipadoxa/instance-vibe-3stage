@@ -1,0 +1,242 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., `10:5620` for appbar, `10:10214` for list-item, `10:8459` for divider, `10:3907` for button) were selected based on the provided design specification.  These IDs correspond to pre-defined components within the design system, ensuring consistency and ease of rendering.",
+    "styleApplication": "Text styles (e.g., `Title/Medium`) and color styles (e.g., `Neutral/neutral90`) are directly applied as specified in the design document. This ensures that the final UI matches the design intent in terms of typography and color palette. Color style names are preserved exactly as provided.",
+    "designSystemMapping": "The design system's components and styles were mapped directly to the design specification. This involved matching the 'type' in the specification (e.g., 'appbar', 'list-item', 'text', 'divider', 'button') to the corresponding component IDs in the design system. The properties of each component (e.g., Headline, Supporting text, variants) were similarly mapped from the design specification.",
+    "variantDecisions": "Component variants (e.g., within list-item and button components) were selected based on the specified properties and values in the design document.  For example, the 'Leading' and 'Trailing' variants in list-items were set to 'None' or 'Icon' depending on whether a leading or trailing icon was required. Similarly, button variants were selected to reflect the specific style requirements (e.g., Size, Type, Color)."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Personal Details Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 12,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Personal Details",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Name",
+            "trailing-text": "John Doe",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Phone Number",
+            "trailing-text": "+1 555-123-4567",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Email",
+            "trailing-text": "john.doe@example.com",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Business Details Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 12,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Business Details",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Company",
+            "trailing-text": "Acme Corp",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "componentNodeId": "10:8459",
+      "properties": {
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Account Settings Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 12,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Account Settings",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change Password",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Language",
+            "trailing-text": "English",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "Text"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Notifications",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "None",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Chats",
+            "leading-icon": "switch",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Icon",
+              "Trailing": "None"
+            }
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "leading-icon": "switch",
+            "variants": {
+              "Condition": "1-line",
+              "Leading": "Icon",
+              "Trailing": "None"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Log Out",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,245 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Image Gallery",
+      "layoutMode": "HORIZONTAL",
+      "layoutWrap": "WRAP",
+      "itemSpacing": 4,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 177,
+            "height": 118,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 177,
+            "height": 118,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 177,
+            "height": 118,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        },
+        {
+          "type": "native-rectangle",
+          "properties": {
+            "width": 177,
+            "height": 118,
+            "fill": {
+              "type": "IMAGE",
+              "scaleMode": "FILL"
+            },
+            "cornerRadius": 8
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Product Details",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2023 MacBook Pro 16\"",
+            "textStyle": "Title/Large",
+            "color": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$1200",
+            "textStyle": "Headline/Medium",
+            "color": "Primary/primary50"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Excellent Condition",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Seller Info",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 12,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "START",
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 48,
+                "height": 48,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 24
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Doe",
+                "textStyle": "Label/Medium",
+                "color": "Neutral/neutral90"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "name": "Rating",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 2,
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "properties": {
+                    "width": 16,
+                    "height": 16,
+                    "variants": {
+                      "Star": "full"
+                    }
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "properties": {
+                    "width": 16,
+                    "height": 16,
+                    "variants": {
+                      "Star": "full"
+                    }
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "properties": {
+                    "width": 16,
+                    "height": 16,
+                    "variants": {
+                      "Star": "full"
+                    }
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "properties": {
+                    "width": 16,
+                    "height": 16,
+                    "variants": {
+                      "Star": "full"
+                    }
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4752",
+                  "properties": {
+                    "width": 16,
+                    "height": 16,
+                    "variants": {
+                      "Star": "half"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec enim velit.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "Action": "Contact Seller"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

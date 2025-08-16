@@ -1,6 +1,157 @@
+"use strict";
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
-export class ComponentScanner {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ComponentScanner = void 0;
+class ComponentScanner {
+    /**
+     * NEW: Scan Figma Variables (Design Tokens) from the local file
+     */
+    static async scanFigmaVariables() {
+        console.log("🔧 Scanning Figma Variables (Design Tokens)...");
+        try {
+            // Debug: Check if Variables API exists
+            if (!figma.variables) {
+                console.warn("❌ figma.variables API not available in this Figma version");
+                return [];
+            }
+            console.log("✅ figma.variables API is available");
+            const collections = await figma.variables.getLocalVariableCollectionsAsync();
+            console.log(`✅ Found ${collections.length} variable collections`);
+            // Debug: Check if we have any collections at all
+            if (collections.length === 0) {
+                console.warn("⚠️ No variable collections found. Possible reasons:");
+                console.warn("  1. File has no Variables/Design Tokens defined");
+                console.warn("  2. Variables are in a different library/file");
+                console.warn("  3. Variables API permissions issue");
+                // Try to get ALL variables (not just local)
+                try {
+                    console.log("🔍 Checking for non-local variables...");
+                    // Note: This might not be available, but worth trying
+                }
+                catch (e) {
+                    console.log("📝 Non-local variable check not available");
+                }
+                return [];
+            }
+            const tokens = [];
+            for (const collection of collections) {
+                console.log(`📦 Processing collection: "${collection.name}" (ID: ${collection.id})`);
+                try {
+                    const variables = await figma.variables.getVariablesByCollectionAsync(collection.id);
+                    console.log(`  Found ${variables.length} variables in "${collection.name}"`);
+                    // Debug: Log collection details
+                    console.log(`  Collection modes:`, Object.keys(collection.modes || {}));
+                    for (const variable of variables) {
+                        try {
+                            console.log(`    Processing variable: "${variable.name}" (Type: ${variable.resolvedType})`);
+                            // Get the first mode for the value
+                            const modes = Object.keys(variable.valuesByMode);
+                            console.log(`      Available modes: [${modes.join(', ')}]`);
+                            if (modes.length === 0) {
+                                console.warn(`      ⚠️ Variable "${variable.name}" has no modes`);
+                                continue;
+                            }
+                            const firstMode = modes[0];
+                            const value = variable.valuesByMode[firstMode];
+                            console.log(`      Using mode "${firstMode}" with value:`, value);
+                            const token = {
+                                id: variable.id,
+                                name: variable.name,
+                                type: variable.resolvedType,
+                                value: value,
+                                collection: collection.name,
+                                mode: firstMode,
+                                description: variable.description || undefined
+                            };
+                            tokens.push(token);
+                            if (variable.resolvedType === 'COLOR') {
+                                console.log(`🎨 Color token: "${variable.name}" = ${JSON.stringify(value)}`);
+                            }
+                            else {
+                                console.log(`🔧 ${variable.resolvedType} token: "${variable.name}"`);
+                            }
+                        }
+                        catch (varError) {
+                            console.warn(`⚠️ Failed to process variable "${variable.name}":`, varError);
+                        }
+                    }
+                }
+                catch (collectionError) {
+                    console.warn(`⚠️ Failed to process collection "${collection.name}":`, collectionError);
+                }
+            }
+            // Log summary
+            const colorTokens = tokens.filter(t => t.type === 'COLOR');
+            const otherTokens = tokens.filter(t => t.type !== 'COLOR');
+            console.log(`🔧 Design Tokens Summary:`);
+            console.log(`   Color Tokens: ${colorTokens.length}`);
+            console.log(`   Other Tokens: ${otherTokens.length}`);
+            console.log(`   Total: ${tokens.length} tokens`);
+            if (tokens.length === 0) {
+                console.log("🤔 Debug suggestions:");
+                console.log("  1. Check if this file has Variables in the right panel");
+                console.log("  2. Try creating a simple color variable as a test");
+                console.log("  3. Check if Variables are published from a library");
+            }
+            return tokens;
+        }
+        catch (error) {
+            console.warn("⚠️ Failed to scan design tokens:", error);
+            console.warn("  This could be due to:");
+            console.warn("  - Variables API not available in this Figma version");
+            console.warn("  - Plugin permissions");
+            console.warn("  - File access restrictions");
+            return [];
+        }
+    }
+    /**
+     * NEW: Fallback - Create design tokens from color styles for testing
+     * This allows testing the token system even when Variables API doesn't work
+     */
+    static async createDesignTokensFromColorStyles() {
+        console.log("🔄 Creating fallback design tokens from color styles...");
+        try {
+            const colorStyleCollection = await this.scanFigmaColorStyles();
+            const tokens = [];
+            // Convert each color style to a design token format
+            Object.entries(colorStyleCollection).forEach(([category, styles]) => {
+                styles.forEach(style => {
+                    // Create a token name from the style name
+                    const tokenName = style.name.toLowerCase()
+                        .replace(/[\/\s]+/g, '-') // Replace / and spaces with -
+                        .replace(/[^a-z0-9\-]/g, ''); // Remove special chars
+                    // Convert hex color to RGB format for consistency with Variables API
+                    let rgbValue = { r: 0, g: 0, b: 0 };
+                    if (style.colorInfo.type === 'SOLID' && style.colorInfo.color) {
+                        const hex = style.colorInfo.color.replace('#', '');
+                        rgbValue = {
+                            r: parseInt(hex.substr(0, 2), 16) / 255,
+                            g: parseInt(hex.substr(2, 2), 16) / 255,
+                            b: parseInt(hex.substr(4, 2), 16) / 255
+                        };
+                    }
+                    const token = {
+                        id: `fallback-${style.id}`,
+                        name: tokenName,
+                        type: 'COLOR',
+                        value: rgbValue,
+                        collection: `${category}-colors`,
+                        mode: 'default',
+                        description: `Fallback token from color style: ${style.name}`
+                    };
+                    tokens.push(token);
+                    console.log(`🎨 Created fallback token: "${tokenName}" from "${style.name}"`);
+                });
+            });
+            console.log(`🔄 Created ${tokens.length} fallback design tokens from color styles`);
+            return tokens;
+        }
+        catch (error) {
+            console.warn("⚠️ Failed to create fallback design tokens:", error);
+            return [];
+        }
+    }
     /**
      * Scan Figma Color Styles from the local file
      */
@@ -53,6 +204,56 @@ export class ComponentScanner {
                 surface: [],
                 other: []
             };
+        }
+    }
+    /**
+     * Scans all local text styles in the current Figma file
+     * Mirrors the scanFigmaColorStyles pattern exactly
+     */
+    static async scanFigmaTextStyles() {
+        try {
+            console.log('🔍 Scanning text styles...');
+            const figmaTextStyles = await figma.getLocalTextStylesAsync();
+            console.log(`Found ${figmaTextStyles.length} text styles`);
+            const textStyles = figmaTextStyles.map(style => {
+                // Build text style object with safe property access
+                const textStyle = {
+                    id: style.id,
+                    name: style.name,
+                    description: style.description || '',
+                    fontSize: style.fontSize,
+                    fontName: style.fontName,
+                    lineHeight: style.lineHeight,
+                    letterSpacing: style.letterSpacing,
+                };
+                // Add optional properties if they exist
+                if (style.textDecoration) {
+                    textStyle.textDecoration = style.textDecoration;
+                }
+                if (style.textCase) {
+                    textStyle.textCase = style.textCase;
+                }
+                if (style.textAlignHorizontal) {
+                    textStyle.textAlignHorizontal = style.textAlignHorizontal;
+                }
+                if (style.textAlignVertical) {
+                    textStyle.textAlignVertical = style.textAlignVertical;
+                }
+                if (style.paragraphSpacing !== undefined) {
+                    textStyle.paragraphSpacing = style.paragraphSpacing;
+                }
+                if (style.paragraphIndent !== undefined) {
+                    textStyle.paragraphIndent = style.paragraphIndent;
+                }
+                console.log(`✅ Processed text style: ${style.name} (${style.fontSize}px)`);
+                return textStyle;
+            });
+            console.log(`📝 Successfully scanned ${textStyles.length} text styles`);
+            return textStyles;
+        }
+        catch (error) {
+            console.error('❌ Error scanning text styles:', error);
+            throw new Error(`Failed to scan text styles: ${error.message}`);
         }
     }
     /**
@@ -148,11 +349,46 @@ export class ComponentScanner {
         console.log("🔍 Starting comprehensive design system scan...");
         const components = [];
         let colorStyles;
+        let textStyles;
         try {
             await figma.loadAllPagesAsync();
             console.log("✅ All pages loaded");
-            // First, scan Color Styles
-            console.log("\n🎨 Phase 1: Scanning Color Styles...");
+            // First, scan Design Tokens (Variables)
+            console.log("\n🔧 Phase 1: Scanning Design Tokens...");
+            let designTokens;
+            try {
+                designTokens = await this.scanFigmaVariables();
+                // Debug: Log what we got from Variables API
+                console.log(`🔍 Variables API returned:`, designTokens);
+                console.log(`🔍 Type: ${typeof designTokens}, Length: ${designTokens ? designTokens.length : 'undefined'}`);
+                // If Variables API returned no tokens, try fallback method
+                if (!designTokens || designTokens.length === 0) {
+                    console.log("🔄 No Variables found, trying fallback design tokens from color styles...");
+                    designTokens = await this.createDesignTokensFromColorStyles();
+                    if (designTokens && designTokens.length > 0) {
+                        console.log("✅ Using fallback design tokens created from color styles");
+                    }
+                    else {
+                        console.log("⚠️ Fallback also returned no tokens");
+                    }
+                }
+                else {
+                    console.log("✅ Using Variables API design tokens");
+                }
+            }
+            catch (error) {
+                console.warn("⚠️ Design Tokens scanning failed, trying fallback:", error);
+                try {
+                    designTokens = await this.createDesignTokensFromColorStyles();
+                    console.log("✅ Using fallback design tokens despite Variables API error");
+                }
+                catch (fallbackError) {
+                    console.warn("⚠️ Fallback design tokens also failed:", fallbackError);
+                    designTokens = undefined;
+                }
+            }
+            // Second, scan Color Styles
+            console.log("\n🎨 Phase 2: Scanning Color Styles...");
             try {
                 colorStyles = await this.scanFigmaColorStyles();
             }
@@ -160,8 +396,17 @@ export class ComponentScanner {
                 console.warn("⚠️ Color Styles scanning failed, continuing without color styles:", error);
                 colorStyles = undefined;
             }
-            // Then, scan components
-            console.log("\n🧩 Phase 2: Scanning Components...");
+            // Third, scan Text Styles
+            console.log("\n📝 Phase 3: Scanning Text Styles...");
+            try {
+                textStyles = await this.scanFigmaTextStyles();
+            }
+            catch (error) {
+                console.warn("⚠️ Text Styles scanning failed, continuing without text styles:", error);
+                textStyles = undefined;
+            }
+            // Fourth, scan components
+            console.log("\n🧩 Phase 4: Scanning Components...");
             for (const page of figma.root.children) {
                 console.log(`📋 Scanning page: "${page.name}"`);
                 try {
@@ -201,13 +446,17 @@ export class ComponentScanner {
             const scanSession = {
                 components,
                 colorStyles,
+                textStyles,
+                designTokens, // NEW: Include design tokens
                 scanTime: Date.now(),
-                version: "2.0.0",
+                version: "2.1.0", // Bump version for token support
                 fileKey: figma.fileKey || undefined
             };
             console.log(`\n🎉 Comprehensive scan complete!`);
             console.log(`   📦 Components: ${components.length}`);
+            console.log(`   🔧 Design Tokens: ${designTokens ? designTokens.length : 0}`);
             console.log(`   🎨 Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+            console.log(`   📝 Text Styles: ${textStyles ? textStyles.length : 0}`);
             console.log(`   📄 File Key: ${scanSession.fileKey || 'Unknown'}`);
             return scanSession;
         }
@@ -224,6 +473,112 @@ export class ComponentScanner {
         return session.components;
     }
     /**
+     * Recursively searches for auto-layout containers with padding to find visual padding
+     */
+    static findNestedAutolayoutPadding(node, depth = 0) {
+        // Limit recursion depth to prevent infinite loops
+        if (depth > 3)
+            return null;
+        try {
+            // Check if current node has auto-layout with meaningful padding
+            if (node.layoutMode && node.layoutMode !== 'NONE') {
+                const padding = {
+                    paddingTop: node.paddingTop || 0,
+                    paddingLeft: node.paddingLeft || 0,
+                    paddingRight: node.paddingRight || 0,
+                    paddingBottom: node.paddingBottom || 0
+                };
+                // If this auto-layout has meaningful padding, return it
+                if (padding.paddingTop > 0 || padding.paddingLeft > 0 ||
+                    padding.paddingRight > 0 || padding.paddingBottom > 0) {
+                    console.log(`  🔍 Found nested auto-layout padding at depth ${depth}:`, padding, `(${node.name})`);
+                    return padding;
+                }
+            }
+            // Recursively search children
+            if (node.children && node.children.length > 0) {
+                for (const child of node.children) {
+                    const childPadding = this.findNestedAutolayoutPadding(child, depth + 1);
+                    if (childPadding) {
+                        return childPadding;
+                    }
+                }
+            }
+            return null;
+        }
+        catch (error) {
+            console.warn(`⚠️ Error searching nested padding at depth ${depth}:`, error);
+            return null;
+        }
+    }
+    /**
+     * Extracts internal padding information from a component, including nested auto-layout containers
+     */
+    static extractInternalPadding(comp) {
+        try {
+            // For component sets, analyze the default variant
+            let targetNode = comp;
+            if (comp.type === 'COMPONENT_SET') {
+                const defaultVariant = comp.defaultVariant || comp.children[0];
+                if (defaultVariant && defaultVariant.type === 'COMPONENT') {
+                    targetNode = defaultVariant;
+                }
+            }
+            if (targetNode.type === 'COMPONENT') {
+                console.log(`🔍 Analyzing component "${comp.name}" for padding...`);
+                // Method 1: Check if root component has auto-layout with padding
+                if (targetNode.layoutMode !== 'NONE') {
+                    const rootPadding = {
+                        paddingTop: targetNode.paddingTop || 0,
+                        paddingLeft: targetNode.paddingLeft || 0,
+                        paddingRight: targetNode.paddingRight || 0,
+                        paddingBottom: targetNode.paddingBottom || 0
+                    };
+                    // If root has meaningful padding, return it
+                    if (rootPadding.paddingTop > 0 || rootPadding.paddingLeft > 0 ||
+                        rootPadding.paddingRight > 0 || rootPadding.paddingBottom > 0) {
+                        console.log(`  ✅ Found root auto-layout padding:`, rootPadding);
+                        return rootPadding;
+                    }
+                }
+                // Method 2: Search for nested auto-layout containers with padding
+                const nestedPadding = this.findNestedAutolayoutPadding(targetNode);
+                if (nestedPadding) {
+                    console.log(`  ✅ Using nested auto-layout padding:`, nestedPadding);
+                    return nestedPadding;
+                }
+                // Method 3: Fallback to geometric detection (original method)
+                if (targetNode.children && targetNode.children.length > 0) {
+                    const firstChild = targetNode.children[0];
+                    if (firstChild.x !== undefined && firstChild.y !== undefined) {
+                        const paddingLeft = firstChild.x;
+                        const paddingTop = firstChild.y;
+                        const paddingRight = targetNode.width - (firstChild.x + firstChild.width);
+                        const paddingBottom = targetNode.height - (firstChild.y + firstChild.height);
+                        // Only return if padding values are reasonable (between 0 and 100)
+                        if (paddingLeft >= 0 && paddingTop >= 0 && paddingRight >= 0 && paddingBottom >= 0 &&
+                            paddingLeft <= 100 && paddingTop <= 100 && paddingRight <= 100 && paddingBottom <= 100) {
+                            const geometricPadding = {
+                                paddingTop: Math.round(paddingTop),
+                                paddingLeft: Math.round(paddingLeft),
+                                paddingRight: Math.round(paddingRight),
+                                paddingBottom: Math.round(paddingBottom)
+                            };
+                            console.log(`  ✅ Using geometric padding detection:`, geometricPadding);
+                            return geometricPadding;
+                        }
+                    }
+                }
+                console.log(`  ❌ No meaningful padding found for "${comp.name}"`);
+            }
+            return null;
+        }
+        catch (error) {
+            console.warn(`⚠️ Error extracting padding for component ${comp.name}:`, error);
+            return null;
+        }
+    }
+    /**
      * Analyzes a single component to extract metadata
      */
     static async analyzeComponent(comp) {
@@ -237,6 +592,11 @@ export class ComponentScanner {
         const imageNodes = this.findImageNodes(comp);
         // NEW: Extract color and style information
         const styleInfo = this.extractStyleInfo(comp);
+        // NEW: Extract internal padding information
+        const internalPadding = this.extractInternalPadding(comp);
+        if (internalPadding) {
+            console.log(`📏 Found internal padding for "${comp.name}":`, internalPadding);
+        }
         let variants = [];
         const variantDetails = {};
         if (comp.type === 'COMPONENT_SET') {
@@ -265,6 +625,7 @@ export class ComponentScanner {
             vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined,
             imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
             styleInfo: styleInfo, // NEW: Include color and style information
+            internalPadding: internalPadding, // NEW: Include internal padding information
             isFromLibrary: false
         };
     }
@@ -1032,3 +1393,4 @@ export class ComponentScanner {
         return null;
     }
 }
+exports.ComponentScanner = ComponentScanner;

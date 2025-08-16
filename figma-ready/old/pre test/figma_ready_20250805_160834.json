@@ -1,0 +1,196 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Stats Cards",
+      "layoutMode": "HORIZONTAL",
+      "layoutWrap": "WRAP",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Total Listings",
+                "textStyle": "Label/Medium",
+                "color": "Neutral/neutral50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "150",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Views This Week",
+                "textStyle": "Label/Medium",
+                "color": "Neutral/neutral50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "2,750",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Messages",
+                "textStyle": "Label/Medium",
+                "color": "Neutral/neutral50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "12",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Activity Feed",
+      "layoutMode": "VERTICAL",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "True"
+          },
+          "properties": {
+            "Headline": "New listing added",
+            "Supporting text": "Just now"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "True"
+          },
+          "properties": {
+            "Headline": "Message received",
+            "Supporting text": "5 minutes ago"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Action Buttons",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "Create New Listing"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Outlined",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "properties": {
+            "Action": "View All Messages"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "properties": {
+        "Label": "Home"
+      }
+    }
+  ]
+}

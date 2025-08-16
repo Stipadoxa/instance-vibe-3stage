@@ -1,0 +1,77 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single column to maximize vertical space on mobile, aligning with user constraints.",
+    "userFlowReasoning": "The user flow is straightforward: enter credentials, tap login, or tap password recovery.  Error messages provide immediate feedback, improving user experience.",
+    "componentChoices": "I chose '10:8492' (text input) for email and password fields, '10:3907' (button) for the login button, and '10:10214' (list item) for the password recovery link. I considered using a form component, but the design system didn't offer one suitable for this single-column, mobile-first layout.  The selected components provide the necessary functionality and mobile-friendly design aspects.",
+    "visualHierarchy": "The login button ('10:3907') will be visually prominent due to its larger size and primary color, while the password recovery link ('10:10214') will use a less prominent style and tertiary color to maintain a clear visual hierarchy.",
+    "variantSelectionRationale": "For the login button ('10:3907'), I chose Size='Large', Type='Filled', Color='Green', and State='Default' for optimal visibility and tap target size on mobile.  Alternatives like 'Small' or 'Outlined' buttons were unsuitable due to limited screen real estate. The default state is appropriate initially.  For input fields ('10:8492'), I selected Type='Filled' and State='Enabled' for clarity and standard interaction. I avoided the 'Error' state initially; it would only appear upon validation failures. For the password recovery link ('10:10214'), I opted for Leading='None' and Trailing='None' to maintain a clean design, avoiding unnecessary visual clutter."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Email Address"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "None",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "False"
+        },
+        "textLayers": {
+          "Headline": "Forgot Password?"
+        }
+      }
+    ]
+  }
+}
+```

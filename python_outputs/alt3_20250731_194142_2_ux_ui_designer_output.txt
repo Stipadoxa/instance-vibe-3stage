@@ -1,0 +1,148 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is designed using a vertical layoutMode to create a clear, top-to-bottom flow. Item spacing is set to 0 for a clean look. Padding is set to 0 to maximize space utilization.",
+    "userFlowReasoning": "Users will first see the hero section, then scroll down to explore features, testimonials, and finally fill out the signup form.  The F-shaped layout guides the eye naturally through the key information.",
+    "componentChoices": "I chose the 'product card' (147:3743) component for showcasing key features because it provides a visually appealing way to present information with icons and concise descriptions.  I considered using a simple 'text' component or a 'list item' (10:10214), but the card better conveys the importance of each feature and allows for more visual interest. The reference shows that the card component is highly adaptable and consistent with the design system's layout.",
+    "visualHierarchy": "Visual hierarchy is established through a combination of size, color, and position. The hero section is prominent at the top, featuring large headlines and a strong CTA button. Feature cards are presented in a visually appealing grid, and testimonials have adequate space for emphasis.",
+    "variantSelectionRationale": "For the 'Button' (10:3907) component, I selected the \"Size: Large\", \"Type: Filled\", \"Color: Green\", and \"State: Default\" variants to ensure the CTA is highly visible and engaging. Other size options were considered, but large provided maximum impact on first view. The reference shows the visual difference between the various size options in the design system. This choice makes the CTA more action-oriented and easier for users to spot and click.",
+    "nativeElementJustification": "With moment significance of 0.85 and first_touch journey position, this landing page warrants expressive treatment. Native gradient backgrounds and decorative shapes create memorable first impressions while component-based interactions ensure reliability. The emotional intent of 'impress and convert' is supported by the visual depth and hierarchy that the native elements provide. The visual cues match the hero section pattern and brand expression."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "E-commerce Landing Page",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 360,
+          "height": 200,
+          "fill": {
+            "type": "LINEAR",
+            "stops": [
+              {
+                "color": {
+                  "r": 0.0,
+                  "g": 0.7,
+                  "b": 0.3
+                },
+                "position": 0.0
+              },
+              {
+                "color": {
+                  "r": 0.2,
+                  "g": 0.6,
+                  "b": 0.9
+                },
+                "position": 1.0
+              }
+            ],
+            "angle": 45
+          },
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Headline: Your SaaS Product Name",
+          "fontSize": 32,
+          "fontWeight": "bold",
+          "alignment": "center",
+          "color": "primary-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Subheadline: A concise and compelling value proposition.",
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "alignment": "center",
+          "color": "neutral-50",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-circle",
+        "properties": {
+          "width": 60,
+          "height": 60,
+          "fill": {
+            "r": 0.9,
+            "g": 0.2,
+            "b": 0.2
+          }
+        }
+      },
+      {
+        "type": "component",
+        "componentId": "10:3907",
+        "properties": {
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "textLayers": {
+            "Action": "Start Free Trial"
+          }
+        }
+      },
+      {
+        "type": "component",
+        "componentId": "147:3743",
+        "properties": {
+          "variants": {
+            "view": "grid",
+            "type": "normal"
+          },
+          "textLayers": {
+            "#title": "Key Feature 1",
+            "#attribute1 value": "Description"
+          },          
+          "componentInstances": {
+            "local_fire_department": {
+              "componentId": "635:4789"
+            }
+          }
+        }
+      },
+      {
+        "type": "component",
+        "componentId": "147:3743",
+        "properties": {
+          "variants": {
+            "view": "grid",
+            "type": "normal"
+          },
+          "textLayers": {
+            "#title": "Key Feature 2",
+            "#attribute1 value": "Description"
+          },
+          "componentInstances": {
+            "reviews": {
+              "componentId": "635:4792"
+            }
+          }
+        }
+      }
+      // ... more feature cards, testimonials, signup form, footer ...
+    ]
+  }
+}
+```

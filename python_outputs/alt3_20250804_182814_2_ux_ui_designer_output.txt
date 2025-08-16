@@ -1,0 +1,172 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The profile page uses a vertical layout (`layoutMode`: "VERTICAL") to naturally organize sections.  Each section (Order History, Address, Password) is contained within its own vertical container, providing visual separation.  A consistent 16-pixel spacing (`itemSpacing`: 16) is used between sections for readability.  Full-width elements like dividers utilize `"horizontalSizing": "FILL"` to span the entire screen width.
+
+3. **User Flow Reasoning:** The user flow is linear and intuitive.  Users first see their order history, then can proceed to update their address and finally change their password. This order reflects typical user priorities and task sequences.
+
+4. **Component Choices:**  I chose the `10:10214` (List item) component for the order history because it provides a clear and efficient way to display a list of items with detailed information, offering various variants for leading and trailing elements. This component is preferred over using native lists (which lack pre-designed styles) or individual text and image components (which would require extensive manual styling).
+
+5. **Component Gaps:** The design system lacks a dedicated "profile page" component.  However, the provided components (list item, input, and divider) allow for constructing the desired functionality without creating custom components. This strategy offers a clean, consistent user experience that still adheres to design system guidelines.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through section headings (using `native-text` with appropriate text styles from the design system) and clear spacing.  The order history section appears first, followed by the address and password sections in descending order of visual importance. Dividers visually separate the sections further.
+
+7. **Variant Selection Rationale:** For the `10:10214` (List item) component, I chose the `Condition: 2-line` variant because order items require displaying both a title and a summary. For the input fields (`10:8492` and `10:8619`), `Type: Filled` and `State: Enabled` are used to represent default functional state.
+
+8. **Native Element Justification:**  While the design system provides input components, section headings and dividers are implemented using `native-text` and `native-rectangle` (with fill color from the `colorStyles` system) because these elements require precise typography control and customized styling not readily available in existing components.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Order History",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "leading"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "properties":{
+              "Headline": "Order #1234",
+              "Supporting text": "Total: $50.00, Status: Delivered"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:10214",
+            "variants": {
+              "Condition": "2-line",
+              "Leading": "None",
+              "Trailing": "None",
+              "Show overline": "False",
+              "Show supporting text": "True"
+            },
+            "properties":{
+              "Headline": "Order #5678",
+              "Supporting text": "Total: $25.00, Status: Processing"
+            }
+          }
+        ]
+      },
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "height": 1,
+          "fill": "Neutral/neutral10",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Address",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "leading"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "Enabled"
+        },
+        "properties": {
+          "label-text": "Street Address"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "Enabled"
+        },
+        "properties": {
+          "label-text": "City"
+        }
+      },
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "height": 1,
+          "fill": "Neutral/neutral10",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Password",
+          "textStyle": "Title/Large",
+          "color": "Neutral/neutral90",
+          "alignment": "leading"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "Enabled"
+        },
+        "properties": {
+          "label-text": "Current Password"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:8492",
+        "variants": {
+          "Type": "Filled",
+          "State": "Enabled"
+        },
+        "properties": {
+          "label-text": "New Password"
+        }
+      },
+      {
+        "type": "component",
+        "id": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Save Changes"
+        }
+      }
+    ]
+  }
+}
+```

@@ -1,0 +1,26 @@
+Domain & Context
+Domain:  Business/SaaS domain with user account management; specifically, a mobile application for Cars45 auction.
+User Type: Registered users of the Cars45 mobile app needing to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear, tappable elements due to limited screen real estate and touch-only interaction.
+
+User Requirements
+Primary Goals: Modify account information, manage app preferences, securely log out.
+Secondary Goals: Access help resources (e.g., "What is it?"), understand account status (e.g., "Active").
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings options from the reference image are included, using the provided design system components; top and bottom navigation bars are implemented; touch targets meet accessibility guidelines.
+
+Content Requirements
+Critical: Personal details (with editing capability), Business details (with editing capability), Access to Cars45 auction (toggle switch), "Verified ID" badge (with explanation link), Change phone number, Change email, Change language, Disable chats (toggle switch), Disable Feedback (toggle switch), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" links for relevant settings (as shown in the reference image).
+Contextual:  Active/Inactive status for toggles;  Success/error messages after changes are made.
+
+Structural & Component Directives
+* Layout:  Vertical list of settings options, using the app’s existing list component.
+* Components:  App’s standard top and bottom navigation bars, list items with titles and actions (toggles, links, or input fields), standard button for "Log out".
+* Styling: Consistent with the provided design system; color scheme and typography should match the app’s existing style.
+
+Screen Requirements
+Primary Actions:  Tap a setting to modify it; Tap Log out.
+Secondary Actions: Tap "What is it?" links;  Tap any navigation elements.
+Screen States: Default state (displaying all settings); Loading state (when making changes or retrieving information); Error state (if changes fail).
+Feedback Needs: Visual confirmation of changes made (e.g., checkmarks); Error messages for invalid inputs; Loading indicators; Clear visual feedback on toggle switches.

@@ -1,0 +1,129 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized vertically, prioritizing the hero image at the top to showcase the product.  Product details follow, and the 'Contact Seller' button is prominently placed at the bottom for a clear call to action.  Sufficient spacing is used between sections to improve readability and visual hierarchy.",
+    "userFlowReasoning": "Users are guided through a clear visual path, starting with the compelling product image, then reviewing essential details (title, price, seller info), and finally taking the desired action ('Contact Seller').  This linear flow simplifies the decision-making process for the user.",
+    "componentChoices": "I chose the `10:7816` (IMAGES) component for the hero image because it supports multiple images and allows for a full-width display on mobile devices.  I considered `147:3743` (product card) as an alternative but it doesn't adequately showcase the product's full width.  The `10:3907` (Button) component is selected because it provides a clear, visually prominent call-to-action. The reference shows that the design system offers a 'Filled' button type for a more prominent visual emphasis.",
+    "visualHierarchy": "Visual hierarchy is established through the use of a large, full-width hero image, followed by a prominent product title and price in larger typography.  Seller information is displayed below in smaller, less dominant typography. The 'Contact Seller' button has high contrast and a prominent placement, making it the clear focus.",
+    "variantSelectionRationale": "For the 'Contact Seller' button (`10:3907`), I chose the `Size:Large`, `Type:Filled`, and `Color:Green` variants.  I considered `Size:Medium` and `Type:Outlined`, but Large size with Filled type is preferable due to the criticality of this button in driving conversions. The filled button type creates a stronger visual cue, and the green color aligns with the positive emotional intent of conversion. The reference shows the difference between Filled and Outlined buttons clearly.",
+    "nativeElementJustification": "With moment significance of 0.7 and 'impress, guide, convert' emotional intent, this product detail screen warrants expressive treatment.  A native `native-rectangle` with a subtle gradient background is used to enhance visual appeal without disrupting the functionality of the component-based UI elements.  This pattern enhances visual interest and memorability."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "E-commerce Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": 320,
+          "height": 200,
+          "fill": {
+            "type": "LINEAR_GRADIENT",
+            "stops": [
+              {
+                "color": "#00b53f",
+                "position": 0
+              },
+              {
+                "color": "#6ccc7b",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        },
+        "items": [
+          {
+            "id": "10:7816",
+            "type": "image",
+            "variants": {
+              "Type": "1 image"
+            },
+            "properties": {
+              "source": "product_image_url"
+            }
+          }
+        ]
+      },
+      {
+        "id": "native-text-title",
+        "type": "native-text",
+        "properties": {
+          "content": "Product Title",
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "#304049",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "id": "native-text-price",
+        "type": "native-text",
+        "properties": {
+          "content": "₦10,000",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "alignment": "left",
+          "color": "#00b53f",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "id": "10:7798",
+            "type": "avatar",
+            "variants": {
+              "Type": "Photo"
+            },
+            "properties": {
+              "source": "seller_avatar_url"
+            }
+          },
+          {
+            "id": "native-text-seller-info",
+            "type": "native-text",
+            "properties": {
+              "content": "Seller Name\nLocation",
+              "fontSize": 14,
+              "fontWeight": "normal",
+              "alignment": "left",
+              "color": "#6c8ea0",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "id": "10:3907",
+        "type": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Contact Seller"
+        }
+      }
+    ]
+  }
+}
+```

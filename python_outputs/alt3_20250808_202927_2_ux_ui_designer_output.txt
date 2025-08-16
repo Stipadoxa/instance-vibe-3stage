@@ -1,0 +1,223 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** All component IDs referenced below have been manually verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout prioritizes a clear information hierarchy.  Quick stats are presented prominently at the top using a horizontal layout for easy comparison. The recent activity feed follows below in a vertical scrolling container. Action buttons are clearly separated and positioned for convenient access. Bottom navigation is implemented at the very bottom for consistent accessibility. Consistent 16px padding is used for content sections, providing visual breathing room while maintaining a mobile-first approach.
+
+3. **User Flow Reasoning:** The user should immediately grasp their key performance indicators (KPIs) at the top of the screen.  The activity feed then provides context for recent actions. Prominent action buttons guide the user towards key tasks.  Finally, bottom navigation offers quick access to other sections of the app.
+
+4. **Component Choices:** I chose the `Bottom navigation` (10:4724) component for the bottom navigation bar due to its built-in support for multiple tabs and its pre-designed mobile-optimized appearance.  I also selected the `Button` (10:3907) component for action buttons because of its clarity and consistency with the overall design system.
+
+5. **Component Gaps:** The user request requires a grid layout for stats cards and list items for the activity feed, but the design system lacks suitable components. I used `layoutContainer` with `layoutMode: "HORIZONTAL"` and `layoutWrap: "WRAP"` for the grid layout.  For the activity feed, I'm employing a vertical `layoutContainer` and populating it with multiple instances of the `List item` (10:10214) component. I've addressed the potential for long lists by configuring the `layoutContainer` with `primaryAxisSizingMode: "AUTO"` and `counterAxisSizingMode: "AUTO"` to allow for automatic scrolling as content grows.
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the following:
+    - **Size and Position:** Quick stats cards are large and occupy the top of the screen. The activity feed is a smaller section directly below.
+    - **Color:** Primary colors are used for key actions and important information. Secondary colors enhance information without overshadowing primary elements.
+    - **Typography:**  Headline text styles are used for stats and section titles. Body text styles are used for the activity feed, ensuring a clear distinction between important information and detailed content.
+
+7. **Variant Selection Rationale:** For the `Button` component, I chose "Size: Medium", "Type: Filled", and "Color: Green" for the "Create New Listing" button to represent its importance and positive action.  For the "View All Messages" button, similar sizes and type will be used, but the color will be adjusted to the system secondary for consistency and to visually differentiate between actions.
+
+8. **Native Element Justification:**  `native-rectangle` is used to create the background for the stats cards. `native-text` is utilized to display the numbers on the stats cards. This approach ensures the system styling is maintained for the text while allowing flexibility to design the background, using components only for non-critical visuals.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Cards Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Stats Row 1",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 12,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "SOLID",
+                    "color": "#00b53f"
+                  },
+                  "cornerRadius": 8
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "123",
+                      "textStyle": "Headline/Small",
+                      "color": "#ffffff",
+                      "alignment": "center"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Listings",
+                      "textStyle": "Label/Medium",
+                      "color": "#ffffff",
+                      "alignment": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "SOLID",
+                    "color": "#00b53f"
+                  },
+                  "cornerRadius": 8
+                },
+                "items":[
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "456",
+                      "textStyle": "Headline/Small",
+                      "color": "#ffffff",
+                      "alignment": "center"
+                    }
+                  },
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Views",
+                      "textStyle": "Label/Medium",
+                      "color": "#ffffff",
+                      "alignment": "center"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons Section",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 12,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "AUTO",
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Secondary/secondary50"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "variants": {
+            "Device": "Mobile"
+          }
+        }
+      }
+    ]
+  }
+}
+```

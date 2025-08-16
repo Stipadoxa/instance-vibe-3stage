@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise and easily navigable settings page with touch-friendly controls.  Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals:  Understand account status (e.g., "Verified ID"), easily log out of the application, delete account if desired.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, limited attention span.
+Ready for handoff if: All settings are accessible, navigation is intuitive, and all interactive elements meet mobile touch target guidelines.  The visual style matches the provided reference image while using existing app components.
+
+Content Requirements
+Critical: Personal details (name, contact information), business details (if applicable), notification settings, password change, account deletion, logout.
+Supporting: Access to Cars45 auction status, "Verified ID" badge explanation,  chat/feedback disabling options.
+Contextual:  Confirmation dialogs before deleting the account or performing significant actions.
+
+
+Structural & Component Directives
+* Layout:  List-based layout using vertically stacked rows. Each row represents a setting.  Top and bottom app navigation bars are included.
+* Components:  Use existing app components for list items, buttons, switches (for toggles), and navigation.  The visual style should match the reference image.
+* Styling:  Follow the existing app's color scheme and typography.
+
+
+Screen Requirements
+Primary Actions:  Navigate to specific setting screens for detailed editing (e.g., personal details), toggle settings (e.g., notifications), log out, delete account.
+Secondary Actions: Access information about account status (e.g. "What is it?" for Verified ID).
+Screen States: Default state (all settings displayed), loading state (while fetching data or saving changes), error states (if any), confirmation dialogs (before deleting account).
+Feedback Needs: Clear visual feedback on toggle changes, confirmation messages on successful updates, clear error messaging.
+

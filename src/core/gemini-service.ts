@@ -255,6 +255,40 @@ export class GeminiService {
     }
 
     /**
+     * Analyze image with Gemini API for design feedback
+     */
+    static async analyzeImage(imageBytes: Uint8Array, prompt: string): Promise<string> {
+        try {
+            const apiKey = await this.getApiKey();
+            if (!apiKey) {
+                throw new Error('No API key found. Please configure your API key first.');
+            }
+
+            const base64 = btoa(String.fromCharCode(...imageBytes));
+            
+            const response = await this.callGeminiAPI(
+                apiKey,
+                prompt,
+                { base64, type: 'image/png' },
+                {
+                    temperature: 0.1,
+                    maxOutputTokens: 1024,
+                    responseMimeType: "application/json"
+                }
+            );
+
+            if (response.success) {
+                return response.data || '';
+            } else {
+                throw new Error(response.error || 'Analysis failed');
+            }
+        } catch (error) {
+            console.error('Vision analysis failed:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Format error message for user display
      */
     static formatErrorMessage(error: string): string {

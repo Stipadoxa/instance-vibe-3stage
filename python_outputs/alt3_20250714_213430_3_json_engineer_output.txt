@@ -1,0 +1,185 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., 10:5620 for appbar, 10:10214 for listItem, 10:9912 for switch) were selected based on the provided design system.  These IDs represent the specific components that best match the UI design requirements.  The bottomNavigation component (10:4724) was included as a placeholder for bottom navigation, assuming it's a pre-defined component in the design system.",
+    "styleApplication": "Text styles (Title/Medium, Body/Medium) and color styles (Neutral/neutral90, Primary/primary50) were applied directly as specified in the input JSON.  These styles are assumed to exist within the provided design system.  No color conversions or manual style definitions were performed.",
+    "designSystemMapping": "The design system's components were mapped directly to the corresponding elements in the UI specification. List items represent settings, utilizing the 'Headline' property for labels. Switches were used within ListItems for boolean settings. The appbar and bottom navigation components are directly utilized from the design system.",
+    "variantDecisions": "Variants were not explicitly defined in the input JSON.  The `listItem` component's variants (e.g., 1-line, 2-line) are not used in this specific example, as they are not needed for this layout.  The switch component within the list item utilizes its inherent on/off variant."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Primary/primary50"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing-text": "Active",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing-text": "What is it?",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "trailing": {
+              "type": "switch",
+              "componentNodeId": "10:9912"
+            }
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "listItem",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out",
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bottomNavigation",
+      "componentNodeId": "10:4724"
+    }
+  ]
+}
+```

@@ -1,0 +1,101 @@
+## SCREENSHOT
+[UI screenshot showing a notifications interface with 3 notification items displayed. The top shows "Notifications" with a subtitle. Each notification has a placeholder avatar image, title text like "New Message", "Meeting Reminder", "System Update", descriptive text, and timestamps like "100+". The interface appears clean but missing the bottom navigation and full 5 notifications that were requested.]
+
+## USER REQUEST ANALYZER OUTPUT
+Domain & Context
+Domain: Communication/Information Delivery domain within a mobile application context.
+User Type: Mobile app users who need to be informed of updates, events, or messages.
+Platform Impact: Mobile users require a concise and easily scannable notification list due to screen size limitations. Touch interaction and potential interruptions are key considerations.
+
+User Requirements
+Primary Goals: View recent notifications, understand the content of each notification.
+Secondary Goals: Potentially mark notifications as read, possibly dismiss or take action on individual notifications (depending on notification types).
+User Constraints: Limited screen real estate, touch-only interaction, potential interruptions, varying network conditions, user may only want to quickly scan the list.
+Ready for handoff if: Five notification items are clearly displayed, each with user avatar, title, description, and timestamp. Top bar with user info and bottom navigation are present. All UI elements are appropriately sized for touch interaction.
+
+Content Requirements
+Critical: User avatar, notification title, notification description, timestamp for each of the five notifications. User information in the top bar (at minimum, a user identifier).
+Supporting: Indication of notification read status (e.g., bold or faded text for unread notifications).
+Contextual: Potentially a "Mark all as read" button if appropriate to the notification system's design. Loading indicator if notifications are fetched dynamically. Empty state message if no notifications are present.
+
+Structural & Component Directives
+* Layout: Vertical list of 5 notification items. Top bar at the top of the screen, Bottom navigation at the bottom of the screen.
+* Components: Top Bar (containing user info), Notification Item (containing user avatar, title, description, timestamp, read status indicator), Bottom Navigation.
+* Styling: Style should be consistent with the overall app design.
+
+Screen Requirements
+Primary Actions: View notification details (potentially by tapping on a notification item).
+Secondary Actions: Mark as read (individual or all), dismiss notification(s).
+Screen States: Default state (showing 5 notifications), loading state (while fetching notifications), empty state (no notifications present).
+Feedback Needs: Clear visual indication of read/unread status. Appropriate loading indicators. Haptic feedback on interaction.
+
+## DESIGN_SYSTEM_DATA
+[Design system includes components like: appbar (10:5620), list-item (10:10214), navigation (10:4724), with various variants and properties]
+
+## CURRENT_LAYOUT_SPECIFICATION
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "type": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "props": {
+          "headline": "Notifications",
+          "subheadline": "Recent Activities",
+          "avatar": {
+            "id": "10:7773",
+            "type": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            },
+            "props": {
+              "Photo": "https://example.com/user_avatar.jpg"
+            }
+          }
+        }
+      },
+      {
+        "id": "10:10214",
+        "type": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "props": {
+          "Headline": "Notification Title 1",
+          "Supporting text": "Notification Description 1",
+          "Trailing supporting text": "1 hour ago",
+          "Image": "https://example.com/avatar1.jpg"
+        }
+      },
+      [Additional 4 similar list items],
+      {
+        "id": "10:4724",
+        "type": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "props": {
+          "labels": ["Home", "Saved", "Sell", "Chat", "Profile"]
+        }
+      }
+    ]
+  }
+}

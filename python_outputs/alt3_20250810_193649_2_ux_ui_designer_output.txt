@@ -1,0 +1,162 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20,
+        "paddingBottom": 20,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Welcome back to CraftMart!",
+              "textStyle": "Headline/Large",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Sign in to access your favorite handmade treasures and connect with talented artisans.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Form Section",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 12,
+            "paddingTop": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "Type": "Filled",
+                  "State": "enabled",
+                  "label-text": "Email Address",
+                  "placeholder-text": "your.email@example.com"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:8492",
+                "properties": {
+                  "horizontalSizing": "FILL",
+                  "Type": "Filled",
+                  "State": "enabled",
+                  "label-text": "Password",
+                  "placeholder-text": "********"
+                }
+              },
+              {
+                "type": "layoutContainer",
+                "name": "Forgot Password Row",
+                "layoutMode": "HORIZONTAL",
+                "itemSpacing": 8,
+                "paddingTop": 0,
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "primaryAxisSizingMode": "AUTO",
+                "counterAxisSizingMode": "AUTO",
+                "horizontalSizing": "FILL",
+                "layoutAlign": "MIN",
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Forgot password?",
+                      "textStyle": "Body/Small",
+                      "color": "Tertiary/tertiary90",
+                      "alignment": "left"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "horizontalSizing": "FILL",
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Primary/primary50",
+              "Action": "Sign In"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Signup Link Row",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "paddingTop": 16,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "CENTER",
+            "items": [
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Create Account",
+                  "textStyle": "Body/Small",
+                  "color": "Primary/primary50",
+                  "alignment": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "DESIGN RATIONALE": {
+    "Component Verification": "All component IDs (10:8492, 10:3907) were verified to exist in the provided DESIGN_SYSTEM_DATA.",
+    "Layout Strategy": "A mobile-first approach using a single content section for the login form. Vertical layout for better readability and form structure.",
+    "User Experience Logic": "Standard login form pattern: email and password fields, login button, and a link to recover a forgotten password.  Clear visual hierarchy and intuitive flow.",
+    "Component Selection": "The 'text input' component (10:8492) was selected for email and password inputs for consistency with the design system. The 'Button' component (10:3907) provides a standard, styled login button.",
+    "Gap Analysis": "Native text elements were used for the title, description, 'Forgot password?', and 'Create Account' links, as these did not require the interactive behavior of system components.",
+    "Hierarchy Decisions": "The title is the largest element, followed by the description. The form fields and button are visually prominent, with the 'forgot password' and 'create account' links having lower visual weight.",
+    "Variant Rationale": "The filled variant was used for both input fields for a more polished look. For the button, the large, filled variant was used to ensure better touch target area on mobile.",
+    "Native Element Justification": "Native text elements were used due to their simplicity and suitability for displaying static text content.  Using components here would have been unnecessary and potentially complicated the design."
+  }
+}
+```

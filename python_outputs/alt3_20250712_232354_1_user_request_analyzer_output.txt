@@ -1,0 +1,27 @@
+Domain & Context
+Domain: E-commerce domain specifically for classified mobile app product listings.
+User Type: Mobile users browsing and considering purchasing products from classified ads.
+Platform Impact: Mobile users need concise information, large touch targets, quick loading times, and easy navigation due to smaller screen real estate and potential for interruptions.
+
+User Requirements
+Primary Goals: View product details, understand pricing and condition, contact the seller.
+Secondary Goals: Save the listing for later, share the listing with others, view seller's other listings.
+User Constraints: Limited screen space, touch-only interaction, potentially slow network connection, interruptions from other mobile notifications.
+Ready for handoff if: All critical content is displayed clearly, touch targets are appropriately sized, loading time is under 3 seconds, and navigation is intuitive.
+
+Content Requirements
+Critical: Product image (large), title, price, description, seller contact information (phone number or email).
+Supporting:  Seller rating/reviews (if applicable),  date listed, location of the product (if applicable), item condition description.
+Contextual:  Similar product suggestions, loading indicator, error messages (e.g., network error), seller profile link.
+
+Structural & Component Directives
+* Layout: Single-column layout for optimal mobile readability, vertically scrolling.
+* Components: Top Navigation Bar (containing back button and app logo), Large product image occupying significant screen space, clearly visible price and title, detailed product description section, Seller contact information section displayed prominently, Buttons for contacting seller.
+* Styling: Consistent with the overall branding and design language of the classified app.
+
+
+Screen Requirements
+Primary Actions: Contact seller, view seller's profile.
+Secondary Actions: Save listing, share listing, report listing.
+Screen States: Loading state, default state, error state (e.g., network error), potential future state of showing similar listings.
+Feedback Needs: Loading indicator while fetching data, clear success or error messages during contact attempts, visual indication of listing saved/shared.

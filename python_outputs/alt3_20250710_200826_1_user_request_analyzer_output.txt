@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Authentication domain with secure access control for mobile users.
+User Type: Mobile users needing to access their personal accounts.
+Platform Impact: Mobile users often in distracting environments, need quick secure access with touch-friendly interface, limited screen real estate necessitates concise design.
+
+User Requirements
+Primary Goals: Authenticate quickly and securely, access personal account.
+Secondary Goals: Create a new account, access account recovery options.
+User Constraints: Small screen, touch-only interaction, may be interrupted, varying network conditions, limited attention span.
+Ready for handoff if: All fields are correctly labeled and sized for mobile touch interaction, error states are clearly displayed, primary action (Sign in) is prominent, and all interactive elements meet minimum tap target sizes.  Visual hierarchy prioritizes login functionality.
+
+Content Requirements
+Critical: Email field ("Your e-mail" label, pre-filled with "123@example.ua"), password field (with error state and supportive text "Please enter your password"), "Sign in" button.
+Supporting: "Sign up" button, "By continuing you agree to the Policy and Rules" footnote with hyperlinked "Policy" and "Rules".
+Contextual:  Error messages for invalid email or password.  Success message after successful login.
+
+
+Structural & Component Directives
+*   **Layout:** Vertical layout with email field, password field, "Sign in" button, "Sign up" button, and footnote text in that order.
+*   **Components:** Email input field (pre-filled), Password input field (error state), Primary button ("Sign in"), Text button ("Sign up"), Footnote text with hyperlinked "Policy" and "Rules".
+*   **Styling:**  "Sign in" button styled as a primary button. "Policy" and "Rules" links styled in primary color.  Error state styling for password field.
+
+Screen Requirements
+Primary Actions: Sign in.
+Secondary Actions: Sign up.
+Screen States: Default state (fields visible), error state (password field error), loading state (during authentication), success state (redirect or confirmation).
+Feedback Needs: Real-time validation for email format (optional), clear error messages for login failures, loading indicators during authentication, success confirmation.

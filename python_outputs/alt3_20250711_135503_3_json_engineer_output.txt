@@ -1,0 +1,91 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Sign In Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "text": "Welcome",
+      "properties": {
+        "textStyle": "Headline/Medium",
+        "colorStyleName": "Neutral/neutral90",
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "center"
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Email",
+        "label-text": "Email",
+        "textStyle": "Label/Medium",
+        "colorStyleName": "Neutral/neutral50",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "placeholder-text": "Password",
+        "label-text": "Password",
+        "textStyle": "Label/Medium",
+        "colorStyleName": "Neutral/neutral50",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "isPassword": true
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign in",
+        "textStyle": "Label/Large",
+        "colorStyleName": "Primary/primary50",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign up",
+        "textStyle": "Label/Medium",
+        "colorStyleName": "Neutral/neutral80",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default"
+        }
+      }
+    }
+  ]
+}
+```

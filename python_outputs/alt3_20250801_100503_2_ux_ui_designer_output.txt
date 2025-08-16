@@ -1,0 +1,90 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical arrangement to prioritize the calendar view at the top, followed by the list of appointments.  This is a common and effective pattern for dashboard designs.",
+    "userFlowReasoning": "The user can view upcoming appointments in the calendar, add new ones with a button, and then interact with individual appointments for details, editing, or deletion.",
+    "componentChoices": "I chose the `10:10214` List item component over `147:3743` product card and `10:10076` Context Menu because it provides the most efficient way to display a list of appointments with details. The product card is visually richer, but not necessary for the content, while a context menu is more suited to individual item actions. The list item allows for inline editing and deletion for this purpose, therefore selected as optimal.",
+    "visualHierarchy": "Visual hierarchy is established through clear spacing, using the primary color palette. The calendar is the dominant element at the top, with the appointment list and add button clearly subordinate.  The purple color scheme adds a unique touch without sacrificing readability or usability.",
+    "variantSelectionRationale": "I chose the \"1-line\" variant for the list item, as a single line of text with an icon is sufficient for basic display. The \"2-line\" variant would increase visual complexity without significant added benefit for this context. I also chose a \"Leading:Icon\" variant to display a visual representation of the pet in question for each appointment, improving engagement.",
+    "nativeElementJustification": "With moment significance of 0.6 and a daily_use journey position, this dashboard warrants enhanced treatment. The purple background and custom typography add a touch of personality without sacrificing the core functionality.  Native elements are used selectively to improve visual appeal and engagement, but don't overwhelm functionality."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Pet Appointment Dashboard",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "width": "FILL",
+          "height": "300",
+          "fill": {
+            "type": "SOLID",
+            "color": "#b8b3f6",
+            "opacity": 1
+          },
+          "cornerRadius": 12,
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "Pet Appointments",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "alignment": "center",
+          "color": "#ffffff",
+          "horizontalSizing": "FILL"
+        }
+      },
+      {
+        "type": "component",
+        "componentId": "635:4185",
+        "variants": {
+          "Style": "Filled"
+        },
+        "properties": {}
+      },
+      {
+        "type": "component",
+        "componentId": "10:10214",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "properties": {
+          "Headline": "Appointment Detail",
+          "Supporting text": "Time and date"
+        }
+      },
+      {
+        "type": "component",
+        "componentId": "10:3907",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "properties": {
+          "Action": "Add Appointment"
+        }
+      }
+    ]
+  }
+}
+```

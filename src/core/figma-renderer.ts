@@ -1,7 +1,7 @@
 // src/core/figma-renderer.ts
 // UI generation and rendering engine for AIDesigner
 
-import { ComponentScanner, ColorStyleCollection, ColorStyle } from './component-scanner';
+import { ComponentScanner, ColorStyleCollection, ColorStyle, TextStyle, DesignToken } from './component-scanner';
 import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, SessionManager } from './session-manager';
 import { ComponentPropertyEngine, PropertyValidationResult, PerformanceTracker } from './component-property-engine';
 import { JSONMigrator } from './json-migrator';
@@ -22,6 +22,112 @@ export class FigmaRenderer {
   
   // Static storage for Color Styles scanned from the design system
   private static cachedColorStyles: ColorStyleCollection | null = null;
+  private static cachedDesignTokens: DesignToken[] | null = null; // NEW: Design tokens cache
+  
+  // Static storage for Text Styles scanned from the design system
+  private static cachedTextStyles: TextStyle[] | null = null;
+
+  // Auto-positioning system to prevent overlapping renders
+  private static async getNextRenderPosition(width: number, height: number): Promise<{x: number, y: number}> {
+    const GRID_SPACING = 50; // Gap between frames
+    const COLUMN_WIDTH = 400; // Max width per column before wrapping
+    
+    try {
+      // Get stored position data
+      const positionData = await figma.clientStorage.getAsync('uxpal-render-positions');
+      let positions = positionData ? JSON.parse(positionData) : { nextX: 0, nextY: 0, currentRow: 0 };
+      
+      // Calculate position
+      const currentX = positions.nextX;
+      const currentY = positions.nextY;
+      
+      // Update for next render
+      positions.nextX += width + GRID_SPACING;
+      
+      // Wrap to next row if needed
+      if (positions.nextX > COLUMN_WIDTH * 3) { // Allow 3 columns max
+        positions.nextX = 0;
+        positions.nextY += Math.max(height, 812) + GRID_SPACING;
+        positions.currentRow++;
+      }
+      
+      // Save updated positions
+      await figma.clientStorage.setAsync('uxpal-render-positions', JSON.stringify(positions));
+      
+      return { x: currentX, y: currentY };
+    } catch (error) {
+      console.warn('Position tracking failed, using default:', error);
+      return { x: 0, y: 0 };
+    }
+  }
+
+  // Reset render positions to start fresh
+  static async resetRenderPositions(): Promise<void> {
+    try {
+      await figma.clientStorage.setAsync('uxpal-render-positions', JSON.stringify({ nextX: 0, nextY: 0, currentRow: 0 }));
+      console.log('🔄 Render positions reset to origin');
+    } catch (error) {
+      console.warn('Failed to reset positions:', error);
+    }
+  }
+
+  /**
+   * Calculates the actual height needed for all content
+   */
+  private static calculateContentHeight(frame: FrameNode): number {
+    let maxBottom = 0;
+    
+    for (const child of frame.children) {
+      const childBottom = child.y + child.height;
+      maxBottom = Math.max(maxBottom, childBottom);
+    }
+    
+    // Add frame padding
+    const paddingBottom = 'paddingBottom' in frame ? frame.paddingBottom : 0;
+    return maxBottom + paddingBottom;
+  }
+
+  /**
+   * Adjusts root frame height after content is rendered
+   * Ensures minimum viewport height while hugging content
+   */
+  private static async adjustRootFrameHeight(rootFrame: FrameNode, minHeight: number = 812): Promise<void> {
+    try {
+      // Wait for layout to settle
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Calculate actual content height
+      const contentHeight = this.calculateContentHeight(rootFrame);
+      
+      console.log('📏 Content height analysis:', {
+        contentHeight,
+        minHeight,
+        shouldAdjust: contentHeight > minHeight,
+        currentFrameHeight: rootFrame.height,
+        primaryAxisSizing: rootFrame.primaryAxisSizingMode
+      });
+      
+      // If content exceeds minimum, let it grow naturally
+      // If content is smaller, keep minimum height
+      if (contentHeight > minHeight && rootFrame.primaryAxisSizingMode === "AUTO") {
+        console.log('✅ Content height exceeds minimum - frame will hug content');
+        // Auto-layout will handle this automatically
+      } else {
+        console.log('📐 Content fits within minimum - maintaining', minHeight, 'px height');
+        // Frame will stay at minHeight due to minHeight constraint
+      }
+      
+      // Force layout update
+      if (rootFrame.layoutMode !== 'NONE') {
+        // Trigger auto-layout recalculation
+        const currentSpacing = rootFrame.itemSpacing;
+        rootFrame.itemSpacing = currentSpacing;
+      }
+      
+    } catch (error) {
+      console.warn('⚠️ Failed to adjust root frame height:', error);
+    }
+  }
 
   /**
    * Main UI generation function - creates UI from structured JSON data
@@ -32,6 +138,56 @@ export class FigmaRenderer {
     
     if (parentNode.type === 'PAGE' && containerData) {
       currentFrame = figma.createFrame();
+      
+      // Set initial size - width fixed, height to minimum
+      const initialWidth = containerData.width || 375;
+      const minHeight = containerData.minHeight || 812;
+      
+      currentFrame.resize(initialWidth, minHeight);
+      
+      // Configure auto-layout FIRST, then sizing properties
+      if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
+        // Step 1: Enable auto-layout
+        try {
+          currentFrame.layoutMode = containerData.layoutMode;
+          console.log('✅ Set layoutMode to:', containerData.layoutMode);
+        } catch (layoutModeError) {
+          console.warn('⚠️ Could not set layoutMode:', layoutModeError.message);
+          return currentFrame; // Exit early if auto-layout can't be enabled
+        }
+        
+        // Step 2: Set sizing modes AFTER auto-layout is enabled
+        try {
+          // Key change: Use AUTO for primary axis (vertical) to hug content
+          currentFrame.primaryAxisSizingMode = "AUTO"; // Force content hugging regardless of JSON
+          console.log('✅ Set primaryAxisSizingMode to AUTO');
+        } catch (sizingError) {
+          console.warn('⚠️ Could not set primaryAxisSizingMode:', sizingError.message);
+        }
+        
+        try {
+          currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+          console.log('✅ Set counterAxisSizingMode to FIXED');
+        } catch (counterError) {
+          console.warn('⚠️ Could not set counterAxisSizingMode:', counterError.message);
+        }
+        
+        // Step 3: Set minimum height constraint AFTER sizing modes
+        try {
+          if (minHeight) {
+            currentFrame.minHeight = minHeight;
+            console.log('✅ Set minHeight to:', minHeight);
+          }
+        } catch (minHeightError) {
+          console.warn('⚠️ Could not set minHeight:', minHeightError.message);
+        }
+      }
+      
+      // Auto-position to prevent overlapping
+      const position = await this.getNextRenderPosition(initialWidth, minHeight);
+      currentFrame.x = position.x;
+      currentFrame.y = position.y;
+      
       parentNode.appendChild(currentFrame);
     } else if (parentNode.type === 'FRAME') {
       currentFrame = parentNode;
@@ -42,7 +198,7 @@ export class FigmaRenderer {
     
     if (containerData && containerData !== layoutData) {
       currentFrame.name = containerData.name || "Generated Frame";
-      currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
+      currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL"
         ? containerData.layoutMode : "NONE";
         
       if (currentFrame.layoutMode !== 'NONE') {
@@ -59,50 +215,98 @@ export class FigmaRenderer {
         }
         
         // Layout wrap support
-        if (containerData.layoutWrap !== undefined) {
-          currentFrame.layoutWrap = containerData.layoutWrap;
+        try {
+          if (containerData.layoutWrap !== undefined) {
+            currentFrame.layoutWrap = containerData.layoutWrap;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set layoutWrap:', e.message);
         }
         
         // Primary axis alignment
-        if (containerData.primaryAxisAlignItems) {
-          currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+        try {
+          if (containerData.primaryAxisAlignItems) {
+            currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set primaryAxisAlignItems:', e.message);
         }
         
         // Counter axis alignment
-        if (containerData.counterAxisAlignItems) {
-          currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+        try {
+          if (containerData.counterAxisAlignItems) {
+            currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisAlignItems:', e.message);
         }
         
-        // Sizing modes
-        if (containerData.primaryAxisSizingMode) {
-          currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+        // Sizing modes with setter checks
+        const hasPrimarySetter = Object.getOwnPropertyDescriptor(currentFrame, 'primaryAxisSizingMode')?.set !== undefined;
+        const hasCounterSetter = Object.getOwnPropertyDescriptor(currentFrame, 'counterAxisSizingMode')?.set !== undefined;
+        
+        if (hasPrimarySetter) {
+          if (containerData.primaryAxisSizingMode) {
+            currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+          } else if (currentFrame.primaryAxisSizingMode === 'FIXED') {
+            // CRITICAL FIX: Don't override sizing modes that were already set by applyChildLayoutProperties
+            // Only set default if frame still has FIXED (default from createFrame())
+            currentFrame.primaryAxisSizingMode = "AUTO";
+          }
         } else {
-          currentFrame.primaryAxisSizingMode = "AUTO";
+          console.warn('⚠️ Skipping primaryAxisSizingMode - setter not available');
         }
         
-        if (containerData.counterAxisSizingMode) {
+        if (hasCounterSetter && containerData.counterAxisSizingMode) {
           currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+        } else if (!hasCounterSetter) {
+          console.warn('⚠️ Skipping counterAxisSizingMode - setter not available');
         }
       }
       
-      // Size constraints
-      if (containerData.minWidth !== undefined) {
-        currentFrame.minWidth = containerData.minWidth;
+      // Size constraints - wrapped in try-catch to prevent property setter errors
+      try {
+        if (containerData.minWidth !== undefined) {
+          currentFrame.minWidth = containerData.minWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minWidth:', e.message);
       }
-      if (containerData.maxWidth !== undefined) {
-        currentFrame.maxWidth = containerData.maxWidth;
+      
+      try {
+        if (containerData.maxWidth !== undefined) {
+          currentFrame.maxWidth = containerData.maxWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxWidth:', e.message);
       }
-      if (containerData.minHeight !== undefined) {
-        currentFrame.minHeight = containerData.minHeight;
+      
+      try {
+        if (containerData.minHeight !== undefined) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minHeight:', e.message);
       }
-      if (containerData.maxHeight !== undefined) {
-        currentFrame.maxHeight = containerData.maxHeight;
+      
+      try {
+        if (containerData.maxHeight !== undefined) {
+          currentFrame.maxHeight = containerData.maxHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxHeight:', e.message);
       }
       
       if (containerData.width) {
-        currentFrame.resize(containerData.width, currentFrame.height);
-        if (!containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = "FIXED";
+        if (currentFrame.layoutMode !== 'NONE') {
+          // For auto-layout frames, set width directly and let auto-layout handle height
+          currentFrame.width = containerData.width;
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "FIXED";
+          }
+        } else {
+          // For regular frames, use resize
+          currentFrame.resize(containerData.width, currentFrame.height);
         }
       } else if (!containerData.counterAxisSizingMode) {
         currentFrame.counterAxisSizingMode = "AUTO";
@@ -117,17 +321,134 @@ export class FigmaRenderer {
         const nestedFrame = figma.createFrame();
         currentFrame.appendChild(nestedFrame);
         
+        console.log('🔍 DEBUG: Created nested frame with default sizing modes:', {
+          primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+          counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+          layoutMode: nestedFrame.layoutMode
+        });
+        
         // Apply child layout properties
         this.applyChildLayoutProperties(nestedFrame, item);
         
+        // CRITICAL FIX: Reset height for horizontal AUTO containers (alternative code path)
+        if (nestedFrame.layoutMode === 'HORIZONTAL' && nestedFrame.primaryAxisSizingMode === 'AUTO') {
+          console.log('🔧 HORIZONTAL AUTO CONTAINER (ALT PATH): Forcing height reset from default 100px');
+          
+          // Direct approach: Force height to hug by resetting the frame height
+          try {
+            console.log('📏 Current height before fix:', nestedFrame.height);
+            
+            const children = nestedFrame.children;
+            if (children.length > 0) {
+              // Calculate the maximum height of child elements
+              let maxChildHeight = 0;
+              for (const child of children) {
+                if ('height' in child) {
+                  maxChildHeight = Math.max(maxChildHeight, (child as any).height);
+                }
+              }
+              
+              console.log('📏 Calculated max child height:', maxChildHeight);
+              
+              if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
+                // Apply padding if it exists
+                const paddingTop = (nestedFrame as any).paddingTop || 0;
+                const paddingBottom = (nestedFrame as any).paddingBottom || 0;
+                const targetHeight = maxChildHeight + paddingTop + paddingBottom;
+                
+                console.log('📏 Setting frame height to:', targetHeight);
+                nestedFrame.resize(nestedFrame.width, targetHeight);
+              }
+            }
+            
+            console.log('📏 Final height after fix:', nestedFrame.height);
+            console.log('✅ Height reset complete - should now hug content');
+          } catch (error) {
+            console.error('❌ Height reset failed:', error);
+          }
+        }
+        
+        console.log('🔍 DEBUG: After applyChildLayoutProperties:', {
+          primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+          counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+          layoutMode: nestedFrame.layoutMode,
+          height: nestedFrame.height
+        });
+        
         await this.generateUIFromData({ layoutContainer: item, items: item.items }, nestedFrame);
+        
+        console.log('🔍 DEBUG: Final nested frame properties:', {
+          primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+          counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+          layoutMode: nestedFrame.layoutMode,
+          height: nestedFrame.height,
+          name: nestedFrame.name
+        });
         
       } else if (item.type === 'frame' && item.layoutContainer) {
         const nestedFrame = figma.createFrame();
         currentFrame.appendChild(nestedFrame);
         await this.generateUIFromData(item, nestedFrame);
         
-      } 
+      }
+      
+      // Safe defensive conversion for native elements with children
+      else if (item.type?.startsWith('native-') && (item.items || item.properties?.items)) {
+        console.warn(`⚠️ Invalid structure: ${item.type} cannot have child items`);
+        console.warn('📦 Auto-converting to layoutContainer to prevent crash');
+        
+        // Extract the items array (might be in different places)
+        const childItems = item.items || item.properties?.items || [];
+        
+        // Create a proper container that preserves visual intent
+        const safeContainer = {
+          type: 'layoutContainer',
+          layoutMode: 'VERTICAL',
+          itemSpacing: 0,
+          padding: 0,
+          items: childItems
+        };
+        
+        // Preserve visual styling if it was a styled rectangle
+        if (item.type === 'native-rectangle' && item.properties) {
+          // Transfer visual properties safely
+          if (item.properties.fill?.color) {
+            safeContainer.backgroundColor = item.properties.fill.color;
+          }
+          if (item.properties.cornerRadius) {
+            safeContainer.cornerRadius = item.properties.cornerRadius;
+          }
+          if (item.properties.padding) {
+            safeContainer.padding = item.properties.padding;
+          }
+          // Transfer sizing if present
+          if (item.properties.width) {
+            safeContainer.width = item.properties.width;
+          }
+          if (item.properties.height) {
+            safeContainer.height = item.properties.height;
+          }
+        }
+        
+        // Log what we're doing for debugging
+        console.log('🔄 Converted structure:', {
+          from: item.type,
+          to: 'layoutContainer',
+          preservedStyling: {
+            backgroundColor: safeContainer.backgroundColor || 'none',
+            cornerRadius: safeContainer.cornerRadius || 'none'
+          }
+        });
+        
+        // Process as container instead of native element
+        const nestedFrame = figma.createFrame();
+        currentFrame.appendChild(nestedFrame);
+        
+        this.applyChildLayoutProperties(nestedFrame, safeContainer);
+        
+        await this.generateUIFromData({ layoutContainer: safeContainer, items: safeContainer.items }, nestedFrame);
+        continue;
+      }
       // NATIVE ELEMENTS - Handle these BEFORE component resolution
       else if (item.type === 'native-text' || item.type === 'text') {
         await this.createTextNode(item, currentFrame);
@@ -151,8 +472,8 @@ export class FigmaRenderer {
           continue;
         }
         
-        const masterComponent = (componentNode.type === 'COMPONENT_SET' 
-          ? componentNode.defaultVariant 
+        const masterComponent = (componentNode.type === 'COMPONENT_SET'
+          ? componentNode.defaultVariant
           : componentNode) as ComponentNode | null;
           
         if (!masterComponent || masterComponent.type !== 'COMPONENT') {
@@ -189,7 +510,15 @@ export class FigmaRenderer {
                 Object.entries(variants).forEach(([propName, propValue]) => {
                   const availableProp = availableVariants[propName];
                   if (availableProp && availableProp.values) {
-                    const stringValue = String(propValue);
+                    // Convert boolean values to capitalized strings for Figma
+                    let stringValue: string;
+                    if (typeof propValue === 'boolean') {
+                      stringValue = propValue ? 'True' : 'False';
+                      console.log(`🔄 Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+                    } else {
+                      stringValue = String(propValue);
+                    }
+                    
                     if (availableProp.values.includes(stringValue)) {
                       validVariants[propName] = stringValue;
                       hasValidVariants = true;
@@ -231,6 +560,9 @@ export class FigmaRenderer {
     }
     
     if (parentNode.type === 'PAGE') {
+      // Adjust root frame height after content is rendered
+      await this.adjustRootFrameHeight(currentFrame, containerData?.minHeight || 812);
+      
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);
       figma.notify(`UI "${currentFrame.name}" generated!`, { timeout: 2500 });
@@ -242,7 +574,9 @@ export class FigmaRenderer {
    * Dynamic UI generation with component ID resolution
    */
   static async generateUIFromDataDynamic(layoutData: any): Promise<FrameNode | null> {
-    if (!layoutData || !layoutData.items) {
+    console.log('🚀 START generateUIFromDataDynamic', { hasLayoutData: !!layoutData, hasItems: !!layoutData?.items });
+    
+    if (!layoutData || (!layoutData.items && !layoutData.layoutContainer)) {
       figma.notify("Invalid JSON structure", { error: true });
       return null;
     }
@@ -251,8 +585,8 @@ export class FigmaRenderer {
       // Enable performance optimizations
       figma.skipInvisibleInstanceChildren = true;
       
-      // Load color styles if not already cached
-      await this.ensureColorStylesLoaded();
+      // Load design system data if not already cached
+      await this.ensureDesignSystemDataLoaded();
       
       // Skip ComponentPropertyEngine for testing if no schemas available
       console.log('🔧 Checking ComponentPropertyEngine schemas...');
@@ -270,8 +604,8 @@ export class FigmaRenderer {
       // Existing ID resolution logic
       const isPlaceholderID = (id: string): boolean => {
         if (!id) return true;
-        return id.includes('_id') || 
-               id.includes('placeholder') || 
+        return id.includes('_id') ||
+               id.includes('placeholder') ||
                !id.match(/^[0-9]+:[0-9]+$/);
       };
 
@@ -285,9 +619,9 @@ export class FigmaRenderer {
             }
             
             // SKIP native elements - they don't need component IDs
-            if (item.type === 'native-text' || 
-                item.type === 'text' || 
-                item.type === 'native-rectangle' || 
+            if (item.type === 'native-text' ||
+                item.type === 'text' ||
+                item.type === 'native-rectangle' ||
                 item.type === 'native-circle') {
               console.log(`ℹ️ Skipping native element: ${item.type}`);
               continue;
@@ -295,7 +629,7 @@ export class FigmaRenderer {
             
             if (item.type === 'frame' && item.items) {
               await resolveComponentIds(item.items);
-            } 
+            }
             else if (item.type !== 'frame') {
               if (!item.componentNodeId || isPlaceholderID(item.componentNodeId)) {
                 console.log(` Resolving component ID for type: ${item.type}`);
@@ -313,13 +647,210 @@ export class FigmaRenderer {
         }
 
       await resolveComponentIds(migratedData.items);
-      return await this.generateUIFromDataSystematic(migratedData, figma.currentPage);
+      console.log('🟢 USING SYSTEMATIC GENERATION METHOD');
+      
+      // Get real design system data for icon swaps
+      let designSystemData = null;
+      try {
+        console.log('🔍 Loading real design system data from storage...');
+        
+        // Try to get design system data from figma.clientStorage
+        if (typeof figma !== 'undefined' && figma.clientStorage) {
+          const scanSession = await figma.clientStorage.getAsync('design-system-scan');
+          if (scanSession && scanSession.components) {
+            designSystemData = {
+              components: scanSession.components,
+              colorStyles: scanSession.colorStyles || null,
+              scanTime: scanSession.scanTime,
+              totalCount: scanSession.components.length
+            };
+            
+            const iconCount = scanSession.components.filter((comp: any) => comp.suggestedType === 'icon').length;
+            console.log('✅ Loaded real design system data:', {
+              totalComponents: scanSession.components.length,
+              iconComponents: iconCount,
+              scanTime: new Date(scanSession.scanTime).toLocaleString(),
+              fileKey: scanSession.fileKey
+            });
+            
+            // Log available icons for debugging
+            const icons = scanSession.components.filter((comp: any) => comp.suggestedType === 'icon');
+            console.log('🎨 Available icons:', icons.slice(0, 10).map((icon: any) => `${icon.name} (${icon.id})`));
+            
+          } else {
+            console.warn('⚠️ No design-system-scan data found in storage');
+            
+            // Fallback: try last-scan-results
+            const lastScan = await figma.clientStorage.getAsync('last-scan-results');
+            if (lastScan && Array.isArray(lastScan)) {
+              designSystemData = {
+                components: lastScan,
+                totalCount: lastScan.length
+              };
+              console.log('✅ Using fallback last-scan-results data:', lastScan.length, 'components');
+            }
+          }
+        } else {
+          console.warn('⚠️ figma.clientStorage not available');
+        }
+      } catch (error) {
+        console.error('❌ Error loading design system data:', error);
+      }
+      
+      return await this.generateUIFromDataSystematic(migratedData, figma.currentPage, designSystemData);
     } catch (e: any) {
       const errorMessage = e instanceof Error ? e.message : String(e);
       figma.notify(errorMessage, { error: true, timeout: 4000 });
       console.error("❌ generateUIFromDataDynamic error:", e);
       return null;
     }
+  }
+
+  /**
+   * Detects if a container has width constraints that should constrain text
+   * NEW LOGIC: Uses effective width calculation from parent chain
+   */
+  private static detectWidthConstraint(container: FrameNode): boolean {
+    console.log('🔍 Detecting width constraint for container:', {
+      type: container.type,
+      layoutMode: container.layoutMode,
+      width: container.width,
+      name: container.name
+    });
+    
+    // Calculate effective width from parent chain
+    const effectiveWidth = this.calculateEffectiveWidth(container);
+    
+    // Keep 375px threshold as requested
+    if (effectiveWidth && effectiveWidth <= 375) {
+      console.log('✅ Width constraint detected: Effective width =', effectiveWidth);
+      return true;
+    }
+    
+    console.log('❌ No width constraint: Effective width =', effectiveWidth || 'null');
+    return false;
+  }
+
+  /**
+   * Debug helper to log the full parent chain for width analysis
+   * Useful for troubleshooting width constraint detection issues
+   */
+  private static debugParentChain(container: FrameNode): void {
+    console.log('🔍 DEBUG: Parent chain analysis for:', container.name);
+    let current: FrameNode | null = container;
+    let level = 0;
+    
+    while (current && level < 10) {
+      console.log(`Level ${level}:`, {
+        name: current.name,
+        type: current.type,
+        layoutMode: current.layoutMode || 'none',
+        width: current.width,
+        horizontalSizing: (current as any).horizontalSizing || 'not-set',
+        primaryAxisSizingMode: current.primaryAxisSizingMode || 'not-set',
+        counterAxisSizingMode: current.counterAxisSizingMode || 'not-set',
+        hasEffectiveWidth: !!(current as any)._effectiveWidth,
+        effectiveWidth: (current as any)._effectiveWidth || 'none'
+      });
+      
+      const parent = current.parent;
+      if (parent && parent.type === 'FRAME') {
+        current = parent as FrameNode;
+        level++;
+      } else {
+        break;
+      }
+    }
+  }
+
+  /**
+   * Calculate effective width constraint from parent chain
+   * Enhanced to handle FILL containers and metadata from JSON Engineer
+   * Walks up the layout hierarchy to find actual width limits
+   */
+  private static calculateEffectiveWidth(container: FrameNode): number | null {
+    console.log('🧮 Calculating effective width for:', container.name);
+    
+    let current: FrameNode | null = container;
+    let level = 0;
+    
+    while (current && level < 10) { // Prevent infinite loops
+      console.log(`  Level ${level}: ${current.name} (${current.layoutMode || 'no-layout'})`);
+      
+      // Case 1: Root container with explicit fixed width
+      if (current.primaryAxisSizingMode === 'FIXED' && 
+          current.counterAxisSizingMode === 'FIXED' && 
+          current.width > 0) {
+        const rootWidth = current.width;
+        console.log(`  ✅ Case 1 - Found root width: ${rootWidth}px`);
+        return rootWidth;
+      }
+      
+      // Case 2: Container with actual width (any container that has width set)
+      if (current.width > 0) {
+        const constrainedWidth = current.width - 
+          (current.paddingLeft || 0) - 
+          (current.paddingRight || 0);
+        console.log(`  ✅ Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
+        return Math.max(constrainedWidth, 100); // Minimum 100px
+      }
+      
+      // Case 3: NEW - Check for _effectiveWidth metadata from JSON Engineer
+      // This metadata is added during JSON processing to help with width calculation
+      if ((current as any)._effectiveWidth) {
+        const metadataWidth = (current as any)._effectiveWidth;
+        console.log(`  ✅ Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
+        return metadataWidth;
+      }
+      
+      // Case 4: NEW - FILL container inside VERTICAL parent
+      // This is the critical fix for adaptive layouts
+      const parent = current.parent;
+      if (parent && parent.type === 'FRAME') {
+        const parentFrame = parent as FrameNode;
+        
+        // Check if this container is FILL inside a VERTICAL parent
+        if (parentFrame.layoutMode === 'VERTICAL' && 
+            current.layoutMode !== undefined) { // Current has layout (is a container)
+          
+          console.log(`  🔍 Case 4 - Checking FILL in VERTICAL parent`);
+          console.log(`    Parent: ${parentFrame.name}, layout: VERTICAL`);
+          console.log(`    Current horizontalSizing: ${(current as any).horizontalSizing || 'not-set'}`);
+          
+          // If parent is VERTICAL, this container should inherit parent's width
+          // Try to get parent's effective width recursively
+          const parentWidth = this.calculateEffectiveWidth(parentFrame);
+          if (parentWidth) {
+            // Account for parent's padding when calculating available width
+            const availableWidth = parentWidth - 
+              (parentFrame.paddingLeft || 0) - 
+              (parentFrame.paddingRight || 0);
+            console.log(`  ✅ Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
+            return Math.max(availableWidth, 100);
+          }
+        }
+        
+        // Case 5: NEW - Check if parent has any width constraint we can use
+        if (parentFrame.layoutMode === 'HORIZONTAL' && parentFrame.width > 0) {
+          // HORIZONTAL parent with fixed width also constrains children
+          const parentWidth = parentFrame.width - 
+            (parentFrame.paddingLeft || 0) - 
+            (parentFrame.paddingRight || 0);
+          console.log(`  ✅ Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
+          return Math.max(parentWidth, 100);
+        }
+        
+        // Move up the parent chain for next iteration
+        current = parentFrame;
+        level++;
+      } else {
+        // No more parents to check
+        break;
+      }
+    }
+    
+    console.log('  ❌ No effective width found in parent chain (reached top or max depth)');
+    return null;
   }
 
   /**
@@ -339,6 +870,18 @@ export class FigmaRenderer {
     
     // Extract and apply properties from the properties object
     const props = textData.properties || textData;
+
+    // NEW: Extract width constraint metadata from JSON Engineer
+    const constraintWidth = (textData as any)._constraintWidth || null;
+    const parentLayout = (textData as any)._parentLayout || null;
+    const useFlexFill = (textData as any)._useFlexFill || false;
+
+    console.log('📐 Text metadata:', {
+      constraintWidth,
+      parentLayout,
+      useFlexFill,
+      content: props.content?.substring(0, 30) + '...'
+    });
     
     // Font size
     const fontSize = props.fontSize || props.size || props.textSize || 16;
@@ -375,7 +918,7 @@ export class FigmaRenderer {
               console.log(`✅ Applied semantic color "${props.color}" to text (as style reference)`);
             } else {
               // Fallback to RGB color if style not found
-              const resolvedColor = this.resolveSemanticColor(props.color);
+              const resolvedColor = this.resolveColorReference(props.color);
               if (resolvedColor) {
                 textNode.fills = [this.createSolidPaint(resolvedColor)];
                 console.log(`✅ Applied semantic color "${props.color}" to text (as RGB fallback)`);
@@ -387,8 +930,12 @@ export class FigmaRenderer {
             console.error(`❌ Error applying color "${props.color}":`, error);
             // Continue without color if there's an error
           }
+        } else if (typeof props.color === 'object' && 'r' in props.color) {
+          // Handle RGB object - remove alpha channel if present
+          const { r, g, b } = props.color;
+          textNode.fills = [{ type: 'SOLID', color: { r, g, b } }];
         } else {
-          // Handle RGB object (existing behavior)
+          // Handle other cases
           textNode.fills = [{ type: 'SOLID', color: props.color }];
         }
       }
@@ -406,7 +953,7 @@ export class FigmaRenderer {
           console.log(`✅ Applied color style "${props.colorStyleName}" to text (as style reference)`);
         } else {
           // Fallback to RGB color if style not found
-          const resolvedColor = this.resolveSemanticColor(props.colorStyleName);
+          const resolvedColor = this.resolveColorReference(props.colorStyleName);
           if (resolvedColor) {
             textNode.fills = [this.createSolidPaint(resolvedColor)];
             console.log(`✅ Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
@@ -420,15 +967,85 @@ export class FigmaRenderer {
       }
     }
     
-    // Apply child layout properties
-    this.applyChildLayoutProperties(textNode, props);
-    
-    // Text auto-resize behavior
-    if (props.horizontalSizing === 'FILL') {
-      textNode.textAutoResize = 'HEIGHT';
-    } else {
-      textNode.textAutoResize = 'WIDTH_AND_HEIGHT';
+    // Text style support (new feature) - applies actual Figma text style
+    if (props.textStyle || props.textStyleName) {
+      const styleName = props.textStyle || props.textStyleName;
+      console.log(`📝 Attempting to apply text style: "${styleName}"`);
+      
+      try {
+        await FigmaRenderer.applyTextStyle(textNode, styleName);
+      } catch (error) {
+        console.error(`❌ Error applying text style "${styleName}":`, error);
+        // Continue without text style if there's an error
+      }
     }
+    
+    // FINAL: Enhanced text auto-resize with flex-fill support
+    const isInConstrainedContainer = this.detectWidthConstraint(container);
+
+    // Debug: Log decision factors
+    if (useFlexFill) {
+      console.log('📝 Text flex-fill decision:', {
+        content: textContent.substring(0, 30) + '...',
+        useFlexFill,
+        parentLayout,
+        isInConstrainedContainer,
+        containerName: container.name,
+        effectiveWidth: this.calculateEffectiveWidth(container)
+      });
+      
+      // Uncomment for detailed debugging:
+      // this.debugParentChain(container);
+    }
+    
+    if (useFlexFill) {
+      // HORIZONTAL containers or VERTICAL-in-HORIZONTAL: Use flex-fill
+      textNode.textAutoResize = 'HEIGHT';  // Height flexible, width managed by auto-layout
+      // Don't set explicit width - let container's auto-layout distribute space
+      
+      console.log('✅ FINAL: Applied flex-fill (auto-layout managed width)', {
+        parentLayout,
+        textAutoResize: 'HEIGHT',
+        strategy: parentLayout === 'VERTICAL_IN_HORIZONTAL' ? 'nested' : 'direct'
+      });
+    } else if (isInConstrainedContainer && !useFlexFill) {
+      textNode.textAutoResize = 'HEIGHT';  // Width constrained, height flexible
+      
+      // Priority 1: Use metadata from JSON Engineer
+      // Priority 2: Calculate effective width 
+      // Priority 3: Fallback to container width
+      let targetWidth = constraintWidth;
+      
+      if (!targetWidth) {
+        const effectiveWidth = this.calculateEffectiveWidth(container);
+        targetWidth = effectiveWidth;
+      }
+      
+      if (!targetWidth) {
+        targetWidth = container.width;
+      }
+      
+      // Account for container padding
+      const availableWidth = Math.max(
+        targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 
+        100  // Minimum 100px
+      );
+      
+      textNode.resize(availableWidth, textNode.height);
+      
+      console.log('✅ FINAL: Applied width constraint', {
+        source: constraintWidth ? 'metadata' : 'calculated',
+        targetWidth,
+        availableWidth,
+        containerPadding: (container.paddingLeft || 0) + (container.paddingRight || 0)
+      });
+    } else {
+      textNode.textAutoResize = 'WIDTH_AND_HEIGHT';  // Free expansion
+      console.log('✅ FINAL: Applied free expansion (no width constraint detected)');
+    }
+    
+    // Note: applyChildLayoutProperties will safely ignore text nodes (returns early for type 'TEXT')
+    this.applyChildLayoutProperties(textNode, props);
     
     container.appendChild(textNode);
     console.log('Native text created successfully');
@@ -442,31 +1059,145 @@ export class FigmaRenderer {
     
     const rect = figma.createRectangle();
     
-    // Set dimensions
-    if (rectData.width && rectData.height) {
-      rect.resize(rectData.width, rectData.height);
-    } else {
-      rect.resize(100, 100); // Default size
-    }
+    // Extract and apply properties from the properties object (same pattern as native text)
+    const props = rectData.properties || rectData;
     
-    // Set fill color
-    if (rectData.fill) {
-      rect.fills = [{ type: 'SOLID', color: rectData.fill }];
+    // Set dimensions - respect explicit width/height properties
+    const width = props.width || rectData.width || 100;
+    const height = props.height || rectData.height || 100;
+    rect.resize(width, height);
+    
+    // Set fill color - support solid colors and image fills
+    if (props.fill || rectData.fill) {
+      const fillColor = props.fill || rectData.fill;
+      try {
+        if (typeof fillColor === 'string' && fillColor.includes('#')) {
+          // Convert hex string to RGB object
+          const hexColor = fillColor.replace('#', '');
+          if (hexColor.length === 6) {
+            const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+            const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+            const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+            // Only set if valid numbers
+            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+              rect.fills = [{ type: 'SOLID', color: { r, g, b } }];
+            }
+          }
+        } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
+          // Already an RGB object - remove alpha channel if present
+          const { r, g, b } = fillColor;
+          rect.fills = [{ type: 'SOLID', color: { r, g, b } }];
+        } else if (fillColor && typeof fillColor === 'object' && fillColor.type === 'IMAGE') {
+          // Handle image fill
+          await this.applyImageFill(rect, fillColor);
+        }
+      } catch (error) {
+        console.log('Skipping invalid fill color:', fillColor);
+      }
     }
     
     // Set corner radius
-    if (rectData.cornerRadius) {
-      rect.cornerRadius = rectData.cornerRadius;
+    if (props.cornerRadius || rectData.cornerRadius) {
+      const radius = props.cornerRadius || rectData.cornerRadius;
+      rect.cornerRadius = radius;
     }
     
-    // Handle sizing
-    if (rectData.horizontalSizing === 'FILL') {
+    // Apply child layout properties (same as native text)
+    this.applyChildLayoutProperties(rect, props);
+    
+    // Handle horizontal sizing properly (same as native text behavior)
+    if (props.horizontalSizing === 'FILL') {
       rect.layoutAlign = 'STRETCH';
+      rect.layoutGrow = 1;
     }
     
     container.appendChild(rect);
     console.log('Rectangle created successfully');
   }
+
+  /**
+   * Apply image fill to a shape element (rectangle or ellipse)
+   */
+  static async applyImageFill(element: RectangleNode | EllipseNode, fillData: any): Promise<void> {
+    console.log('🔍 DEBUG: applyImageFill called with:', fillData);
+    console.log('🔍 DEBUG: Element type:', element.type);
+    
+    try {
+      const imageUrl = fillData.imageUrl;
+      const scaleMode = fillData.scaleMode || 'FILL';
+      
+      console.log('🔍 DEBUG: imageUrl:', imageUrl);
+      console.log('🔍 DEBUG: scaleMode:', scaleMode);
+      
+      if (!imageUrl) {
+        console.log('🔍 DEBUG: No imageUrl - attempting native placeholder');
+        
+        // Try different approaches to create image placeholder
+        try {
+          // Create a simple 2x2 checkered pattern (light gray and white)
+          const checkeredPattern = new Uint8Array([
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
+            0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, // 2x2 pixels
+            0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x5D, 0x68, // RGB color type
+            0x16, 0x00, 0x00, 0x00, 0x18, 0x49, 0x44, 0x41, // IDAT chunk
+            0x54, 0x08, 0x1D, 0x01, 0x0D, 0x00, 0xF2, 0xFF, // Compressed data
+            0xFF, 0xFF, 0xFF, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, // White and light gray pixels
+            0xF0, 0xFF, 0xFF, 0xFF, 0x23, 0x28, 0x01, 0x99, // Creating checkered pattern
+            0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, // IEND chunk
+            0xAE, 0x42, 0x60, 0x82
+          ]);
+          
+          const placeholderImage = figma.createImage(checkeredPattern);
+          console.log('🔍 DEBUG: Created placeholder image with hash:', placeholderImage.hash);
+          
+          const placeholderPaint: ImagePaint = {
+            type: 'IMAGE',
+            imageHash: placeholderImage.hash,
+            scaleMode: scaleMode as any
+          };
+          
+          console.log('🔍 DEBUG: Created ImagePaint:', placeholderPaint);
+          element.fills = [placeholderPaint];
+          console.log('🔍 DEBUG: Applied fills to element');
+          console.log('🔍 DEBUG: Element fills after setting:', element.fills);
+          return;
+          
+        } catch (placeholderError) {
+          console.log('🔍 DEBUG: Placeholder creation failed:', placeholderError);
+          throw placeholderError;
+        }
+      }
+      
+      console.log('🔍 DEBUG: Creating image from URL:', imageUrl);
+      // Create image from URL
+      const image = await figma.createImageAsync(imageUrl);
+      console.log('🔍 DEBUG: Created image with hash:', image.hash);
+      
+      // Create ImagePaint fill
+      const imagePaint: ImagePaint = {
+        type: 'IMAGE',
+        imageHash: image.hash,
+        scaleMode: scaleMode as any // FILL, STRETCH, FIT, CROP, etc.
+      };
+      
+      console.log('🔍 DEBUG: Created ImagePaint from URL:', imagePaint);
+      element.fills = [imagePaint];
+      console.log('🔍 DEBUG: Applied URL image fill successfully');
+      console.log('🔍 DEBUG: Element fills after URL setting:', element.fills);
+      
+    } catch (error) {
+      console.log('🔍 DEBUG: applyImageFill error occurred:', error);
+      console.log('🔍 DEBUG: Falling back to solid gray');
+      
+      // Ultimate fallback to solid gray for debugging
+      const grayFill = { type: 'SOLID', color: { r: 0.8, g: 0.8, b: 0.8 } };
+      element.fills = [grayFill];
+      console.log('🔍 DEBUG: Applied gray fallback:', grayFill);
+      console.log('🔍 DEBUG: Element fills after fallback:', element.fills);
+    }
+  }
+
 
   /**
    * Create native ellipse element
@@ -476,16 +1207,50 @@ export class FigmaRenderer {
     
     const ellipse = figma.createEllipse();
     
-    // Set dimensions
-    if (ellipseData.width && ellipseData.height) {
-      ellipse.resize(ellipseData.width, ellipseData.height);
-    } else {
-      ellipse.resize(50, 50); // Default size
+    // Extract and apply properties from the properties object (same pattern as native text)
+    const props = ellipseData.properties || ellipseData;
+    
+    // Set dimensions - respect explicit width/height properties
+    const width = props.width || ellipseData.width || 50;
+    const height = props.height || ellipseData.height || 50;
+    ellipse.resize(width, height);
+    
+    // Set fill color - support solid colors and image fills
+    if (props.fill || ellipseData.fill) {
+      const fillColor = props.fill || ellipseData.fill;
+      try {
+        if (typeof fillColor === 'string' && fillColor.includes('#')) {
+          // Convert hex string to RGB object
+          const hexColor = fillColor.replace('#', '');
+          if (hexColor.length === 6) {
+            const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+            const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+            const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+            // Only set if valid numbers
+            if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+              ellipse.fills = [{ type: 'SOLID', color: { r, g, b } }];
+            }
+          }
+        } else if (fillColor && typeof fillColor === 'object' && 'r' in fillColor) {
+          // Already an RGB object - remove alpha channel if present
+          const { r, g, b } = fillColor;
+          ellipse.fills = [{ type: 'SOLID', color: { r, g, b } }];
+        } else if (fillColor && typeof fillColor === 'object' && fillColor.type === 'IMAGE') {
+          // Handle image fill
+          await this.applyImageFill(ellipse, fillColor);
+        }
+      } catch (error) {
+        console.log('Skipping invalid fill color:', fillColor);
+      }
     }
     
-    // Set fill color
-    if (ellipseData.fill) {
-      ellipse.fills = [{ type: 'SOLID', color: ellipseData.fill }];
+    // Apply child layout properties (same as native text)
+    this.applyChildLayoutProperties(ellipse, props);
+    
+    // Handle horizontal sizing properly (same as native text behavior)
+    if (props.horizontalSizing === 'FILL') {
+      ellipse.layoutAlign = 'STRETCH';
+      ellipse.layoutGrow = 1;
     }
     
     container.appendChild(ellipse);
@@ -500,11 +1265,17 @@ export class FigmaRenderer {
     
     console.log("🔍 Applying text properties:", properties);
     
-    // Get all text nodes in the instance
-    const allTextNodes = instance.findAll(n => n.type === 'TEXT') as TextNode[];
-    console.log("🔍 Available text nodes in component:", 
+    // Get all text nodes in the instance with error handling
+    let allTextNodes: TextNode[] = [];
+    try {
+      allTextNodes = instance.findAll(n => n.type === 'TEXT') as TextNode[];
+    } catch (findError) {
+      console.error(`❌ Error finding text nodes in component instance:`, findError.message);
+      return; // Skip text property application if we can't find nodes
+    }
+    console.log("🔍 Available text nodes in component:",
       allTextNodes.map(textNode => ({
-        name: textNode.name, 
+        name: textNode.name,
         id: textNode.id,
         visible: textNode.visible,
         chars: textNode.characters || '[empty]'
@@ -518,7 +1289,7 @@ export class FigmaRenderer {
     // Define semantic classification mappings
     const semanticMappings: {[key: string]: string[]} = {
       'primary-text': ['primary'],
-      'secondary-text': ['secondary'], 
+      'secondary-text': ['secondary'],
       'tertiary-text': ['tertiary'],
       'headline': ['primary', 'secondary'],
       'title': ['primary', 'secondary'],
@@ -548,7 +1319,16 @@ export class FigmaRenderer {
     
     for (const [propKey, propValue] of Object.entries(properties)) {
       if (!propValue || typeof propValue !== 'string' || !propValue.trim()) continue;
-      if (propKey === 'horizontalSizing' || propKey === 'variants') continue;
+      
+      // Exclude non-text properties (styles, icons, layout configs)
+      const nonTextProperties = new Set([
+        'horizontalSizing', 'variants', 'textStyle', 'colorStyleName',
+        'leading-icon', 'trailing-icon', 'layoutAlign', 'layoutGrow'
+      ]);
+      
+      if (nonTextProperties.has(propKey) || propKey.endsWith('Style') || propKey.includes('icon')) {
+        continue;
+      }
       
       console.log(`🔧 Trying to set ${propKey} = "${propValue}"`);
       
@@ -557,7 +1337,7 @@ export class FigmaRenderer {
       
       // Method 1: Try exact node name match from scan data
       if (componentTextHierarchy) {
-        const hierarchyEntry = componentTextHierarchy.find(entry => 
+        const hierarchyEntry = componentTextHierarchy.find(entry =>
           entry.nodeName.toLowerCase() === propKey.toLowerCase() ||
           entry.nodeName.toLowerCase().replace(/\s+/g, '-') === propKey.toLowerCase()
         );
@@ -567,6 +1347,13 @@ export class FigmaRenderer {
           if (textNode) {
             matchMethod = 'exact-name';
             console.log(`✅ Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
+          } else {
+            // Enhanced fallback: match by name when ID fails (for nested components)
+            textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
+            if (textNode) {
+              matchMethod = 'name-fallback';
+              console.log(`✅ Found text node by name fallback: "${textNode.name}" (ID mismatch resolved)`);
+            }
           }
         }
       }
@@ -576,7 +1363,7 @@ export class FigmaRenderer {
         const targetClassifications = semanticMappings[propKey.toLowerCase()];
         
         for (const classification of targetClassifications) {
-          const hierarchyEntry = componentTextHierarchy.find(entry => 
+          const hierarchyEntry = componentTextHierarchy.find(entry =>
             entry.classification === classification
           );
           
@@ -586,6 +1373,14 @@ export class FigmaRenderer {
               matchMethod = 'semantic-classification';
               console.log(`✅ Found text node by semantic classification: "${textNode.name}" (${classification})`);
               break;
+            } else {
+              // Enhanced fallback: match by name when ID fails (for nested components)
+              textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
+              if (textNode) {
+                matchMethod = 'semantic-name-fallback';
+                console.log(`✅ Found text node by semantic name fallback: "${textNode.name}" (ID mismatch resolved)`);
+                break;
+              }
             }
           }
         }
@@ -593,7 +1388,7 @@ export class FigmaRenderer {
       
       // Method 3: Try partial node name match from scan data
       if (!textNode && componentTextHierarchy) {
-        const hierarchyEntry = componentTextHierarchy.find(entry => 
+        const hierarchyEntry = componentTextHierarchy.find(entry =>
           entry.nodeName.toLowerCase().includes(propKey.toLowerCase()) ||
           propKey.toLowerCase().includes(entry.nodeName.toLowerCase())
         );
@@ -603,6 +1398,13 @@ export class FigmaRenderer {
           if (textNode) {
             matchMethod = 'partial-name';
             console.log(`✅ Found text node by partial name match: "${textNode.name}"`);
+          } else {
+            // Enhanced fallback: match by name when ID fails (for nested components)
+            textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
+            if (textNode) {
+              matchMethod = 'partial-name-fallback';
+              console.log(`✅ Found text node by partial name fallback: "${textNode.name}" (ID mismatch resolved)`);
+            }
           }
         }
       }
@@ -833,7 +1635,7 @@ export class FigmaRenderer {
     }
     
     // Try exact name match
-    const exactMatch = allMediaSlots.find(slot => 
+    const exactMatch = allMediaSlots.find(slot =>
       slot.name.toLowerCase() === propKey.toLowerCase() ||
       slot.name.toLowerCase().replace(/\s+/g, '-') === propKey.toLowerCase()
     );
@@ -974,8 +1776,8 @@ export class FigmaRenderer {
       const nameLower = slot.name.toLowerCase();
       
       // Avatar classification - look for people, faces, profiles
-      if (nameLower.includes('avatar') || 
-          nameLower.includes('profile') || 
+      if (nameLower.includes('avatar') ||
+          nameLower.includes('profile') ||
           nameLower.includes('user') ||
           nameLower.includes('person') ||
           nameLower.includes('selfie') ||
@@ -988,7 +1790,7 @@ export class FigmaRenderer {
       }
       
       // Icon classification - small graphics, symbols
-      else if (nameLower.includes('icon') || 
+      else if (nameLower.includes('icon') ||
                nameLower.includes('symbol') ||
                nameLower.includes('pictogram') ||
                (slot.type === 'vector-node' && nameLower.length < 10)) {
@@ -1018,7 +1820,7 @@ export class FigmaRenderer {
       }
       
       // Image classification - all image nodes and component instances with image-like names
-      else if (slot.type === 'image-node' || 
+      else if (slot.type === 'image-node' ||
                nameLower.includes('image') ||
                nameLower.includes('picture') ||
                nameLower.includes('photo')) {
@@ -1053,12 +1855,12 @@ export class FigmaRenderer {
    * Find media slots by position keywords
    */
   static findByPosition(mediaSlots: Array<{name: string, type: 'component-instance' | 'vector-node' | 'image-node'}>, position: 'leading' | 'trailing'): {name: string, type: 'component-instance' | 'vector-node' | 'image-node'} | null {
-    const positionKeywords = position === 'leading' 
+    const positionKeywords = position === 'leading'
       ? ['leading', 'start', 'left', 'first', 'begin']
       : ['trailing', 'end', 'right', 'last', 'final'];
     
-    return mediaSlots.find(slot => 
-      positionKeywords.some(keyword => 
+    return mediaSlots.find(slot =>
+      positionKeywords.some(keyword =>
         slot.name.toLowerCase().includes(keyword)
       )
     ) || null;
@@ -1095,7 +1897,7 @@ export class FigmaRenderer {
     
     const variantPropertyNames = [
       'condition', 'Condition',
-      'leading', 'Leading', 
+      'leading', 'Leading',
       'trailing', 'Trailing',
       'state', 'State',
       'style', 'Style',
@@ -1143,43 +1945,149 @@ export class FigmaRenderer {
    * Apply child layout properties for auto-layout items
    */
   static applyChildLayoutProperties(node: SceneNode, properties: any): void {
-    if (!properties) return;
+    if (!properties || !node) return;
     
-    // layoutAlign - how the child aligns within its parent
-    if (properties.layoutAlign) {
-      (node as any).layoutAlign = properties.layoutAlign;
-    } else if (properties.horizontalSizing === 'FILL') {
-      (node as any).layoutAlign = 'STRETCH';
+    console.log('🔥 CODE DEPLOYMENT TEST - APPLYING CHILD LAYOUT PROPERTIES:', {
+      nodeType: node.type,
+      properties: properties,
+      DEPLOYMENT_TEST: 'August 12 - If you see this, code is deployed'
+    });
+    
+    console.log('🔥🔥🔥 BEFORE SIZING MODE LOGIC:', {
+      primaryAxisSizingMode: (node as any).primaryAxisSizingMode,
+      counterAxisSizingMode: (node as any).counterAxisSizingMode,
+      layoutMode: (node as any).layoutMode,
+      height: (node as any).height
+    });
+    
+    // Check if node is a frame that supports auto-layout
+    if (node.type !== 'FRAME' && node.type !== 'COMPONENT' && node.type !== 'INSTANCE') {
+      console.warn('⚠️ Node type does not support layout properties:', node.type);
+      return;
     }
     
-    // layoutGrow - how much the child should grow to fill available space
-    if (properties.layoutGrow !== undefined) {
-      (node as any).layoutGrow = properties.layoutGrow;
-    } else if (properties.horizontalSizing === 'FILL') {
-      const parent = node.parent;
-      if (parent && 'layoutMode' in parent && parent.layoutMode === 'HORIZONTAL') {
-        (node as any).layoutGrow = 1;
+    const frame = node as FrameNode;
+    
+    // Handle horizontalSizing: "FILL"
+    if (properties.horizontalSizing === 'FILL') {
+      const parent = frame.parent;
+      
+      if (parent && 'layoutMode' in parent) {
+        const parentFrame = parent as FrameNode;
+        
+        if (parentFrame.layoutMode === 'VERTICAL') {
+          // In vertical layout, FILL means stretch horizontally
+          try {
+            // Set the frame to stretch to parent width
+            frame.layoutAlign = properties.layoutAlign || 'STRETCH';
+            
+            // CRITICAL: Don't set width - let auto-layout handle it
+            // Instead, ensure the sizing mode allows stretching
+            if (frame.layoutMode !== 'NONE') {
+              // This is an auto-layout frame
+              frame.counterAxisSizingMode = 'FIXED';
+              frame.primaryAxisSizingMode = 'AUTO';
+            }
+            
+            console.log('✅ Applied FILL for VERTICAL parent - set layoutAlign to STRETCH');
+          } catch (e) {
+            console.error('❌ Failed to apply FILL sizing:', e);
+          }
+        } else if (parentFrame.layoutMode === 'HORIZONTAL') {
+          // In horizontal layout, FILL means grow to fill available space
+          try {
+            frame.layoutGrow = 1;
+            frame.layoutAlign = 'STRETCH';  // Force STRETCH for FILL, ignore layoutAlign
+            
+            if (frame.layoutMode !== 'NONE') {
+              // FIXED: For horizontal containers, primary axis (width) should be FIXED to allow growth
+              frame.primaryAxisSizingMode = 'FIXED';  // Width grows with layoutGrow
+              frame.counterAxisSizingMode = 'AUTO';   // Height hugs content
+            }
+            
+            console.log('✅ Applied FILL for HORIZONTAL parent - set layoutGrow to 1 and layoutAlign to STRETCH');
+          } catch (e) {
+            console.error('❌ Failed to apply FILL sizing:', e);
+          }
+        }
+      }
+    } else if (properties.horizontalSizing === 'HUG' || properties.horizontalSizing === 'AUTO') {
+      // HUG/AUTO means size to content
+      try {
+        if (frame.layoutMode !== 'NONE') {
+          frame.primaryAxisSizingMode = 'AUTO';
+          frame.counterAxisSizingMode = 'AUTO';
+        }
+        console.log('✅ Applied HUG/AUTO sizing');
+      } catch (e) {
+        console.error('❌ Failed to apply HUG sizing:', e);
       }
     }
     
-    // layoutPositioning - absolute positioning within auto-layout
-    if (properties.layoutPositioning) {
-      (node as any).layoutPositioning = properties.layoutPositioning;
+    // Apply layoutAlign if specified (and not already set above)
+    if (properties.layoutAlign && !properties.horizontalSizing) {
+      try {
+        frame.layoutAlign = properties.layoutAlign;
+        console.log('✅ Set layoutAlign:', properties.layoutAlign);
+      } catch (e) {
+        console.warn('⚠️ Failed to set layoutAlign:', e);
+      }
     }
     
-    // Size constraints for child elements
-    if (properties.minWidth !== undefined && 'minWidth' in node) {
-      (node as any).minWidth = properties.minWidth;
+    // Apply layoutGrow if explicitly specified
+    if (properties.layoutGrow !== undefined && properties.layoutGrow !== null) {
+      try {
+        frame.layoutGrow = properties.layoutGrow;
+        console.log('✅ Set layoutGrow:', properties.layoutGrow);
+      } catch (e) {
+        console.warn('⚠️ Failed to set layoutGrow:', e);
+      }
     }
-    if (properties.maxWidth !== undefined && 'maxWidth' in node) {
-      (node as any).maxWidth = properties.maxWidth;
+    
+    // Apply other layout properties
+    if (properties.layoutPositioning) {
+      try {
+        frame.layoutPositioning = properties.layoutPositioning;
+        console.log('✅ Set layoutPositioning:', properties.layoutPositioning);
+      } catch (e) {
+        console.warn('⚠️ Failed to set layoutPositioning:', e);
+      }
     }
-    if (properties.minHeight !== undefined && 'minHeight' in node) {
-      (node as any).minHeight = properties.minHeight;
+    
+    // CRITICAL FIX: Apply sizing modes directly for containers
+    // Apply layout mode first if provided
+    if (properties.layoutMode && properties.layoutMode !== frame.layoutMode) {
+      try {
+        frame.layoutMode = properties.layoutMode;
+        console.log('✅ Set child layoutMode:', properties.layoutMode);
+      } catch (e) {
+        console.error('❌ Failed to set layoutMode:', e);
+      }
     }
-    if (properties.maxHeight !== undefined && 'maxHeight' in node) {
-      (node as any).maxHeight = properties.maxHeight;
+    
+    // Apply sizing modes regardless of layoutMode (they should work independently)
+    if (properties.primaryAxisSizingMode || properties.counterAxisSizingMode) {
+      try {
+        if (properties.primaryAxisSizingMode) {
+          frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
+          console.log('✅ Set child primaryAxisSizingMode:', properties.primaryAxisSizingMode);
+        }
+        
+        if (properties.counterAxisSizingMode) {
+          frame.counterAxisSizingMode = properties.counterAxisSizingMode;
+          console.log('✅ Set child counterAxisSizingMode:', properties.counterAxisSizingMode);
+        }
+      } catch (e) {
+        console.error('❌ Failed to apply sizing modes:', e);
+      }
     }
+    
+    console.log('🔥🔥🔥 AFTER ALL LOGIC:', {
+      primaryAxisSizingMode: (node as any).primaryAxisSizingMode,
+      counterAxisSizingMode: (node as any).counterAxisSizingMode,
+      layoutMode: (node as any).layoutMode,
+      height: (node as any).height
+    });
   }
 
   /**
@@ -1188,14 +2096,23 @@ export class FigmaRenderer {
   static async createComponentInstanceSystematic(item: any, container: FrameNode): Promise<void> {
     if (!item.componentNodeId) return;
 
-    const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
-    if (!componentNode) {
-      console.warn(`⚠️ Component with ID ${item.componentNodeId} not found. Skipping.`);
+    let componentNode;
+    try {
+      componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
+    } catch (nodeError) {
+      console.error(`❌ Error accessing component ${item.componentNodeId}:`, nodeError.message);
+      await this.createMissingComponentPlaceholder(item.componentNodeId, container);
       return;
     }
     
-    const masterComponent = (componentNode.type === 'COMPONENT_SET' 
-      ? componentNode.defaultVariant 
+    if (!componentNode) {
+      console.warn(`⚠️ Component with ID ${item.componentNodeId} not found. Skipping.`);
+      await this.createMissingComponentPlaceholder(item.componentNodeId, container);
+      return;
+    }
+    
+    const masterComponent = (componentNode.type === 'COMPONENT_SET'
+      ? componentNode.defaultVariant
       : componentNode) as ComponentNode | null;
       
     if (!masterComponent || masterComponent.type !== 'COMPONENT') {
@@ -1205,10 +2122,15 @@ export class FigmaRenderer {
 
     console.log(` Creating systematic instance: ${masterComponent.name}`);
 
-    // SYSTEMATIC VALIDATION
+    // SYSTEMATIC VALIDATION - Merge properties and variants
+    const allProperties = {
+      ...item.properties || {},
+      variants: item.variants || {}
+    };
+    
     const validationResult = ComponentPropertyEngine.validateAndProcessProperties(
-      item.componentNodeId, 
-      item.properties || {}
+      item.componentNodeId,
+      allProperties
     );
 
     if (validationResult.warnings.length > 0) {
@@ -1218,7 +2140,7 @@ export class FigmaRenderer {
       console.error(`❌ Validation errors:`, validationResult.errors);
       
       // Create LLM-friendly error message
-      const llmErrors = validationResult.errors.map(err => 
+      const llmErrors = validationResult.errors.map(err =>
         `${err.message}${err.suggestion ? ` - ${err.suggestion}` : ''}${err.llmHint ? ` (${err.llmHint})` : ''}`
       ).join('\n');
       
@@ -1227,23 +2149,72 @@ export class FigmaRenderer {
 
     const { variants, textProperties, mediaProperties, layoutProperties } = validationResult.processedProperties;
 
-    // Create and configure instance
-    const instance = masterComponent.createInstance();
-    container.appendChild(instance);
+    console.log('🔧 VALIDATION RESULTS:', {
+      originalVariants: item.variants,
+      processedVariants: variants,
+      variantCount: Object.keys(variants).length
+    });
 
-    // Apply properties in correct order
-    if (Object.keys(variants).length > 0) {
-      await this.applyVariantsSystematic(instance, variants, componentNode);
+    // Create and configure instance
+    let instance;
+    try {
+      instance = masterComponent.createInstance();
+      container.appendChild(instance);
+    } catch (createError) {
+      console.error(`❌ Error creating instance of ${masterComponent.name}:`, createError.message);
+      // Create a placeholder instead
+      await this.createMissingComponentPlaceholder(item.componentNodeId, container);
+      return;
+    }
+
+    // Apply properties in correct order with error handling
+    try {
+      if (Object.keys(variants).length > 0) {
+        console.log('✅ About to apply variants:', variants);
+        await this.applyVariantsSystematic(instance, variants, componentNode);
+      } else {
+        console.log('⚠️ NO VARIANTS TO APPLY - variants object is empty');
+      }
+    } catch (variantError) {
+      console.error(`❌ Error applying variants to ${masterComponent.name}:`, variantError.message);
     }
     
-    this.applyChildLayoutProperties(instance, layoutProperties);
-    
-    if (Object.keys(textProperties).length > 0) {
-      await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
+    try {
+      this.applyChildLayoutProperties(instance, layoutProperties);
+    } catch (layoutError) {
+      console.error(`❌ Error applying layout properties to ${masterComponent.name}:`, layoutError.message);
     }
     
-    if (Object.keys(mediaProperties).length > 0) {
-      await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
+    try {
+      if (Object.keys(textProperties).length > 0) {
+        await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
+      }
+    } catch (textError) {
+      console.error(`❌ Error applying text properties to ${masterComponent.name}:`, textError.message);
+    }
+    
+    try {
+      if (Object.keys(mediaProperties).length > 0) {
+        await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
+      }
+    } catch (mediaError) {
+      console.error(`❌ Error applying media properties to ${masterComponent.name}:`, mediaError.message);
+    }
+    
+    // Apply visibility overrides and icon swaps at the very end after all other properties
+    try {
+      await this.applyVisibilityOverrides(instance, item);
+    } catch (visibilityError) {
+      console.error(`❌ Error applying visibility overrides to ${masterComponent.name}:`, visibilityError.message);
+    }
+    
+    // Apply icon swaps AFTER everything else is rendered
+    try {
+      if (item.iconSwaps) {
+        await this.applyIconSwaps(instance, item.iconSwaps);
+      }
+    } catch (iconError) {
+      console.error(`❌ Error applying icon swaps to ${masterComponent.name}:`, iconError.message);
     }
   }
 
@@ -1251,6 +2222,12 @@ export class FigmaRenderer {
    * Apply variants with modern Component Properties API
    */
   static async applyVariantsSystematic(instance: InstanceNode, variants: any, componentNode: any): Promise<void> {
+    console.log('🎨 VARIANT APPLICATION START', {
+      variants,
+      componentType: componentNode?.type,
+      instanceName: instance.name
+    });
+    
     try {
       await PerformanceTracker.track('apply-variants', async () => {
         if (componentNode && componentNode.type === 'COMPONENT_SET') {
@@ -1267,7 +2244,15 @@ export class FigmaRenderer {
           Object.entries(variants).forEach(([propName, propValue]) => {
             const propertyDef = propertyDefinitions[propName];
             if (propertyDef && propertyDef.type === 'VARIANT') {
-              const stringValue = String(propValue);
+              // Convert boolean values to capitalized strings for Figma
+              let stringValue: string;
+              if (typeof propValue === 'boolean') {
+                stringValue = propValue ? 'True' : 'False';
+                console.log(`🔄 Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+              } else {
+                stringValue = String(propValue);
+              }
+              
               if (propertyDef.variantOptions && propertyDef.variantOptions.includes(stringValue)) {
                 validVariants[propName] = stringValue;
                 console.log(`✅ Valid variant: ${propName} = "${stringValue}"`);
@@ -1291,6 +2276,424 @@ export class FigmaRenderer {
   }
 
   /**
+   * Apply visibility overrides to component child elements
+   */
+  private static async applyVisibilityOverrides(instance: InstanceNode, itemData: any): Promise<void> {
+    console.log('🐛 applyVisibilityOverrides CALLED', {
+      hasOverrides: !!itemData.visibilityOverrides,
+      hasIconSwaps: !!itemData.iconSwaps,
+      overrideCount: Object.keys(itemData.visibilityOverrides || {}).length,
+      iconSwapCount: Object.keys(itemData.iconSwaps || {}).length,
+      instanceName: instance.name,
+      instanceId: instance.id,
+      itemType: itemData.type
+    });
+
+    if (!itemData.visibilityOverrides && !itemData.iconSwaps) {
+      console.log('🐛 No overrides to apply, returning early');
+      return;
+    }
+    
+    // Log all instance children for debugging
+    console.log('🐛 Instance children:', instance.children.map(child => ({
+      name: child.name,
+      id: child.id,
+      type: child.type,
+      visible: child.visible
+    })));
+    
+    try {
+      // Apply visibility overrides
+      if (itemData.visibilityOverrides) {
+        console.log('🐛 Processing visibility overrides:', itemData.visibilityOverrides);
+        Object.entries(itemData.visibilityOverrides).forEach(([nodeId, visible]) => {
+          console.log(`🐛 Looking for node ${nodeId} to set visibility to ${visible}`);
+          
+          // Try exact match first
+          let child = instance.findChild(node => node.id === nodeId);
+          
+          // If not found, try matching by base node ID (handles instance-prefixed IDs)
+          if (!child) {
+            console.log(`🐛 Exact match failed, trying base node ID matching for ${nodeId}`);
+            
+            // First try direct children
+            child = instance.findChild(node => node.id.endsWith(nodeId) || node.id.includes(nodeId));
+            
+            // If still not found, search recursively through all descendants
+            if (!child) {
+              console.log(`🐛 Direct child search failed, searching all descendants for ${nodeId}`);
+              try {
+                child = instance.findAll(node => node.id.includes(nodeId))[0];
+                if (child) {
+                  console.log(`🐛 Found in descendants: ${child.id} (${child.name})`);
+                }
+              } catch (findAllError) {
+                console.warn(`🐛 findAll search failed:`, findAllError);
+              }
+            }
+          }
+          
+          if (child) {
+            try {
+              const previousVisible = child.visible;
+              child.visible = visible as boolean;
+              // Safely access name property
+              const childName = child.name || 'unnamed';
+              console.log(`✅ Applied visibility override: ${nodeId} = ${visible} (was: ${previousVisible}, name: ${childName}, actualId: ${child.id})`);
+            } catch (nodeError) {
+              console.warn(`⚠️ Error accessing node ${nodeId}:`, nodeError);
+              console.warn(`🐛 Node may have been invalidated during component instantiation`);
+            }
+          } else {
+            console.warn(`⚠️ Child node ${nodeId} not found for visibility override`);
+            console.warn(`🐛 Available node IDs:`, instance.children.map(c => c.id));
+          }
+        });
+      }
+
+      
+      console.log('🐛 applyVisibilityOverrides completed successfully');
+    } catch (error) {
+      console.error('❌ Visibility override application failed:', error);
+    }
+  }
+
+  /**
+   * Simple icon resolution using existing design system structure
+   */
+  private static resolveIcon(iconName: string, designSystemData: any): string | null {
+    if (!designSystemData?.components) {
+      console.warn('⚠️ No design system data available for icon resolution');
+      return null;
+    }
+    
+    console.log(`🔍 Resolving icon "${iconName}" from ${designSystemData.components.length} components`);
+    console.log(`🔍 Available icons:`, designSystemData.components
+      .filter(comp => comp.suggestedType === 'icon')
+      .map(comp => `${comp.name} (${comp.id})`)
+    );
+    
+    const iconComponent = designSystemData.components.find(comp =>
+      comp.suggestedType === 'icon' &&
+      comp.name.toLowerCase().includes(iconName.toLowerCase())
+    );
+    
+    if (iconComponent) {
+      console.log(`✅ Resolved icon "${iconName}" → ${iconComponent.id} (${iconComponent.name})`);
+      return iconComponent.id;
+    }
+    
+    console.warn(`❌ Icon "${iconName}" not found in design system`);
+    return null;
+  }
+
+  // Static field to store design system data for this rendering session
+  private static currentDesignSystemData: any = null;
+  
+  /**
+   * Get cached design system data for icon resolution
+   */
+  private static getCachedDesignSystemData(): any {
+    if (!this.currentDesignSystemData) {
+      console.warn('⚠️ No design system data available for icon resolution');
+      return null;
+    }
+    console.log('✅ Using design system data with', this.currentDesignSystemData?.components?.length || 0, 'components');
+    return this.currentDesignSystemData;
+  }
+  
+  /**
+   * Set design system data for the current rendering session
+   */
+  private static setDesignSystemData(data: any): void {
+    this.currentDesignSystemData = data;
+    console.log('📋 Design system data loaded for rendering:', data?.components?.length || 0, 'components');
+  }
+
+  /**
+   * Apply icon swaps after component rendering is complete
+   */
+  private static async applyIconSwaps(instance: InstanceNode, iconSwaps: Record<string, string>): Promise<void> {
+    console.log('🔄 Applying icon swaps AFTER rendering:', iconSwaps);
+    const designSystemData = this.getCachedDesignSystemData();
+    
+    // Get component schema to understand the structure
+    let schema = null;
+    let componentId = null;
+    
+    try {
+      const mainComponent = await instance.getMainComponentAsync();
+      componentId = mainComponent?.id;
+      if (componentId) {
+        schema = ComponentPropertyEngine.getComponentSchema(componentId);
+        if (schema) {
+          console.log(`📋 Using schema for component ${componentId}:`, schema);
+        } else {
+          console.warn(`⚠️ No schema found for component ${componentId}`);
+        }
+      } else {
+        console.warn(`⚠️ No main component found for instance`);
+      }
+    } catch (error) {
+      console.warn(`⚠️ Error getting main component:`, error);
+    }
+    
+    for (const [nodeId, iconName] of Object.entries(iconSwaps)) {
+      console.log(`🔄 Icon swap: ${nodeId} → ${iconName}`);
+      
+      let targetInstance: InstanceNode | null = null;
+      
+      // Strategy 1: Use schema to find component instances
+      if (schema && schema.componentInstances) {
+        console.log(`📋 Schema-based search for "${nodeId}"...`);
+        console.log(`📋 Available componentInstances:`, schema.componentInstances);
+        
+        // Look for matching component instances in schema
+        for (const compInstance of schema.componentInstances) {
+          const instName = compInstance.nodeName.toLowerCase();
+          const instId = compInstance.nodeId;
+          
+          console.log(`📋 Checking schema instance: ${compInstance.nodeName} (${instId})`);
+          
+          // Try to match by semantic name
+          if (nodeId.includes('leading') && instName.includes('leading')) {
+            // Find this instance in the actual rendered component
+            try {
+              const foundNode = instance.findChild(node => node.id === instId) ||
+                               instance.findAll(node => node.id.includes(instId))[0];
+              
+              if (foundNode && foundNode.type === 'INSTANCE') {
+                targetInstance = foundNode as InstanceNode;
+                console.log(`📋 Found leading instance via schema: ${foundNode.name} (${foundNode.id})`);
+                break;
+              } else if (foundNode) {
+                // If it's a container (like "Leading element"), search inside it for icons
+                console.log(`📋 Found container "${foundNode.name}", searching for icon instances inside...`);
+                try {
+                  const iconInstances = (foundNode as any).findAll?.((n: any) => n.type === 'INSTANCE') || [];
+                  if (iconInstances.length > 0) {
+                    targetInstance = iconInstances[0] as InstanceNode;
+                    console.log(`📋 Found icon inside container: ${targetInstance.name} (${targetInstance.id})`);
+                    break;
+                  }
+                } catch (nestedError) {
+                  console.warn(`📋 Error searching inside container:`, nestedError);
+                }
+              }
+            } catch (error) {
+              console.warn(`📋 Error finding schema instance ${instId}:`, error);
+            }
+          }
+        }
+      }
+      
+      // Strategy 2: Fallback semantic search if schema didn't work
+      if (!targetInstance) {
+        console.log(`🔍 Fallback search for "${nodeId}"...`);
+        try {
+          // First, let's see what ALL children look like
+          console.log(`🔍 All children of ${instance.name}:`, instance.children.map(child => ({
+            name: child.name,
+            type: child.type,
+            id: child.id
+          })));
+          
+          const allInstances = instance.findAll(node => node.type === 'INSTANCE') as InstanceNode[];
+          console.log(`🔍 Found ${allInstances.length} total instances in component`);
+          
+          for (const inst of allInstances) {
+            const instName = inst.name.toLowerCase();
+            console.log(`🔍 Checking instance: ${inst.name} (${inst.id})`);
+            
+            // Check if this instance matches our semantic search
+            if (nodeId.includes('leading') && instName.includes('leading')) {
+              targetInstance = inst;
+              console.log(`🔍 Found by semantic match: ${inst.name}`);
+              break;
+            } else if (nodeId.includes('trailing') && instName.includes('trailing')) {
+              targetInstance = inst;
+              console.log(`🔍 Found by semantic match: ${inst.name}`);
+              break;
+            } else if (nodeId.includes('icon') && instName.includes('icon')) {
+              targetInstance = inst;
+              console.log(`🔍 Found by semantic match: ${inst.name}`);
+              break;
+            }
+          }
+          
+          // If semantic search failed, let's try to find any instances that might be icons
+          if (!targetInstance && allInstances.length > 0) {
+            console.log(`🔍 No semantic match, checking all instances for potential icon swaps...`);
+            for (const inst of allInstances) {
+              console.log(`🔍 Instance details: ${inst.name} (${inst.id})`);
+              
+              // If this looks like it might be an icon (has mainComponent with 'icon' in name)
+              try {
+                const mainComp = await inst.getMainComponentAsync();
+                console.log(`🔍 Instance ${inst.name} has mainComponent: ${mainComp?.name || 'none'}`);
+                if (mainComp && mainComp.name.toLowerCase().includes('icon')) {
+                  targetInstance = inst;
+                  console.log(`🔍 Found potential icon by mainComponent: ${inst.name} → ${mainComp.name}`);
+                  break;
+                }
+              } catch (error) {
+                console.warn(`🔍 Error checking mainComponent for ${inst.name}:`, error);
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`🔍 Fallback search failed:`, error);
+        }
+      }
+      
+      // Strategy 2: Search by exact ID
+      if (!targetInstance) {
+        console.log(`🔍 Searching by exact ID: ${nodeId}`);
+        let node = instance.findChild(node => node.id === nodeId);
+        
+        if (node && node.type === 'INSTANCE') {
+          targetInstance = node as InstanceNode;
+        } else if (node) {
+          // If found node is not an instance, search within it for component instances
+          console.log(`🔍 Found node ${nodeId} (type: ${node.type}), searching for component instances within...`);
+          try {
+            const instances = (node as any).findAll?.((n: any) => n.type === 'INSTANCE') || [];
+            if (instances.length > 0) {
+              targetInstance = instances[0] as InstanceNode;
+              console.log(`🔍 Found nested instance: ${targetInstance.name} (${targetInstance.id})`);
+            }
+          } catch (error) {
+            console.warn(`🔍 Error searching within node:`, error);
+          }
+        }
+      }
+      
+      // Strategy 3: Broader recursive search
+      if (!targetInstance) {
+        console.log(`🔍 Broader search for any matching instances...`);
+        try {
+          const allInstances = instance.findAll(node => node.type === 'INSTANCE') as InstanceNode[];
+          
+          for (const inst of allInstances) {
+            if (inst.id.includes(nodeId) || inst.id === nodeId) {
+              targetInstance = inst;
+              console.log(`🔍 Found instance by ID match: ${inst.name} (${inst.id})`);
+              break;
+            }
+            
+            // Also search within this instance for the target node
+            try {
+              const childNode = inst.findChild(n => n.id === nodeId);
+              if (childNode && childNode.type === 'INSTANCE') {
+                targetInstance = childNode as InstanceNode;
+                console.log(`🔍 Found nested instance within ${inst.name}: ${childNode.name}`);
+                break;
+              }
+            } catch (nestedError) {
+              // Continue searching
+            }
+          }
+        } catch (error) {
+          console.warn(`🔍 Recursive search failed:`, error);
+        }
+      }
+      
+      // Attempt the swap
+      if (targetInstance) {
+        try {
+          const iconId = this.resolveIcon(iconName, designSystemData);
+          if (iconId) {
+            const iconNode = await figma.getNodeByIdAsync(iconId);
+            let iconComponent: ComponentNode | null = null;
+            
+            if (iconNode?.type === 'COMPONENT') {
+              iconComponent = iconNode as ComponentNode;
+            } else if (iconNode?.type === 'COMPONENT_SET') {
+              const componentSet = iconNode as ComponentSetNode;
+              iconComponent = componentSet.defaultVariant ||
+                            (componentSet.children.find(child => child.type === 'COMPONENT') as ComponentNode);
+            }
+            
+            if (iconComponent && iconComponent.type === 'COMPONENT') {
+              console.log(`🔄 Attempting to swap component: ${targetInstance.name} → ${iconComponent.name}`);
+              targetInstance.swapComponent(iconComponent);
+              console.log(`✅ Successfully swapped ${nodeId} to ${iconName} (${iconId})`);
+            } else {
+              console.error(`❌ Could not get valid component for ${iconName}: ${iconId}`);
+            }
+          } else {
+            console.warn(`❌ Could not resolve icon "${iconName}"`);
+          }
+        } catch (error) {
+          console.error(`❌ Icon swap failed for ${nodeId} → ${iconName}:`, error);
+        }
+      } else {
+        console.warn(`⚠️ No suitable component instance found for ${nodeId}`);
+        
+        // EMERGENCY FALLBACK: Try to swap ANY icon instance found
+        console.log(`🚨 FALLBACK: Attempting to swap any icon instance to "${iconName}"`);
+        try {
+          const allInstances = instance.findAll(node => node.type === 'INSTANCE') as InstanceNode[];
+          console.log(`🐛 Available instances:`, allInstances.map(i => `${i.name} (${i.id})`));
+          
+          if (allInstances.length > 0) {
+            // Just try the first instance
+            const firstInstance = allInstances[0];
+            console.log(`🚨 Trying to swap first available instance: ${firstInstance.name}`);
+            
+            const iconId = this.resolveIcon(iconName, designSystemData);
+            console.log(`🚨 FALLBACK: Icon ID resolved to: ${iconId}`);
+            if (iconId) {
+              console.log(`🚨 FALLBACK: Getting component node for ID: ${iconId}`);
+              const iconNode = await figma.getNodeByIdAsync(iconId);
+              console.log(`🚨 FALLBACK: Got node:`, iconNode?.name, iconNode?.type);
+              
+              let iconComponent: ComponentNode | null = null;
+              
+              if (iconNode?.type === 'COMPONENT') {
+                iconComponent = iconNode as ComponentNode;
+                console.log(`🚨 FALLBACK: Using COMPONENT directly`);
+              } else if (iconNode?.type === 'COMPONENT_SET') {
+                console.log(`🚨 FALLBACK: Got COMPONENT_SET, finding default component...`);
+                const componentSet = iconNode as ComponentSetNode;
+                // Get the first (default) component from the set
+                const defaultComponent = componentSet.defaultVariant;
+                if (defaultComponent) {
+                  iconComponent = defaultComponent;
+                  console.log(`🚨 FALLBACK: Using default variant: ${defaultComponent.name}`);
+                } else {
+                  console.log(`🚨 FALLBACK: No default variant, trying first child...`);
+                  const firstChild = componentSet.children.find(child => child.type === 'COMPONENT');
+                  if (firstChild) {
+                    iconComponent = firstChild as ComponentNode;
+                    console.log(`🚨 FALLBACK: Using first child component: ${firstChild.name}`);
+                  }
+                }
+              }
+              
+              if (iconComponent && iconComponent.type === 'COMPONENT') {
+                console.log(`🚨 FALLBACK: Attempting to swap ${firstInstance.name} → ${iconComponent.name}`);
+                try {
+                  firstInstance.swapComponent(iconComponent);
+                  console.log(`✅ FALLBACK SUCCESS: Swapped ${firstInstance.name} to ${iconName}`);
+                } catch (swapError) {
+                  console.error(`❌ FALLBACK: Swap failed:`, swapError);
+                }
+              } else {
+                console.error(`❌ FALLBACK: Could not get valid COMPONENT from ${iconNode?.type}`);
+              }
+            } else {
+              console.error(`❌ FALLBACK: No icon ID resolved for "${iconName}"`);
+            }
+          }
+        } catch (error) {
+          console.warn(`🚨 Fallback swap failed:`, error);
+        }
+      }
+    }
+  }
+
+  /**
    * Apply text properties with proper font loading and array support
    */
   static async applyTextPropertiesSystematic(instance: InstanceNode, textProperties: any, componentId: string): Promise<void> {
@@ -1304,10 +2707,22 @@ export class FigmaRenderer {
       return;
     }
 
-    // Use fast modern API for finding text nodes
-    const allTextNodes = await PerformanceTracker.track('find-text-nodes', async () => 
-      instance.findAllWithCriteria({ types: ['TEXT'] }) as TextNode[]
-    );
+    // Use fast modern API for finding text nodes with error handling
+    let allTextNodes: TextNode[] = [];
+    try {
+      allTextNodes = await PerformanceTracker.track('find-text-nodes', async () =>
+        instance.findAllWithCriteria({ types: ['TEXT'] }) as TextNode[]
+      );
+    } catch (findError) {
+      console.error(`❌ Error finding text nodes in component ${componentId}:`, findError.message);
+      // Fallback to original method if available
+      try {
+        await this.applyTextProperties(instance, textProperties);
+      } catch (fallbackError) {
+        console.error(`❌ Fallback text application also failed:`, fallbackError.message);
+      }
+      return;
+    }
 
     for (const [propKey, propValue] of Object.entries(textProperties)) {
       const textLayerInfo = schema.textLayers[propKey];
@@ -1355,7 +2770,7 @@ export class FigmaRenderer {
       const layerLower = textLayerInfo.nodeName.toLowerCase();
       const propLower = propKey.toLowerCase();
       
-      return nodeLower === layerLower || 
+      return nodeLower === layerLower ||
              nodeLower.includes(propLower) ||
              nodeLower === propLower;
     });
@@ -1392,7 +2807,7 @@ export class FigmaRenderer {
     
     if (!textNode) {
       // Try exact name match
-      textNode = allTextNodes.find(n => 
+      textNode = allTextNodes.find(n =>
         n.name.toLowerCase() === textLayerInfo.nodeName.toLowerCase()
       );
     }
@@ -1425,15 +2840,21 @@ export class FigmaRenderer {
       return;
     }
 
-    // Get all potential media nodes
-    const allMediaNodes = await PerformanceTracker.track('find-media-nodes', async () => {
-      const vectors = instance.findAllWithCriteria({ types: ['VECTOR'] });
-      const rectangles = instance.findAllWithCriteria({ types: ['RECTANGLE'] });
-      const ellipses = instance.findAllWithCriteria({ types: ['ELLIPSE'] });
-      const components = instance.findAllWithCriteria({ types: ['INSTANCE', 'COMPONENT'] });
-      
-      return [...vectors, ...rectangles, ...ellipses, ...components];
-    });
+    // Get all potential media nodes with error handling
+    let allMediaNodes: any[] = [];
+    try {
+      allMediaNodes = await PerformanceTracker.track('find-media-nodes', async () => {
+        const vectors = instance.findAllWithCriteria({ types: ['VECTOR'] });
+        const rectangles = instance.findAllWithCriteria({ types: ['RECTANGLE'] });
+        const ellipses = instance.findAllWithCriteria({ types: ['ELLIPSE'] });
+        const components = instance.findAllWithCriteria({ types: ['INSTANCE', 'COMPONENT'] });
+        
+        return [...vectors, ...rectangles, ...ellipses, ...components];
+      });
+    } catch (findError) {
+      console.error(`❌ Error finding media nodes in component ${componentId}:`, findError.message);
+      return; // Skip media property application if we can't find nodes
+    }
 
     for (const [propKey, propValue] of Object.entries(mediaProperties)) {
       const mediaLayerInfo = schema.mediaLayers[propKey];
@@ -1512,7 +2933,7 @@ export class FigmaRenderer {
           uniqueFonts.set(`${font.family}-${font.style}`, font);
         });
         
-        const fontPromises = Array.from(uniqueFonts.values()).map(font => 
+        const fontPromises = Array.from(uniqueFonts.values()).map(font =>
           figma.loadFontAsync(font)
         );
         
@@ -1526,101 +2947,438 @@ export class FigmaRenderer {
   /**
    * Enhanced dynamic generation using systematic approach
    */
-  static async generateUIFromDataSystematic(layoutData: any, parentNode: FrameNode | PageNode): Promise<FrameNode> {
-    // Skip ComponentPropertyEngine if no schemas available
-    const schemas = ComponentPropertyEngine.getAllSchemas();
-    if (schemas.length === 0) {
-      console.log('⚠️ No schemas - running systematic generation in basic mode');
-    }
+  static async generateUIFromDataSystematic(layoutData: any, parentNode: FrameNode | PageNode, designSystemData?: any): Promise<FrameNode> {
+    // Add breadcrumb system at the very start
+    let lastBreadcrumb = 'START';
+    const breadcrumb = (location: string) => {
+      lastBreadcrumb = location;
+      console.log(`🍞 ${location}`);
+    };
+    
+    try {
+      breadcrumb('INIT: Method start');
+      
+      // Set design system data for this rendering session
+      if (designSystemData) {
+        breadcrumb('INIT: Setting design system data');
+        this.setDesignSystemData(designSystemData);
+      }
+      
+      console.log('🔧 Starting generateUIFromDataSystematic with data:', {
+        hasLayoutContainer: !!layoutData.layoutContainer,
+        hasItems: !!layoutData.items,
+        parentType: parentNode.type,
+        hasDesignSystemData: !!designSystemData
+      });
+      
+      console.log('🚨 DEBUG TRACE: About to start main processing');
+      
+      // Skip ComponentPropertyEngine if no schemas available
+      const schemas = ComponentPropertyEngine.getAllSchemas();
+      if (schemas.length === 0) {
+        console.log('⚠️ No schemas - running systematic generation in basic mode');
+      }
     
     let currentFrame: FrameNode;
     const containerData = layoutData.layoutContainer || layoutData;
     
+    console.log('🚨 DEBUG TRACE: Container data extracted:', {
+      hasContainerData: !!containerData,
+      containerDataKeys: containerData ? Object.keys(containerData) : [],
+      hasWidth: !!(containerData && containerData.width),
+      parentNodeType: parentNode.type
+    });
+    
+    // DEBUG LOG 1: Input data verification + Full debug output
+    const debugData = {
+      timestamp: new Date().toISOString(),
+      inputData: layoutData,
+      containerData: containerData,
+      parentNodeType: parentNode.type
+    };
+    
+    console.log('📁 FULL INPUT DATA FOR DEBUGGING:', JSON.stringify(debugData, null, 2));
+    
+    // Create downloadable debug file
+    try {
+      const debugContent = JSON.stringify(debugData, null, 2);
+      const blob = new Blob([debugContent], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // Auto-download the file
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'debug-renderer-input.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      console.log('💾 Debug file auto-downloaded as: debug-renderer-input.json');
+    } catch (e) {
+      console.warn('⚠️ Could not auto-download debug file:', e.message);
+      console.log('📋 Copy this JSON manually:', JSON.stringify(debugData, null, 2));
+    }
+    
+    console.log('🔍 INPUT DATA:', {
+      containerData: containerData,
+      hasWidth: !!containerData?.width,
+      widthValue: containerData?.width
+    });
+    
     if (parentNode.type === 'PAGE' && containerData) {
+      breadcrumb('FRAME: Creating root frame for PAGE');
+      console.log('🚨 DEBUG TRACE: Creating root frame for PAGE');
       currentFrame = figma.createFrame();
+      console.log('🚨 DEBUG TRACE: Root frame created successfully');
+      
+      // Set initial size - width fixed, height to minimum
+      const initialWidth = containerData.width || 375;
+      const minHeight = containerData.minHeight || 812;
+      
+      breadcrumb('FRAME: Setting initial size with resize');
+      console.log('🚨 DEBUG TRACE: About to call resize with:', { initialWidth, minHeight });
+      currentFrame.resize(initialWidth, minHeight);
+      console.log('🚨 DEBUG TRACE: Resize completed successfully');
+      
+      // Configure auto-layout FIRST, then sizing properties
+      if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
+        // Step 1: Enable auto-layout
+        try {
+          breadcrumb('FRAME: Setting layoutMode to ' + containerData.layoutMode);
+          currentFrame.layoutMode = containerData.layoutMode;
+          console.log('✅ Set layoutMode to:', containerData.layoutMode);
+        } catch (layoutModeError) {
+          console.warn('⚠️ Could not set layoutMode:', layoutModeError.message);
+          return currentFrame; // Exit early if auto-layout can't be enabled
+        }
+        
+        // Step 2: Set sizing modes AFTER auto-layout is enabled
+        try {
+          // Key change: Use AUTO for primary axis (vertical) to hug content
+          breadcrumb('FRAME: Setting primaryAxisSizingMode to AUTO');
+          currentFrame.primaryAxisSizingMode = "AUTO"; // Force content hugging regardless of JSON
+          console.log('✅ Set primaryAxisSizingMode to AUTO');
+        } catch (sizingError) {
+          console.warn('⚠️ Could not set primaryAxisSizingMode:', sizingError.message);
+        }
+        
+        try {
+          currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
+          console.log('✅ Set counterAxisSizingMode to FIXED');
+        } catch (counterError) {
+          console.warn('⚠️ Could not set counterAxisSizingMode:', counterError.message);
+        }
+        
+        // Step 3: Set minimum height constraint AFTER sizing modes
+        try {
+          if (minHeight) {
+            currentFrame.minHeight = minHeight;
+            console.log('✅ Set minHeight to:', minHeight);
+          }
+        } catch (minHeightError) {
+          console.warn('⚠️ Could not set minHeight:', minHeightError.message);
+        }
+      }
+      
+      // Auto-position to prevent overlapping
+      const position = await this.getNextRenderPosition(initialWidth, minHeight);
+      currentFrame.x = position.x;
+      currentFrame.y = position.y;
+      
       parentNode.appendChild(currentFrame);
     } else if (parentNode.type === 'FRAME') {
+      console.log('🚨 DEBUG TRACE: Using existing FRAME as container');
       currentFrame = parentNode;
+      console.log('🚨 DEBUG TRACE: Current frame properties:', {
+        type: currentFrame.type,
+        layoutMode: currentFrame.layoutMode,
+        hasWidthProperty: 'width' in currentFrame,
+        widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, 'width')
+      });
     } else {
       figma.notify("Cannot add items without a parent frame.", { error: true });
       return figma.createFrame();
     }
     
     // Apply container properties
-    if (containerData && containerData !== layoutData) {
+    // DEBUG LOG 2: Container condition check
+    console.log('🔍 CONTAINER CONDITION:', {
+      hasContainerData: !!containerData,
+      containerEqualsLayout: containerData === layoutData,
+      conditionPassed: !!(containerData && containerData !== layoutData)
+    });
+    if (containerData) {
+      breadcrumb('FRAME: Setting name to ' + (containerData.name || "Generated Frame"));
       currentFrame.name = containerData.name || "Generated Frame";
       
       console.log('🔧 Applying container properties:', {
         name: containerData.name,
         layoutMode: containerData.layoutMode,
         itemSpacing: containerData.itemSpacing,
-        primaryAxisSizingMode: containerData.primaryAxisSizingMode
+        primaryAxisSizingMode: containerData.primaryAxisSizingMode,
+        width: containerData.width,
+        hasWidth: !!containerData.width
       });
       
-      currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" 
-        ? containerData.layoutMode : "NONE";
-        
-      console.log('🔧 Frame layoutMode set to:', currentFrame.layoutMode);
+      try {
+        breadcrumb('FRAME: Setting secondary layoutMode to ' + (containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE"));
+        currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL"
+          ? containerData.layoutMode : "NONE";
+        console.log('🔧 Frame layoutMode set to:', currentFrame.layoutMode);
+      } catch (e) {
+        console.warn('⚠️ Failed to set layoutMode:', e.message);
+      }
         
       if (currentFrame.layoutMode !== 'NONE') {
-        currentFrame.paddingTop = typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0;
-        currentFrame.paddingBottom = typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0;
-        currentFrame.paddingLeft = typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0;
-        currentFrame.paddingRight = typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0;
+        try {
+          breadcrumb('FRAME: Setting paddingTop to ' + (typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0));
+          currentFrame.paddingTop = typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingTop:', e.message);
+        }
+        
+        try {
+          breadcrumb('FRAME: Setting paddingBottom to ' + (typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0));
+          currentFrame.paddingBottom = typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingBottom:', e.message);
+        }
+        
+        try {
+          breadcrumb('FRAME: Setting paddingLeft to ' + (typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0));
+          currentFrame.paddingLeft = typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingLeft:', e.message);
+        }
+        
+        try {
+          breadcrumb('FRAME: Setting paddingRight to ' + (typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0));
+          currentFrame.paddingRight = typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0;
+        } catch (e) {
+          console.warn('⚠️ Failed to set paddingRight:', e.message);
+        }
         
         // Enhanced auto-layout properties
-        if (containerData.itemSpacing === 'AUTO') {
-          (currentFrame as any).itemSpacing = 'AUTO';
-        } else {
-          currentFrame.itemSpacing = typeof containerData.itemSpacing === 'number' ? containerData.itemSpacing : 0;
+        try {
+          if (containerData.itemSpacing === 'AUTO') {
+            (currentFrame as any).itemSpacing = 'AUTO';
+          } else {
+            currentFrame.itemSpacing = typeof containerData.itemSpacing === 'number' ? containerData.itemSpacing : 0;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set itemSpacing:', e.message);
         }
         
         // Layout wrap support
-        if (containerData.layoutWrap !== undefined) {
-          currentFrame.layoutWrap = containerData.layoutWrap;
+        try {
+          if (containerData.layoutWrap !== undefined) {
+            currentFrame.layoutWrap = containerData.layoutWrap;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set layoutWrap:', e.message);
         }
         
         // Primary axis alignment
-        if (containerData.primaryAxisAlignItems) {
-          currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+        try {
+          if (containerData.primaryAxisAlignItems) {
+            currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set primaryAxisAlignItems:', e.message);
         }
         
         // Counter axis alignment
-        if (containerData.counterAxisAlignItems) {
-          currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+        try {
+          if (containerData.counterAxisAlignItems) {
+            currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisAlignItems:', e.message);
         }
         
-        // Sizing modes
-        if (containerData.primaryAxisSizingMode) {
-          currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+        // Sizing modes - Skip primaryAxisSizingMode here if we have explicit width
+        // (it will be set to FIXED later in the width setting block)
+        console.log('🔍 EARLY CHECK:', {
+          hasWidth: !!containerData.width,
+          widthValue: containerData.width,
+          skipEarlySetting: !containerData.width
+        });
+        
+        if (!containerData.width || containerData.width === 0) {
+          try {
+            if (containerData.primaryAxisSizingMode) {
+              const hasPrimarySetter = Object.getOwnPropertyDescriptor(currentFrame, 'primaryAxisSizingMode')?.set !== undefined;
+              if (hasPrimarySetter) {
+                breadcrumb('FRAME: Setting early primaryAxisSizingMode to ' + containerData.primaryAxisSizingMode);
+                currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
+                console.log('🔍 Set primaryAxisSizingMode early:', containerData.primaryAxisSizingMode);
+              } else {
+                console.warn('⚠️ Skipping early primaryAxisSizingMode - setter not available');
+              }
+            }
+          } catch (e) {
+            console.warn('⚠️ Failed to set primaryAxisSizingMode:', e.message);
+          }
+        } else {
+          console.log('🔍 SKIPPED early primaryAxisSizingMode setting (has width)');
         }
         
-        if (containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+        try {
+          if (containerData.counterAxisSizingMode) {
+            const hasCounterSetter = Object.getOwnPropertyDescriptor(currentFrame, 'counterAxisSizingMode')?.set !== undefined;
+            if (hasCounterSetter) {
+              breadcrumb('FRAME: Setting counterAxisSizingMode to ' + containerData.counterAxisSizingMode);
+              currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
+            } else {
+              console.warn('⚠️ Skipping counterAxisSizingMode - setter not available');
+            }
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisSizingMode:', e.message);
         }
       }
       
-      // Size constraints
-      if (containerData.minWidth !== undefined) {
-        currentFrame.minWidth = containerData.minWidth;
+      // Size constraints - wrapped in try-catch to prevent property setter errors
+      try {
+        if (containerData.minWidth !== undefined) {
+          currentFrame.minWidth = containerData.minWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minWidth:', e.message);
       }
-      if (containerData.maxWidth !== undefined) {
-        currentFrame.maxWidth = containerData.maxWidth;
+      
+      try {
+        if (containerData.maxWidth !== undefined) {
+          currentFrame.maxWidth = containerData.maxWidth;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxWidth:', e.message);
       }
-      if (containerData.minHeight !== undefined) {
-        currentFrame.minHeight = containerData.minHeight;
+      
+      try {
+        if (containerData.minHeight !== undefined) {
+          currentFrame.minHeight = containerData.minHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set minHeight:', e.message);
       }
-      if (containerData.maxHeight !== undefined) {
-        currentFrame.maxHeight = containerData.maxHeight;
+      
+      try {
+        if (containerData.maxHeight !== undefined) {
+          currentFrame.maxHeight = containerData.maxHeight;
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to set maxHeight:', e.message);
       }
       
       if (containerData.width) {
-        currentFrame.resize(containerData.width, currentFrame.height);
-        if (!containerData.counterAxisSizingMode) {
-          currentFrame.counterAxisSizingMode = "FIXED";
+        console.log('🚨 WIDTH SETTING ENTRY POINT:', {
+          layoutMode: currentFrame.layoutMode,
+          widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, 'width'),
+          hasWidthSetter: Object.getOwnPropertyDescriptor(currentFrame, 'width')?.set !== undefined
+        });
+        try {
+          // ENHANCED DEBUG: Comprehensive frame state logging
+          const frameState = {
+            width: containerData.width,
+            currentWidth: currentFrame.width,
+            layoutMode: currentFrame.layoutMode,
+            primaryAxisSizing: currentFrame.primaryAxisSizingMode,
+            counterAxisSizing: currentFrame.counterAxisSizingMode,
+            frameType: currentFrame.type,
+            parent: currentFrame.parent?.type,
+            hasLayoutMode: 'layoutMode' in currentFrame,
+            isAutoLayout: currentFrame.layoutMode !== 'NONE'
+          };
+
+          console.log('COMPREHENSIVE WIDTH SET ATTEMPT:', frameState);
+          console.log('FRAME PROPERTIES AVAILABLE:', Object.getOwnPropertyNames(currentFrame));
+          console.log('ATTEMPTING WIDTH SET ON:', {
+            nodeId: currentFrame.id,
+            nodeName: currentFrame.name,
+            canSetWidth: 'width' in currentFrame
+          });
+
+          if (currentFrame.layoutMode !== 'NONE') {
+            console.log('🔧 ATTEMPTING AUTO-LAYOUT WIDTH SET');
+            
+            // WORKAROUND: Create new auto-layout frame if width setter not available
+            const hasWidthSetter = Object.getOwnPropertyDescriptor(currentFrame, 'width')?.set !== undefined;
+            
+            if (!hasWidthSetter) {
+              console.log('⚠️ WIDTH SETTER NOT AVAILABLE - Using resize workaround for auto-layout frame');
+              
+              // Use resize as fallback, then set sizing modes
+              breadcrumb('FRAME: Using resize workaround for width ' + containerData.width);
+              currentFrame.resize(containerData.width, currentFrame.height);
+              
+              try {
+                // Check if sizing mode setters are available
+                const hasPrimarySetter = Object.getOwnPropertyDescriptor(currentFrame, 'primaryAxisSizingMode')?.set !== undefined;
+                const hasCounterSetter = Object.getOwnPropertyDescriptor(currentFrame, 'counterAxisSizingMode')?.set !== undefined;
+                
+                console.log('🔧 SIZING MODE SETTERS CHECK:', {
+                  hasPrimarySetter,
+                  hasCounterSetter,
+                  layoutMode: currentFrame.layoutMode
+                });
+                
+                if (hasPrimarySetter) {
+                  breadcrumb('FRAME: Setting primaryAxisSizingMode to FIXED (resize workaround)');
+                  currentFrame.primaryAxisSizingMode = "FIXED";
+                } else {
+                  console.warn('⚠️ primaryAxisSizingMode setter not available');
+                }
+                
+                if (hasCounterSetter) {
+                  breadcrumb('FRAME: Setting counterAxisSizingMode to ' + (containerData.counterAxisSizingMode || "FIXED") + ' (resize workaround)');
+                  currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
+                } else {
+                  console.warn('⚠️ counterAxisSizingMode setter not available');
+                }
+              } catch (e) {
+                console.warn('⚠️ Could not set sizing modes:', e.message);
+              }
+              
+              console.log('✅ Applied width via resize workaround:', containerData.width);
+            } else {
+              // Standard width setting for proper auto-layout frames
+              breadcrumb('FRAME: Setting width directly to ' + containerData.width);
+              currentFrame.width = containerData.width;
+              console.log('✅ Set width directly:', containerData.width);
+            }
+          } else {
+            // For regular frames, use resize
+            console.log('REGULAR FRAME RESIZE:', {
+              currentHeight: currentFrame.height,
+              targetWidth: containerData.width
+            });
+            breadcrumb('FRAME: Regular frame resize to width ' + containerData.width);
+            currentFrame.resize(containerData.width, currentFrame.height);
+            console.log('Regular frame resized successfully');
+          }
+        } catch (e) {
+          console.error('DETAILED WIDTH SET ERROR:', {
+            message: e.message,
+            stack: e.stack,
+            containerWidth: containerData.width,
+            frameState: {
+              type: currentFrame.type,
+              layoutMode: currentFrame.layoutMode,
+              primaryAxis: currentFrame.primaryAxisSizingMode,
+              counterAxis: currentFrame.counterAxisSizingMode
+            }
+          });
         }
-      } else if (!containerData.counterAxisSizingMode) {
-        currentFrame.counterAxisSizingMode = "AUTO";
+      } else {
+        try {
+          if (!containerData.counterAxisSizingMode) {
+            currentFrame.counterAxisSizingMode = "AUTO";
+          }
+        } catch (e) {
+          console.warn('⚠️ Failed to set counterAxisSizingMode (AUTO):', e.message);
+        }
       }
     }
     
@@ -1628,37 +3386,499 @@ export class FigmaRenderer {
     if (!items || !Array.isArray(items)) return currentFrame;
     
     for (const item of items) {
-      if (item.type === 'layoutContainer') {
-        console.log('🔧 Creating nested layoutContainer:', item.name, 'layoutMode:', item.layoutMode);
-        const nestedFrame = figma.createFrame();
-        currentFrame.appendChild(nestedFrame);
+      try {
+        console.log('🔥 PROCESSING ITEM:', item.type, item.name || 'unnamed', 'layoutMode:', item.layoutMode);
         
-        // Apply child layout properties
-        this.applyChildLayoutProperties(nestedFrame, item);
+        // Pre-process item to fix common issues
+        const processedItem = {...item};
         
-        await this.generateUIFromDataSystematic({ layoutContainer: item, items: item.items }, nestedFrame);
-      } 
-      else if (item.type === 'frame' && item.layoutContainer) {
-        const nestedFrame = figma.createFrame();
-        currentFrame.appendChild(nestedFrame);
-        await this.generateUIFromDataSystematic(item, nestedFrame);
-      }
-      else if (item.type === 'native-text' || item.type === 'text') {
-        await this.createTextNode(item, currentFrame);
-      }
-      else if (item.type === 'native-rectangle') {
-        await this.createRectangleNode(item, currentFrame);
-      }
-      else if (item.type === 'native-circle') {
-        await this.createEllipseNode(item, currentFrame);
-      }
-      else {
-        // Use systematic approach for components
-        await this.createComponentInstanceSystematic(item, currentFrame);
+        // Validate and potentially transform native types
+        if (processedItem.type?.startsWith('native-')) {
+          const validatedType = this.validateNativeType(processedItem.type);
+          
+          if (!validatedType) {
+            console.error(`❌ Skipping invalid native element type: ${processedItem.type}`);
+            continue;
+          }
+          
+          // If it transformed to layoutContainer, handle accordingly
+          if (validatedType === 'layoutContainer') {
+            processedItem.type = 'layoutContainer';
+            processedItem.layoutMode = processedItem.layoutMode || 'VERTICAL';
+            processedItem.itemSpacing = processedItem.itemSpacing || 8;
+            // Move items if they were in properties
+            if (processedItem.properties?.items) {
+              processedItem.items = processedItem.properties.items;
+              delete processedItem.properties.items;
+            }
+          } else {
+            processedItem.type = validatedType;
+          }
+        }
+        
+        // Normalize component ID property
+        if (processedItem.type === 'component') {
+          processedItem.componentNodeId = processedItem.componentNodeId ||
+                                         processedItem.componentId ||
+                                         processedItem.id;
+          delete processedItem.componentId;
+          delete processedItem.id;
+        }
+        
+        // Sanitize width properties
+        if (processedItem.properties?.width) {
+          const sanitizedWidth = this.sanitizeWidth(processedItem.properties.width);
+          if (sanitizedWidth === null && processedItem.properties.width === '100%') {
+            processedItem.properties.horizontalSizing = 'FILL';
+            delete processedItem.properties.width;
+          } else if (sanitizedWidth !== null) {
+            processedItem.properties.width = sanitizedWidth;
+          } else {
+            delete processedItem.properties.width;
+          }
+        }
+        
+        // Handle container width
+        if (processedItem.width && processedItem.layoutMode) {
+          const sanitizedWidth = this.sanitizeWidth(processedItem.width);
+          if (sanitizedWidth !== null) {
+            processedItem.width = sanitizedWidth;
+          } else {
+            delete processedItem.width;
+            processedItem.counterAxisSizingMode = 'AUTO';
+          }
+        }
+        
+        // Process based on type
+        if (processedItem.type === 'layoutContainer') {
+          console.log('🔥 CREATING NESTED LAYOUT CONTAINER:', processedItem.name, 'layoutMode:', processedItem.layoutMode);
+          console.log('🚀 DEPLOYMENT CHECK AUG 12 2025 - CODE IS DEPLOYED AND RUNNING');
+          breadcrumb('NESTED: Creating layoutContainer frame for ' + (processedItem.name || 'unnamed'));
+          const nestedFrame = figma.createFrame();
+          breadcrumb('NESTED: Appending layoutContainer frame to parent');
+          currentFrame.appendChild(nestedFrame);
+          
+          console.log('🔍 DEBUG: Created nested frame with defaults:', {
+            name: processedItem.name,
+            layoutMode: processedItem.layoutMode,
+            primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+            counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+            height: nestedFrame.height
+          });
+          
+          // Apply child layout properties
+          console.log('🚨 DEBUG LINE 3072: About to call applyChildLayoutProperties', {
+            nestedFrameType: nestedFrame.type,
+            itemType: processedItem.type,
+            itemKeys: Object.keys(processedItem),
+            itemHasProperties: 'properties' in processedItem,
+            itemDirectProperties: {
+              layoutAlign: processedItem.layoutAlign,
+              horizontalSizing: processedItem.horizontalSizing,
+              layoutGrow: processedItem.layoutGrow,
+              width: processedItem.width,
+              layoutMode: processedItem.layoutMode
+            }
+          });
+          
+          // CORRECT - only pass relevant child layout properties
+          // CRITICAL FIX: Include sizing modes for horizontal containers
+          const childLayoutProps = {
+            layoutAlign: processedItem.layoutAlign,
+            horizontalSizing: processedItem.horizontalSizing,
+            layoutGrow: processedItem.layoutGrow,
+            layoutPositioning: processedItem.layoutPositioning,
+            minWidth: processedItem.minWidth,
+            maxWidth: processedItem.maxWidth,
+            minHeight: processedItem.minHeight,
+            maxHeight: processedItem.maxHeight,
+            // FIX: Pass sizing modes so horizontal containers can hug content
+            primaryAxisSizingMode: processedItem.primaryAxisSizingMode,
+            counterAxisSizingMode: processedItem.counterAxisSizingMode,
+            layoutMode: processedItem.layoutMode
+          };
+          
+          // Remove undefined properties to avoid unnecessary processing
+          Object.keys(childLayoutProps).forEach(key => {
+            if (childLayoutProps[key] === undefined) {
+              delete childLayoutProps[key];
+            }
+          });
+          
+          breadcrumb('NESTED: Applying child layout properties to layoutContainer');
+          this.applyChildLayoutProperties(nestedFrame, childLayoutProps);
+          
+          // CRITICAL FIX: Reset height for horizontal AUTO containers
+          if (nestedFrame.layoutMode === 'HORIZONTAL' && nestedFrame.primaryAxisSizingMode === 'AUTO') {
+            console.log('🔧 HORIZONTAL AUTO CONTAINER: Forcing height reset from default 100px');
+            
+            // Direct approach: Force height to hug by resetting the frame height
+            try {
+              // Method 1: Try to force height recalculation by changing the height property
+              console.log('📏 Current height before fix:', nestedFrame.height);
+              
+              // For horizontal containers with AUTO primary axis, the height should adapt to content
+              // Force the frame to recalculate its height based on children
+              const children = nestedFrame.children;
+              if (children.length > 0) {
+                // Calculate the maximum height of child elements
+                let maxChildHeight = 0;
+                for (const child of children) {
+                  if ('height' in child) {
+                    maxChildHeight = Math.max(maxChildHeight, (child as any).height);
+                  }
+                }
+                
+                console.log('📏 Calculated max child height:', maxChildHeight);
+                
+                if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
+                  // Apply padding if it exists
+                  const paddingTop = (nestedFrame as any).paddingTop || 0;
+                  const paddingBottom = (nestedFrame as any).paddingBottom || 0;
+                  const targetHeight = maxChildHeight + paddingTop + paddingBottom;
+                  
+                  console.log('📏 Setting frame height to:', targetHeight);
+                  nestedFrame.resize(nestedFrame.width, targetHeight);
+                }
+              }
+              
+              console.log('📏 Final height after fix:', nestedFrame.height);
+              console.log('✅ Height reset complete - should now hug content');
+            } catch (error) {
+              console.error('❌ Height reset failed:', error);
+            }
+          }
+          
+          console.log('🔍 DEBUG: After applyChildLayoutProperties:', {
+            name: processedItem.name,
+            layoutMode: nestedFrame.layoutMode,
+            primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+            counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+            height: nestedFrame.height
+          });
+          
+          breadcrumb('NESTED: Recursive call to generateUIFromDataSystematic for layoutContainer');
+          await this.generateUIFromDataSystematic({
+            layoutContainer: processedItem,
+            items: processedItem.items
+          }, nestedFrame);
+          
+          console.log('🔍 DEBUG: Final frame properties:', {
+            name: nestedFrame.name,
+            layoutMode: nestedFrame.layoutMode,
+            primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
+            counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
+            height: nestedFrame.height
+          });
+          
+        } else if (processedItem.type === 'frame' && processedItem.layoutContainer) {
+          breadcrumb('NESTED: Creating frame with layoutContainer');
+          const nestedFrame = figma.createFrame();
+          breadcrumb('NESTED: Appending frame to parent');
+          currentFrame.appendChild(nestedFrame);
+          breadcrumb('NESTED: Recursive call for frame type');
+          await this.generateUIFromDataSystematic(processedItem, nestedFrame);
+          
+        }
+        
+        // Safe defensive conversion for native elements with children
+        else if (processedItem.type?.startsWith('native-') && (processedItem.items || processedItem.properties?.items)) {
+          console.warn(`⚠️ Invalid structure: ${processedItem.type} cannot have child items`);
+          console.warn('📦 Auto-converting to layoutContainer to prevent crash');
+          
+          // Extract the items array (might be in different places)
+          const childItems = processedItem.items || processedItem.properties?.items || [];
+          
+          // Create a proper container that preserves visual intent
+          const safeContainer = {
+            type: 'layoutContainer',
+            layoutMode: 'VERTICAL',
+            itemSpacing: 0,
+            padding: 0,
+            items: childItems
+          };
+          
+          // Preserve visual styling if it was a styled rectangle
+          if (processedItem.type === 'native-rectangle' && processedItem.properties) {
+            // Transfer visual properties safely
+            if (processedItem.properties.fill?.color) {
+              safeContainer.backgroundColor = processedItem.properties.fill.color;
+            }
+            if (processedItem.properties.cornerRadius) {
+              safeContainer.cornerRadius = processedItem.properties.cornerRadius;
+            }
+            if (processedItem.properties.padding) {
+              safeContainer.padding = processedItem.properties.padding;
+            }
+            // Transfer sizing if present
+            if (processedItem.properties.width) {
+              safeContainer.width = processedItem.properties.width;
+            }
+            if (processedItem.properties.height) {
+              safeContainer.height = processedItem.properties.height;
+            }
+          }
+          
+          // Log what we're doing for debugging
+          console.log('🔄 Converted structure:', {
+            from: processedItem.type,
+            to: 'layoutContainer',
+            preservedStyling: {
+              backgroundColor: safeContainer.backgroundColor || 'none',
+              cornerRadius: safeContainer.cornerRadius || 'none'
+            }
+          });
+          
+          // Process as container instead of native element
+          breadcrumb('NESTED: Creating defensive container frame for native element');
+          const nestedFrame = figma.createFrame();
+          breadcrumb('NESTED: Appending defensive container to parent');
+          currentFrame.appendChild(nestedFrame);
+          
+          console.log('🚨 DEBUG LINE 3138: About to call applyChildLayoutProperties', {
+            nestedFrameType: nestedFrame.type,
+            itemType: safeContainer.type,
+            itemKeys: Object.keys(safeContainer),
+            itemHasProperties: 'properties' in safeContainer,
+            itemDirectProperties: {
+              layoutAlign: safeContainer.layoutAlign,
+              horizontalSizing: safeContainer.horizontalSizing,
+              layoutGrow: safeContainer.layoutGrow,
+              width: safeContainer.width,
+              layoutMode: safeContainer.layoutMode
+            }
+          });
+          
+          // CORRECT - only pass relevant child layout properties
+          const childLayoutProps2 = {
+            layoutAlign: safeContainer.layoutAlign,
+            horizontalSizing: safeContainer.horizontalSizing,
+            layoutGrow: safeContainer.layoutGrow,
+            layoutPositioning: safeContainer.layoutPositioning,
+            minWidth: safeContainer.minWidth,
+            maxWidth: safeContainer.maxWidth,
+            minHeight: safeContainer.minHeight,
+            maxHeight: safeContainer.maxHeight
+          };
+          
+          // Remove undefined properties to avoid unnecessary processing
+          Object.keys(childLayoutProps2).forEach(key => {
+            if (childLayoutProps2[key] === undefined) {
+              delete childLayoutProps2[key];
+            }
+          });
+          
+          breadcrumb('NESTED: Applying child layout properties to defensive container');
+          this.applyChildLayoutProperties(nestedFrame, childLayoutProps2);
+          
+          breadcrumb('NESTED: Recursive call for defensive container');
+          await this.generateUIFromDataSystematic({
+            layoutContainer: safeContainer,
+            items: safeContainer.items
+          }, nestedFrame);
+          continue;
+        }
+        // NATIVE ELEMENTS - Handle these BEFORE component resolution
+        else if (processedItem.type === 'native-text' || processedItem.type === 'text') {
+          await this.createTextNode(processedItem, currentFrame);
+          continue;
+        }
+        else if (processedItem.type === 'native-rectangle') {
+          await this.createRectangleNode(processedItem, currentFrame);
+          continue;
+        }
+        else if (processedItem.type === 'native-circle') {
+          await this.createEllipseNode(processedItem, currentFrame);
+          continue;
+        }
+        // COMPONENT ELEMENTS
+        else if (processedItem.type === 'component') {
+          if (!processedItem.componentNodeId) {
+            console.error('❌ No component ID found after normalization');
+            continue;
+          }
+          
+          let componentNode;
+          try {
+            componentNode = await figma.getNodeByIdAsync(processedItem.componentNodeId);
+          } catch (nodeError) {
+            console.warn(`⚠️ Error accessing component ${processedItem.componentNodeId}: ${nodeError.message}`);
+            componentNode = null;
+          }
+          
+          if (!componentNode) {
+            console.warn(`⚠️ Component ${processedItem.componentNodeId} not found - creating placeholder`);
+            await this.createMissingComponentPlaceholder(processedItem.componentNodeId, currentFrame);
+            continue;
+          }
+          
+          // Get component info from design system scan data if available
+          let componentInfo = null;
+          try {
+            // Import DesignSystemScannerService at runtime to avoid circular imports
+            const { DesignSystemScannerService } = await import('./design-system-scanner-service');
+            const scanSession = await DesignSystemScannerService.getScanSession();
+            if (scanSession?.components) {
+              componentInfo = scanSession.components.find(c => c.id === processedItem.componentNodeId);
+            }
+          } catch (error) {
+            console.warn('⚠️ Could not load component info from scan data:', error);
+          }
+          
+          // Normalize properties
+          if (processedItem.properties && componentInfo?.textLayers) {
+            processedItem.properties = this.normalizePropertyNames(
+              processedItem.properties,
+              componentInfo.textLayers
+            );
+          }
+          
+          // Validate and fix variants
+          if (processedItem.variants && componentInfo?.variantDetails) {
+            processedItem.variants = this.validateAndFixVariants(
+              processedItem.variants,
+              componentInfo.variantDetails
+            );
+          }
+          
+          // Use systematic approach for components with processed data
+          await this.createComponentInstanceSystematic(processedItem, currentFrame);
+          
+          // ADD THIS: Apply child layout properties for components at top level
+          const componentInstance = currentFrame.children[currentFrame.children.length - 1];
+          if (componentInstance) {
+            // Extract child layout properties from the item
+            const childLayoutProps = {
+              layoutAlign: processedItem.layoutAlign || processedItem.properties?.layoutAlign,
+              horizontalSizing: processedItem.horizontalSizing || processedItem.properties?.horizontalSizing,
+              layoutGrow: processedItem.layoutGrow || processedItem.properties?.layoutGrow,
+              layoutPositioning: processedItem.layoutPositioning || processedItem.properties?.layoutPositioning,
+              minWidth: processedItem.minWidth || processedItem.properties?.minWidth,
+              maxWidth: processedItem.maxWidth || processedItem.properties?.maxWidth,
+              minHeight: processedItem.minHeight || processedItem.properties?.minHeight,
+              maxHeight: processedItem.maxHeight || processedItem.properties?.maxHeight
+            };
+            
+            // Remove undefined properties
+            Object.keys(childLayoutProps).forEach(key => {
+              if (childLayoutProps[key] === undefined) {
+                delete childLayoutProps[key];
+              }
+            });
+            
+            // Apply child layout properties if any exist
+            if (Object.keys(childLayoutProps).length > 0) {
+              console.log('✅ Applying child layout properties to component:', childLayoutProps);
+              this.applyChildLayoutProperties(componentInstance, childLayoutProps);
+            }
+          }
+        }
+        else {
+          // Use systematic approach for other types
+          await this.createComponentInstanceSystematic(processedItem, currentFrame);
+          
+          // ADD THIS: Apply child layout properties for other types at top level
+          const createdInstance = currentFrame.children[currentFrame.children.length - 1];
+          if (createdInstance) {
+            // Extract child layout properties from the item
+            const childLayoutProps = {
+              layoutAlign: processedItem.layoutAlign || processedItem.properties?.layoutAlign,
+              horizontalSizing: processedItem.horizontalSizing || processedItem.properties?.horizontalSizing,
+              layoutGrow: processedItem.layoutGrow || processedItem.properties?.layoutGrow,
+              layoutPositioning: processedItem.layoutPositioning || processedItem.properties?.layoutPositioning,
+              minWidth: processedItem.minWidth || processedItem.properties?.minWidth,
+              maxWidth: processedItem.maxWidth || processedItem.properties?.maxWidth,
+              minHeight: processedItem.minHeight || processedItem.properties?.minHeight,
+              maxHeight: processedItem.maxHeight || processedItem.properties?.maxHeight
+            };
+            
+            // Remove undefined properties
+            Object.keys(childLayoutProps).forEach(key => {
+              if (childLayoutProps[key] === undefined) {
+                delete childLayoutProps[key];
+              }
+            });
+            
+            // Apply child layout properties if any exist
+            if (Object.keys(childLayoutProps).length > 0) {
+              console.log('✅ Applying child layout properties to other type:', childLayoutProps);
+              this.applyChildLayoutProperties(createdInstance, childLayoutProps);
+            }
+          }
+        }
+        
+      } catch (itemError) {
+        console.error(`❌ Error rendering item:`, itemError);
+        console.log('Problematic item:', JSON.stringify(item, null, 2));
+        
+        // Create error placeholder
+        try {
+          breadcrumb('ERROR: Creating error placeholder frame');
+          const errorFrame = figma.createFrame();
+          try {
+            errorFrame.name = `Error: ${itemError.message}`;
+          } catch (e) {
+            console.warn('Could not set name on error frame:', e.message);
+          }
+          try {
+            errorFrame.fills = [{type: 'SOLID', color: {r: 1, g: 0.8, b: 0.8}}];
+          } catch (e) {
+            console.warn('Could not set fills on error frame:', e.message);
+          }
+          try {
+            errorFrame.resize(200, 50);
+          } catch (e) {
+            console.warn('Could not resize error frame:', e.message);
+          }
+          currentFrame.appendChild(errorFrame);
+        } catch (e) {
+          console.error('Could not create error placeholder:', e);
+        }
+        
+        // Continue with next item instead of failing entire render
+        continue;
       }
     }
     
-    if (parentNode.type === 'PAGE') {
+    // Post-processing: Ensure frame maintains intended dimensions after content is added
+    const postProcessContainerData = layoutData.layoutContainer || layoutData;
+    if (postProcessContainerData && postProcessContainerData.width && currentFrame.layoutMode !== 'NONE') {
+      console.log('🔧 Post-processing: Re-enforcing frame width to:', postProcessContainerData.width);
+      breadcrumb('POSTPROCESS: Re-enforcing frame width to ' + postProcessContainerData.width);
+      
+      // Check if width setter is available
+      const hasWidthSetter = Object.getOwnPropertyDescriptor(currentFrame, 'width')?.set !== undefined;
+      
+      if (hasWidthSetter) {
+        currentFrame.width = postProcessContainerData.width;
+        console.log('✅ Re-enforced width via setter');
+      } else {
+        // Use resize as fallback
+        try {
+          currentFrame.resize(postProcessContainerData.width, currentFrame.height);
+          console.log('✅ Re-enforced width via resize fallback');
+        } catch (resizeError) {
+          console.warn('⚠️ Could not re-enforce width:', resizeError.message);
+          // Continue without re-enforcing - not critical
+        }
+      }
+    }
+
+    // Add this BEFORE the final return statement
+    // After all content is rendered, adjust height if this is a root frame
+    if (parentNode.type === 'PAGE' && currentFrame.layoutMode !== 'NONE') {
+      const minHeight = containerData.minHeight || 812;
+      await this.adjustRootFrameHeight(currentFrame, minHeight);
+      
+      console.log('🎯 Final root frame dimensions:', {
+        width: currentFrame.width,
+        height: currentFrame.height,
+        primaryAxisSizing: currentFrame.primaryAxisSizingMode,
+        minHeight: currentFrame.minHeight
+      });
+    }
+
+    if (parentNode.type === 'PAGE') {      
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);
       
@@ -1670,6 +3890,40 @@ export class FigmaRenderer {
     }
     
     return currentFrame;
+    
+    } catch (error) {
+      console.error('❌ BREADCRUMB LOCATION:', lastBreadcrumb);
+      console.error('❌ generateUIFromDataSystematic error:', error);
+      console.error('❌ Error details:', {
+        lastBreadcrumb: lastBreadcrumb,
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        layoutData: layoutData,
+        parentNodeType: parentNode.type
+      });
+      
+      // Create a basic frame as fallback
+      breadcrumb('FALLBACK: Creating fallback frame');
+      const fallbackFrame = figma.createFrame();
+      try {
+        fallbackFrame.name = "Error Frame";
+      } catch (e) {
+        console.warn('Could not set name on fallback frame:', e.message);
+      }
+      try {
+        fallbackFrame.resize(375, 100);
+      } catch (e) {
+        console.warn('Could not resize fallback frame:', e.message);
+      }
+      
+      if (parentNode.type === 'PAGE') {
+        parentNode.appendChild(fallbackFrame);
+      }
+      
+      figma.notify(`❌ Error creating UI: ${error.message}`, { error: true });
+      return fallbackFrame;
+    }
   }
 
   /**
@@ -1723,6 +3977,37 @@ export class FigmaRenderer {
   }
 
   /**
+   * Ensure design tokens are loaded before UI generation
+   */
+  static async ensureDesignTokensLoaded(): Promise<void> {
+    if (!this.cachedDesignTokens) {
+      console.log('🔧 Design tokens not cached, attempting to load from storage...');
+      try {
+        const scanSession = await SessionManager.loadLastScanSession();
+        if (scanSession?.designTokens) {
+          this.setDesignTokens(scanSession.designTokens);
+          console.log('✅ Design tokens loaded from scan session');
+        } else {
+          console.warn('⚠️ No design tokens found in storage. Run a design system scan first.');
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to load design tokens from storage:', e);
+      }
+    } else {
+      console.log('✅ Design tokens already cached');
+    }
+  }
+
+  /**
+   * Ensure all cached design system data is loaded (color styles, text styles, design tokens)
+   */
+  static async ensureDesignSystemDataLoaded(): Promise<void> {
+    await this.ensureColorStylesLoaded();
+    await this.ensureDesignTokensLoaded();
+    // Note: Text styles are loaded differently since they don't have a caching mechanism like colors/tokens
+  }
+
+  /**
    * Initialize Color Styles from a scan session
    */
   static setColorStyles(colorStyles: ColorStyleCollection | null): void {
@@ -1733,6 +4018,88 @@ export class FigmaRenderer {
     }
   }
   
+  /**
+   * NEW: Set cached design tokens for renderer to use
+   */
+  static setDesignTokens(designTokens: DesignToken[]): void {
+    this.cachedDesignTokens = designTokens;
+    console.log(`🔧 Cached ${designTokens?.length || 0} design tokens for renderer`);
+  }
+
+  /**
+   * NEW: Resolve design token names to RGB values
+   * Supports various token naming patterns: 'button.primary', 'color-primary-500', 'Primary/500'
+   */
+  static resolveDesignTokenReference(tokenName: string): RGB | null {
+    if (!this.cachedDesignTokens || this.cachedDesignTokens.length === 0) {
+      return null;
+    }
+    
+    console.log(`🔧 Resolving design token: "${tokenName}"`);
+    
+    // Find exact match first
+    const exactMatch = this.cachedDesignTokens.find(token =>
+      token.type === 'COLOR' && token.name === tokenName
+    );
+    
+    if (exactMatch) {
+      console.log(`✅ Found exact design token: ${exactMatch.name}`);
+      return this.convertTokenValueToRgb(exactMatch.value);
+    }
+    
+    // Try case-insensitive match
+    const caseInsensitiveMatch = this.cachedDesignTokens.find(token =>
+      token.type === 'COLOR' && token.name.toLowerCase() === tokenName.toLowerCase()
+    );
+    
+    if (caseInsensitiveMatch) {
+      console.log(`✅ Found case-insensitive design token: ${caseInsensitiveMatch.name}`);
+      return this.convertTokenValueToRgb(caseInsensitiveMatch.value);
+    }
+    
+    // Try pattern matching: 'collection/name' format
+    const collectionMatch = this.cachedDesignTokens.find(token =>
+      token.type === 'COLOR' && `${token.collection}/${token.name}`.toLowerCase() === tokenName.toLowerCase()
+    );
+    
+    if (collectionMatch) {
+      console.log(`✅ Found collection-based design token: ${collectionMatch.collection}/${collectionMatch.name}`);
+      return this.convertTokenValueToRgb(collectionMatch.value);
+    }
+    
+    console.warn(`⚠️ Could not find design token "${tokenName}"`);
+    return null;
+  }
+  
+  /**
+   * NEW: Convert design token value to RGB
+   */
+  private static convertTokenValueToRgb(tokenValue: any): RGB | null {
+    try {
+      // Handle Figma Variables color format: {r: 0.1, g: 0.2, b: 0.3}
+      if (typeof tokenValue === 'object' && tokenValue !== null) {
+        if ('r' in tokenValue && 'g' in tokenValue && 'b' in tokenValue) {
+          return {
+            r: Math.max(0, Math.min(1, Number(tokenValue.r) || 0)),
+            g: Math.max(0, Math.min(1, Number(tokenValue.g) || 0)),
+            b: Math.max(0, Math.min(1, Number(tokenValue.b) || 0))
+          };
+        }
+      }
+      
+      // Handle hex string format: "#ff0000"
+      if (typeof tokenValue === 'string' && tokenValue.startsWith('#')) {
+        return this.hexToRgb(tokenValue);
+      }
+      
+      console.warn(`⚠️ Unsupported token value format:`, tokenValue);
+      return null;
+    } catch (error) {
+      console.error(`❌ Error converting token value:`, error);
+      return null;
+    }
+  }
+
   /**
    * Resolve color style names to actual Figma color styles (for style application)
    * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
@@ -1758,7 +4125,7 @@ export class FigmaRenderer {
       }
       
       // Fallback: case-insensitive search
-      const caseInsensitiveMatch = localPaintStyles.find(style => 
+      const caseInsensitiveMatch = localPaintStyles.find(style =>
         style.name.toLowerCase() === colorStyleName.toLowerCase()
       );
       if (caseInsensitiveMatch) {
@@ -1774,6 +4141,34 @@ export class FigmaRenderer {
       console.error(`❌ Error resolving color style "${colorStyleName}":`, error);
       return null;
     }
+  }
+
+  /**
+   * ENHANCED: Resolve color references with 3-tier fallback system
+   * 1. Design Tokens (preferred)
+   * 2. Color Styles (legacy)
+   * 3. Semantic color fallback
+   */
+  static resolveColorReference(colorName: string): RGB | null {
+    console.log(`🎨 Resolving color: "${colorName}" with 3-tier system`);
+    
+    // Tier 1: Try design tokens first (modern approach)
+    const tokenColor = this.resolveDesignTokenReference(colorName);
+    if (tokenColor) {
+      console.log(`✅ Resolved via design token`);
+      return tokenColor;
+    }
+    
+    // Tier 2: Fallback to color styles (legacy approach)
+    const styleColor = this.resolveSemanticColor(colorName);
+    if (styleColor && !(styleColor.r === 0 && styleColor.g === 0 && styleColor.b === 0)) {
+      console.log(`✅ Resolved via color style`);
+      return styleColor;
+    }
+    
+    // Tier 3: Ultimate fallback
+    console.warn(`⚠️ Could not resolve color "${colorName}" through any method`);
+    return { r: 0, g: 0, b: 0 }; // Black fallback
   }
 
   /**
@@ -1799,7 +4194,7 @@ export class FigmaRenderer {
     }
     
     // Fallback: case-insensitive search
-    const caseInsensitiveMatch = allCategories.find(style => 
+    const caseInsensitiveMatch = allCategories.find(style =>
       style.name.toLowerCase() === colorStyleName.toLowerCase()
     );
     
@@ -1850,7 +4245,7 @@ export class FigmaRenderer {
    * Helper method to resolve and apply semantic colors to text nodes
    */
   static applySemanticTextColor(textNode: TextNode, semanticColorName: string): boolean {
-    const rgb = this.resolveSemanticColor(semanticColorName);
+    const rgb = this.resolveColorReference(semanticColorName);
     if (rgb) {
       textNode.fills = [this.createSolidPaint(rgb)];
       console.log(`✅ Applied semantic color "${semanticColorName}" to text node`);
@@ -1872,12 +4267,351 @@ export class FigmaRenderer {
     }
     
     // Fallback to RGB color if style not found
-    const rgb = this.resolveSemanticColor(semanticColorName);
+    const rgb = this.resolveColorReference(semanticColorName);
     if (rgb && 'fills' in node) {
       (node as any).fills = [this.createSolidPaint(rgb)];
       console.log(`✅ Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
       return true;
     }
     return false;
+  }
+  
+  // Text Styles Caching and Resolution
+  
+  /**
+   * Sets the cached text styles for the renderer
+   * Mirrors setColorStyles pattern exactly
+   */
+  static setTextStyles(textStyles: TextStyle[]): void {
+    FigmaRenderer.cachedTextStyles = textStyles;
+    console.log(`📝 Cached ${textStyles.length} text styles for rendering`);
+    
+    // Log available text styles for debugging
+    if (textStyles.length > 0) {
+      console.log('Available text styles:', textStyles.map(s => s.name).join(', '));
+    }
+  }
+
+  /**
+   * Resolves text style name to Figma text style ID
+   * Mirrors resolveColorStyleReference pattern
+   */
+  static async resolveTextStyleReference(textStyleName: string): Promise<TextStyle | null> {
+    console.log(`📝 Resolving text style reference: "${textStyleName}"`);
+    
+    try {
+      // Get all local text styles from Figma
+      const localTextStyles = await figma.getLocalTextStylesAsync();
+      console.log(`📋 Found ${localTextStyles.length} local text styles in Figma`);
+      
+      // Debug: Show first few style names
+      if (localTextStyles.length > 0) {
+        console.log(`📋 First 5 text style names:`, localTextStyles.slice(0, 5).map(s => s.name));
+      }
+      
+      // Find exact match first
+      const exactMatch = localTextStyles.find(style => style.name === textStyleName);
+      if (exactMatch) {
+        console.log(`✅ Found exact text style: ${exactMatch.name}`);
+        return exactMatch;
+      }
+      
+      // Fallback: case-insensitive search
+      const caseInsensitiveMatch = localTextStyles.find(style =>
+        style.name.toLowerCase() === textStyleName.toLowerCase()
+      );
+      if (caseInsensitiveMatch) {
+        console.log(`✅ Found case-insensitive text style: ${caseInsensitiveMatch.name}`);
+        return caseInsensitiveMatch;
+      }
+      
+      console.warn(`⚠️ Could not find text style "${textStyleName}"`);
+      console.log(`📋 All available text styles:`, localTextStyles.map(s => s.name));
+      return null;
+      
+    } catch (error) {
+      console.error(`❌ Error resolving text style "${textStyleName}":`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Applies text style to a text node
+   */
+  static async applyTextStyle(textNode: TextNode, textStyleName: string): Promise<void> {
+    try {
+      console.log(`📝 Attempting to apply text style: "${textStyleName}"`);
+      const textStyle = await FigmaRenderer.resolveTextStyleReference(textStyleName);
+      if (textStyle) {
+        console.log(`📝 Text style found - ID: ${textStyle.id}, Name: ${textStyle.name}`);
+        await textNode.setTextStyleIdAsync(textStyle.id);
+        console.log(`✅ Applied text style "${textStyleName}" to text node`);
+      } else {
+        console.warn(`❌ Could not apply text style "${textStyleName}" - style not found`);
+      }
+    } catch (error) {
+      console.error(`❌ Error applying text style "${textStyleName}":`, error);
+      console.error(`❌ Error details:`, {
+        errorMessage: error.message,
+        errorStack: error.stack,
+        textStyleName: textStyleName,
+        textNodeType: textNode?.type,
+        textNodeId: textNode?.id
+      });
+    }
+  }
+
+  /**
+   * Validates native element types and provides fallbacks
+   */
+  static validateNativeType(type: string): string | null {
+    const ALLOWED_NATIVE_TYPES = ['native-text', 'native-rectangle', 'native-circle'];
+    
+    if (ALLOWED_NATIVE_TYPES.includes(type)) {
+      return type;
+    }
+    
+    // Attempt intelligent fallback
+    const fallbackMap: Record<string, string> = {
+      'native-grid': 'layoutContainer',
+      'native-list-item': 'layoutContainer',
+      'native-rating': 'native-rectangle',
+      'native-image': 'native-rectangle',
+      'native-vertical-scroll': 'layoutContainer',
+      'native-horizontal-scroll': 'layoutContainer'
+    };
+    
+    if (fallbackMap[type]) {
+      console.warn(`⚠️ Unknown native type "${type}" - falling back to "${fallbackMap[type]}"`);
+      return fallbackMap[type];
+    }
+    
+    console.error(`❌ Unknown native type "${type}" - no fallback available`);
+    return null;
+  }
+
+  /**
+   * Sanitizes width properties to handle percentages and invalid values
+   */
+  static sanitizeWidth(width: any): number | null {
+    // Handle percentage strings
+    if (typeof width === 'string') {
+      // Remove percentage and convert
+      if (width.endsWith('%')) {
+        const percentage = parseFloat(width);
+        if (width === '100%') {
+          console.warn('⚠️ Converting width "100%" to horizontalSizing: "FILL"');
+          return null; // Signal to use FILL instead
+        } else {
+          // Convert percentage to approximate fixed width
+          const defaultContainerWidth = 375; // Mobile width
+          const calculated = (defaultContainerWidth * percentage) / 100;
+          console.warn(`⚠️ Converting width "${width}" to ${calculated}px`);
+          return calculated;
+        }
+      }
+      
+      // Try parsing as number
+      const parsed = parseFloat(width);
+      if (!isNaN(parsed)) {
+        return parsed;
+      }
+    }
+    
+    if (typeof width === 'number') {
+      return width;
+    }
+    
+    console.warn(`⚠️ Invalid width value: ${width}`);
+    return null;
+  }
+
+  /**
+   * Normalizes property names to match component schemas
+   */
+  static normalizePropertyNames(properties: any, textLayers?: string[]): any {
+    if (!properties) return {};
+    
+    const normalized = {...properties};
+    
+    // Common property aliases
+    const aliases: Record<string, string[]> = {
+      'Action': ['text', 'label', 'action', 'Default', 'buttonText'],
+      'label-text': ['label', 'labelText', 'text'],
+      'placeholder-text': ['placeholder', 'placeholderText'],
+      'isPassword': ['isSecure', 'secure', 'password'],
+      'Headline': ['title', 'heading', 'headline'],
+      'Supporting text': ['subtitle', 'description', 'supportingText'],
+      'Default': ['text', 'content', 'label']
+    };
+    
+    // If we have schema, use it for validation
+    if (textLayers && textLayers.length > 0) {
+      Object.keys(properties).forEach(propName => {
+        if (!textLayers.includes(propName)) {
+          // Find correct property name
+          for (const [correct, wrongNames] of Object.entries(aliases)) {
+            if (wrongNames.includes(propName) && textLayers.includes(correct)) {
+              console.warn(`⚠️ Normalizing property "${propName}" to "${correct}"`);
+              normalized[correct] = properties[propName];
+              delete normalized[propName];
+              break;
+            }
+          }
+        }
+      });
+    }
+    
+    return normalized;
+  }
+
+  /**
+   * Validates and fixes component variants
+   */
+  static validateAndFixVariants(
+    variants: any,
+    variantDetails: any
+  ): any {
+    if (!variants || !variantDetails) {
+      return variants || {};
+    }
+    
+    const fixed = {...variants};
+    
+    // Validate existing variants
+    Object.entries(variants).forEach(([propName, value]) => {
+      const validValues = variantDetails[propName];
+      
+      if (!validValues) {
+        console.warn(`⚠️ Unknown variant property "${propName}" - removing`);
+        delete fixed[propName];
+        return;
+      }
+      
+      // Check if value is valid
+      if (!validValues.includes(value)) {
+        // Try case-insensitive match
+        const match = validValues.find((v: string) =>
+          v.toLowerCase() === String(value).toLowerCase()
+        );
+        
+        if (match) {
+          console.warn(`⚠️ Fixing variant case: "${value}" → "${match}"`);
+          fixed[propName] = match;
+        } else {
+          console.warn(`⚠️ Invalid variant value "${value}" for "${propName}". Using default: "${validValues[0]}"`);
+          fixed[propName] = validValues[0];
+        }
+      }
+    });
+    
+    // Add missing required variants
+    Object.entries(variantDetails).forEach(([propName, values]: [string, any]) => {
+      if (!fixed[propName] && Array.isArray(values) && values.length > 0) {
+        console.warn(`⚠️ Adding missing variant "${propName}" with default: "${values[0]}"`);
+        fixed[propName] = values[0];
+      }
+    });
+    
+    return fixed;
+  }
+
+  /**
+   * Pre-render validation of entire layout data
+   */
+  static validateLayoutData(layoutData: any): {valid: boolean, errors: string[], warnings: string[]} {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    
+    // Validate root structure
+    if (!layoutData.layoutContainer && !layoutData.items) {
+      errors.push('Missing layoutContainer or items at root level');
+    }
+    
+    // Recursive validation function
+    const validateItems = (items: any[], path: string = '') => {
+      if (!Array.isArray(items)) return;
+      
+      items.forEach((item, index) => {
+        const itemPath = `${path}[${index}]`;
+        
+        // Check for unknown native types
+        if (item.type?.startsWith('native-') &&
+            !['native-text', 'native-rectangle', 'native-circle'].includes(item.type)) {
+          warnings.push(`Invalid native type "${item.type}" at ${itemPath} - will attempt fallback`);
+        }
+        
+        // Check for percentage widths
+        if (typeof item.width === 'string' && item.width.includes('%')) {
+          warnings.push(`Percentage width "${item.width}" at ${itemPath} - will convert`);
+        }
+        
+        if (typeof item.properties?.width === 'string' && item.properties.width.includes('%')) {
+          warnings.push(`Percentage width "${item.properties.width}" in properties at ${itemPath} - will convert`);
+        }
+        
+        // Check for component ID
+        if (item.type === 'component') {
+          if (!item.componentNodeId && !item.componentId && !item.id) {
+            errors.push(`Missing component ID at ${itemPath}`);
+          } else if (!item.componentNodeId) {
+            warnings.push(`Using legacy property name for component ID at ${itemPath} - will normalize`);
+          }
+        }
+        
+        // Recurse into nested items
+        if (item.items) {
+          validateItems(item.items, `${itemPath}.items`);
+        }
+        if (item.layoutContainer?.items) {
+          validateItems(item.layoutContainer.items, `${itemPath}.layoutContainer.items`);
+        }
+      });
+    };
+    
+    const items = layoutData.items || layoutData.layoutContainer?.items;
+    if (items) {
+      validateItems(items);
+    }
+    
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings
+    };
+  }
+
+  /**
+   * Creates a visual placeholder for missing components
+   */
+  static async createMissingComponentPlaceholder(
+    componentId: string,
+    parentNode: FrameNode
+  ): Promise<RectangleNode> {
+    const placeholder = figma.createRectangle();
+    placeholder.name = `Missing Component: ${componentId}`;
+    placeholder.fills = [{type: 'SOLID', color: {r: 1, g: 0.9, b: 0.9}}];
+    placeholder.resize(200, 100);
+    placeholder.cornerRadius = 8;
+    placeholder.strokes = [{type: 'SOLID', color: {r: 0.8, g: 0.2, b: 0.2}}];
+    placeholder.strokeWeight = 2;
+    placeholder.dashPattern = [5, 5];
+    parentNode.appendChild(placeholder);
+    
+    try {
+      const text = figma.createText();
+      await figma.loadFontAsync({family: "Inter", style: "Regular"});
+      text.characters = `Component\n${componentId}\nnot found`;
+      text.fontSize = 12;
+      text.fills = [{type: 'SOLID', color: {r: 0.5, g: 0.5, b: 0.5}}];
+      text.textAlignHorizontal = 'CENTER';
+      text.textAlignVertical = 'CENTER';
+      text.resize(200, 100);
+      placeholder.appendChild(text);
+    } catch (e) {
+      console.warn('Could not add text to placeholder:', e);
+    }
+    
+    return placeholder;
   }
 }

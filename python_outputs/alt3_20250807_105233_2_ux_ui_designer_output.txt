@@ -1,0 +1,209 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.  The `10:9912` (switch) component is crucial for this design.
+
+2. **Layout Decisions:** The page uses a vertical layout for a clear top-to-bottom flow of notification categories. Each category is presented as a list item (`10:10214`), providing a consistent structure.  Spacing is maintained using the standard 16px vertical and 16px horizontal padding defined in Pattern A.
+
+3. **User Flow Reasoning:** Users will scan the list of notification types, and easily toggle each one on or off using the switch component.  The clear labeling and visual feedback from the switch provides immediate confirmation of their choices.
+
+4. **Component Choices:** I chose the `10:10214` (List item) component to structure the notification settings because it naturally supports leading and trailing elements (the description text and the switch, respectively).
+
+5. **Component Gaps:** The design system doesn't offer a built-in notification preference persistence mechanism.  This is handled outside of this design specification (e.g., through backend data storage and syncing).
+
+6. **Visual Hierarchy:**  The visual hierarchy is established through consistent typography and spacing.  The title of each notification type uses a slightly larger font size than the associated toggle, creating a clear relationship.
+
+7. **Variant Selection Rationale:** For the `10:10214` (List item) component, I selected the "Leading: Switch" and "Trailing: None" variants as there is no need for trailing icon.  The switch itself provides sufficient visual feedback for its state. The `10:9912` (switch) component uses the "State: enabled" variant for all switches in the default state.
+
+8. **Native Element Justification:** No native elements were required; all functionality could be implemented using components from the design system.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Notification Settings - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 600,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Content Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 20, "paddingBottom": 20, "paddingLeft": 16, "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Notification Settings",
+              "textStyle": "Title/Large",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Notification List",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 12,
+            "paddingTop": 0, "paddingBottom": 0, "paddingLeft": 0, "paddingRight": 0,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Leading": "Switch",
+                    "Trailing": "None"
+                  },
+                  "horizontalSizing": "FILL"
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Push Notifications",
+                      "textStyle": "Label/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left",
+                      "horizontalSizing": "AUTO"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "State": "enabled",
+                        "Selected": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Leading": "Switch",
+                    "Trailing": "None"
+                  },
+                  "horizontalSizing": "FILL"
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Email Alerts",
+                      "textStyle": "Label/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left",
+                      "horizontalSizing": "AUTO"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "State": "enabled",
+                        "Selected": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Leading": "Switch",
+                    "Trailing": "None"
+                  },
+                  "horizontalSizing": "FILL"
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "SMS Updates",
+                      "textStyle": "Label/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left",
+                      "horizontalSizing": "AUTO"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "State": "enabled",
+                        "Selected": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "properties": {
+                  "variants": {
+                    "Leading": "Switch",
+                    "Trailing": "None"
+                  },
+                  "horizontalSizing": "FILL"
+                },
+                "items": [
+                  {
+                    "type": "native-text",
+                    "properties": {
+                      "content": "Promotional Offers",
+                      "textStyle": "Label/Medium",
+                      "color": "Neutral/neutral90",
+                      "alignment": "left",
+                      "horizontalSizing": "AUTO"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "componentNodeId": "10:9912",
+                    "properties": {
+                      "variants": {
+                        "State": "enabled",
+                        "Selected": "false"
+                      },
+                      "horizontalSizing": "AUTO"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```

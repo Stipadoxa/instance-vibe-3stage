@@ -1,0 +1,192 @@
+```json
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Welcome back to CraftMart!",
+        "textStyle": "Headline/Large",
+        "alignment": "center",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Sign in to access your favorite handcrafted goods and connect with talented artisans.",
+        "textStyle": "Body/Medium",
+        "alignment": "center",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "AUTO",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Email Address",
+                "textStyle": "Label/Medium",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                },
+                "placeholder-text": "your.email@example.com"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "",
+            "textStyle": "Body/Small",
+            "color": "Error/error50",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          },
+          "name": "email-error"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "paddingTop": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Password",
+                "textStyle": "Label/Medium",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "horizontalSizing": "FILL",
+                "variants": {
+                  "Type": "Filled",
+                  "State": "enabled"
+                },
+                "placeholder-text": "********"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "",
+            "textStyle": "Body/Small",
+            "color": "Error/error50",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          },
+          "name": "password-error"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "horizontalSizing": "FILL",
+            "variants": {
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "Action": "Sign In"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "paddingTop": 16,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "layoutAlign": "CENTER",
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Forgot password?",
+                "textStyle": "Body/Small",
+                "color": "Primary/primary50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Create Account",
+                "textStyle": "Body/Small",
+                "color": "Primary/primary50",
+                "layoutAlign": "STRETCH",
+                "horizontalSizing": "FILL"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```

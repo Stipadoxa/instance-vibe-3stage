@@ -1,0 +1,237 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (e.g., 10:5620 for appbar, 10:10214 for list-item, 10:8492 for input, 10:3907 for button, 10:4724 for bottom navigation) were selected based on the provided design specification.  These IDs represent the reusable components from the design system, ensuring consistency and efficiency.",
+    "styleApplication": "Text styles ('Title/Medium') and color styles ('Neutral/neutral90') are applied as specified in the design to maintain design consistency and leverage the design system's established visual hierarchy and branding.",
+    "designSystemMapping": "The design system's components (appbar, list-item, input, button, bottom navigation) directly map to the UI elements described in the design specification.  No custom components or workarounds were necessary.",
+    "variantDecisions": "Component variants (e.g., appbar variants, button variants) are chosen as specified in the input to match the exact visual representation in the design. Variants are selected to ensure the correct size, type, and state of components. For example, the 'bottom navigation' component's variant is set to 'Device: Mobile' to ensure correct rendering on mobile devices. The 'button' components use variants to specify size, type, state, and color."
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Account Settings",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        }
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Personal Information Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Personal Information",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Name",
+            "variants": {
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "colorStyleName": "Neutral/neutral90"
+          },
+          "children": [
+            {
+              "type": "input",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "label-text": "Enter your name"
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Email",
+            "variants": {
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "colorStyleName": "Neutral/neutral90"
+          },
+          "children": [
+            {
+              "type": "input",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "label-text": "Enter your email"
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Phone Number",
+            "variants": {
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "colorStyleName": "Neutral/neutral90"
+          },
+          "children": [
+            {
+              "type": "input",
+              "componentNodeId": "10:8492",
+              "properties": {
+                "label-text": "Enter your phone number"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Account Management Section",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Account Management",
+          "properties": {
+            "textStyle": "Title/Medium",
+            "colorStyleName": "Neutral/neutral90",
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change Password",
+            "variants": {
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "colorStyleName": "Neutral/neutral90"
+          },
+          "children": [
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Change Password",
+                "variants": {
+                  "Size": "Medium",
+                  "Type": "Text",
+                  "State": "Default",
+                  "Color": "Green"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete Account",
+            "variants": {
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "colorStyleName": "Neutral/neutral90"
+          },
+          "children": [
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Delete Account",
+                "variants": {
+                  "Size": "Medium",
+                  "Type": "Text",
+                  "State": "Default",
+                  "Color": "Green"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log Out",
+            "variants": {
+              "Leading": "None",
+              "Trailing": "None"
+            },
+            "colorStyleName": "Neutral/neutral90"
+          },
+          "children": [
+            {
+              "type": "button",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Log Out",
+                "variants": {
+                  "Size": "Medium",
+                  "Type": "Text",
+                  "State": "Default",
+                  "Color": "Green"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "bottom navigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": ["Home", "Profile", "Settings"]
+      }
+    }
+  ]
+}
+```

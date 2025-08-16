@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Settings management within a mobile application context (Cars45 auction platform implied).
+User Type: Mobile users of the Cars45 auction app needing to manage account settings and preferences.
+Platform Impact: Mobile users expect a simple, intuitive interface with clear navigation and touch-friendly elements. Screen real estate is limited, requiring efficient information presentation.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences (notifications, communication settings), and securely log out.
+Secondary Goals: Understand account status (e.g., "Verified ID" badge), access help/information (e.g., "What is it?").
+User Constraints: Limited screen space, reliance on touch input, potential for interruptions, varying network conditions.
+Ready for handoff if: All settings options from the reference image are included, navigation is consistent with the app's design system, and touch targets meet accessibility standards.
+
+Content Requirements
+Critical: Personal details (name, contact info), business details (if applicable), account settings (notifications, language, chats, feedback), password change, account deletion, logout.  Access to Cars45 auction status. "Verified ID" badge with explanation.
+Supporting:  Information links ("What is it?" for relevant settings).
+Contextual:  Status indicators (e.g., "Active" for auction access).
+
+Structural & Component Directives
+* Layout:  List-based layout, similar to the reference image, with top and bottom app navigation.  Each setting item should be a row with a label and appropriate action (toggle, detail screen navigation).
+* Components:  Use existing app components for list items, toggles, and navigation.  The navigation should consist of a top navigation bar for back button and title and a bottom navigation bar as per app standard.
+* Styling: Adhere to the existing app's color palette and styling guidelines.  Maintain visual consistency with other app screens.
+
+Screen Requirements
+Primary Actions: Navigate to a detail screen to modify settings, toggle settings on/off, initiate logout.
+Secondary Actions: Access help/information links.
+Screen States:  Default state, potentially loading state while fetching settings data.
+Feedback Needs:  Clear visual feedback for toggled settings (on/off states clearly indicated).  Loading indicators where applicable.

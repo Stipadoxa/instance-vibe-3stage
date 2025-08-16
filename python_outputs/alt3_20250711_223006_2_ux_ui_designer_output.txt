@@ -1,0 +1,62 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single vertical stack, prioritizing a clear and concise user flow.  The product image is at the top to immediately grab attention, followed by the title, price (using a prominent text style and color), and a large, easily tappable \"Buy\" button.  Spacing between elements is consistent to improve readability and avoid visual clutter.",
+    "userFlowReasoning": "The user journey focuses on quick product viewing and purchase initiation.  The primary action (Buy) is clearly highlighted.  Secondary actions, such as viewing more details, could be implemented with a small icon or link (not included in this initial design).",
+    "componentChoices": "The 'card-listing' component is selected to encapsulate all product details.  This component is chosen for its ability to display an image, title, price, and other supporting information efficiently.  The 'Button' component with the 'Large' size and 'Green' color variant is used for the \"Buy\" button to ensure high visibility and clarity of the primary action.",
+    "visualHierarchy": "Visual hierarchy is established through the size and placement of elements. The product image dominates the top, followed by the title (using the 'Title/Medium' text style), and then the price (with the primary green color). The \"Buy\" button stands out because of its size and color."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "list",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "variants": {
+          "view": "list",
+          "type": "normal"
+        },
+        "#title": "Product Name",
+        "#price": "₦10,000",
+        "image": {
+          "src": "placeholder.jpg",
+          "width": 375,
+          "height": 250
+        },
+        "#attribut value1": "Location: Lagos",
+        "#attribut value2": "Condition: New"
+      },
+      "textStyle": "Title/Medium",
+      "colorStyleName": "Neutral/neutral90"
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "Action": "Buy Now"
+      },
+      "textStyle": "Title/Large",
+      "colorStyleName": "Primary/primary50"
+    }
+  ]
+}
+```

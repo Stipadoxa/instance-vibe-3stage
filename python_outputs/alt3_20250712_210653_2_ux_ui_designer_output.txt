@@ -1,0 +1,76 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized vertically to optimize for mobile screen real estate.  The header is placed at the top for immediate context. Metric cards are positioned above the chart section, emphasizing key performance indicators first.  Spacing between elements is consistent to improve readability and visual separation.",
+    "userFlowReasoning": "The primary user flow is to quickly assess KPIs.  Tapping on metric cards could reveal more detailed data (this is implied, not explicitly designed here). A potential future addition would be a data refresh action.",
+    "componentChoices": "The `appbar` component is used for the header to provide a consistent top bar.  Three instances of a custom `metricCard` component (not present in the design system, but easily created based on existing components) are used to display KPIs. A simple rectangle acts as a placeholder for the chart, implying the location of data visualization.  No explicit buttons are present at this stage, but implied actions for drill-down into details are anticipated.",
+    "visualHierarchy": "Visual hierarchy is established through size and position. The header is the largest element, followed by metric cards. The chart placeholder is clearly identified as a supporting element. Color palette is chosen to ensure sufficient contrast for readability.  Primary color will be used for KPI values to highlight importance."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Analytics Dashboard",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 48,
+    "paddingBottom": 48,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Analytics Dashboard",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "card",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "title": "Users",
+        "value": "12,345",
+        "unit": "users",
+        "colorStyleName": "Primary/primary50"
+      }
+    },
+    {
+      "type": "card",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "title": "Revenue",
+        "value": "$10,000",
+        "unit": "$",
+        "colorStyleName": "Secondary/secondary50"
+      }
+    },
+    {
+      "type": "card",
+      "componentNodeId": "147:3743",
+      "properties": {
+        "title": "Growth",
+        "value": "15%",
+        "unit": "%",
+        "colorStyleName": "Tertiary/tertiary50"
+      }
+    },
+    {
+      "type": "rectangle",
+      "properties": {
+        "height": 200,
+        "width": 375,
+        "backgroundColor": {
+          "type": "SOLID",
+          "color": "#f0f0f0",
+          "opacity": 1
+        },
+        "cornerRadius": 8
+      }
+    }
+  ]
+}
+```

@@ -1,0 +1,242 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is organized vertically, mirroring the provided reference image.  Sections are grouped logically to minimize scrolling and improve usability on a mobile device.  Consistent spacing (16px) is used between list items for readability. Top and bottom navigation bars provide intuitive screen navigation.",
+    "userFlowReasoning": "The user flow is linear and intuitive.  Users can easily access and modify their settings within clearly defined sections. Critical settings are placed prominently, while less critical options are grouped accordingly.  The log out action is available at the bottom for easy access.",
+    "componentChoices": "The `appbar` component is used for top navigation, and `bottom navigation` for bottom navigation.  `list-item` components display each setting, with toggles (`switch`) used for boolean settings and input fields (`text input`) for editable values.  A `badge` displays the \"Verified ID\" status.",
+    "visualHierarchy": "Visual hierarchy is established through clear section headings (using `Title/Medium` text style), bold text for important settings, and consistent spacing and visual grouping to emphasize sections.  Primary actions (e.g., log out) are visually distinct from secondary actions (e.g., help text).",
+    "variantSelectionRationale": "List items use `Condition: 2-line` for settings requiring descriptions; the `Headline` property is used for the settings and `Supporting text` for the descriptions.  Toggles utilize the `State: enabled` variant, and input fields employ `State: enabled` and `Type: Filled` variants.  The \"Verified ID\" badge uses the `Type: Small` variant, while the help text is styled using `Caption/Small`."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Cars45 Account Settings",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "appbar",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Settings",
+          "variants": {
+            "Mode": "Light",
+            "Type": "Default",
+            "Elevation": "flat"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Settings Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "paddingTop": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingBottom": 16,
+        "items": [
+          {
+            "type": "text",
+            "properties": {
+              "text": "Personal details",
+              "textStyle": "Title/Medium",
+              "colorStyleName": "Primary/primary50"
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change phone number",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change email",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Business details",
+              "textStyle": "Title/Medium"
+            }
+          },          
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Access to Cars45 auction",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "\"Verified ID\" badge",
+              "Supporting text": "What is it?",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "true"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change language",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable chats",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Disable feedback",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "Switch",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Manage notifications",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Change password",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Delete my account permanently",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          },
+          {
+            "type": "list-item",
+            "componentNodeId": "10:10214",
+            "properties": {
+              "Headline": "Log out",
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "false",
+                "Show supporting text": "false"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "bottom navigation",
+        "componentNodeId": "10:4724",
+        "properties": {
+          "variants": {
+            "Device": "Mobile"
+          },
+          "Label": [
+            "Home",
+            "Saved",
+            "Sell",
+            "Sell",
+            "Profile"
+          ]
+        }
+      }
+    ]
+  }
+}
+```

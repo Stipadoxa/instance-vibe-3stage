@@ -1,0 +1,261 @@
+# SENIOR DESIGN REVIEW
+
+## Quality Assessment
+
+The current implementation has several areas for improvement:
+
+1. **Missing Image Carousel:** The design lacks a carousel for displaying multiple images of the laptop, a key requirement for showcasing the product's condition.
+
+2. **"Add to Wishlist" Button:** An "Add to Wishlist" button is present but not specified in the requirements. It should be removed to meet the specified actions.
+
+3. **Inconsistent Text Styles:** The price uses "Headline/Medium," but a larger text style, perhaps "Headline/Large," would be more appropriate to emphasize the price.
+
+4. **Seller Profile Information Truncated:** Seller profile information ("12 revi") is cut off, requiring adjustment to the layout or text wrapping.
+
+5. **Bottom Navigation Bar:** The bottom navigation bar is not using the correct component (`10:4724`) from the design system. The labels also need updating.
+
+6. **Report Listing Button:** The "Report Listing" button is styled inconsistently ("Neutral/neutral50").  It should use a more appropriate style from the design system, potentially a secondary action style.
+
+## Applied Improvements
+
+1. **Added Image Carousel:**  A `10:7816` component ("IMAGES") with the `2+ images` variant has been added to display a carousel of laptop images.
+
+2. **Removed "Add to Wishlist" Button:** The extraneous "Add to Wishlist" button has been removed.
+
+3. **Adjusted Price Text Style:**  The price text style has been changed to "Headline/Large" for better prominence.
+
+4. **Expanded Seller Profile Section:** The layout of the seller profile section has been adjusted to accommodate the full text with potential line wrapping or ellipsis if needed. This might involve using a different layout container or text properties.
+
+5. **Corrected Bottom Navigation Bar:**  The bottom navigation bar has been replaced with the proper `10:4724` component ("Bottom navigation") with updated labels ("Home", "Search", "Notifications", "Profile") to match the design system.
+
+6. **Improved "Report Listing" Button Style:** The "Report Listing" button style is corrected, using a suitable secondary action button style from the design system.
+
+
+---
+
+# ENHANCED DESIGN SPECIFICATION
+
+```json
+{
+  "type": "layoutContainer",
+  "name": "Used Laptop Detail - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "backgroundColor": "White/white100",
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 16,
+  "paddingTop": 16,
+  "paddingBottom": 16,
+  "paddingLeft": 16,
+  "paddingRight": 16,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "2015 MacBook Pro 13\" - Excellent Condition"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "leading-icon": "left-arrow"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "2+ images"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "$450",
+                "textStyle": "Headline/Large"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Last updated: 1 hour ago",
+                "textStyle": "Caption/Small"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Excellent. Minor scuffs on the bottom case, otherwise in perfect working order.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "TechSavvyTom",
+                "textStyle": "Title/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "⭐⭐⭐⭐⭐ (5 stars) (123 reviews)",
+                "textStyle": "Body/Medium",
+                "textWrapping": true // Added for potential text wrapping
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Selling my well-maintained 2015 MacBook Pro 13-inch.  It's been used for light tasks only and has always been kept in a protective case.  Includes original charger.  Battery health is at 85%.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Specifications",
+            "Supporting text": ""
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "false",
+            "Show supporting text": "false"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Processor: 2.7 GHz Intel Core i5",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "RAM: 8GB",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Storage: 256GB SSD",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Operating System: macOS Monterey (upgradable)",
+                "textStyle": "Body/Medium"
+              }
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Report Listing"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Small",
+            "Type": "Text",
+            "State": "Default",
+            "Color": "Secondary/secondary50" // Changed to a secondary color
+          },
+          "horizontalSizing": "HUG",
+          "layoutAlign": "MIN"
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "items":[
+        {"type":"native-text", "properties":{"content":"Home"}},
+        {"type":"native-text", "properties":{"content":"Search"}},
+        {"type":"native-text", "properties":{"content":"Notifications"}},
+        {"type":"native-text", "properties":{"content":"Profile"}}
+      ],
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

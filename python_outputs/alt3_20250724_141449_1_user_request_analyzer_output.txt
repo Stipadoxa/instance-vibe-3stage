@@ -1,0 +1,29 @@
+Domain & Context
+Domain: Business/SaaS domain, specifically user account management within a mobile application (Cars45 auction likely involved).
+User Type: Registered users of a mobile application needing to manage their account settings and preferences.  This includes users with varying levels of technical expertise.
+Platform Impact: Mobile users need a concise and easily navigable settings page with clear touch targets due to limited screen real estate.  The design must account for interruptions and varying network conditions.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences, securely log out of the application.
+Secondary Goals:  Understand account status (e.g., "Verified ID" badge), access help information (e.g., "What is it?"), easily find and adjust important settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, varying levels of technical proficiency among users.
+Ready for handoff if: All settings options from the reference image are present and functional within the design system’s component library, top and bottom navigation is implemented, and all interactive elements have appropriately sized touch targets.
+
+Content Requirements
+Critical: Personal details section (allowing modification), Business details section (allowing modification), Access to Cars45 auction toggle, "Verified ID" badge status and explanation, Change phone number option, Change email option, Change language option, Disable chats toggle, Disable Feedback toggle, Manage notifications option, Change password option, Delete my account permanently option, Log out option.
+Supporting:  Clear and concise labels for all settings options.
+Contextual:  Error messages for invalid inputs (e.g., email format), loading indicators for actions requiring network access (e.g., password change).
+
+
+Structural & Component Directives
+* Layout:  Vertical list of settings options, using the provided design system components. Top and bottom app navigation bars present.
+* Components: Utilize existing app components for list items, toggles, buttons, and navigation.
+* Styling: Adhere to the existing app's style guide, maintaining consistency in colors, fonts, and spacing as demonstrated in the reference image.
+
+
+Screen Requirements
+Primary Actions:  Modify personal and business details, toggle settings options (chats, feedback, Cars45 auction), change password, delete account, log out.
+Secondary Actions: Access help information ("What is it?" for relevant options).
+Screen States:  Default (all settings displayed), loading state (while saving changes or performing actions), success state (after changes are saved), error state (for invalid inputs or network failures).
+Feedback Needs:  Confirmation messages upon successful changes, clear error messages for invalid inputs, visual indicators (e.g., loading spinners) for asynchronous operations.
+

@@ -1,0 +1,149 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The dashboard homepage uses a vertical layout.  The top section features three "quick stats" cards displayed horizontally with spacing for visual separation. Below, a recent activity feed utilizes a vertical layout, showing updates chronologically. Action buttons ("Create New Listing" and "View All Messages") are positioned below the activity feed, again arranged horizontally for clarity.  Finally, the bottom navigation bar is placed at the very bottom.  All horizontal elements utilize `horizontalSizing: "AUTO"` to allow the component to determine its own width unless otherwise specified.  Vertical spacing between sections is 16 pixels.
+
+3. **User Flow Reasoning:** The top section prioritizes quick overview of key metrics (listings, views, messages).  The activity feed provides a recent history of changes.  Action buttons guide users towards creating listings or managing messages.  The bottom navigation provides easy access to other sections of the app.
+
+4. **Component Choices:**  
+    - **Bottom Navigation:** I chose the `10:4724` ("Bottom navigation") component.  No direct alternatives exist within the Design System.
+    - **Buttons:** I chose the `10:3907` ("Button") component for both action buttons.  Alternatives were not considered as this component is perfectly suited for this purpose. I will use the "Filled" type and "Green" Color variant for both.
+    - **Stats Cards:** The design system lacks a dedicated "stats card" component.  Therefore, I will use a combination of `native-rectangle` for the card background and  `native-text` components for the numbers and labels within each card. I did not find any alternative components suitable for displaying quick stats cards. 
+
+5. **Component Gaps:**  The design system lacks components for stats cards and activity feed items.  For stats cards, I used a `native-rectangle` as the container with `native-text` components for text content, creating a visually appealing and functional solution. For the activity feed, I used a `native-text` component for each activity item.  The use of native elements provides the flexibility to build these custom UI elements. These provide the needed functionality for stats cards and activity feed.
+
+6. **Visual Hierarchy:** The hierarchy is established through sectioning (vertical layout), size and spacing of elements, and typography. The top stats cards have higher visual prominence due to their position and size.  The activity feed items will have a smaller font size and reduced line height for distinction.
+
+7. **Variant Selection Rationale:** For the "Button" component (ID: `10:3907`), I selected variants `"Size": "Medium"`, `"Type": "Filled"`, `"State": "Default"`, `"Color": "Green"`. The medium size is appropriate for the action buttons,  "Filled" provides a clear call to action, and "Default" is the standard state, whereas "Green" is a standard positive color which best conveys the intent of the action buttons.
+
+8. **Native Element Justification:** The user request includes "quick stats cards" and "recent activity feed," requiring custom visual and layout structures. Native elements (`native-rectangle` and `native-text`) offer the most direct and efficient means of creating these, providing the necessary functionality and flexibility to design these elements appropriately.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Seller Dashboard Homepage",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Stats Cards",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "cornerRadius": 8,
+              "width": "100%",
+              "height": 100,
+              "fill": {
+                "type": "SOLID",
+                "color": "#e5f6e8"
+              }
+            },
+            "items": [
+              {"type": "native-text", "properties": {"content": "Total Listings", "textStyle": "Title/Small", "color": "#304049", "alignment": "center"}},
+              {"type": "native-text", "properties": {"content": "123", "textStyle": "Headline/Medium", "color": "#006304", "alignment": "center"}}
+            ]
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "cornerRadius": 8,
+              "width": "100%",
+              "height": 100,
+              "fill": {
+                "type": "SOLID",
+                "color": "#e5f6e8"
+              }
+            },
+            "items":[
+              {"type": "native-text", "properties": {"content": "Views This Week", "textStyle": "Title/Small", "color": "#304049", "alignment": "center"}},
+              {"type": "native-text", "properties": {"content": "456", "textStyle": "Headline/Medium", "color": "#006304", "alignment": "center"}}
+            ]
+          },
+          {
+            "type": "native-rectangle",
+            "properties": {
+              "cornerRadius": 8,
+              "width": "100%",
+              "height": 100,
+              "fill": {
+                "type": "SOLID",
+                "color": "#e5f6e8"
+              }
+            },
+            "items":[
+              {"type": "native-text", "properties": {"content": "Unread Messages", "textStyle": "Title/Small", "color": "#304049", "alignment": "center"}},
+              {"type": "native-text", "properties": {"content": "789", "textStyle": "Headline/Medium", "color": "#006304", "alignment": "center"}}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Activity Feed",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {"type": "native-text", "properties": {"content": "New listing added: Product X", "textStyle": "Body/Medium", "color": "#304049"}},
+          {"type": "native-text", "properties": {"content": "New message received from John Doe", "textStyle": "Body/Medium", "color": "#304049"}}
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Action Buttons",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "Create New Listing"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "textLayers": {
+              "Action": "View All Messages"
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:4724",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "textLayers": {
+          "✏️ Label": ["Home", "Saved", "Sell", "Messages", "Profile"]
+        }
+      }
+    ]
+  }
+}
+```

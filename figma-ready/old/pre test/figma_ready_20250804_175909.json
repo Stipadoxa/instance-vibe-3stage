@@ -1,0 +1,169 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "properties": {
+        "headline": "User Profile",
+        "subheadline": "Manage your account details"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "User Name:",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "placeholder-text": "Enter your name"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Email:",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "placeholder-text": "Enter your email"
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Password:",
+            "textStyle": "Label/Medium",
+            "color": "Neutral/neutral50",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:8492",
+          "variants": {
+            "Type": "Filled",
+            "State": "enabled"
+          },
+          "properties": {
+            "placeholder-text": "Enter your password"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8459",
+      "variants": {
+        "Position": "horizontal",
+        "Type": "full-width"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutAlign": "STRETCH",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Order History",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral30",
+            "layoutAlign": "STRETCH",
+            "horizontalSizing": "FILL"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutAlign": "STRETCH",
+          "layoutMode": "VERTICAL",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": false,
+                "Show supporting text": true
+              },
+              "properties": {
+                "Headline": "Order #12345",
+                "Supporting text": "Order Date: 2023-10-26, Total: $100.00"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": false,
+                "Show supporting text": true
+              },
+              "properties": {
+                "Headline": "Order #67890",
+                "Supporting text": "Order Date: 2023-11-15, Total: $50.00"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

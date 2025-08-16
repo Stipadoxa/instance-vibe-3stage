@@ -1,0 +1,73 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single-column, vertically scrolling design, optimized for mobile readability.  This prioritizes content clarity and ease of navigation on smaller screens.  Spacing between elements is consistent, using a 24px grid for visual harmony and breathability.  The product image is prominently placed at the top to immediately engage the user.  Key information (price, title) follows immediately, with detailed description and contact information further down.",
+    "userFlowReasoning": "The user flow is straightforward and intuitive. Users first see the product image and key details, then proceed to read the description, and finally, contact the seller. Secondary actions (saving, sharing) are easily accessible but not obstructive to the main path.",
+    "componentChoices": "Common and familiar UI components are used to ensure ease of use.  This includes a simple image component, text components for details, and a prominent button to contact the seller. The visual style is clean and minimalist to avoid distractions and enhance readability.",
+    "visualHierarchy": "Visual hierarchy is established through size, position, and color contrast. The product image and title are the most prominent, followed by the price, then the description and seller information.  The call-to-action (contact seller button) is clearly emphasized with color and size.  Appropriate whitespace is used to separate sections and elements."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 24,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375
+  },
+  "items": [
+    {
+      "type": "image",
+      "properties": {
+        "source": "productImageURL",
+        "width": 327,
+        "height": 245
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Product Title",
+        "textStyle": "Headline/Large",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "$129.99",
+        "textStyle": "Title/Medium",
+        "colorStyleName": "Primary/primary90"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Product Description",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral80"
+      }
+    },
+    {
+      "type": "text",
+      "properties": {
+        "text": "Seller: John Doe",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Neutral/neutral80"
+      }
+    },
+    {
+      "type": "button",
+      "properties": {
+        "text": "Contact Seller",
+        "textStyle": "Body/Medium",
+        "colorStyleName": "Primary/primary90"
+      }
+    }
+  ]
+}
+```

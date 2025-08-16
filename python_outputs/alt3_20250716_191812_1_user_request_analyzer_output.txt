@@ -1,0 +1,26 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear touch targets due to screen size limitations and reliance on touch interaction.  Interruptions are possible, so the design should be easily digestible in short bursts of attention.
+
+User Requirements
+Primary Goals: Modify personal information, manage account preferences, review account status.
+Secondary Goals: Access help/support information related to settings, easily log out of the app.
+User Constraints: Small screen size limits the amount of information displayed at once, reliance on touch input, potential for interruptions during use.
+Ready for handoff if: All settings options from the reference image are included, using existing app components; top and bottom navigation is implemented; touch targets meet minimum size requirements;  and visual hierarchy is clear and intuitive.
+
+Content Requirements
+Critical:  Personal details (name, contact info etc.), Business details (if applicable), Access to Cars45 Auction (toggle/status indicator), "Verified ID" badge (with explanation link), Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear visual indicators for toggles and active/inactive states.
+Contextual:  "What is it?" explanations (as shown in the reference image for relevant settings).
+
+Structural & Component Directives
+* Layout: List-based layout similar to the reference image. Uses existing app components. Top and bottom app navigation bars.
+* Components:  List items for each setting (with appropriate labels), toggles for on/off settings,  links for explanatory pages or actions.
+* Styling:  Follow existing app's color scheme and design system.
+
+Screen Requirements
+Primary Actions:  Tap on a setting item to modify it.
+Secondary Actions:  Navigate to help/support pages (if applicable), access "What is it?" explanations.
+Screen States: Default state, possibly loading state if loading data for display (e.g., user details).
+Feedback Needs: Clear visual indication of selection/interaction with list items. Confirmation of changes made (e.g., toast messages).

@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users who need to manage their account settings and preferences.
+Platform Impact: Mobile users need a concise and intuitive settings page with clear navigation and touch-friendly controls. Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notifications, and log out securely.
+Secondary Goals: Easily understand each setting and its implications; access help or information about specific settings.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions, varying network conditions.
+Ready for handoff if: All settings from the reference image are included using existing app components, navigation is clear and intuitive, and touch targets meet accessibility standards.
+
+Content Requirements
+Critical: Personal details (editable), business details (editable), access to Cars45 auction (toggle), "Verified ID" badge (with explanation), change phone number, change email, change language, disable chats (toggle), disable feedback (toggle), manage notifications, change password, delete account permanently, log out.
+Supporting:  Clear labels and descriptions for each setting.
+Contextual:  Success/error messages after changes are saved.
+
+Structural & Component Directives
+* Layout: Vertical list of settings, similar to the reference image. Top and bottom app navigation bars.
+* Components: Use existing app components for list items, toggles, and buttons.  Ensure consistent styling.
+* Styling: Maintain existing app color scheme and typography.
+
+
+Screen Requirements
+Primary Actions: Tap on a setting to modify it. Tap on "Log out" to log out.
+Secondary Actions: Access help/information for each setting (if applicable).
+Screen States: Default state, loading state (while saving changes), success/error state after changes.
+Feedback Needs: Confirmation of setting changes, clear error messages, visual loading indicators where appropriate.

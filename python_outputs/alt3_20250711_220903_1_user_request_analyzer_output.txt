@@ -1,0 +1,28 @@
+Domain & Context
+Domain: E-commerce domain focusing on product display and purchase initiation
+User Type: Mobile shoppers browsing product listings
+Platform Impact: Mobile users expect concise product information, large touch targets, and a simple purchase flow. Screen real estate is limited, requiring efficient use of space and prioritization of key information.
+
+User Requirements
+Primary Goals: Quickly view product details (image, title, price), initiate purchase
+Secondary Goals:  View product details on a separate page (tapping the card)
+User Constraints: Limited screen real estate, reliance on touch input, potential for interruptions during browsing
+
+Ready for handoff if: All critical content (image, title, price, buy button) is clearly visible and appropriately sized for touch interaction; the visual hierarchy prioritizes the buy button; sufficient padding/spacing is present for comfortable touch targets.
+
+Content Requirements
+Critical: Product image, product title, product price, "Buy" button
+Supporting:  Rating (stars),  short description (optional, depending on space)
+Contextual:  Out-of-stock indicator (if applicable), sale badge (if applicable)
+
+Structural & Component Directives
+* Layout: Single card layout, vertically stacked elements (image at the top, then title, price, button)
+* Components: Image component (responsive), Text components (title, price), Button component ("Buy")
+* Styling:  Use consistent styling for price (e.g., bold font), ensure sufficient contrast between text and background
+
+
+Screen Requirements
+Primary Actions: Initiate purchase ("Buy" button)
+Secondary Actions: View detailed product page (tapping the card)
+Screen States:  Default (product displayed),  loading (if applicable while fetching data), out-of-stock (if applicable)
+Feedback Needs:  Visual feedback on button tap (e.g., slight color change).

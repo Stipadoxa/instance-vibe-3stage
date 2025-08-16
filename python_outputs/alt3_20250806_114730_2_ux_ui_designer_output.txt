@@ -1,0 +1,254 @@
+**SECTIONS:**
+
+1. **gallery:** A large, hero image of the Galaxy S24 Ultra showcasing its design and key features (e.g., camera, display). This immediately grabs attention and highlights the product's visual appeal.  This section uses a `native-rectangle` with an image fill.
+
+2. **essentials:** This section contains the product title ("Galaxy S24 Ultra: Reimagine What's Possible"), a concise description,  and a structured list of specifications using `10:10214` (List item) components to display camera, display, processor, battery, storage, and RAM details.  A `native-text` element displays the release date from metadata. The purpose is to provide core product information in a clear and organized manner.
+
+3. **purchase:**  This section includes prominent "Buy Now" (`10:3907` Button, Green Color) and "Add to Cart" (`10:3907` Button, Green Color) buttons as primary CTAs. The pricing information, including the discounted price and percentage off, is also displayed using `native-text` elements, ensuring users can easily make a purchase decision.
+
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Section Planning:** The section blueprint follows the e-commerce pattern: gallery → essentials → purchase.  The gallery section immediately engages the user visually, the essentials provide key information, and the purchase section offers clear calls to action. This structure prioritizes visual appeal and efficient information delivery to encourage purchase.
+
+3. **Layout Decisions:** The layout employs a vertical arrangement (`layoutMode`: "VERTICAL") for mobile-first responsiveness.  The gallery is full-width (`horizontalSizing`: "FILL"), and the essentials and purchase sections have a content padding of 16 pixels on each side and 16 pixels of spacing between items, adhering to the "Root = Screen, Content = Padded, Components = Natural" sizing approach.  The specification section uses a vertical container (`layoutMode`: "VERTICAL") to arrange the spec list items, promoting readability.
+
+4. **User Flow Reasoning:** The user flow is designed to be intuitive and straightforward. Users first see the product's main image (gallery). Then, concise information and specifications (essentials) are provided, directly leading to purchase options (purchase). This visual-to-information-to-action flow guides the user through the decision-making process.
+
+5. **Component Choices:**
+    * I chose `10:3907` (Button) for the CTAs due to its prominent design and clear action affordances. I chose the "Green" color for the buttons to align with common e-commerce conventions to indicate a positive action.  Alternatives considered but rejected were `10:3856` (snackbar) – inappropriate for primary actions – and no other suitable button component was found.
+    * I chose `10:10214` (List item) for the specifications because it provides a structured and easily scannable way to present the product details.  Alternatives considered included using `native-text` alone, which lacked the visual organization this component offers.
+
+6. **Component Gaps:** The design system doesn't contain a component specifically designed for presenting product pricing with a discount.  I used `native-text` elements to achieve this. This workaround is functional and ensures that the pricing information is clear and concise.
+
+7. **Visual Hierarchy:** Visual hierarchy is established using image size and placement (gallery). The product title is a larger text size in the essentials section, followed by the description, and then a slightly smaller text size is used for specifications, creating a clear visual progression.  The CTAs in the purchase section are highlighted by color and button style for prominence.
+
+8. **Variant Selection Rationale:** For the `10:3907` (Button) component, I selected the "Green" color variant to indicate the positive action associated with purchasing the product. The "Large" size variant improves visual accessibility and user interaction. The "Filled" type is selected for the "Buy Now" button as it's more prominent and conveys urgency.
+
+
+9. **Native Element Justification:**  To display the product's price with the discount, `native-text` elements were used because no specific component existed in the design system to represent this type of information. Native text components provide this functionality while maintaining visual clarity.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Detail Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 414,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "height": 300,
+          "fill": {
+            "type": "IMAGE",
+            "scaleMode": "COVER"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "itemSpacing": 16,
+        "horizontalSizing": "FILL",
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Galaxy S24 Ultra: Reimagine What's Possible",
+              "textStyle": "Headline/Medium",
+              "color": "Neutral/neutral90"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Experience the future with the Galaxy S24 Ultra. Its groundbreaking camera system captures breathtaking detail, while the seamless performance of the Snapdragon 8 Gen 3 processor ensures effortless multitasking. Immerse yourself in the vibrant 6.8-inch Dynamic AMOLED 2X display and enjoy unparalleled power and innovation.",
+              "textStyle": "Body/Medium",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "variants": {
+                  "Condition": "2-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "true",
+                  "Show supporting text": "true"
+                },
+                "properties": {
+                  "Overline": "Camera",
+                  "Headline": "200MP Wide-angle, 12MP Ultrawide, 10MP Telephoto (3x optical zoom), 10MP Periscope Telephoto (10x optical zoom)",
+                  "Supporting text": "Space Zoom up to 100x"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "variants": {
+                  "Condition": "2-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "true",
+                  "Show supporting text": "true"
+                },
+                "properties": {
+                  "Overline": "Display",
+                  "Headline": "6.8-inch Dynamic AMOLED 2X",
+                  "Supporting text": "120Hz Adaptive refresh rate, 1750 nits peak brightness"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "true",
+                  "Show supporting text": "false"
+                },
+                "properties": {
+                  "Overline": "Processor",
+                  "Headline": "Qualcomm Snapdragon 8 Gen 3",
+                  "Supporting text": ""
+                }
+              },
+               {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "true",
+                  "Show supporting text": "false"
+                },
+                "properties": {
+                  "Overline": "Battery",
+                  "Headline": "5000mAh",
+                  "Supporting text": "45W Super Fast Charging"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "true",
+                  "Show supporting text": "false"
+                },
+                "properties": {
+                  "Overline": "Storage",
+                  "Headline": "Options: 256GB, 512GB, 1TB",
+                  "Supporting text": ""
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:10214",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "true",
+                  "Show supporting text": "false"
+                },
+                "properties": {
+                  "Overline": "RAM",
+                  "Headline": "12GB",
+                  "Supporting text": ""
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Released: March 15, 2024",
+              "textStyle": "Caption/Small",
+              "color": "Neutral/neutral50"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green"
+                },
+                "properties": {
+                  "Action": "Buy Now"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green"
+                },
+                "properties": {
+                  "Action": "Add to Cart"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$1199.99",
+              "textStyle": "Title/Large",
+              "color": "Primary/primary50"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "<s>$1299.99</s>  8% off",
+              "textStyle": "Caption/Small",
+              "color": "Neutral/neutral30"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

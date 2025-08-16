@@ -1,0 +1,114 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The profile page uses a vertical layout (`layoutMode`: `VERTICAL`).  The top section features a large, full-width profile picture (`horizontalSizing`: `"FILL"`)  using a `native-rectangle` with an image fill because the design system does not contain a dedicated full-width image component suitable for this purpose. Below this, individual sections for name, email, and password are vertically stacked with a spacing of 16 pixels between each section using `layoutContainer` components with `itemSpacing` of 16.  Each input field uses a full width `text input` component.  A save button at the bottom is aligned to the right using a `HORIZONTAL` layout container.
+
+3. **User Flow Reasoning:** The user flow is straightforward: display current profile information, allow edits, and provide a clear save mechanism.  The placement of the profile picture at the top is a standard convention, emphasizing visual identity.  The vertical order of name, email, and password is intuitive and follows typical form design principles. The save button is placed at the bottom for clarity.
+
+4. **Component Choices:** I chose the `10:8492` (`text input`) component for name, email, and password fields. I considered using a `text area` for the password field if a length limit wasn't required but this proved unnecessary.  There's no component to handle the image upload directly, so `native-rectangle` was used. A `button` component was used for the save action. 
+
+5. **Component Gaps:**  The design system lacks a full-width image component for the hero image and a dedicated component for profile picture editing.  I used `native-rectangle` with `"fill": {"type": "IMAGE"}` to display the profile image, addressing the full-width image requirement.  For picture editing, I utilized a combination of `native-rectangle` and a native upload mechanism (outside the scope of this JSON spec).
+
+6. **Visual Hierarchy:** Visual hierarchy is established through the size and placement of UI elements. The profile picture is the most prominent element due to its size and placement at the top.  The name field is next in prominence with the `text input` component's styling, followed by email and password.
+
+7. **Variant Selection Rationale:**  The chosen `text input` variant is `Type: Filled, State: Enabled` for optimal user experience.  Variants for other components are chosen based on the visual design and user experience requirements.  There is no specific rationale required for the native elements as they are providing simple layout and image handling functionality not provided by the Design System.
+
+8. **Native Element Justification:** The user request for a full-width profile picture necessitates the use of a `native-rectangle` with image fill capabilities. The design system lacks a suitable component for this. The native element provides the required functionality.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-rectangle",
+        "properties": {
+          "horizontalSizing": "FILL",
+          "height": 200,
+          "cornerRadius": 8,
+          "fill": {
+            "type": "IMAGE",
+            "scaleMode": "FILL"
+          }
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Name",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Email",
+              "horizontalSizing": "FILL"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Password",
+              "horizontalSizing": "FILL"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "layoutContainer",
+            "layoutGrow": 1
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Save"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

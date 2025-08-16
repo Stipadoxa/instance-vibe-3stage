@@ -1,0 +1,144 @@
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:** I have verified all component references against the provided design system data.
+
+2. **Layout Decisions:** The layout utilizes a vertical layout for the overall page structure.  The top section contains the search bar (`10:12086` - searchbar) and filter button (`10:3907` - button), arranged horizontally to maximize screen width. The product grid is implemented as a vertical layout container (`layoutContainer`) with horizontal wrapping (`layoutWrap: "WRAP"`) for the product cards (`147:3743` - card), allowing for responsive grid adjustments based on screen size.  All elements use consistent spacing for visual clarity.  The `horizontalSizing` property is set to `"FILL"` for full-width elements where appropriate (e.g., the search bar and product images within the product cards).
+
+3. **User Flow Reasoning:** The user flow is straightforward. Users can begin by inputting a search query in the search bar, filtering the results if needed, then browsing the resulting grid of product cards. Selecting a product card leads to a separate product detail page (not part of this design).
+
+4. **Component Choices:**
+    * **Search Bar:** I chose component ID `10:12086` (searchbar) for the search functionality.  Alternatives considered included using native text input with a search icon; however, the dedicated search bar component offers a more streamlined and intuitive user experience for search.
+    * **Filter Button:** The `10:3907` (button) component is used for its clear visual affordance for the filter action. Alternatives, such as text links, lack the directness of a button.
+    * **Product Cards:** I selected the `147:3743` (card) component as it provides a standardized layout for displaying product information. Alternatives were not readily apparent, and creating this from native elements would be highly inefficient and not design-system compliant.
+
+
+5. **Component Gaps:**  The design system lacks a dedicated grid layout component for the product cards. I employed a native `layoutContainer` with `layoutMode: "HORIZONTAL"`, `layoutWrap: "WRAP"`, and `itemSpacing` to achieve the desired grid effect. This ensures responsiveness, adaptive sizing of cards, and allows for an easily scalable number of products.
+
+6. **Visual Hierarchy:** The visual hierarchy is established through a combination of layout, size, and typography. The search bar is prominently positioned at the top, followed by the filter button. Product cards are presented in a clear grid layout, with product titles in a larger font size (`Title/Medium`) than other card details (`Label/Medium`), establishing a clear hierarchy within each card.
+
+7. **Variant Selection Rationale:** For the search bar (`10:12086`), the "Mobile" device variant ensures optimal mobile presentation, and the "default" state is appropriate for the initial design state.  The Product card (`147:3743`) uses the "grid" view and "normal" type variants to match the user request.
+
+8. **Native Element Justification:**  A native `layoutContainer` is used to create the product grid, as the design system lacks a dedicated grid component. This native element provides the flexible layout structure necessary to arrange the product cards responsively across multiple screen sizes and to efficiently manage varying numbers of product listings.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "Product Listing",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "10:12086",
+            "variants": {
+              "Device": "Mobile",
+              "State": "default"
+            },
+            "horizontalSizing": "FILL"
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Grid",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "layoutWrap": "WRAP",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "items": [
+          {
+            "type": "component",
+            "id": "147:3743",
+            "variants": {
+              "view": "grid",
+              "type": "normal"
+            },
+            "items":[
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "cornerRadius": 8,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "Product Title",
+                  "textStyle": "Title/Medium",
+                  "color": "Neutral/neutral90",
+                  "alignment": "left",
+                  "horizontalSizing": "FILL"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "₦10,000",
+                  "textStyle": "Label/Medium",
+                  "color": "Primary/primary50",
+                  "alignment": "left"
+                }
+              },
+              {
+                "type": "component",
+                "id": "635:4752",
+                "variants":{
+                  "Star": "full"
+                }
+              },
+              {
+                "type": "native-text",
+                "properties": {
+                  "content": "4.5 (10)",
+                  "textStyle": "Caption/Small",
+                  "color": "Neutral/neutral50",
+                  "alignment": "left"
+                }
+              }
+            ]
+          }
+          
+        ]
+      }
+    ]
+  }
+}
+```

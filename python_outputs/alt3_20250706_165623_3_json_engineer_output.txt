@@ -1,0 +1,101 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Login Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 24,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "width": 375,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH"
+  },
+  "items": [
+    {
+      "type": "layoutContainer",
+      "name": "Username Input Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Username or Email",
+          "properties": {
+            "fontSize": 16,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "text-input",
+          "componentNodeId": "text-input",
+          "properties": {
+            "placeholder": "Enter username or email"
+          }
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Password Input Container",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "text": "Password",
+          "properties": {
+            "fontSize": 16,
+            "horizontalSizing": "FILL",
+            "textAutoResize": "HEIGHT",
+            "layoutAlign": "STRETCH",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "text-input",
+          "componentNodeId": "text-input",
+          "properties": {
+            "placeholder": "Enter password",
+            "isPassword": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "componentNodeId": "button",
+      "properties": {
+        "Label": "Login"
+      }
+    },
+    {
+      "type": "native-text",
+      "text": "Forgot Password?",
+      "properties": {
+        "fontSize": 14,
+        "horizontalSizing": "FILL",
+        "textAutoResize": "HEIGHT",
+        "layoutAlign": "STRETCH",
+        "alignment": "center",
+        "color": {
+          "r": 0.1,
+          "g": 0.1,
+          "b": 0.1
+        }
+      }
+    }
+  ]
+}
+```

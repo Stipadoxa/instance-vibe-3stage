@@ -1,0 +1,204 @@
+```json
+{
+  "layoutContainer": {
+    "name": "Product Page - Mobile Viewport",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "width": 375,
+    "minHeight": 812,
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "App Bar",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:5620",
+            "properties": {
+              "Mode": "Light",
+              "Type": "Default",
+              "Elevation": "flat",
+              "headline": "2020 Dell XPS 13 - Excellent Condition",
+              "subheadline": "Used Laptop"
+            }
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Product Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "layoutContainer",
+            "name": "Image Carousel",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              },
+              {
+                "type": "native-rectangle",
+                "properties": {
+                  "width": 150,
+                  "height": 150,
+                  "fill": {
+                    "type": "IMAGE",
+                    "scaleMode": "FILL"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "$650",
+              "textStyle": "Headline/Medium",
+              "color": "primary-500"
+            }
+          },
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Condition: Excellent (Minor scratches on the bottom)",
+              "textStyle": "Body/Medium",
+              "color": "neutral-50"
+            }
+          },
+          {
+            "type": "component",
+            "componentNodeId": "10:8619",
+            "properties": {
+              "Platform": "Android+Web",
+              "Type": "Filled",
+              "State": "Enabled",
+              "label-text": "Description"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Specifications",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "primaryAxisSizingMode": "AUTO",
+            "counterAxisSizingMode": "AUTO",
+            "horizontalSizing": "FILL",
+            "layoutAlign": "STRETCH",
+            "items": [
+              { "type": "native-text", "properties": { "content": "Specifications:", "textStyle": "Title/Medium", "color": "neutral-50" } },
+              { "type": "native-text", "properties": { "content": "Intel Core i5-1035G1, 8GB RAM, 256GB SSD, 13.3-inch display", "textStyle": "Body/Medium", "color": "neutral-50" } }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Actions",
+        "layoutMode": "HORIZONTAL",
+        "itemSpacing": 16,
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "AUTO",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH",
+        "items": [
+          {
+            "type": "component",
+            "componentNodeId": "10:3907",
+            "properties": {
+              "Platform": "Android+Web",
+              "Size": "Large",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green",
+              "Action": "Contact Seller"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**DESIGN RATIONALE:**
+
+1. **Component Verification:** All component IDs (`10:5620`, `10:3907`, `10:8619`) are verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Strategy:** A mobile-first approach is used, starting with a 375px wide root container.  The layout utilizes nested `layoutContainer` components to manage sections (App Bar, Product Section, Actions) and elements within those sections (image carousel, specifications, buttons). Spacing is controlled through padding and itemSpacing properties within each container, ensuring consistent margins.
+
+3. **User Experience Logic:** The user flow is linear, starting with the product overview (app bar, images, price), followed by detailed information (description, specifications), and finally actions (contact seller button).
+
+4. **Component Selection:** The `appbar` component provides a structured header. The `Button` component is used for the "Contact Seller" call-to-action, and `text input`  is used for the description.
+
+5. **Gap Analysis:** The image carousel is implemented using multiple instances of `native-rectangle` components as image placeholders, since there is no image component in the design system.
+
+6. **Hierarchy Decisions:**  The product title and price are given prominence using the `Headline/Medium` and `Headline/Large` text styles respectively.  Specifications and description are secondary in importance.
+
+7. **Variant Rationale:**  The `appbar` is configured with "Light", "Default", and "flat" variants to maintain visual consistency. The button has specified the appropriate variants (Platform, Size, Type, State, Color).
+
+8. **Native Element Justification:** `native-rectangle` is used for image placeholders because the design system lacks an image component that meets the requirements, and using native elements avoids crashes that would happen with other approaches.  `native-text` provides basic text display within the specifications and description areas, as detailed text formatting is not needed.

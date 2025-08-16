@@ -1,0 +1,111 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 32,
+    "paddingBottom": 32,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": 320,
+        "height": 200,
+        "fill": {
+          "type": "LINEAR",
+          "stops": [
+            {
+              "color": "primary-50",
+              "position": 0
+            },
+            {
+              "color": "primary-10",
+              "position": 1
+            }
+          ]
+        },
+        "cornerRadius": 24,
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "width": 60,
+        "height": 60,
+        "fill": "primary-5",
+        "cornerRadius": 30,
+        "marginLeft": 200,
+        "marginTop": -20
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "label-text": "Your e-mail",
+        "placeholder-text": "123@example.ua",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        }
+      }
+    },
+    {
+      "type": "input",
+      "componentNodeId": "10:8492",
+      "properties": {
+        "label-text": "Your password",
+        "supporting-text": "Please enter your password",
+        "variants": {
+          "Type": "Filled",
+          "State": "error"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign in",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "button",
+      "componentNodeId": "10:3907",
+      "properties": {
+        "Action": "Sign up",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        }
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "By continuing you agree to the Policy and Rules",
+        "fontSize": 11,
+        "fontWeight": "400",
+        "alignment": "center",
+        "color": "primary-500",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    }
+  ]
+}

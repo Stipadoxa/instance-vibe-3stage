@@ -1,0 +1,161 @@
+{
+  "layoutContainer": {
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO"
+  },
+  "items": [
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Order History",
+        "textStyle": "Title/Large",
+        "color": "Neutral/neutral90",
+        "alignment": "leading",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8,
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "True"
+          },
+          "properties": {
+            "Headline": "Order #1234",
+            "Supporting text": "Total: $50.00, Status: Delivered"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:10214",
+          "variants": {
+            "Condition": "2-line",
+            "Leading": "None",
+            "Trailing": "None",
+            "Show overline": "False",
+            "Show supporting text": "True"
+          },
+          "properties": {
+            "Headline": "Order #5678",
+            "Supporting text": "Total: $25.00, Status: Processing"
+          }
+        }
+      ]
+    },
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "height": 1,
+        "fill": "Neutral/neutral10",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Address",
+        "textStyle": "Title/Large",
+        "color": "Neutral/neutral90",
+        "alignment": "leading",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "Enabled"
+      },
+      "properties": {
+        "label-text": "Street Address"
+      }
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "Enabled"
+      },
+      "properties": {
+        "label-text": "City"
+      }
+    },
+    {
+      "type": "native-rectangle",
+      "properties": {
+        "height": 1,
+        "fill": "Neutral/neutral10",
+        "horizontalSizing": "FILL",
+        "layoutAlign": "STRETCH"
+      }
+    },
+    {
+      "type": "native-text",
+      "properties": {
+        "content": "Password",
+        "textStyle": "Title/Large",
+        "color": "Neutral/neutral90",
+        "alignment": "leading",
+        "layoutAlign": "STRETCH",
+        "horizontalSizing": "FILL"
+      }
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "Enabled"
+      },
+      "properties": {
+        "label-text": "Current Password"
+      }
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:8492",
+      "variants": {
+        "Type": "Filled",
+        "State": "Enabled"
+      },
+      "properties": {
+        "label-text": "New Password"
+      }
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:3907",
+      "variants": {
+        "Platform": "Android+Web",
+        "Size": "Medium",
+        "Type": "Filled",
+        "State": "Default",
+        "Color": "Green"
+      },
+      "properties": {
+        "Action": "Save Changes"
+      }
+    }
+  ]
+}

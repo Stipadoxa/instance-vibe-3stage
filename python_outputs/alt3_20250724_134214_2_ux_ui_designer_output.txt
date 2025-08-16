@@ -1,0 +1,210 @@
+```json
+{
+  "designRationale": {
+    "domainAnalysis": "The analyzer clearly specifies an \"Authentication domain\" for a mobile application.  This indicates a need for a form-based login screen, prioritizing secure user input and clear action buttons.",
+    "layoutDecisions": "A vertical layout is chosen for optimal usability on mobile.  Input fields are placed above buttons to establish a clear visual hierarchy and flow.  Spacing between components is adjusted based on system-provided inner padding values, ensuring consistent visual rhythm.",
+    "userFlowReasoning": "The user flow is linear: 1. Enter credentials, 2. Click \"Sign In,\" 3. (Optional) Reset password. Social logins offer an alternative, faster path.",
+    "componentChoices": "The `input` component is used for username/email and password fields. The `button` component (with appropriate variants) handles primary login and social login actions. The `link` component is used for password recovery.  All choices are made based on the domain type (authentication).",
+    "visualHierarchy": "Visual hierarchy is created through vertical stacking of elements with descending importance. The primary action button (\"Sign In\") is prominently styled, while secondary actions (social logins) are less prominent, maintaining a balanced visual structure.",
+    "variantSelectionRationale": "The \"Sign In\" button utilizes the \"Primary\" style variant because it is the key action within the authentication context.  Social login buttons use the \"Secondary\" variant to visually differentiate secondary actions from the primary one."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Authentication Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Authentication Content",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 24,
+          "paddingTop": 24,
+          "paddingBottom": 24,
+          "paddingLeft": 24,
+          "paddingRight": 24,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "items": [
+            {
+              "type": "input",
+              "componentNodeId": "64:1101",
+              "properties": {
+                "placeholder": "Email",
+                "variants": {
+                  "State": "Default",
+                  "Size": "Medium",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "input",
+              "componentNodeId": "64:1101",
+              "properties": {
+                "placeholder": "Password",
+                "variants": {
+                  "State": "Default",
+                  "Size": "Medium",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "componentNodeId": "34:1219",
+              "properties": {
+                "text": "Sign In",
+                "variants": {
+                  "Size": "Large",
+                  "State": "Default",
+                  "Content": "Only Icons",
+                  "Style": "Filled"
+                }
+              }
+            },
+            {
+              "type": "buttonGroup",
+              "componentNodeId": "52:941",
+              "properties": {
+                "Amount": "3",
+                "Content": "Only Icons",
+                "Size": "Medium",
+                "items": [
+                  {"type": "button", "componentNodeId": "34:1219", "properties": {"text": "Google", "variants": {"Size": "Medium", "State": "Default", "Content": "Icons + Text", "Style": "Outline"}}},
+                  {"type": "button", "componentNodeId": "34:1219", "properties": {"text": "Facebook", "variants": {"Size": "Medium", "State": "Default", "Content": "Icons + Text", "Style": "Outline"}}},
+                  {"type": "button", "componentNodeId": "34:1219", "properties": {"text": "Apple", "variants": {"Size": "Medium", "State": "Default", "Content": "Icons + Text", "Style": "Outline"}}}
+                ]
+              }
+            },
+            {
+              "type": "link",
+              "componentNodeId": "130:5269",
+              "properties": {
+                "text": "Forgot Password?",
+                "textStyle": "Caption/Small"
+              }
+            },
+            {
+              "type": "text",
+              "properties": {
+                "text": "Terms & Conditions",
+                "textStyle": "Caption/Small",
+                "colorStyleName": "Neutral/neutral80"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "items": [
+      {
+        "type": "layoutContainer",
+        "name": "Authentication Content",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 24,
+        "paddingTop": 24,
+        "paddingBottom": 24,
+        "paddingLeft": 24,
+        "paddingRight": 24,
+        "primaryAxisSizingMode": "AUTO",
+        "counterAxisSizingMode": "FIXED",
+        "items": [
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder": "Email",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "input",
+            "componentNodeId": "64:1101",
+            "properties": {
+              "placeholder": "Password",
+              "variants": {
+                "State": "Default",
+                "Size": "Medium",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "button",
+            "componentNodeId": "34:1219",
+            "properties": {
+              "text": "Sign In",
+              "variants": {
+                "Size": "Large",
+                "State": "Default",
+                "Content": "Only Icons",
+                "Style": "Filled"
+              }
+            }
+          },
+          {
+            "type": "buttonGroup",
+            "componentNodeId": "52:941",
+            "properties": {
+              "Amount": "3",
+              "Content": "Only Icons",
+              "Size": "Medium",
+              "items": [
+                {"type": "button", "componentNodeId": "34:1219", "properties": {"text": "Google", "variants": {"Size": "Medium", "State": "Default", "Content": "Icons + Text", "Style": "Outline"}}},
+                {"type": "button", "componentNodeId": "34:1219", "properties": {"text": "Facebook", "variants": {"Size": "Medium", "State": "Default", "Content": "Icons + Text", "Style": "Outline"}}},
+                {"type": "button", "componentNodeId": "34:1219", "properties": {"text": "Apple", "variants": {"Size": "Medium", "State": "Default", "Content": "Icons + Text", "Style": "Outline"}}}
+              ]
+            }
+          },
+          {
+            "type": "link",
+            "componentNodeId": "130:5269",
+            "properties": {
+              "text": "Forgot Password?",
+              "textStyle": "Caption/Small"
+            }
+          },
+          {
+            "type": "text",
+            "properties": {
+              "text": "Terms & Conditions",
+              "textStyle": "Caption/Small",
+              "colorStyleName": "Neutral/neutral80"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

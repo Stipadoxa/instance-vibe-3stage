@@ -1,0 +1,30 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management
+User Type: Mobile app users managing their account settings and preferences.
+Platform Impact: Mobile users need a concise, easily navigable settings page with clear touch targets. Limited screen real estate necessitates prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify account settings, manage notification preferences, update personal information.
+Secondary Goals: Understand account status (e.g., "Verified ID"), access help resources ("What is it?"), securely log out.
+User Constraints: Small screen size, touch-only interaction, potential for interruptions.
+Ready for handoff if: All settings from the reference image are included, using consistent design components; navigation is clear and intuitive; touch targets meet minimum size requirements.
+
+
+Content Requirements
+Critical:  Personal details (with ability to edit), business details (with ability to edit), Access to Cars45 auction (toggle), "Verified ID" badge (with explanation), Change phone number, Change email, Change language, Disable chats (toggle), Disable Feedback (toggle), Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  "What is it?" explanations for relevant settings.
+Contextual:  Success/error messages for setting changes.
+
+
+Structural & Component Directives
+* Layout:  List view of settings, similar to the reference image.  Top and bottom app navigation bars included.
+* Components:  Use existing app components for list items, toggles, and buttons.  Each setting should be a list item with appropriate labels and actions (e.g., edit fields, toggles).
+* Styling:  Adhere to the existing app's color scheme and styling guidelines (as referenced in the visual).
+
+
+Screen Requirements
+Primary Actions:  Edit settings, toggle settings, initiate account deletion, log out.
+Secondary Actions:  Access help/explanation for specific settings.
+Screen States:  Default state (displaying settings), loading state (while saving changes), error state (if changes fail), success state (after successful changes).
+Feedback Needs:  Clear visual indicators for changes (e.g., checkmarks, success messages), loading indicators, and error messages.
+

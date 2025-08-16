@@ -1,0 +1,28 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management and settings configuration.  Specific context is a mobile application for Cars45 auction.
+User Type: Registered users of the Cars45 mobile app who need to manage their account settings and preferences.  This includes both personal and business users.
+Platform Impact: Mobile platform constraints necessitate a simplified, touch-friendly interface with clear visual hierarchy and minimal scrolling.  Limited screen real estate requires careful prioritization of settings.
+
+User Requirements
+Primary Goals: Access and modify personal account information, manage notification preferences, adjust application settings.
+Secondary Goals: Understand the meaning of "Verified ID" badge, easily access account deletion and logout functionality.
+User Constraints: Small screen size, touch-only interaction, potential for distractions while using the app.
+Ready for handoff if: All settings listed in the reference image are included, grouped logically, and use existing app components; top and bottom navigation bars are implemented; touch targets meet accessibility standards.
+
+Content Requirements
+Critical:  All settings listed in the reference image (Personal details, Business details, Access to Cars45 auction, "Verified ID" badge, Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out).  Each setting should have a clear label.  "Active" and "What is it?" contextual information needs to be displayed appropriately.
+Supporting:  A help or information section for each less-obvious setting (e.g., what "Verified ID" badge means, details about "Disable Feedback").
+Contextual:  Status indicators (e.g., "Active" for auction access), informative tooltips or pop-ups on hover/tap for clarification.
+
+
+Structural & Component Directives
+*   **Layout:**  List view of settings, grouped by category (Personal details, Business details, etc.) as shown in the reference image.  Each setting should be a separate row.
+*   **Components:** Use existing app components for list items, navigation, and buttons.  The list items should include labels and potentially status indicators or navigation arrows.
+*   **Styling:** Consistent with the existing app's style guide.  Follow the color scheme and typography of the reference image.
+
+
+Screen Requirements
+Primary Actions:  Navigate to individual setting screens to modify values, log out.
+Secondary Actions: Access help or information about settings, possibly toggle settings directly on this screen (depending on design).
+Screen States: Default state displaying the list of settings.  Individual setting screens will have their own states (e.g., loading, error, success).
+Feedback Needs:  Clear visual feedback for toggles (if implemented), loading indicators, and confirmation of setting changes.

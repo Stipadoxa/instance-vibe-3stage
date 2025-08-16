@@ -1,20 +1,39 @@
+"use strict";
 // src/core/design-system-scanner-service.ts
 // Design System Scanner service for AIDesigner plugin - handles all component scanning logic
-import { ComponentScanner } from './component-scanner';
-import { FigmaRenderer } from './figma-renderer';
-export class DesignSystemScannerService {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DesignSystemScannerService = void 0;
+const component_scanner_1 = require("./component-scanner");
+const figma_renderer_1 = require("./figma-renderer");
+class DesignSystemScannerService {
     /**
-     * Main scanning function - scans all pages for components and Color Styles
+     * Main scanning function - scans all pages for components, Color Styles, and Text Styles
      */
     static async scanDesignSystem(progressCallback) {
-        console.log("🔍 Starting comprehensive design system scan with Color Styles...");
+        console.log("🔍 Starting comprehensive design system scan with Color Styles and Text Styles...");
         try {
             progressCallback === null || progressCallback === void 0 ? void 0 : progressCallback({ current: 0, total: 100, status: "Initializing comprehensive scan..." });
-            // Use the enhanced ComponentScanner that includes Color Styles
-            const scanSession = await ComponentScanner.scanDesignSystem();
-            progressCallback === null || progressCallback === void 0 ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles with renderer..." });
+            // Use the enhanced ComponentScanner that includes Color Styles and Text Styles
+            const scanSession = await component_scanner_1.ComponentScanner.scanDesignSystem();
+            progressCallback === null || progressCallback === void 0 ? void 0 : progressCallback({ current: 50, total: 100, status: "Integrating Color Styles and Text Styles with renderer..." });
             // Initialize the FigmaRenderer with the scanned Color Styles
-            FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
+            figma_renderer_1.FigmaRenderer.setColorStyles(scanSession.colorStyles || null);
+            // Initialize the FigmaRenderer with the scanned Text Styles
+            if (scanSession.textStyles && scanSession.textStyles.length > 0) {
+                figma_renderer_1.FigmaRenderer.setTextStyles(scanSession.textStyles);
+                console.log(`📝 Loaded ${scanSession.textStyles.length} text styles into renderer`);
+            }
+            else {
+                console.log("📝 No text styles found in scan session");
+            }
+            // Initialize the FigmaRenderer with the scanned Design Tokens
+            if (scanSession.designTokens && scanSession.designTokens.length > 0) {
+                figma_renderer_1.FigmaRenderer.setDesignTokens(scanSession.designTokens);
+                console.log(`🔧 Loaded ${scanSession.designTokens.length} design tokens into renderer`);
+            }
+            else {
+                console.log("🔧 No design tokens found in scan session");
+            }
             progressCallback === null || progressCallback === void 0 ? void 0 : progressCallback({ current: 100, total: 100, status: "Comprehensive scan complete!" });
             return scanSession;
         }
@@ -36,12 +55,42 @@ export class DesignSystemScannerService {
     static async scanColorStyles() {
         console.log("🎨 Scanning only Color Styles...");
         try {
-            const colorStyles = await ComponentScanner.scanFigmaColorStyles();
-            FigmaRenderer.setColorStyles(colorStyles);
+            const colorStyles = await component_scanner_1.ComponentScanner.scanFigmaColorStyles();
+            figma_renderer_1.FigmaRenderer.setColorStyles(colorStyles);
             return colorStyles;
         }
         catch (e) {
             console.error("❌ Error scanning Color Styles:", e);
+            throw e;
+        }
+    }
+    /**
+     * Scan only Text Styles without components
+     */
+    static async scanTextStyles() {
+        console.log("📝 Scanning only Text Styles...");
+        try {
+            const textStyles = await component_scanner_1.ComponentScanner.scanFigmaTextStyles();
+            figma_renderer_1.FigmaRenderer.setTextStyles(textStyles);
+            return textStyles;
+        }
+        catch (e) {
+            console.error("❌ Error scanning Text Styles:", e);
+            throw e;
+        }
+    }
+    /**
+     * Scan only Design Tokens without components
+     */
+    static async scanDesignTokens() {
+        console.log("🔧 Scanning only Design Tokens...");
+        try {
+            const designTokens = await component_scanner_1.ComponentScanner.scanFigmaVariables();
+            figma_renderer_1.FigmaRenderer.setDesignTokens(designTokens);
+            return designTokens;
+        }
+        catch (e) {
+            console.error("❌ Error scanning Design Tokens:", e);
             throw e;
         }
     }
@@ -82,7 +131,7 @@ export class DesignSystemScannerService {
                     for (const node of allNodes) {
                         try {
                             if (node.type === 'COMPONENT' || node.type === 'COMPONENT_SET') {
-                                const componentInfo = await ComponentScanner.analyzeComponent(node);
+                                const componentInfo = await component_scanner_1.ComponentScanner.analyzeComponent(node);
                                 if (componentInfo) {
                                     // Add page information
                                     componentInfo.pageInfo = {
@@ -120,7 +169,7 @@ export class DesignSystemScannerService {
      * Generate LLM prompt with components and color styles
      */
     static generateLLMPrompt(components, colorStyles) {
-        return ComponentScanner.generateLLMPrompt(components, colorStyles);
+        return component_scanner_1.ComponentScanner.generateLLMPrompt(components, colorStyles);
     }
     /**
      * Analyzes a single component to extract metadata and variants
@@ -289,21 +338,25 @@ export class DesignSystemScannerService {
         return textLayers;
     }
     /**
-     * Save scan results to Figma storage - supports full scan session with color styles
+     * Save scan results to Figma storage - supports full scan session with color styles, text styles, and design tokens
      */
-    static async saveScanResults(components, colorStyles) {
+    static async saveScanResults(components, colorStyles, textStyles, designTokens) {
         try {
             const scanSession = {
                 components,
                 colorStyles: colorStyles || undefined,
+                textStyles: textStyles || undefined,
+                designTokens: designTokens || undefined,
                 scanTime: Date.now(),
-                version: "2.0.0",
+                version: "2.1.0",
                 fileKey: figma.fileKey || figma.root.id
             };
             await figma.clientStorage.setAsync('design-system-scan', scanSession);
             await figma.clientStorage.setAsync('last-scan-results', components);
             const colorStylesCount = colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-            console.log(`💾 Saved ${components.length} components and ${colorStylesCount} color styles with session data`);
+            const textStylesCount = textStyles ? textStyles.length : 0;
+            const designTokensCount = designTokens ? designTokens.length : 0;
+            console.log(`💾 Saved ${components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens with session data`);
         }
         catch (error) {
             console.error("❌ Error saving scan results:", error);
@@ -318,14 +371,16 @@ export class DesignSystemScannerService {
         }
     }
     /**
-     * Save complete scan session including color styles
+     * Save complete scan session including color styles, text styles, and design tokens
      */
     static async saveScanSession(scanSession) {
         try {
             await figma.clientStorage.setAsync('design-system-scan', scanSession);
             await figma.clientStorage.setAsync('last-scan-results', scanSession.components);
             const colorStylesCount = scanSession.colorStyles ? Object.values(scanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
-            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components and ${colorStylesCount} color styles`);
+            const textStylesCount = scanSession.textStyles ? scanSession.textStyles.length : 0;
+            const designTokensCount = scanSession.designTokens ? scanSession.designTokens.length : 0;
+            console.log(`💾 Saved complete scan session: ${scanSession.components.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles, and ${designTokensCount} design tokens`);
         }
         catch (error) {
             console.error("❌ Error saving scan session:", error);
@@ -403,16 +458,21 @@ export class DesignSystemScannerService {
         }
     }
     /**
-     * Clear all scan data
+     * Clear all scan data and renderer cache
      */
     static async clearScanData() {
         try {
             await figma.clientStorage.setAsync('design-system-scan', null);
             await figma.clientStorage.setAsync('last-scan-results', null);
-            console.log("✅ Scan data cleared");
+            // Clear renderer caches
+            figma_renderer_1.FigmaRenderer.setColorStyles(null);
+            figma_renderer_1.FigmaRenderer.setTextStyles([]);
+            figma_renderer_1.FigmaRenderer.setDesignTokens([]);
+            console.log("✅ Scan data and renderer cache cleared");
         }
         catch (error) {
             console.error("❌ Error clearing scan data:", error);
         }
     }
 }
+exports.DesignSystemScannerService = DesignSystemScannerService;

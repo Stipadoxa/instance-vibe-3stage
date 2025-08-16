@@ -1,0 +1,111 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to accommodate the list of notifications, with a top bar for user information and a bottom navigation bar for additional actions.  Item spacing is minimized for optimal screen real estate usage on mobile.",
+    "userFlowReasoning": "Users can view notifications in a scrollable list. Tapping on a notification will ideally open a detail view (not implemented in this basic screen).  The top bar provides quick access to user information.",
+    "componentChoices": "I chose '10:10214' (list-item) for the notification items, over '147:3743' (product card) and '10:3856' (snackbar) because the list-item component provides a flexible structure for displaying various text elements such as title, description, and timestamp, while snackbar is inappropriate for a full list of items and product card is unsuitable for notification presentation.",
+    "visualHierarchy": "The top bar has the highest visual prominence, followed by the notification list, and finally the bottom navigation.  The list items maintain a consistent visual style, with clear separation between each item.",
+    "variantSelectionRationale": "For the list-item component, I chose 'Condition=2-line', 'Leading=Image', 'Trailing=None', 'Show overline=False', and 'Show supporting text=True'  instead of other options like using a checkbox or switch for the leading component. No trailing element is needed. Using only images for the leading component ensures the display of user avatars, aligned with design specification.  Overline is unnecessary. Supporting text enables the display of the notification description."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Communication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:5620",
+        "suggestedType": "appbar",
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "suggestedType": "text",
+            "text": "User Name"
+          }
+        ]
+      },
+      {
+        "id": "10:10214",
+        "suggestedType": "list-item",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Image",
+          "Trailing": "None",
+          "Show overline": "False",
+          "Show supporting text": "True"
+        },
+        "items": [
+          {
+            "id": "10:7773",
+            "suggestedType": "avatar",
+            "variants": {
+              "Photo": "Yes"
+            }
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "suggestedType": "text",
+            "text": "Notification Title 1"
+          },
+          {
+            "id": "S:bd915a8e249e62bcbd25e1452467f0d46e3e59fc",
+            "suggestedType": "text",
+            "text": "Notification Description 1"
+          },
+          {
+            "id": "S:fa25503cb2164e444d7547fff9bc01765f752c1b",
+            "suggestedType": "text",
+            "text": "Timestamp 1"
+          }
+        ],
+        "count": 5
+      },
+      {
+        "id": "10:4724",
+        "suggestedType": "navigation",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "items": [
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "suggestedType": "text",
+            "text": "Tab 1"
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "suggestedType": "text",
+            "text": "Tab 2"
+          },
+          {
+            "id": "S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b",
+            "suggestedType": "text",
+            "text": "Tab 3"
+          }
+        ]
+      }
+    ]
+  }
+}
+```

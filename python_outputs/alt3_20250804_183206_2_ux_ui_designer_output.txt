@@ -1,0 +1,245 @@
+I have verified all component references against the provided design system data.
+
+**DESIGN RATIONALE:**
+
+1. **Component Inventory Verification:**  All component IDs used below have been verified against the provided `DESIGN_SYSTEM_DATA`.
+
+2. **Layout Decisions:** The layout employs a vertical arrangement for a clear, top-to-bottom flow of information.  Sections are visually separated using dividers (`10:8459`) for improved readability.  Each section (Order History, Payment Info, Change Password) occupies its own vertical container with appropriate padding for breathing room.  The `horizontalSizing` property is used where necessary (e.g., full-width dividers).
+
+3. **User Flow Reasoning:** The user flows linearly through the sections: Order History (read-only), Payment Information (editable), and Password Change (editable).  This sequence prioritizes essential account management tasks.
+
+4. **Component Choices:**  For the sections' headers, I chose `native-text` with the "Title/Medium" text style (`S:41bc7b6b83403f34c823d2b1e378bb17ce3eec9b`) over other headline styles because it provides sufficient visual prominence without being overwhelming for a mobile-friendly design. For list items I chose `10:10214` (List item) with a leading icon.  It's superior to using only native elements because it offers pre-built styling and accessibility features.
+
+5. **Component Gaps:** The user request requires a visually appealing and easily navigable sectioning of the profile page. While the design system offers dividers (`10:8459`), no single component directly provides this section separation effectively. I created the workaround using combinations of dividers and padding within vertical containers to achieve the required visual hierarchy. This provides a cleaner and more organized presentation compared to a single block of content and ensures a great experience on different screen sizes.
+
+6. **Visual Hierarchy:** Visual hierarchy is achieved through sectioning with dividers, and clear labeling using the "Title/Medium" text style. This prioritizes important information.
+
+7. **Variant Selection Rationale:** I've opted for specific list item variants based on context. For order history, it will be set to show "3-line+" in the "Condition" variant. For Payment and Password sections, it might be "2-line" or "1-line". Leading icons ("Icon" variant) are used for better visual representation. The "Trailing" variant will be "None" for the most sections, except when special actions (like edit) are required there.
+
+8. **Native Element Justification:**  To create section headers and to better control typography and text hierarchy, `native-text` elements, styled with design system text styles are used.
+
+
+**DESIGN SPECIFICATION:**
+
+```json
+{
+  "layoutContainer": {
+    "name": "User Profile Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16, "paddingBottom": 16, "paddingLeft": 16, "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO", "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "type": "native-text",
+        "properties": {
+          "content": "My Profile",
+          "textStyle": "Headline/Medium",
+          "color": "Neutral/neutral90",
+          "alignment": "left",
+          "horizontalSizing": "AUTO"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Order History Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Order History",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "name": "Order History List",
+            "layoutMode": "VERTICAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "3-line+",
+                  "Leading": "Icon",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Overline": "Order #1234",
+                  "Headline": "Item 1, Item 2",
+                  "Supporting text": "Delivered on 2023-10-26",
+                  "Trailing supporting text": "₦10,000"
+                }
+              },
+              {
+                "type": "component",
+                "id": "10:10214",
+                "variants": {
+                  "Condition": "3-line+",
+                  "Leading": "Icon",
+                  "Trailing": "None",
+                  "Show overline": "False",
+                  "Show supporting text": "True"
+                },
+                "properties": {
+                  "Overline": "Order #5678",
+                  "Headline": "Item 3",
+                  "Supporting text": "Pending",
+                  "Trailing supporting text": "₦5,000"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Payment Info Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Payment Information",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Card Number",
+              "label-text": "Card Number",
+              "supporting-text": "",
+              "counter": ""
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Expiration Date",
+              "label-text": "Expiration Date",
+              "supporting-text": "",
+              "counter": ""
+            }
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "id": "10:8459",
+        "variants": {
+          "Position": "horizontal",
+          "Type": "full-width"
+        }
+      },
+      {
+        "type": "layoutContainer",
+        "name": "Change Password Section",
+        "layoutMode": "VERTICAL",
+        "itemSpacing": 8,
+        "paddingTop": 16, "paddingBottom": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "properties": {
+              "content": "Change Password",
+              "textStyle": "Title/Medium",
+              "color": "Neutral/neutral90",
+              "alignment": "left",
+              "horizontalSizing": "AUTO"
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Current Password",
+              "label-text": "Current Password",
+              "supporting-text": "",
+              "counter": ""
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "New Password",
+              "label-text": "New Password",
+              "supporting-text": "",
+              "counter": ""
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:8492",
+            "variants": {
+              "Type": "Filled",
+              "State": "enabled"
+            },
+            "properties": {
+              "placeholder-text": "Confirm New Password",
+              "label-text": "Confirm New Password",
+              "supporting-text": "",
+              "counter": ""
+            }
+          },
+          {
+            "type": "component",
+            "id": "10:3907",
+            "variants": {
+              "Platform": "Android+Web",
+              "Size": "Medium",
+              "Type": "Filled",
+              "State": "Default",
+              "Color": "Green"
+            },
+            "properties": {
+              "Action": "Save Changes"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```

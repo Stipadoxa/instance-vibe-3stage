@@ -1243,6 +1243,7 @@ var AIDesignerUI = (() => {
       this.scanResults = [];
       this.currentFilter = "all";
       this.searchQuery = "";
+      this.fullScanSession = null;
       this.elements = {
         scanBtn: null,
         rescanBtn: null,
@@ -1317,11 +1318,6 @@ var AIDesignerUI = (() => {
         });
       }
       this.setupFilterButtons();
-      const promptBtn = document.querySelector('[onclick="generateLLMPrompt()"]');
-      if (promptBtn) {
-        promptBtn.removeAttribute("onclick");
-        promptBtn.addEventListener("click", () => this.generateLLMPrompt());
-      }
     }
     /**
      * Setup filter button event listeners
@@ -1343,19 +1339,26 @@ var AIDesignerUI = (() => {
     registerMessageHandlers() {
       if (window.messageHandler) {
         window.messageHandler.register("scan-results", (msg) => {
-          this.handleScanResults(msg.components);
+          this.handleScanResults(msg);
         });
         window.messageHandler.register("scan-error", (msg) => {
           this.handleScanError(msg.error);
         });
         window.messageHandler.register("saved-scan-loaded", (msg) => {
+          if (msg.colorStyles || msg.textStyles) {
+            this.fullScanSession = {
+              components: msg.components || [],
+              colorStyles: msg.colorStyles || null,
+              textStyles: msg.textStyles || null,
+              scanTime: msg.scanTime || Date.now(),
+              colorStylesCount: msg.colorStylesCount || 0,
+              textStylesCount: msg.textStylesCount || 0
+            };
+          }
           this.displaySavedScan(msg.components, msg.scanTime);
         });
         window.messageHandler.register("component-type-updated", (msg) => {
           this.handleComponentTypeUpdated(msg.componentId, msg.newType, msg.componentName);
-        });
-        window.messageHandler.register("llm-prompt-generated", (msg) => {
-          this.handleLLMPromptGenerated(msg.prompt);
         });
       }
     }
@@ -1379,13 +1382,33 @@ var AIDesignerUI = (() => {
     /**
      * Handle scan results from backend
      */
-    handleScanResults(components) {
+    handleScanResults(msg) {
+      var _a, _b;
       if (this.elements.scanBtn) {
         this.elements.scanBtn.disabled = false;
         this.elements.scanBtn.textContent = "\u{1F50D} Scan Design System";
       }
-      this.displaySavedScan(components, Date.now());
-      console.log(`\u2705 Scan completed: ${(components == null ? void 0 : components.length) || 0} components found`);
+      console.log("\u{1F50D} DesignSystemUI received scan-results message:", {
+        hasComponents: !!msg.components,
+        componentCount: ((_a = msg.components) == null ? void 0 : _a.length) || 0,
+        hasColorStyles: !!msg.colorStyles,
+        hasTextStyles: !!msg.textStyles,
+        textStylesCount: msg.textStylesCount || 0,
+        textStylesArray: msg.textStyles ? msg.textStyles.length : 0
+      });
+      this.fullScanSession = {
+        components: msg.components || [],
+        colorStyles: msg.colorStyles || null,
+        textStyles: msg.textStyles || null,
+        scanTime: msg.scanTime || Date.now(),
+        colorStylesCount: msg.colorStylesCount || 0,
+        textStylesCount: msg.textStylesCount || 0
+      };
+      this.displaySavedScan(msg.components, msg.scanTime);
+      const totalComponents = ((_b = msg.components) == null ? void 0 : _b.length) || 0;
+      const totalColorStyles = msg.colorStylesCount || 0;
+      const totalTextStyles = msg.textStylesCount || 0;
+      console.log(`\u2705 Scan completed: ${totalComponents} components, ${totalColorStyles} color styles, ${totalTextStyles} text styles found`);
     }
     /**
      * Handle scan error from backend
@@ -1599,23 +1622,6 @@ var AIDesignerUI = (() => {
       console.log(`\u2705 Component type updated: ${componentName} \u2192 ${newType}`);
     }
     /**
-     * Generate LLM prompt for the design system
-     */
-    generateLLMPrompt() {
-      import_message_handler.MessageHandler.sendMessage({ type: "generate-llm-prompt" });
-      console.log("\u{1F4CB} Generating LLM prompt for design system");
-    }
-    /**
-     * Handle generated LLM prompt
-     */
-    handleLLMPromptGenerated(prompt) {
-      import_ui_framework.UIFramework.copyToClipboard(prompt).then(() => {
-        if (this.elements.scanStatusText) {
-          this.showScanStatus("\u{1F4CB} Prompt copied to clipboard!", "success");
-        }
-      });
-    }
-    /**
      * Enable the generator tab after successful scan
      */
     enableGeneratorTab() {
@@ -1720,25 +1726,38 @@ var AIDesignerUI = (() => {
      * Export raw scan data as JSON file
      */
     exportRawScanData() {
-      if (!this.scanResults || this.scanResults.length === 0) {
+      if (!this.fullScanSession || !this.scanResults || this.scanResults.length === 0) {
         this.showScanStatus("\u274C No scan data available to export", "error");
         return;
       }
+      console.log("\u{1F4E5} Export Debug - fullScanSession:", {
+        hasColorStyles: !!this.fullScanSession.colorStyles,
+        hasTextStyles: !!this.fullScanSession.textStyles,
+        textStylesCount: this.fullScanSession.textStyles ? this.fullScanSession.textStyles.length : 0,
+        textStylesPreview: this.fullScanSession.textStyles ? this.fullScanSession.textStyles.slice(0, 3).map((s) => s.name) : []
+      });
       try {
+        const colorStylesCount = this.fullScanSession.colorStyles ? Object.values(this.fullScanSession.colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0;
+        const textStylesCount = this.fullScanSession.textStyles ? this.fullScanSession.textStyles.length : 0;
         const exportData = {
           metadata: {
             exportedAt: (/* @__PURE__ */ new Date()).toISOString(),
             componentCount: this.scanResults.length,
-            exportVersion: "1.0",
+            colorStylesCount,
+            textStylesCount,
+            scanTime: this.fullScanSession.scanTime,
+            exportVersion: "2.0",
             source: "Figma Design System Scanner"
           },
-          components: this.scanResults
+          components: this.scanResults,
+          colorStyles: this.fullScanSession.colorStyles,
+          textStyles: this.fullScanSession.textStyles
         };
         const timestamp = (/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-").slice(0, -5);
         const filename = `design-system-raw-data-${timestamp}.json`;
         this.downloadJsonFile(exportData, filename);
-        this.showScanStatus("\u2705 Raw data exported successfully", "success");
-        console.log(`\u{1F4E5} Exported ${this.scanResults.length} components to ${filename}`);
+        this.showScanStatus("\u2705 Complete design system data exported successfully", "success");
+        console.log(`\u{1F4E5} Exported ${this.scanResults.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles to ${filename}`);
       } catch (error) {
         console.error("Export failed:", error);
         this.showScanStatus("\u274C Export failed. Please try again.", "error");
@@ -1775,10 +1794,6 @@ var AIDesignerUI = (() => {
   window.rescanDesignSystem = function() {
     var _a;
     (_a = window.designSystemUI) == null ? void 0 : _a.rescanDesignSystem();
-  };
-  window.generateLLMPrompt = function() {
-    var _a;
-    (_a = window.designSystemUI) == null ? void 0 : _a.generateLLMPrompt();
   };
   window.enableGeneratorTab = function() {
     var _a;
@@ -2037,6 +2052,9 @@ var AIDesignerUI = (() => {
         });
         window.messageHandler.register("session-cleared", () => {
           this.startFresh();
+        });
+        window.messageHandler.register("design-feedback-result", (msg) => {
+          this.handleDesignFeedbackResult(msg.feedback);
         });
       }
     }
@@ -2672,7 +2690,7 @@ var AIDesignerUI = (() => {
     /**
      * Handle successful UI generation
      */
-    handleUIGeneratedSuccess(generatedJSON, frameId) {
+    async handleUIGeneratedSuccess(generatedJSON, frameId) {
       this.clearStatus();
       this.enterIterationMode(generatedJSON, frameId);
       if (this.elements.userPrompt) {

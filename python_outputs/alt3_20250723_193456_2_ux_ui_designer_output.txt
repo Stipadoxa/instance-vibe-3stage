@@ -1,0 +1,114 @@
+The provided code is a solid foundation for a design system-agnostic text mapping system.  However, it can be improved in terms of robustness, efficiency, and clarity.  Here's a refined version with explanations:
+
+
+```javascript
+// Global variable to store design system data.  Consider a more robust data fetching mechanism in a real-world application.
+const DESIGN_SYSTEM_DATA = [ /* ... your design system data ... */ ];
+
+
+function extractTextProperties(schema) {
+  // Prioritize explicit text property declarations. This enhances predictability and maintainability.
+  const explicitTextProperties = [
+    'textLayers', 'textHierarchy', 'textNodes', 'textElements',
+    'properties.text', // Nested property access string
+  ].map(path => {
+    const props = path.split('.').reduce((obj, key) => obj && obj[key], schema);
+    return props && (Array.isArray(props) ? props.map(item => item.nodeName || item.name || item.key || item.id).filter(Boolean) : Object.keys(props));
+  }).find(props => props && props.length > 0);
+
+  if (explicitTextProperties) return explicitTextProperties;
+
+  // Fallback to heuristic property name matching. Be cautious as this is less reliable.
+  const heuristicTextProperties = Object.keys(schema).filter(key => {
+    const keyLower = key.toLowerCase();
+    return keyLower.includes('text') || keyLower.includes('label') || keyLower.includes('content') ||
+           keyLower.includes('placeholder') || keyLower.includes('title') || keyLower.includes('headline') ||
+           keyLower.includes('caption') || keyLower.includes('heading') || keyLower.includes('description'); // Added more relevant keywords
+  });
+
+  if (heuristicTextProperties.length > 0) {
+    console.warn(`No explicit text properties found. Using heuristic matching for component ${schema.id || schema.name}.`);
+    return heuristicTextProperties;
+  }
+
+  console.warn(`No text properties found for component ${schema.id || schema.name}`);
+  return [];
+}
+
+
+function mapUserIntentToSchemaProperties(userTextData, availableSchemaProperties) {
+  const mappedProperties = {};
+  const semanticCategories = { // Expanded semantic categories for better coverage
+    primary: ['default', 'primary', 'main', 'text', 'content', 'body', 'value', 'action', 'message'],
+    button: ['button', 'action', 'label', 'cta', 'submit', 'confirm', 'calltoaction'],
+    placeholder: ['placeholder', 'hint', 'example', 'input'],
+    label: ['label', 'fieldlabel', 'inputlabel', 'formlabel'],
+    helper: ['supporting', 'help', 'description', 'helpertext'],
+    error: ['error', 'errortext', 'errormessage', 'validation'],
+    headline: ['headline', 'title', 'header', 'heading', 'primary'],
+    subtitle: ['subtitle', 'secondary', 'supporting', 'subtext', 'caption'], // Caption merged here for better semantic mapping
+    caption: ['footnote', 'smalltext', 'small text'], // More specific caption variants
+    navigation: ['nav', 'menu', 'tab', 'breadcrumb', 'link'],
+    status: ['status', 'badge', 'tag', 'chip', 'indicator'],
+    content: ['content', 'body', 'text', 'copy', 'paragraph']
+  };
+
+  for (const [userKey, userValue] of Object.entries(userTextData)) {
+    const schemaProperty = findBestPropertyMatch(userKey, availableSchemaProperties, semanticCategories);
+    mappedProperties[schemaProperty || availableSchemaProperties[0]] = userValue; // Always assign, using first available as fallback.  Log a warning if no match is found
+    if (!schemaProperty) console.warn(`Could not map user property "${userKey}" to any schema property.  Using fallback.`);
+  }
+
+  return mappedProperties;
+}
+
+
+// Improved findBestPropertyMatch function for more robust matching
+function findBestPropertyMatch(userKey, schemaProperties, semanticCategories) {
+  const normalizedUserKey = userKey.toLowerCase().replace(/[-_\s]/g, '');
+
+  // Exact match (case-insensitive, ignoring separators)
+  const exactMatch = schemaProperties.find(prop => prop.toLowerCase().replace(/[-_\s]/g, '') === normalizedUserKey);
+  if (exactMatch) return exactMatch;
+
+  // Semantic category matching
+  for (const [category, variants] of Object.entries(semanticCategories)) {
+    if (variants.some(variant => normalizedUserKey.includes(variant.replace(/[-_\s]/g, '')))) {
+      const categoryMatch = schemaProperties.find(prop => variants.some(variant => prop.toLowerCase().replace(/[-_\s]/g, '').includes(variant.replace(/[-_\s]/g, ''))));
+      if (categoryMatch) return categoryMatch;
+    }
+  }
+
+  // Partial substring matching (less reliable, use with caution)
+  const partialMatch = schemaProperties.find(prop => {
+    const propLower = prop.toLowerCase().replace(/[-_\s]/g, '');
+    return propLower.includes(normalizedUserKey) || normalizedUserKey.includes(propLower);
+  });
+  if (partialMatch) return partialMatch;
+
+  return null; // No match found
+}
+
+// ... rest of the processComponentTextProperties function remains largely the same
+
+
+// Example Usage:  Remember to populate DESIGN_SYSTEM_DATA
+const userText = { title: "Settings", subText: "Manage your account", action: "Save" };
+const componentId = "my-settings-component"; // Replace with your component ID
+const mappedData = processComponentTextProperties(componentId, userText);
+console.log(mappedData);
+
+```
+
+
+**Key Improvements:**
+
+* **Consolidated Property Extraction:**  The `extractTextProperties` function is now much cleaner and more efficient, prioritizing explicitly defined properties over heuristic guesses.  The use of `reduce` improves the clarity of nested property access.
+* **Enhanced Semantic Mapping:** The `semanticCategories` object is expanded for better coverage, and the logic is simplified for improved readability and performance.
+* **Improved Matching Logic:** `findBestPropertyMatch` prioritizes exact matches and semantic categories, making the matching more robust.  Partial matching is retained but flagged as less reliable.
+* **Fallback Strategy:** The fallback logic is made clearer and more consistent, ensuring a value is always assigned.  Warnings are issued to help developers understand mapping issues.
+* **Error Handling:** Error handling and warnings are improved for better debugging.
+* **Code Clarity:** The code is restructured for better readability and maintainability.
+
+
+This revised code provides a more robust, efficient, and easier-to-understand solution for design system-agnostic text mapping.  Remember to replace the placeholder comment in `DESIGN_SYSTEM_DATA` with your actual design system data.  Thorough testing with various design system schemas and user input variations is crucial to ensure the system's reliability.

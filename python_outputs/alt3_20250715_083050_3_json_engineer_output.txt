@@ -1,0 +1,203 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The Figma component IDs (10:5620 for appbar, 10:10214 for list-item, 10:4724 for bottomNavigation) were chosen based on the design system's pre-built components.  These components provide consistent styling and functionality, reducing development time and ensuring design consistency.  The `listItem` component, in particular, is versatile enough to handle different content types using variants.",
+    "styleApplication": "Text styles are applied consistently using the design system's naming conventions (`Body/Medium`). Color styles are utilized for appbar background (`Neutral/neutral90`) and list item text (`Primary/primary50`), maintaining brand consistency.  Where the original input incorrectly used `textStyle` within the `listItem` components, I've removed these, relying on the component's inherent styling capabilities controlled through variants. ",
+    "designSystemMapping": "The design system's components are directly mapped to the UI requirements.  The `appbar` fulfills top navigation needs, `listItem` provides consistent setting display, and `bottomNavigation` handles the bottom navigation.  List item variants effectively manage different setting presentations (text, switches, arrows).",
+    "variantDecisions": "Variants are used extensively on the `listItem` components to handle various scenarios.  The `Leading` and `Trailing` variants control the presence and type of leading (switch) and trailing (arrow, text) elements, dynamically adapting the layout based on the specific settings.  The `Condition` variant is used to control whether a single line or multi-line layout is applied. The `Show supporting text` variant helps to ensure supporting text displays appropriately"
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 0,
+    "paddingTop": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingBottom": 0,
+    "width": 375,
+    "height": 812,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED"
+  },
+  "items": [
+    {
+      "type": "appbar",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Settings",
+        "colorStyleName": "Neutral/neutral90"
+      }
+    },
+    {
+      "type": "layoutContainer",
+      "name": "Settings Content",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "items": [
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Personal details"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Business details"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Access to Cars45 auction",
+            "Supporting text": "Active"
+          },
+          "variants": {
+            "Condition": "2-line",
+            "Trailing": "Text"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "\"Verified ID\" badge",
+            "Supporting text": "What is it?"
+          },
+          "variants": {
+            "Condition": "2-line",
+            "Trailing": "Text"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change phone number"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change email"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change language"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable chats"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Leading": "Switch"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Disable Feedback"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Leading": "Switch"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Manage notifications"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Change password"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Delete my account permanently"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        },
+        {
+          "type": "list-item",
+          "componentNodeId": "10:10214",
+          "properties": {
+            "Headline": "Log out"
+          },
+          "variants": {
+            "Condition": "1-line",
+            "Trailing": "Icon"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bottomNavigation",
+      "componentNodeId": "10:4724",
+      "properties": {
+        "Label": ["Home", "Saved", "Sell", "Sell", "Profile"]
+      }
+    }
+  ]
+}
+```

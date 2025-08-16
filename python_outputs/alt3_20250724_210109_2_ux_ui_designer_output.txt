@@ -1,0 +1,391 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is structured vertically to mimic the reference image and accommodate a mobile screen's limited vertical space. Each setting is presented as a row within the list, creating a clear visual flow and easy navigation.",
+    "userFlowReasoning": "The user flow is designed to be straightforward. Each list item represents a setting, and tapping it will take the user to a new screen where they can modify the setting. Primary actions are clearly presented in the list; secondary actions (help and contextual information) are linked through small arrows and additional textual cues.",
+    "componentChoices": "I chose `231:4151` (List) over `230:3931` (List) and  `277:3078` (Card) because the List component provides the necessary functionality for presenting a vertically scrollable list of settings efficiently. While Cards are visually appealing, they're not suitable for showcasing multiple settings compactly. Unlike the other List component, `231:4151` is able to correctly display the numerous List Items required, based on the content and context.",
+    "visualHierarchy": "Visual hierarchy is established through the use of clear text labels, consistent spacing, and a top-down arrangement of settings.  More frequently used settings like Personal details and Log out are visually emphasized. The inclusion of a top navigation bar further clarifies the screen's context, enhancing navigation.",
+    "variantSelectionRationale": "I chose the `230:3919` List (Right Item) variant with `Right Item` = `Text + Icon` to display a right-aligned chevron icon, indicating navigation to a secondary setting screen, instead of using other `Right Item` options (Badge + Icon, Checkbox, Radio, Stepper, Toggle). This is consistent with the reference image. The chevron clearly signals further action is available. Using badges would require more content than is immediately present; using a switch or checkbox would be contradictory to the settings list's purpose. The same reasoning is applied across all settings."
+  }
+}
+```
+```json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 12,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "118:1617",
+        "type": "appbar",
+        "variants": {
+          "Content": "Title + Secondary Text"
+        },
+        "textLayers": {
+          "Title": "Settings",
+          "Label": ""
+        }
+      },
+      {
+        "id": "231:4151",
+        "type": "list",
+        "items": [
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Personal details"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Business details"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Access to Cars45 auction"
+            },
+            "componentInstances": {
+              "star": "97:1290"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": "Active"
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "\"Verified ID\" badge"
+            },
+            "componentInstances": {
+              "star": "107:1567"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": "What is it?"
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Change phone number"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Change email"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Change language"
+            },
+            "componentInstances": {
+              "star": "130:5229"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Disable chats"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Disable Feedback"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Manage notifications"
+            },
+            "componentInstances": {
+              "star": "130:2840"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Change password"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Delete my account permanently"
+            },
+            "componentInstances": {
+              "star": "34:819"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          },
+          {
+            "id": "230:3882",
+            "type": "list",
+            "variants": {
+              "Left Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Title": "Log out"
+            },
+            "componentInstances": {
+              "star": "130:6415"
+            }
+          },
+          {
+            "id": "230:3919",
+            "type": "list",
+            "variants": {
+              "Right Item": "Text + Icon"
+            },
+            "textLayers": {
+              "Details": ""
+            },
+            "componentInstances": {
+              "nav-arrow-right": "34:859"
+            }
+          }
+        ]
+      },
+      {
+        "id": "116:2019",
+        "type": "appbar",
+        "variants": {
+          "Amount": "5",
+          "Style": "Text + Icon"
+        }
+      }
+    ]
+  }
+}
+```

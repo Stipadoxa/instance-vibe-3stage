@@ -1,0 +1,76 @@
+```json
+{
+  "implementationRationale": {
+    "componentSelection": "The provided JSON uses the 'image', 'text', and 'button' components.  These are assumed to be pre-defined components within the Figma design system with node IDs '10:7816' and '10:3907' respectively.  No other component IDs were provided, so these are the only ones used.",
+    "styleApplication": "Text styles 'Title/Medium' and 'Label/Medium' are applied to the respective text components. Color styles 'Neutral/neutral90' and 'Primary/primary50' are used for product title and price respectively, as specified in the input.",
+    "designSystemMapping": "The input directly specifies components and styles from the design system.  The mapping is straightforward; each element in the input directly corresponds to a component or style in the Figma design system.",
+    "variantDecisions": "The button component uses the 'Medium', 'Filled', 'Green', and 'Default' variants as defined in the input. The image component uses the '1 image' variant.  No other variant selections were necessary."
+  }
+}
+---RATIONALE-SEPARATOR---
+{
+  "layoutContainer": {
+    "name": "Product Listing Card",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 16,
+    "paddingBottom": 16,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "FIXED",
+    "layoutAlign": "STRETCH",
+    "items": [
+      {
+        "type": "image",
+        "componentNodeId": "10:7816",
+        "properties": {
+          "variants": {
+            "Type": "1 image"
+          },
+          "imageSource": "https://via.placeholder.com/350x350"
+        },
+        "width": 350,
+        "height": 350
+      },
+      {
+        "type": "native-text",
+        "text": "Product Title",
+        "properties": {
+          "textStyle": "Title/Medium",
+          "colorStyleName": "Neutral/neutral90",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "native-text",
+        "text": "$29.99",
+        "properties": {
+          "textStyle": "Label/Medium",
+          "colorStyleName": "Primary/primary50",
+          "horizontalSizing": "FILL",
+          "textAutoResize": "HEIGHT",
+          "layoutAlign": "STRETCH",
+          "alignment": "left"
+        }
+      },
+      {
+        "type": "button",
+        "componentNodeId": "10:3907",
+        "properties": {
+          "variants": {
+            "Size": "Medium",
+            "Type": "Filled",
+            "Color": "Green",
+            "State": "Default"
+          },
+          "Action": "Buy"
+        }
+      }
+    ]
+  }
+}
+```

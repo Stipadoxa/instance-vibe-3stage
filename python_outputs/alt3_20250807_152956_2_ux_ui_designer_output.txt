@@ -1,0 +1,205 @@
+```json
+{
+  "DESIGN RATIONALE": {
+    "Component Inventory Verification": "All component IDs have been verified against the provided `DESIGN_SYSTEM_DATA`.",
+    "Layout Decisions": "The layout prioritizes a mobile-first approach.  The top section features a vertical layout for stats cards, followed by a vertical layout for the activity feed.  Action buttons are placed below the feed for easy access.  Bottom navigation is at the very bottom of the screen.",
+    "User Flow Reasoning": "The dashboard presents key metrics prominently at the top.  Recent activity follows to inform the seller of recent events.  Action buttons offer quick access to frequently used features.  Bottom navigation maintains consistent access to core sections.",
+    "Component Choices": "The `Bottom navigation` component (10:4724) was chosen for the bottom navigation bar due to its design system compliance and functionality.  The `product card` component (147:3743) was selected for the stats cards because of its visual appeal and ability to display key information concisely.",
+    "Component Gaps": "The design system lacks a dedicated 'activity feed' component. A workaround was implemented using nested `layoutContainer` elements to create the feed structure.  Individual list items within the activity feed will be created using native elements.",
+    "Visual Hierarchy": "Stats cards are displayed prominently at the top with larger text sizes.  The activity feed is given ample space but is visually subordinate to the top section. The use of visual separators helps maintain a clear visual hierarchy.",
+    "Variant Selection Rationale": "Variants for components were selected based on default states and optimal visual presentation.  For example, the `Button` component uses the `Medium` size and `Default` state unless other states are needed. This is indicated in the `DESIGN_SPECIFICATION` section.",
+    "Native Element Justification": "Native text elements (`native-text`) are used for activity feed items to ensure flexible content display.  Native rectangles (`native-rectangle`) are used to create visual elements if required."
+  },
+  "DESIGN SPECIFICATION": {
+    "layoutContainer": {
+      "name": "Seller Dashboard - Mobile Viewport",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "primaryAxisSizingMode": "FIXED",
+      "counterAxisSizingMode": "FIXED",
+      "width": 375,
+      "minHeight": 600,
+      "items": [
+        {
+          "type": "layoutContainer",
+          "name": "Stats Cards Section",
+          "layoutMode": "HORIZONTAL",
+          "layoutWrap": "WRAP",
+          "itemSpacing": 12,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "147:3743",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "147:3743",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "147:3743",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "variants": {
+                  "view": "grid",
+                  "type": "normal"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Activity Feed Section",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "layoutContainer",
+              "name": "Activity Item 1",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 8,
+              "paddingTop": 8,
+              "paddingBottom": 8,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "primaryAxisSizingMode": "AUTO",
+              "counterAxisSizingMode": "AUTO",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "New listing added",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral80"
+                  }
+                }
+              ]
+            },
+             {
+              "type": "layoutContainer",
+              "name": "Activity Item 2",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 8,
+              "paddingTop": 8,
+              "paddingBottom": 8,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "primaryAxisSizingMode": "AUTO",
+              "counterAxisSizingMode": "AUTO",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Message received from buyer",
+                    "textStyle": "Body/Medium",
+                    "color": "Neutral/neutral80"
+                  }
+                }
+              ]
+            }
+
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Action Buttons Section",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "paddingTop": 16,
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "AUTO",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "SPACE_BETWEEN",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Medium",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green"
+                },
+                "textLayers": {
+                  "Action": "Create New Listing"
+                }
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "horizontalSizing": "AUTO",
+                "variants": {
+                  "Platform": "Android+Web",
+                  "Size": "Medium",
+                  "Type": "Filled",
+                  "State": "Default",
+                  "Color": "Green"
+                },
+                "textLayers": {
+                  "Action": "View All Messages"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:4724",
+          "properties": {
+            "variants": {
+              "Device": "Mobile"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```

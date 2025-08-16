@@ -1,0 +1,27 @@
+Domain & Context
+Domain: Business/SaaS domain with user account management.  Specific context is a mobile application for managing user settings and account details.
+User Type: Mobile app users who need to manage their account settings, personal information, and preferences.
+Platform Impact: Mobile users need a streamlined settings page with clear and concise options, easily accessible through touch interactions, considering potential interruptions and limited screen real estate.
+
+User Requirements
+Primary Goals: Access and modify personal information, manage account preferences (notifications, language), control account security (password, account deletion).
+Secondary Goals: Understand account status (e.g., "Verified ID" badge), easily find help/information ("What is it?" links).
+User Constraints: Small screen size, touch-only interaction, potential interruptions while using the app, limited attention span.
+Ready for handoff if:  All settings options from the reference image are included, navigation is intuitive and consistent with the app's design system, all interactive elements have appropriate touch targets, and the design adheres to the provided component library.
+
+Content Requirements
+Critical: Personal details (name, contact info, potentially address), Business details (if applicable), Access to Cars45 auction (toggle), "Verified ID" badge status and explanation, Change phone number, Change email, Change language, Disable chats, Disable Feedback, Manage notifications, Change password, Delete my account permanently, Log out.
+Supporting:  Clear and concise labels for each setting option.
+Contextual:  Error messages for invalid inputs (e.g., email format), loading indicators for actions that take time (e.g., password change).
+
+Structural & Component Directives
+* Layout:  Single column list of settings options, following the pattern in the reference image. Top and bottom app navigation bars to be implemented using existing app components.
+* Components: Utilize existing app components for list items, buttons, toggles, and navigation bars.  The visual style should match the reference image.
+* Styling:  Adhere to the existing app's color scheme and typography.  Maintain the visual hierarchy seen in the reference image.
+
+
+Screen Requirements
+Primary Actions:  Tap on a settings option to modify it (e.g., change password, manage notifications). Tap on the back button.
+Secondary Actions: Access help information (e.g., "What is it?").
+Screen States:  Default state (showing all settings), loading state (while processing an action such as password change), error state (for invalid inputs or failed actions), success state (after successfully completing an action).
+Feedback Needs: Visual feedback indicating that an action is in progress (loading indicator), confirmation messages after successful actions, clear error messages with actionable instructions.

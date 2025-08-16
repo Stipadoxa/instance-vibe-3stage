@@ -1,0 +1,248 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout uses a vertical list to present settings, mirroring the reference image's structure.  This approach prioritizes a clear, scannable experience on a small screen. Section dividers enhance visual organization and improve information hierarchy. Consistent spacing (16px) between list items maintains visual rhythm and ensures readability.",
+    "userFlowReasoning": "The user flow is straightforward, allowing easy access and modification of settings.  Each setting item is presented as a clearly labeled list item.  Editable items lead to dedicated edit screens ('Personal details', 'Business details', 'Change phone number', 'Change email'), while toggles directly modify settings ('Access to Cars45 auction', 'Disable chats', 'Disable feedback').  The 'Manage notifications' item likely navigates to a dedicated notification management screen. The 'What is it?' links provide help and clarity. The Log Out action is clearly separated at the end to emphasize its significance.",
+    "componentChoices": "The design leverages the provided design system components for consistency.  List items (10:10214) serve as containers for individual settings, combining text and interactive elements.  Toggles (10:9912) are used for boolean settings, while icons ('635:4389', '635:4374', etc.) provide visual cues. The navigation is accomplished using the appbar and appropriate trailing icons to signal navigation. Buttons are employed for actions that require confirmation. A divider component (10:8459) separates sections.",
+    "visualHierarchy": "Visual hierarchy is established through text styles and the layout itself. Headlines are primary, while supporting text is secondary. Icons and leading elements (icons, switches) draw immediate attention to interactive elements. Spacing and dividers create clear visual separation, avoiding visual clutter.",
+    "variantSelectionRationale": "Variant selection focuses on achieving the best possible user experience given the components and content. Toggles have the \"Switch\" variant applied for boolean controls.  Navigation items use the \"Icon\" trailing variant to indicate an action on a separate screen.  Where explanations are provided, the \"Supporting text\" variant is set to \"True\" in List items. The 'Verified ID' badge is shown as a trailing element in the list-item using the \"Trailing\" variant.  The log out option is presented as a \"Button\" component, not a list-item to signal its importance as a main action."
+  },
+  "layoutData": {
+    "layoutContainer": {
+      "name": "Settings Screen",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 0,
+      "paddingTop": 0,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingBottom": 0,
+      "width": 375,
+      "height": 812,
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "items": [
+        {
+          "type": "appbar",
+          "componentNodeId": "10:5620",
+          "properties": {
+            "headline": "Settings",
+            "variants": {
+              "Mode": "Light",
+              "Type": "Default",
+              "Elevation": "flat"
+            }
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "name": "Settings Content",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 16,
+          "layoutAlign": "STRETCH",
+          "primaryAxisSizingMode": "AUTO",
+          "counterAxisSizingMode": "FIXED",
+          "paddingTop": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "items": [
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Personal details",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                },
+                "colorStyleName": "Primary/primary50"
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Business details",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Access to Cars45 auction",
+                "Supporting text": "Active",
+                "variants": {
+                  "Condition": "2-line",
+                  "Leading": "None",
+                  "Trailing": "Switch",
+                  "Show overline": "false",
+                  "Show supporting text": "true"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "\"Verified ID\" badge",
+                "Supporting text": "What is it?",
+                "variants": {
+                  "Condition": "2-line",
+                  "Leading": "None",
+                  "Trailing": "Info",
+                  "Show overline": "false",
+                  "Show supporting text": "true"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Change phone number",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Change email",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Change language",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Disable chats",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Switch",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Disable Feedback",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Switch",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Manage notifications",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Change password",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "Icon",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Delete my account permanently",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            },
+            {
+              "type": "list-item",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Log out",
+                "variants": {
+                  "Condition": "1-line",
+                  "Leading": "None",
+                  "Trailing": "None",
+                  "Show overline": "false",
+                  "Show supporting text": "false"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "Bottom navigation",
+          "componentNodeId": "10:4724",
+          "properties": {
+            "variants": {
+              "Device": "Mobile"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```

@@ -1,0 +1,90 @@
+```json
+{
+  "designRationale": {
+    "layoutDecisions": "The layout is a single column, vertically stacked, to optimize for mobile screens and to ensure a clear, top-to-bottom user flow.  Spacing between components is minimized for efficient use of screen real estate.",
+    "userFlowReasoning": "The user flow prioritizes quick and secure authentication. The username/email and password fields are at the top, followed by the primary login button. Secondary actions (social login, forgot password, terms) are placed below the primary action to avoid distraction.",
+    "componentChoices": "I chose the 'button' component (id: 10:3907) for the login button because it's a standard, highly visible component with clear affordances. I considered 'chip' (id: 10:8132) and 'snackbar' (id: 10:3856), but they are not suitable for primary actions. The 'button' offers better visual prominence and tappable area.",
+    "visualHierarchy": "Visual hierarchy is established using component placement and size. The login button is larger than other interactive elements.  Whitespace is used strategically to create visual separation and improve readability on smaller screens.",
+    "variantSelectionRationale": "For the login button, I selected 'Size: Large', 'Type: Filled', 'State: Default', and 'Color: Green' (id: 10:3907). I did not choose smaller button sizes because of the need for sufficient touch targets on mobile devices. An outlined button was not suitable because of the need for visual prominence.  The green color signifies a positive, action-oriented button."
+  }
+}
+```
+---RATIONALE-SEPARATOR---
+```json
+{
+  "layoutContainer": {
+    "name": "Authentication Screen",
+    "layoutMode": "VERTICAL",
+    "itemSpacing": 16,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "primaryAxisSizingMode": "AUTO",
+    "counterAxisSizingMode": "AUTO",
+    "items": [
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Username or Email",
+          "label-text": "Username"
+        }
+      },
+      {
+        "id": "10:8492",
+        "suggestedType": "input",
+        "variants": {
+          "Type": "Filled",
+          "State": "enabled"
+        },
+        "textLayers": {
+          "placeholder-text": "Password",
+          "label-text": "Password"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Large",
+          "Type": "Filled",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Login"
+        }
+      },
+      {
+        "id": "10:3907",
+        "suggestedType": "button",
+        "variants": {
+          "Platform": "Android+Web",
+          "Size": "Medium",
+          "Type": "Text",
+          "State": "Default",
+          "Color": "Green"
+        },
+        "textLayers": {
+          "Action": "Forgot Password?"
+        }
+      },
+      {
+        "id": "10:9586",
+        "suggestedType": "checkbox",
+        "variants": {
+          "Type": "Unselected",
+          "State": "Enabled"
+        }
+      },
+
+    ]
+  }
+}
+```
