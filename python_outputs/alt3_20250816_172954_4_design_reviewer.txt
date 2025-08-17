@@ -1,0 +1,301 @@
+# SENIOR DESIGN REVIEW
+
+## Quality Assessment
+- **Image Carousel:** The current implementation uses `native-rectangle` placeholders instead of the `10:7816` IMAGES component from the design system, which is designed for image carousels and has better visual presentation and loading support.
+
+- **Seller Profile Image:**  A generic `10:7798` avatar component is used. It's better to use a component that explicitly supports profile pictures with potential for larger sizes.
+
+- **Layout Issues:** There is excessive spacing above the "Contact Seller" button and below the "View Seller Profile" text, that would be better implemented in the design system elements.
+
+- **Readability:** Although not critically unreadable, the gray text for the condition and specifications could benefit from a slightly bolder font weight for improved readability (changing to `Body/MediumBold` would improve it).
+
+- **Information Hierarchy:** The specifications section could be visually improved by using a more structured component, such as a `list-item`.
+
+## Applied Improvements
+- Replaced placeholder rectangles with the `10:7816` IMAGES component for image carousels in the Product Images section. This provides the correct aspect ratio, better functionality (carousel behavior), loading indicators, and error handling.
+- The `10:7798` avatar component is replaced with the `10:7773` avatar / big component, which supports larger images and is more suitable for seller profile pictures, it also provides an `online-indicator`.
+- Adjusted padding within the layout containers to resolve excessive spacing. The design system already accounts for common padding between elements.
+- Changed the text style of the condition and specifications to "Body/MediumBold" for better readability on mobile.  This leverages the design system for better visual consistency.
+- The specifications section is improved visually using the `10:10214` `List item` component for each specification, offering better visual hierarchy and improved readability. This makes use of the design systems structured component, enabling better usability of the design system.
+
+
+---
+
+# ENHANCED DESIGN SPECIFICATION
+
+```json
+{
+  "type": "layoutContainer",
+  "name": "Used Laptop Detail - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 0,
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5625": false,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "leading-icon": "settings"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16,
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2015 MacBook Pro - 13-inch - Space Gray - Excellent Condition",
+            "textStyle": "Headline/primary",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "2+ images"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$450",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition: Excellent (Minor scratches on the bottom case)",
+            "textStyle": "Body/MediumBold",
+            "color": "Neutral/neutral80"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7773",
+              "properties": {},
+              "variants": {
+                "Type": "Photo"
+              },
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Smith (4.8 stars, 123 reviews)",
+                "textStyle": "Body/MediumBold",
+                "color": "Neutral/neutral90"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used 2015 MacBook Pro 13-inch in Space Gray. Excellent condition with minor scratches on the bottom case. Includes original charger. Runs macOS Ventura smoothly. Battery health at 85%.",
+            "textStyle": "Body/MediumBold",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Specifications:",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral80"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 4,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Processor",
+                "Supporting text": "2.7 GHz Intel Core i5"
+              },
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "RAM",
+                "Supporting text": "8GB"
+              },
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Storage",
+                "Supporting text": "256GB SSD"
+              },
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Operating System",
+                "Supporting text": "macOS Ventura"
+              },
+              "variants": {
+                "Condition": "2-line",
+                "Leading": "None",
+                "Trailing": "None",
+                "Show overline": "False",
+                "Show supporting text": "True"
+              },
+              "layoutAlign": "STRETCH"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Last updated: 2 hours ago",
+            "textStyle": "Caption/Small",
+            "color": "Neutral/neutral30"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "View Seller Profile",
+            "textStyle": "Body/MediumBold",
+            "color": "Primary/primary50",
+            "underline": true
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "textLayers": {
+        "✈ Label": [
+          "Home",
+          "Search",
+          "Messages",
+          "Profile"
+        ]
+      },
+      "iconSwaps": {
+        "0": "home",
+        "1": "search",
+        "2": "message",
+        "3": "person"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

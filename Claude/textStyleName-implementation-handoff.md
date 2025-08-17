@@ -81,14 +81,16 @@ const exportData = {
 
 ## ❌ MINOR ISSUE REMAINING
 
-### 1. textStyleName Field Missing
-**Problem**: textStyleName not appearing in component textHierarchy
+### 1. textStyleName Field Missing - CONFIRMED ISSUE
+**Problem**: textStyleName not appearing in component textHierarchy after multiple fresh scans
 
 **Evidence**: 
+- Latest test: `design-system-raw-data-2025-08-16T22-11-01.json`
 - textStyleId present: `"textStyleId": "S:ebfb895b181caad91007d132a477c24baab0ad13,2403:1340"`
 - textStyleName absent (should be: `"textStyleName": "Headline/Large"`)
+- textStyles section exports correctly with 15 entries
 
-**Root Cause**: Format matching may need fresh scan or backend restart
+**Root Cause**: Format matching logic not working - textStyleMap contains different IDs than component textStyleIds
 
 ## 🔧 METHODS ATTEMPTED (DIDN'T WORK)
 
@@ -125,22 +127,31 @@ npm run build  # Multiple times
 
 ## 🎯 NEXT STEPS FOR COMPLETION
 
-### Priority 1: Test textStyleName Resolution ⏳
-**Action**: Full Figma restart + fresh scan to verify textStyleName logic
+### Priority 1: DEBUG textStyleName Format Matching 🔍
+**Problem Confirmed**: Multiple fresh scans show textStyleName still missing
 
-**Expected Result**: 
-```json
-{
-  "textStyleId": "S:ebfb895b181caad91007d132a477c24baab0ad13,2403:1340",
-  "textStyleName": "Headline/Large",
-  "usesDesignSystemStyle": true
+**Required Debug Action**: Add console.log to textStyleName lookup logic
+```typescript
+// In src/core/component-scanner.ts around line 1084-1092
+if (textStyleId) {
+  console.log('🔍 DEBUG textStyleId from node:', textStyleId);
+  console.log('🔍 DEBUG textStyleMap contents:', Array.from(this.textStyleMap.entries()).slice(0, 5));
+  
+  textStyleName = this.textStyleMap.get(textStyleId);
+  if (!textStyleName) {
+    const baseId = textStyleId.split(',')[0];
+    const mapFormatId = baseId + ',';
+    console.log('🔍 DEBUG baseId:', baseId);
+    console.log('🔍 DEBUG mapFormatId:', mapFormatId);
+    console.log('🔍 DEBUG trying mapFormatId lookup...');
+    
+    textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
+    console.log('🔍 DEBUG final textStyleName:', textStyleName);
+  }
 }
 ```
 
-**If Still Missing**: Debug format matching in real-time
-- Log textStyleId from components  
-- Log textStyleMap contents
-- Verify baseId + ',' matching logic
+**Expected Finding**: Discover why node textStyleIds don't match textStyleMap keys
 
 ### Priority 2: Comprehensive Testing
 **Action**: Test with various text components to ensure consistency
@@ -168,9 +179,9 @@ npm run build  # Multiple times
 - ✅ Export version 2.0 working
 - ✅ Backend textStyles processing 100% verified
 
-**Final Status**: 95% complete - only textStyleName field verification remaining
+**Final Status**: 95% complete - textStyles export fully working, textStyleName debug needed
 
-**Ready for**: Final textStyleName testing with fresh Figma scan
+**Ready for**: Debug console logs to identify format mismatch between node.textStyleId and textStyleMap
 
 ---
 

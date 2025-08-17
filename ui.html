@@ -1911,11 +1911,12 @@ function isValidImageSelected() {
                 // Download the JSON file
                 downloadJsonFile(exportData, filename);
 
-                const exportMessage = colorStyles ? 
-                    `✅ Raw data exported successfully (${scanResults.length} components, ${colorStylesCount} color styles)` :
+                const textStylesCount = textStyles ? textStyles.length : 0;
+                const exportMessage = colorStyles || textStyles ? 
+                    `✅ Raw data exported successfully (${scanResults.length} components, ${colorStylesCount} color styles, ${textStylesCount} text styles)` :
                     `✅ Raw data exported successfully (${scanResults.length} components)`;
                 console.log(exportMessage);
-                console.log(`📤 Exported ${scanResults.length} components and ${colorStylesCount} color styles to ${filename}`);
+                console.log(`📤 Exported ${scanResults.length} components, ${colorStylesCount} color styles, and ${textStylesCount} text styles to ${filename}`);
             } catch (error) {
                 console.error('Export failed:', error);
                 console.log('❌ Export failed. Please try again.');
@@ -2693,7 +2694,6 @@ function isValidImageSelected() {
                     
                     // Store both components and colorStyles
                     colorStyles = msg.colorStyles || null;
-                    textStyles = msg.textStyles || null;
                     textStyles = msg.textStyles || null;
                     
                     // Debug logging

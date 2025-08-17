@@ -1,0 +1,317 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 0,
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5627": true,
+        "10:5628": true,
+        "10:5631": true,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false,
+        "10:5636": false
+      },
+      "iconSwaps": {
+        "leading-icon": "arrow"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "native-text",
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL",
+          "properties": {
+            "content": "2015 MacBook Pro 13-inch - Excellent Condition",
+            "textStyle": "Headline",
+            "color": "Neutral/neutral90"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "2+ images"
+          },
+          "properties": {
+            "images": [
+              "imageUrl1",
+              "imageUrl2",
+              "imageUrl3",
+              "imageUrl4"
+            ]
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 12,
+          "items": [
+            {
+              "type": "native-text",
+              "_useFlexFill": true,
+              "_parentLayout": "HORIZONTAL",
+              "properties": {
+                "content": "$450",
+                "textStyle": "Title",
+                "color": "Primary/primary50"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:7805",
+              "properties": {
+                "content": "4.8"
+              },
+              "variants": {
+                "Type": "Small",
+                "Active": "false"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL",
+              "properties": {
+                "content": "Condition: Excellent (Minor scratches on the bottom casing)",
+                "textStyle": "Body",
+                "color": "Neutral/neutral50"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 8,
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "10:7798",
+                  "variants": {
+                    "Type": "Photo"
+                  },
+                  "properties": {
+                    "imageUrl": "sellerProfilePicture"
+                  }
+                },
+                {
+                  "type": "native-text",
+                  "_useFlexFill": true,
+                  "_parentLayout": "HORIZONTAL",
+                  "properties": {
+                    "content": "John Doe \u2b50\u2b50\u2b50\u2b50 (4.8 stars) (123 reviews)",
+                    "textStyle": "Body",
+                    "color": "Neutral/neutral50"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL",
+              "properties": {
+                "content": "Specifications:",
+                "textStyle": "Title",
+                "color": "Neutral/neutral80"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Processor: Intel Core i5",
+                "Supporting text": ""
+              },
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "RAM: 8GB",
+                "Supporting text": ""
+              },
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Storage: 256GB SSD",
+                "Supporting text": ""
+              },
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:10214",
+              "properties": {
+                "Headline": "Operating System: macOS Monterey",
+                "Supporting text": ""
+              },
+              "variants": {
+                "Condition": "1-line",
+                "Leading": "None",
+                "Trailing": "None"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL",
+          "properties": {
+            "content": "Description:",
+            "textStyle": "Title",
+            "color": "Neutral/neutral80"
+          }
+        },
+        {
+          "type": "native-text",
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL",
+          "properties": {
+            "content": "\"Lightly used 2015 MacBook Pro 13-inch. In excellent condition, with only minor scratches on the bottom casing. Battery health is at 85%. Includes original charger.\"",
+            "textStyle": "Body",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "native-text",
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL",
+          "properties": {
+            "content": "Shipping Information: Free shipping within the US.",
+            "textStyle": "Body",
+            "color": "Neutral/neutral50"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Contact Seller"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "HORIZONTAL",
+              "itemSpacing": 8,
+              "items": [
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4744",
+                  "variants": {
+                    "style": "filled"
+                  }
+                },
+                {
+                  "type": "component",
+                  "componentNodeId": "635:4533",
+                  "variants": {
+                    "style": "filled"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL",
+          "properties": {
+            "content": "Last updated: 1 hour ago",
+            "textStyle": "Caption",
+            "color": "Neutral/neutral50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

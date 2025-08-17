@@ -9,6 +9,12 @@ export interface ColorInfo {
     color: string;
     position: number;
   }>;
+  
+  // NEW: Design System color style references
+  paintStyleId?: string;           // Color style ID from Design System for fast rendering
+  paintStyleName?: string;         // Style name for JSON Engineer lookup and fallback
+  boundVariables?: any;            // Bound variables for color style
+  usesDesignSystemColor?: boolean; // Flag indicating Design System usage
 }
 
 export interface StyleInfo {
@@ -34,6 +40,15 @@ export interface TextHierarchy {
   textStyleName?: string;         // Style name for JSON Engineer lookup and fallback
   boundTextStyleId?: string;      // Bound variable for text style
   usesDesignSystemStyle?: boolean; // Flag indicating Design System usage
+}
+
+// NEW: Interface for exact text style matching
+export interface TextStyleDetails {
+  id: string;
+  name: string;
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: string | number;
 }
 
 export interface ComponentInstance {

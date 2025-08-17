@@ -1,0 +1,237 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Used Laptop Detail - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "back-icon",
+          "properties": {},
+          "horizontalSizing": "HUG",
+          "layoutAlign": "START"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Product Details",
+            "textStyle": "Headline/Medium",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "HORIZONTAL"
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2015 MacBook Pro 13-inch - Excellent Condition",
+            "textStyle": "Headline/Large",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "image-carousel",
+          "properties": {
+            "images": ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg"]
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$450",
+            "textStyle": "Headline/Medium",
+            "color": "Primary/primary50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Excellent - Minor scratches on the casing. Fully functional. Battery health: 85%",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "seller-avatar",
+              "properties": {},
+              "width": 40,
+              "height": 40,
+              "cornerRadius": 20
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "John Smith",
+                "textStyle": "Title/Medium",
+                "color": "Neutral/neutral90"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "rating-component",
+              "properties": {
+                "rating": 4.5,
+                "numReviews": 123
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Used MacBook Pro 13-inch from 2015. Excellent condition with minor cosmetic wear. Includes original charger. Specs: 8GB RAM, 256GB SSD, Intel Core i5.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "specs-table",
+          "properties": {
+            "headers": ["Spec", "Value"],
+            "rows": [
+              ["Processor", "Intel Core i5"],
+              ["RAM", "8GB"],
+              ["Storage", "256GB SSD"],
+              ["Operating System", "macOS Monterey"]
+            ]
+          }
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Listed 2 days ago",
+            "textStyle": "Caption/Small",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "contact-seller-button",
+          "properties": {
+            "text": "Contact Seller",
+            "buttonStyle": "primary",
+            "size": "large"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "add-to-wishlist-button",
+              "properties": {
+                "text": "Add to Wishlist",
+                "buttonStyle": "secondary",
+                "size": "medium"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "report-listing-button",
+              "properties": {
+                "text": "Report Listing",
+                "buttonStyle": "secondary",
+                "size": "medium"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "STRETCH"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "HORIZONTAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "items": [
+        {
+          "type": "component",
+          "componentNodeId": "home-icon",
+          "properties": {},
+          "horizontalSizing": "HUG",
+          "layoutAlign": "CENTER"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "search-icon",
+          "properties": {},
+          "horizontalSizing": "HUG",
+          "layoutAlign": "CENTER"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "notifications-icon",
+          "properties": {},
+          "horizontalSizing": "HUG",
+          "layoutAlign": "CENTER"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "profile-icon",
+          "properties": {},
+          "horizontalSizing": "HUG",
+          "layoutAlign": "CENTER"
+        }
+      ]
+    }
+  ]
+}
+```

@@ -1,0 +1,67 @@
+{
+  "timestamp": "2025-08-16T17:31:50.145450",
+  "total_iterations": 2,
+  "total_issues_found": 10,
+  "total_changes_made": 5,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 5,
+      "changes_made": 2,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system? // \"Headline/Large\" is not a valid style.",
+        "- Do content containers have itemSpacing between children (8, 12, 16, or 24)? //The inner layout container uses itemSpacing: 8 which is valid.",
+        "- Are three-panel layouts structured as: Header (auto) + Content (layoutGrow: 1) + Footer (auto)? //Yes, the layout is structured correctly.",
+        "- Do native-text elements have layoutSizingHorizontal: \"FILL\" instead of \"HUG\"? //No `layoutSizingHorizontal` specified for native text elements.",
+        "- Are all component IDs using \"componentNodeId\" (not \"id\" or \"componentId\")? // \"componentId\" is used in some component instances instead of \"componentNodeId\"."
+      ],
+      "changes": [
+        "- Added `layoutSizingHorizontal: \"FILL\"` to all native-text elements.",
+        "- Changed textStyle \"Headline/Large\" to \"Headline/primary\" in the first native-text element.  This is an assumption to make the code valid, as \"Headline/Large\" is not found in the design system."
+      ],
+      "detailed_change_log": [
+        "[CHANGE_TYPE] Property \"items[1].items[0].properties.textStyle\": \"Headline/Large\" \u2192 \"Headline/primary\" (Reason: \"Headline/Large\" is not a valid text style in the design system. Changed to a valid primary Headline style.  This is a best guess, as more context is needed.)",
+        "[ADDITION] Added property \"items[1].items[0].layoutSizingHorizontal\": \"FILL\" (Reason:  Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[2].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[3].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[5].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[7].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[8].items[1].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[9].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)",
+        "[ADDITION] Added property \"items[1].items[10].layoutSizingHorizontal\": \"FILL\" (Reason: Native text elements require layoutSizingHorizontal to be FILL for full-width behavior.)"
+      ]
+    },
+    {
+      "iteration_number": 2,
+      "issues_found": 5,
+      "changes_made": 3,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system? // \"Headline/Large\" is not a valid style.",
+        "- Do content containers have itemSpacing between children (8, 12, 16, or 24)? //The inner layout container uses itemSpacing: 8 which is valid.",
+        "- Are three-panel layouts structured as: Header (auto) + Content (layoutGrow: 1) + Footer (auto)? //Yes, the layout is structured correctly.",
+        "- Do native-text elements have layoutSizingHorizontal: \"FILL\" instead of \"HUG\"? //No `layoutSizingHorizontal` specified for native text elements.",
+        "- Are all component IDs using \"componentNodeId\" (not \"id\" or \"componentId\")? // \"componentId\" is used in some component instances instead of \"componentNodeId\"."
+      ],
+      "changes": [
+        "- Added layoutSizingHorizontal: \"FILL\" to all native-text elements.",
+        "- Corrected \"componentId\" to \"componentNodeId\" in all component instances.",
+        "- Corrected \"textLayers\" to \"\u2708 Label\" in bottom navigation component."
+      ],
+      "detailed_change_log": [
+        "[ADDITION] Added property \"items.1.items.0.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.2.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.3.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.5.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.7.items.0.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.7.items.1.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.7.items.2.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.7.items.3.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.8.layoutSizingHorizontal\": \"FILL\" (Reason:  All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[ADDITION] Added property \"items.1.items.10.layoutSizingHorizontal\": \"FILL\" (Reason: All native-text elements require layoutSizingHorizontal: \"FILL\" for proper width behavior.)",
+        "[CHANGE] Property \"items.2.textLayers\": \"\u2708 Label\" \u2192  (Reason: The original property name was incorrect and inconsistent with the design system's naming convention.)",
+        "[CHANGE] Property \"items.1.items.4.items.1.componentId\": \"10:7798\" \u2192 \"componentNodeId\": \"10:7798\" (Reason:  \"componentId\" should be \"componentNodeId\" for consistency with the design system.)",
+        "[CHANGE] Property \"items.1.items.10.componentNodeId\": \"10:3907\" \u2192 \"componentNodeId\": \"10:3907\" (Reason:  \"componentId\" should be \"componentNodeId\" for consistency with the design system.)"
+      ]
+    }
+  ]
+}

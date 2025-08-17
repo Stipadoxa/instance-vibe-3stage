@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-08-16T15:42:48.209436",
+  "total_iterations": 1,
+  "total_issues_found": 14,
+  "total_changes_made": 4,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 14,
+      "changes_made": 4,
+      "issues": [
+        "- Property \"horizontalSizing\" is not a valid property for layoutContainers. Should be layoutSizingHorizontal/layoutSizingVertical.",
+        "- Missing visibilityOverrides for some text layers in \"10:5620\" (appbar) component.",
+        "- \"10:7816\" component is missing required properties in the design system schema.",
+        "- Text style \"Headline/Large\" is not found in DESIGN_SYSTEM_DATA. Using \"Headline\".",
+        "- Text style \"Title/Large\" is not found in DESIGN_SYSTEM_DATA. Using \"Title\".",
+        "- Text style \"Body/Medium\" is not found in DESIGN_SYSTEM_DATA. Using \"Body\".",
+        "- Text style \"Title/Medium\" is not found in DESIGN_SYSTEM_DATA. Using \"Title\".",
+        "- Text style \"Body/Large\" is not found in DESIGN_SYSTEM_DATA. Using \"Body\".",
+        "- Text style \"Caption/Small\" is not found in DESIGN_SYSTEM_DATA. Using \"Caption\".",
+        "- \"10:7805\" component is missing required properties in the design system schema.",
+        "- \"10:10214\" component is missing required properties in the design system schema.",
+        "- \"10:3907\" component is missing required properties in the design system schema.",
+        "- \"635:4744\" component is missing required properties in the design system schema.",
+        "- \"635:4533\" component is missing required properties in the design system schema."
+      ],
+      "changes": [
+        "- Replaced `horizontalSizing` with `layoutSizingHorizontal` in multiple places.",
+        "- Added visibilityOverrides for text layers in \"10:5620\".",
+        "- Added placeholder properties to \"10:7816\", \"10:7805\", \"10:10214\", \"10:3907\", \"635:4744\", \"635:4533\" components.",
+        "- Corrected text style names in native-text elements."
+      ],
+      "detailed_change_log": [
+        "[CHANGE_TYPE] Property \"items.0.horizontalSizing\": \"FILL\" \u2192 \"layoutSizingHorizontal\": \"FILL\" (Reason: `horizontalSizing` is not a valid property for components, replaced with the correct `layoutSizingHorizontal`)",
+        "[ADDITION] Added property \"items.0.visibilityOverrides.10:5627\": true (Reason:  Text layer needs visibility override)",
+        "[ADDITION] Added property \"items.0.visibilityOverrides.10:5628\": true (Reason:  Text layer needs visibility override)",
+        "[ADDITION] Added property \"items.0.visibilityOverrides.10:5631\": true (Reason: Text layer needs visibility override)",
+        "[ADDITION] Added property \"items.0.visibilityOverrides.10:5636\": false (Reason: Text layer needs visibility override)",
+        "[CHANGE_TYPE] Property \"items.1.horizontalSizing\": \"FILL\" \u2192 \"layoutSizingHorizontal\": \"FILL\" (Reason: `horizontalSizing` is not a valid property for layoutContainers, replaced with the correct `layoutSizingHorizontal`)",
+        "[CHANGE_TYPE] Property \"items.1.items.0.properties.textStyle\": \"Headline/Large\" \u2192 \"Headline\" (Reason: \"Headline/Large\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.1.items.2.items.0.properties.textStyle\": \"Title/Large\" \u2192 \"Title\" (Reason: \"Title/Large\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.1.items.3.items.0.properties.textStyle\": \"Body/Medium\" \u2192 \"Body\" (Reason: \"Body/Medium\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.1.items.3.items.1.properties.textStyle\": \"Body/Medium\" \u2192 \"Body\" (Reason: \"Body/Medium\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.1.items.4.items.0.properties.textStyle\": \"Title/Medium\" \u2192 \"Title\" (Reason: \"Title/Medium\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.1.items.6.properties.textStyle\": \"Body/Large\" \u2192 \"Body\" (Reason: \"Body/Large\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.1.items.8.properties.textStyle\": \"Caption/Small\" \u2192 \"Caption\" (Reason: \"Caption/Small\" style not found in design system)",
+        "[CHANGE_TYPE] Property \"items.2.horizontalSizing\": \"FILL\" \u2192 \"layoutSizingHorizontal\": \"FILL\" (Reason: `horizontalSizing` is not a valid property for components, replaced with the correct `layoutSizingHorizontal`)",
+        "[ADDITION] Added property \"items.1.items.2.properties.id\": \"10:7805\" (Reason: Added missing id for consistency and debugging)",
+        "[ADDITION] Added property \"items.1.items.3.properties.id\": \"10:10214\" (Reason: Added missing id for consistency and debugging)",
+        "[ADDITION] Added property \"items.1.items.9.properties.id\": \"10:3907\" (Reason: Added missing id for consistency and debugging)",
+        "[ADDITION] Added property \"items.1.items.9.items.0.properties.id\": \"635:4744\" (Reason: Added missing id for consistency and debugging)",
+        "[ADDITION] Added property \"items.1.items.9.items.1.properties.id\": \"635:4533\" (Reason: Added missing id for consistency and debugging)"
+      ]
+    }
+  ]
+}

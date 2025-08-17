@@ -1,7 +1,7 @@
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
 
-import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo } from './session-manager';
+import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails } from './session-manager';
 
 export interface ColorStyle {
   id: string;
@@ -70,6 +70,9 @@ export class ComponentScanner {
   // Static cache for text style lookups (id -> name mapping)
   private static textStyleMap: Map<string, string> = new Map();
   private static loggedMissingIds: Set<string> = new Set();
+  
+  // NEW: Static cache for detailed text style properties (for exact matching)
+  private static textStyleDetails: Map<string, TextStyleDetails> = new Map();
   
   // Static cache for color style lookups (id -> name mapping)
   private static paintStyleMap: Map<string, string> = new Map();
@@ -580,10 +583,23 @@ export class ComponentScanner {
         // NEW: Build text style lookup map for fast ID->name resolution
         if (textStyles && textStyles.length > 0) {
           this.textStyleMap.clear();
+          this.textStyleDetails.clear();
+          
           textStyles.forEach(style => {
             this.textStyleMap.set(style.id, style.name);
+            
+            // NEW: Build detailed style properties for exact matching
+            this.textStyleDetails.set(style.id, {
+              id: style.id,
+              name: style.name,
+              fontSize: style.fontSize,
+              fontFamily: style.fontName?.family || 'Unknown',
+              fontWeight: style.fontName?.style || 'Regular'
+            });
           });
+          
           console.log(`✅ Built text style lookup map with ${this.textStyleMap.size} entries`);
+          console.log(`✅ Built text style details map with ${this.textStyleDetails.size} entries`);
           
           // DEBUG: Log first few entries to understand ID format
           const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
@@ -654,10 +670,23 @@ export class ComponentScanner {
       // NEW: Build text style lookup map for component analysis (done at the end to ensure textStyles are available)
       if (textStyles && textStyles.length > 0) {
         this.textStyleMap.clear();
+        this.textStyleDetails.clear();
+        
         textStyles.forEach(style => {
           this.textStyleMap.set(style.id, style.name);
+          
+          // NEW: Build detailed style properties for exact matching
+          this.textStyleDetails.set(style.id, {
+            id: style.id,
+            name: style.name,
+            fontSize: style.fontSize,
+            fontFamily: style.fontName?.family || 'Unknown',
+            fontWeight: style.fontName?.style || 'Regular'
+          });
         });
+        
         console.log(`✅ Built text style lookup map with ${this.textStyleMap.size} entries`);
+        console.log(`✅ Built text style details map with ${this.textStyleDetails.size} entries`);
         
         // DEBUG: Log first few entries to understand ID format
         const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
@@ -665,6 +694,7 @@ export class ComponentScanner {
       } else {
         console.warn('⚠️ No text styles available for lookup map');
         this.textStyleMap.clear();
+        this.textStyleDetails.clear();
       }
       
       return scanSession;
@@ -965,6 +995,56 @@ export class ComponentScanner {
   }
 
   /**
+   * NEW: Normalize fontWeight to comparable format
+   */
+  private static normalizeFontWeight(fontWeight: string | number): string {
+    if (typeof fontWeight === 'number') {
+      // Convert number to string representation
+      if (fontWeight <= 300) return 'Light';
+      if (fontWeight <= 400) return 'Regular';
+      if (fontWeight <= 500) return 'Medium';
+      if (fontWeight <= 600) return 'SemiBold';
+      if (fontWeight <= 700) return 'Bold';
+      return 'ExtraBold';
+    }
+    
+    // Normalize string weights
+    const weight = String(fontWeight).toLowerCase();
+    if (weight.includes('regular') || weight.includes('normal')) return 'Regular';
+    if (weight.includes('medium')) return 'Medium';
+    if (weight.includes('light')) return 'Light';
+    if (weight.includes('bold')) return 'Bold';
+    if (weight.includes('semibold')) return 'SemiBold';
+    if (weight.includes('extrabold') || weight.includes('black')) return 'ExtraBold';
+    
+    return String(fontWeight); // fallback to original
+  }
+
+  /**
+   * NEW: Find exact matching local text style based on fontSize, fontFamily, and fontWeight
+   * Used as fallback when external textStyleId is not found in local styles
+   */
+  private static findExactMatchingLocalStyle(fontSize: number, fontFamily: string, fontWeight: string | number): string | undefined {
+    const normalizedWeight = this.normalizeFontWeight(fontWeight);
+    console.log(`🔍 Looking for exact match: ${fontSize}px, ${fontFamily}, ${normalizedWeight} (original: ${fontWeight})`);
+    
+    for (const [styleId, styleDetails] of this.textStyleDetails.entries()) {
+      const styleNormalizedWeight = this.normalizeFontWeight(styleDetails.fontWeight);
+      
+      if (styleDetails.fontSize === fontSize &&
+          styleDetails.fontFamily === fontFamily &&
+          styleNormalizedWeight === normalizedWeight) {
+        
+        console.log(`✅ Exact match found: "${styleDetails.name}" (${styleId})`);
+        return styleDetails.name;
+      }
+    }
+    
+    console.warn(`❌ No exact match found for: ${fontSize}px, ${fontFamily}, ${normalizedWeight}`);
+    return undefined;
+  }
+
+  /**
    * Finds and catalogs text layers within a component
    */
   static findTextLayers(comp: ComponentNode | ComponentSetNode): string[] {
@@ -1006,7 +1086,7 @@ export class ComponentScanner {
         
         // Collect font info for classification
         const fontSizes: number[] = [];
-        const textNodeData: Array<{node: TextNode, fontSize: number, fontWeight: string | number}> = [];
+        const textNodeData: Array<{node: TextNode, fontSize: number, fontWeight: string | number, fontFamily: string}> = [];
         
         textNodes.forEach(node => {
           if (node.type === 'TEXT') {
@@ -1014,8 +1094,13 @@ export class ComponentScanner {
             try {
               const fontSize = typeof textNode.fontSize === 'number' ? textNode.fontSize : 14;
               const fontWeight = textNode.fontWeight || 'normal';
+              // NEW: Extract fontFamily for exact matching
+              const fontFamily = (textNode.fontName && typeof textNode.fontName === 'object' && textNode.fontName.family) 
+                ? textNode.fontName.family 
+                : 'Unknown';
+              
               fontSizes.push(fontSize);
-              textNodeData.push({node: textNode, fontSize, fontWeight});
+              textNodeData.push({node: textNode, fontSize, fontWeight, fontFamily});
             } catch (e) {
               console.warn(`Could not read font properties for text node "${textNode.name}"`);
             }
@@ -1025,7 +1110,7 @@ export class ComponentScanner {
         // Sort font sizes to determine hierarchy thresholds
         const uniqueSizes = [...new Set(fontSizes)].sort((a, b) => b - a);
         
-        for (const {node, fontSize, fontWeight} of textNodeData) {
+        for (const {node, fontSize, fontWeight, fontFamily} of textNodeData) {
           let classification: 'primary' | 'secondary' | 'tertiary' = 'tertiary';
           
           if (uniqueSizes.length >= 3) {
@@ -1089,6 +1174,16 @@ export class ComponentScanner {
                 const mapFormatId = baseId + ',';
                 
                 textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
+                
+                // NEW: If still not found, try exact matching fallback for external styles
+                if (!textStyleName) {
+                  console.log(`🔄 External textStyleId detected: ${textStyleId}, trying exact match fallback`);
+                  textStyleName = this.findExactMatchingLocalStyle(fontSize, fontFamily, fontWeight);
+                  
+                  if (textStyleName) {
+                    console.log(`✅ External style mapped to local: "${textStyleName}"`);
+                  }
+                }
               }
             }
           } catch (e) {
