@@ -124,6 +124,55 @@ export interface AutoLayoutBehavior {
   }>;
 }
 
+// NEW: Hierarchical component structure interface
+export interface ComponentStructure {
+  id: string;
+  type: string; // 'TEXT' | 'VECTOR' | 'RECTANGLE' | 'ELLIPSE' | 'COMPONENT' | 'INSTANCE' | 'FRAME' | etc.
+  name: string;
+  children: ComponentStructure[];
+  parent?: string; // Parent node ID
+  depth: number; // Depth in component hierarchy (0 = root)
+  visible: boolean;
+  
+  // Node-specific properties
+  nodeProperties?: {
+    // Text properties (if type === 'TEXT')
+    textHierarchy?: TextHierarchy;
+    
+    // Component instance properties (if type === 'COMPONENT' || 'INSTANCE')
+    componentInstance?: ComponentInstance;
+    
+    // Vector properties (if type === 'VECTOR')
+    vectorNode?: VectorNode;
+    
+    // Image properties (if type === 'RECTANGLE' || 'ELLIPSE' with image fills)
+    imageNode?: ImageNode;
+    
+    // Auto-layout properties (if node has layoutMode !== 'NONE')
+    autoLayoutBehavior?: AutoLayoutBehavior;
+    
+    // Style information (for any visual node)
+    styleInfo?: StyleInfo;
+    
+    // Sizing and positioning
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
+    
+    // Layout constraints
+    layoutAlign?: 'INHERIT' | 'STRETCH';
+    layoutGrow?: number;
+    layoutSizingHorizontal?: 'FIXED' | 'HUG' | 'FILL';
+    layoutSizingVertical?: 'FIXED' | 'HUG' | 'FILL';
+  };
+  
+  // Special flags
+  isNestedAutoLayout?: boolean; // True if this node has auto-layout and is nested within another auto-layout
+  isComponentInstanceReference?: boolean; // True if this is a reference to another component (don't analyze deeply)
+  iconContext?: 'leading' | 'trailing' | 'standalone' | 'decorative'; // Context for icons within components
+}
+
 export interface ComponentInfo {
   id: string;
   name: string;
@@ -131,17 +180,17 @@ export interface ComponentInfo {
   confidence: number;
   variants?: string[];
   variantDetails?: { [key: string]: string[] };
-  textLayers?: string[];
+  textLayers?: string[]; // DEPRECATED: Keep for backward compatibility
   isFromLibrary: boolean;
   pageInfo?: {
     pageName: string;
     pageId: string;
     isCurrentPage: boolean;
   };
-  textHierarchy?: TextHierarchy[];
-  componentInstances?: ComponentInstance[];
-  vectorNodes?: VectorNode[];
-  imageNodes?: ImageNode[];
+  textHierarchy?: TextHierarchy[]; // DEPRECATED: Keep for backward compatibility
+  componentInstances?: ComponentInstance[]; // DEPRECATED: Keep for backward compatibility
+  vectorNodes?: VectorNode[]; // DEPRECATED: Keep for backward compatibility
+  imageNodes?: ImageNode[]; // DEPRECATED: Keep for backward compatibility
   styleInfo?: StyleInfo; // NEW: Color and styling information
   internalPadding?: { // NEW: Internal padding information
     paddingTop: number;
@@ -150,6 +199,9 @@ export interface ComponentInfo {
     paddingBottom: number;
   };
   autoLayoutBehavior?: AutoLayoutBehavior; // NEW: Auto-layout behavior analysis
+  
+  // NEW: Hierarchical structure - this replaces flat arrays above
+  componentStructure?: ComponentStructure; // Root structure with full hierarchy
 }
 
 export interface SessionState {

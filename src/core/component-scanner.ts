@@ -1,7 +1,7 @@
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
 
-import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails, VariableDetails, AutoLayoutBehavior } from './session-manager';
+import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails, VariableDetails, AutoLayoutBehavior, ComponentStructure } from './session-manager';
 
 export interface ColorStyle {
   id: string;
@@ -375,6 +375,9 @@ export class ComponentScanner {
           textStyle.textCase = style.textCase;
         }
         
+        // Note: textAlignHorizontal and textAlignVertical don't exist in current Figma API
+        // Skip these properties for now - they may have been moved or renamed
+        /* 
         if (style.textAlignHorizontal) {
           textStyle.textAlignHorizontal = style.textAlignHorizontal;
         }
@@ -382,6 +385,7 @@ export class ComponentScanner {
         if (style.textAlignVertical) {
           textStyle.textAlignVertical = style.textAlignVertical;
         }
+        */
         
         if (style.paragraphSpacing !== undefined) {
           textStyle.paragraphSpacing = style.paragraphSpacing;
@@ -414,7 +418,7 @@ export class ComponentScanner {
       id: paintStyle.id,
       name: paintStyle.name,
       description: paintStyle.description || undefined,
-      paints: paintStyle.paints,
+      paints: [...paintStyle.paints], // Convert readonly to mutable array
       category,
       variant,
       colorInfo: colorInfo || { type: 'SOLID', color: '#000000', opacity: 1 }
@@ -871,17 +875,554 @@ export class ComponentScanner {
   }
 
   /**
+   * NEW: Recursively analyzes component structure to build hierarchical tree
+   * @param node Starting node (component, frame, or any child node)
+   * @param parentId Parent node ID (undefined for root)
+   * @param depth Current depth in hierarchy (0 for root)
+   * @param maxDepth Maximum recursion depth to prevent infinite loops
+   */
+  static async analyzeComponentStructure(
+    node: SceneNode, 
+    parentId?: string, 
+    depth: number = 0,
+    maxDepth: number = 10
+  ): Promise<ComponentStructure> {
+    console.log(`🔍 Analyzing structure for "${node.name}" at depth ${depth} (type: ${node.type})`);
+    
+    // Prevent infinite recursion
+    if (depth > maxDepth) {
+      console.warn(`⚠️ Max depth ${maxDepth} reached for node "${node.name}", stopping recursion`);
+      return {
+        id: node.id,
+        type: node.type,
+        name: node.name,
+        children: [],
+        parent: parentId,
+        depth,
+        visible: node.visible
+      };
+    }
+
+    const structure: ComponentStructure = {
+      id: node.id,
+      type: node.type,
+      name: node.name,
+      children: [],
+      parent: parentId,
+      depth,
+      visible: node.visible
+    };
+
+    // Extract node-specific properties
+    try {
+      structure.nodeProperties = await this.extractNodeProperties(node);
+    } catch (error) {
+      console.warn(`⚠️ Failed to extract properties for "${node.name}":`, error);
+    }
+
+    // Check for special flags
+    this.setSpecialFlags(structure, node, parentId);
+
+    // Recursively analyze children (if node has children and we should traverse them)
+    if ('children' in node && node.children && node.children.length > 0 && this.shouldTraverseChildren(node)) {
+      console.log(`  📁 Found ${node.children.length} children in "${node.name}"`);
+      
+      for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+        try {
+          const childStructure = await this.analyzeComponentStructure(child, node.id, depth + 1, maxDepth);
+          structure.children.push(childStructure);
+        } catch (error) {
+          console.warn(`⚠️ Failed to analyze child "${child.name}" of "${node.name}":`, error);
+        }
+      }
+      
+      console.log(`  ✅ Analyzed ${structure.children.length} children for "${node.name}"`);
+    }
+
+    return structure;
+  }
+
+  /**
+   * NEW: Extract node-specific properties based on node type
+   */
+  private static async extractNodeProperties(node: SceneNode): Promise<ComponentStructure['nodeProperties']> {
+    const properties: ComponentStructure['nodeProperties'] = {};
+
+    // Extract basic dimensions and positioning
+    if ('width' in node && 'height' in node) {
+      properties.width = node.width;
+      properties.height = node.height;
+    }
+    
+    if ('x' in node && 'y' in node) {
+      properties.x = node.x;
+      properties.y = node.y;
+    }
+
+    // Extract layout properties
+    if ('layoutAlign' in node && node.layoutAlign) {
+      properties.layoutAlign = node.layoutAlign as 'INHERIT' | 'STRETCH';
+    }
+    
+    if ('layoutGrow' in node && typeof node.layoutGrow === 'number') {
+      properties.layoutGrow = node.layoutGrow;
+    }
+    
+    if ('layoutSizingHorizontal' in node && node.layoutSizingHorizontal) {
+      properties.layoutSizingHorizontal = node.layoutSizingHorizontal as 'FIXED' | 'HUG' | 'FILL';
+    }
+    
+    if ('layoutSizingVertical' in node && node.layoutSizingVertical) {
+      properties.layoutSizingVertical = node.layoutSizingVertical as 'FIXED' | 'HUG' | 'FILL';
+    }
+
+    // Extract type-specific properties
+    switch (node.type) {
+      case 'TEXT':
+        properties.textHierarchy = await this.extractSingleTextHierarchy(node as TextNode);
+        break;
+        
+      case 'COMPONENT':
+      case 'INSTANCE':
+        properties.componentInstance = await this.extractSingleComponentInstance(node as ComponentNode | InstanceNode);
+        break;
+        
+      case 'VECTOR':
+        properties.vectorNode = this.extractSingleVectorNode(node);
+        break;
+        
+      case 'RECTANGLE':
+      case 'ELLIPSE':
+        properties.imageNode = this.extractSingleImageNode(node as RectangleNode | EllipseNode);
+        break;
+    }
+
+    // Extract auto-layout behavior if node has it
+    if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
+      try {
+        const autoLayout = this.analyzeAutoLayoutBehavior(node as any);
+        properties.autoLayoutBehavior = autoLayout || undefined;
+      } catch (error) {
+        console.warn(`⚠️ Failed to analyze auto-layout for "${node.name}":`, error);
+      }
+    }
+
+    // Extract style information for visual nodes
+    if (this.isVisualNode(node)) {
+      try {
+        properties.styleInfo = this.extractStyleInfo(node as any);
+      } catch (error) {
+        console.warn(`⚠️ Failed to extract style info for "${node.name}":`, error);
+      }
+    }
+
+    return Object.keys(properties).length > 0 ? properties : undefined;
+  }
+
+  /**
+   * NEW: Set special flags for component structure
+   */
+  private static setSpecialFlags(structure: ComponentStructure, node: SceneNode, parentId?: string): void {
+    // Check if this is a nested auto-layout
+    if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
+      if (parentId) {
+        structure.isNestedAutoLayout = true;
+        console.log(`  🎯 Marked "${node.name}" as nested auto-layout (mode: ${node.layoutMode})`);
+        
+        // Special handling for nested auto-layouts within component instances
+        if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+          console.log(`    💡 This is a component instance with auto-layout - special case for icon containers`);
+        }
+      } else {
+        console.log(`  🎯 Root auto-layout detected for "${node.name}" (mode: ${node.layoutMode})`);
+      }
+    }
+
+    // Check if this is a component instance reference
+    if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+      structure.isComponentInstanceReference = true;
+      
+      // Enhanced logging for component instances
+      const hasAutoLayout = 'layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE';
+      console.log(`  📦 Marked "${node.name}" as component instance reference${hasAutoLayout ? ' (with auto-layout)' : ''}`);
+      
+      // If this is a component instance with auto-layout in a nested context, it's likely an icon container
+      if (hasAutoLayout && parentId) {
+        console.log(`    💡 Component instance with nested auto-layout - likely icon container or complex component`);
+      }
+    }
+
+    // Enhanced icon context detection
+    if (this.isLikelyIcon(node)) {
+      structure.iconContext = this.determineIconContext(node, parentId);
+      if (structure.iconContext) {
+        console.log(`  🎨 Icon context for "${node.name}": ${structure.iconContext}`);
+      }
+    }
+  }
+
+  /**
+   * NEW: Enhanced icon detection
+   */
+  private static isLikelyIcon(node: SceneNode): boolean {
+    const name = node.name.toLowerCase();
+    
+    // Vector nodes are often icons
+    if (node.type === 'VECTOR') {
+      return true;
+    }
+    
+    // Component instances with "icon" in the name
+    if ((node.type === 'COMPONENT' || node.type === 'INSTANCE') && name.includes('icon')) {
+      return true;
+    }
+    
+    // Small components/instances that are likely icons (heuristic based on size)
+    if ((node.type === 'COMPONENT' || node.type === 'INSTANCE') && 'width' in node && 'height' in node) {
+      const maxDimension = Math.max(node.width, node.height);
+      if (maxDimension <= 48) { // Icons are usually 48px or smaller
+        console.log(`    🔍 Small component "${node.name}" (${node.width}x${node.height}) - likely icon`);
+        return true;
+      }
+    }
+    
+    // Names that suggest icons
+    const iconKeywords = ['arrow', 'chevron', 'star', 'heart', 'plus', 'minus', 'close', 'menu', 'search', 'check', 'cross'];
+    if (iconKeywords.some(keyword => name.includes(keyword))) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  /**
+   * NEW: Determine whether to traverse children of a node
+   */
+  private static shouldTraverseChildren(node: SceneNode): boolean {
+    // SPECIAL CASE: Component instances - note relationship but don't analyze deeply
+    if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+      // Exception: If this is a top-level component we're analyzing, we DO want to traverse
+      // Exception: If this contains nested auto-layout patterns, we may want shallow traversal
+      const hasAutoLayout = 'layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE';
+      
+      if (hasAutoLayout) {
+        console.log(`  🎯 Component/Instance "${node.name}" has auto-layout, allowing shallow traversal`);
+        return true; // Allow traversal to capture nested auto-layout structure
+      }
+      
+      console.log(`  📦 Component/Instance "${node.name}" - noting relationship but not deep analysis`);
+      return false; // Standard behavior: don't analyze internal structure deeply
+    }
+
+    // SPECIAL CASE: Nested auto-layout containers - always traverse these
+    if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
+      console.log(`  🎯 Auto-layout container "${node.name}" - traversing for nested structure`);
+      return true;
+    }
+
+    // Always traverse standard containers
+    if (node.type === 'FRAME' || node.type === 'GROUP' || node.type === 'COMPONENT_SET') {
+      return true;
+    }
+
+    // Don't traverse into basic elements like TEXT, VECTOR, RECTANGLE, ELLIPSE
+    if (['TEXT', 'VECTOR', 'RECTANGLE', 'ELLIPSE', 'LINE', 'STAR', 'POLYGON'].includes(node.type)) {
+      return false;
+    }
+
+    // Default to traversing for other types
+    return true;
+  }
+
+  /**
+   * NEW: Enhanced icon context determination based on position, parent, and siblings
+   */
+  private static determineIconContext(node: SceneNode, parentId?: string): ComponentStructure['iconContext'] {
+    if (!parentId) return 'standalone';
+
+    const name = node.name.toLowerCase();
+    
+    // Explicit naming patterns
+    if (name.includes('leading') || name.includes('start') || name.includes('left')) {
+      return 'leading';
+    }
+    if (name.includes('trailing') || name.includes('end') || name.includes('right') || name.includes('chevron') || name.includes('arrow')) {
+      return 'trailing';
+    }
+    if (name.includes('decoration') || name.includes('ornament') || name.includes('badge')) {
+      return 'decorative';
+    }
+
+    // Try to get parent node for contextual analysis
+    try {
+      const parent = node.parent;
+      if (parent && 'children' in parent && parent.children) {
+        return this.analyzeIconPositionInParent(node, parent);
+      }
+    } catch (error) {
+      console.warn(`Could not analyze parent context for icon "${node.name}"`);
+    }
+
+    return 'standalone';
+  }
+
+  /**
+   * NEW: Analyze icon position within its parent to determine context
+   */
+  private static analyzeIconPositionInParent(node: SceneNode, parent: BaseNode & ChildrenMixin): ComponentStructure['iconContext'] {
+    const children = parent.children;
+    const nodeIndex = children.indexOf(node);
+    
+    if (nodeIndex === -1) return 'standalone';
+
+    // Check if parent is an auto-layout container
+    const isAutoLayoutParent = 'layoutMode' in parent && parent.layoutMode && parent.layoutMode !== 'NONE';
+    
+    if (isAutoLayoutParent) {
+      const layoutMode = (parent as any).layoutMode;
+      console.log(`    🔍 Analyzing icon "${node.name}" in auto-layout parent (mode: ${layoutMode})`);
+      
+      // In horizontal layouts
+      if (layoutMode === 'HORIZONTAL') {
+        if (nodeIndex === 0) {
+          console.log(`      📍 First child in horizontal layout - likely leading icon`);
+          return 'leading';
+        }
+        if (nodeIndex === children.length - 1) {
+          console.log(`      📍 Last child in horizontal layout - likely trailing icon`);
+          return 'trailing';
+        }
+      }
+      
+      // In vertical layouts, icons are more likely decorative or standalone
+      if (layoutMode === 'VERTICAL') {
+        console.log(`      📍 In vertical layout - likely decorative or standalone icon`);
+        return 'decorative';
+      }
+    }
+
+    // Look for text siblings to determine icon relationship
+    const hasTextSiblings = children.some(child => child.type === 'TEXT');
+    if (hasTextSiblings) {
+      const textNodes = children.filter(child => child.type === 'TEXT');
+      const firstTextIndex = children.indexOf(textNodes[0]);
+      
+      if (nodeIndex < firstTextIndex) {
+        console.log(`      📍 Icon before text - likely leading`);
+        return 'leading';
+      } else {
+        console.log(`      📍 Icon after text - likely trailing`);
+        return 'trailing';
+      }
+    }
+
+    // Check position based on coordinates (fallback for non-auto-layout)
+    if ('x' in node && 'x' in parent && 'width' in parent) {
+      const relativeX = node.x;
+      const parentWidth = (parent as any).width;
+      
+      if (relativeX < parentWidth * 0.3) {
+        console.log(`      📍 Icon on left side (x: ${relativeX}) - likely leading`);
+        return 'leading';
+      } else if (relativeX > parentWidth * 0.7) {
+        console.log(`      📍 Icon on right side (x: ${relativeX}) - likely trailing`);
+        return 'trailing';
+      }
+    }
+
+    return 'standalone';
+  }
+
+  /**
+   * NEW: Check if node is a visual node that can have style information
+   */
+  private static isVisualNode(node: SceneNode): boolean {
+    return ['TEXT', 'RECTANGLE', 'ELLIPSE', 'VECTOR', 'FRAME', 'COMPONENT', 'INSTANCE'].includes(node.type);
+  }
+
+  /**
+   * NEW: Extract text hierarchy for a single text node
+   */
+  private static async extractSingleTextHierarchy(textNode: TextNode): Promise<TextHierarchy> {
+    const fontSize = typeof textNode.fontSize === 'number' ? textNode.fontSize : 14;
+    const fontWeight = textNode.fontWeight || 'normal';
+    const fontFamily = (textNode.fontName && typeof textNode.fontName === 'object' && textNode.fontName.family) 
+      ? textNode.fontName.family 
+      : 'Unknown';
+
+    let characters: string | undefined;
+    try {
+      characters = textNode.characters || '[empty]';
+    } catch (e) {
+      characters = undefined;
+    }
+
+    // Extract text color
+    let textColor: ColorInfo | undefined;
+    try {
+      if (textNode.fills && Array.isArray(textNode.fills) && textNode.fills.length > 0) {
+        const fillStyleId = ('fillStyleId' in textNode) ? textNode.fillStyleId : undefined;
+        const styleId = (fillStyleId && fillStyleId !== figma.mixed) ? fillStyleId : undefined;
+        
+        const firstFill = textNode.fills[0];
+        if (firstFill.visible !== false) {
+          textColor = this.convertPaintToColorInfo(firstFill, styleId) || undefined;
+        }
+      }
+    } catch (e) {
+      console.warn(`Could not extract text color for "${textNode.name}"`);
+    }
+
+    // Extract Design System text style references
+    let textStyleId: string | undefined;
+    let textStyleName: string | undefined;
+    let boundTextStyleId: string | undefined;
+    
+    try {
+      textStyleId = (textNode.textStyleId && textNode.textStyleId !== figma.mixed) ? textNode.textStyleId as string : undefined;
+      // Note: boundTextStyleId doesn't exist in current Figma API
+      boundTextStyleId = undefined;
+      
+      if (textStyleId) {
+        textStyleName = this.textStyleMap.get(textStyleId);
+        if (!textStyleName) {
+          const baseId = textStyleId.split(',')[0];
+          const mapFormatId = baseId + ',';
+          textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
+          
+          if (!textStyleName) {
+            console.log(`🔄 External textStyleId detected: ${textStyleId}, trying exact match fallback`);
+            const weightValue = (typeof fontWeight === 'symbol') ? 'normal' : fontWeight;
+            textStyleName = this.findExactMatchingLocalStyle(fontSize, fontFamily, weightValue);
+            
+            if (textStyleName) {
+              console.log(`✅ External style mapped to local: "${textStyleName}"`);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(`Could not extract text style references for "${textNode.name}"`, e);
+    }
+
+    // Determine classification (simplified for single node)
+    let classification: 'primary' | 'secondary' | 'tertiary' = 'tertiary';
+    const weightValue = (typeof fontWeight === 'symbol') ? 'normal' : fontWeight;
+    const weight = String(weightValue).toLowerCase();
+    if (weight.includes('bold') || weight.includes('700') || weight.includes('800') || weight.includes('900')) {
+      classification = 'primary';
+    } else if (weight.includes('medium') || weight.includes('500') || weight.includes('600')) {
+      classification = 'secondary';
+    }
+
+    const usesDesignSystemStyle = !!(textStyleId || boundTextStyleId);
+
+    return {
+      nodeName: textNode.name,
+      nodeId: textNode.id,
+      fontSize,
+      fontWeight: weightValue, // Use the cleaned weight value
+      classification,
+      visible: textNode.visible,
+      characters,
+      textColor,
+      textStyleId,
+      textStyleName,
+      boundTextStyleId,
+      usesDesignSystemStyle
+    };
+  }
+
+  /**
+   * NEW: Extract component instance for a single component/instance node
+   */
+  private static async extractSingleComponentInstance(node: ComponentNode | InstanceNode): Promise<ComponentInstance> {
+    const instance: ComponentInstance = {
+      nodeName: node.name,
+      nodeId: node.id,
+      visible: node.visible
+    };
+    
+    if (node.type === 'INSTANCE') {
+      try {
+        const mainComponent = await (node as InstanceNode).getMainComponentAsync();
+        instance.componentId = mainComponent?.id;
+      } catch (e) {
+        console.warn(`Could not get main component ID for instance "${node.name}"`);
+      }
+    }
+    
+    return instance;
+  }
+
+  /**
+   * NEW: Extract vector node for a single vector
+   */
+  private static extractSingleVectorNode(vectorNode: SceneNode): import('./session-manager').VectorNode {
+    return {
+      nodeName: vectorNode.name,
+      nodeId: vectorNode.id,
+      visible: vectorNode.visible
+    };
+  }
+
+  /**
+   * NEW: Extract image node for a single rectangle/ellipse
+   */
+  private static extractSingleImageNode(node: RectangleNode | EllipseNode): ImageNode {
+    let hasImageFill = false;
+    
+    try {
+      const fills = node.fills;
+      if (Array.isArray(fills)) {
+        hasImageFill = fills.some(fill => 
+          typeof fill === 'object' && fill !== null && fill.type === 'IMAGE'
+        );
+      }
+    } catch (e) {
+      console.warn(`Could not check fills for node "${node.name}"`);
+    }
+    
+    return {
+      nodeName: node.name,
+      nodeId: node.id,
+      nodeType: node.type,
+      visible: node.visible,
+      hasImageFill
+    };
+  }
+
+  /**
    * Analyzes a single component to extract metadata
    */
   static async analyzeComponent(comp: ComponentNode | ComponentSetNode): Promise<ComponentInfo> {
       const name = comp.name;
       const suggestedType = this.guessComponentType(name.toLowerCase());
       const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+      
+      // DEPRECATED: Keep for backward compatibility, but use new hierarchical structure
       const textLayers = this.findTextLayers(comp);
       const textHierarchy = await this.analyzeTextHierarchy(comp);
       const componentInstances = await this.findComponentInstances(comp);
       const vectorNodes = this.findVectorNodes(comp);
       const imageNodes = this.findImageNodes(comp);
+      
+      // NEW: Extract hierarchical component structure
+      console.log(`🏗️ Building hierarchical structure for "${comp.name}"`);
+      let componentStructure: ComponentStructure | undefined;
+      try {
+        // For component sets, analyze the default variant or first variant
+        let nodeToAnalyze: ComponentNode | ComponentSetNode = comp;
+        if (comp.type === 'COMPONENT_SET' && comp.children.length > 0) {
+          nodeToAnalyze = comp.defaultVariant || (comp.children[0] as ComponentNode);
+        }
+        
+        componentStructure = await this.analyzeComponentStructure(nodeToAnalyze as SceneNode);
+        console.log(`✅ Built hierarchical structure with ${this.countStructureNodes(componentStructure)} total nodes`);
+      } catch (error) {
+        console.warn(`⚠️ Failed to build hierarchical structure for "${comp.name}":`, error);
+      }
       
       // NEW: Extract color and style information
       const styleInfo = this.extractStyleInfo(comp);
@@ -924,16 +1465,201 @@ export class ComponentScanner {
           confidence,
           variants: variants.length > 0 ? variants : undefined,
           variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : undefined,
-          textLayers: textLayers.length > 0 ? textLayers : undefined,
-          textHierarchy: textHierarchy.length > 0 ? textHierarchy : undefined,
-          componentInstances: componentInstances.length > 0 ? componentInstances : undefined,
-          vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined,
-          imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
+          textLayers: textLayers.length > 0 ? textLayers : undefined, // DEPRECATED: Keep for backward compatibility
+          textHierarchy: textHierarchy.length > 0 ? textHierarchy : undefined, // DEPRECATED: Keep for backward compatibility
+          componentInstances: componentInstances.length > 0 ? componentInstances : undefined, // DEPRECATED: Keep for backward compatibility
+          vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined, // DEPRECATED: Keep for backward compatibility
+          imageNodes: imageNodes.length > 0 ? imageNodes : undefined, // DEPRECATED: Keep for backward compatibility
           styleInfo: styleInfo, // NEW: Include color and style information
-          internalPadding: internalPadding, // NEW: Include internal padding information
+          internalPadding: internalPadding || undefined, // NEW: Include internal padding information
           autoLayoutBehavior: autoLayoutBehavior || undefined, // NEW: Include auto-layout behavior analysis
+          componentStructure: componentStructure, // NEW: Include hierarchical structure
           isFromLibrary: false
       };
+  }
+
+  /**
+   * NEW: Count total nodes in component structure (for debugging)
+   */
+  private static countStructureNodes(structure: ComponentStructure): number {
+    let count = 1; // Count this node
+    if (structure.children && structure.children.length > 0) {
+      for (const child of structure.children) {
+        count += this.countStructureNodes(child);
+      }
+    }
+    return count;
+  }
+
+  /**
+   * NEW: Generate a summary of component structure for debugging
+   */
+  static generateStructureSummary(structure: ComponentStructure, indent: string = ""): string {
+    let summary = `${indent}${structure.type}:${structure.name} (id:${structure.id.slice(-8)})`;
+    
+    // Add special flags
+    const flags = [];
+    if (structure.isNestedAutoLayout) flags.push("🎯nested-auto");
+    if (structure.isComponentInstanceReference) flags.push("📦comp-ref");
+    if (structure.iconContext) flags.push(`🎨${structure.iconContext}`);
+    if (flags.length > 0) {
+      summary += ` [${flags.join(", ")}]`;
+    }
+    
+    // Add node properties summary
+    if (structure.nodeProperties) {
+      const props = [];
+      if (structure.nodeProperties.autoLayoutBehavior?.isAutoLayout) {
+        props.push(`auto-layout:${structure.nodeProperties.autoLayoutBehavior.layoutMode}`);
+      }
+      if (structure.nodeProperties.textHierarchy) {
+        props.push(`text:${structure.nodeProperties.textHierarchy.characters?.slice(0, 20) || "empty"}`);
+      }
+      if (structure.nodeProperties.componentInstance) {
+        props.push("component-instance");
+      }
+      if (structure.nodeProperties.vectorNode) {
+        props.push("vector");
+      }
+      if (structure.nodeProperties.imageNode) {
+        props.push(`image:${structure.nodeProperties.imageNode.hasImageFill ? "has-fill" : "no-fill"}`);
+      }
+      if (props.length > 0) {
+        summary += ` {${props.join(", ")}}`;
+      }
+    }
+    
+    summary += `\n`;
+    
+    // Recursively add children
+    if (structure.children && structure.children.length > 0) {
+      for (const child of structure.children) {
+        summary += this.generateStructureSummary(child, indent + "  ");
+      }
+    }
+    
+    return summary;
+  }
+
+  /**
+   * NEW: Test function to analyze a specific component by ID and log the structure
+   */
+  static async testComponentStructure(componentId: string): Promise<void> {
+    try {
+      console.log(`🧪 Testing component structure for ID: ${componentId}`);
+      
+      // Find the component by ID
+      const component = figma.getNodeById(componentId);
+      if (!component) {
+        console.error(`❌ Component not found: ${componentId}`);
+        return;
+      }
+      
+      if (component.type !== 'COMPONENT' && component.type !== 'COMPONENT_SET') {
+        console.error(`❌ Node is not a component: ${component.type}`);
+        return;
+      }
+      
+      console.log(`📋 Found component: "${component.name}" (${component.type})`);
+      
+      // Analyze the component structure
+      const structure = await this.analyzeComponentStructure(component as SceneNode);
+      
+      // Generate and log the structure summary
+      console.log(`🏗️ Component Structure Summary:`);
+      console.log(this.generateStructureSummary(structure));
+      
+      // Count nodes
+      const nodeCount = this.countStructureNodes(structure);
+      console.log(`📊 Total nodes analyzed: ${nodeCount}`);
+      
+      // Log depth statistics
+      const depthStats = this.calculateDepthStatistics(structure);
+      console.log(`📏 Depth statistics:`, depthStats);
+      
+    } catch (error) {
+      console.error(`❌ Error testing component structure:`, error);
+    }
+  }
+
+  /**
+   * NEW: Calculate depth statistics for a component structure
+   */
+  private static calculateDepthStatistics(structure: ComponentStructure): {
+    maxDepth: number;
+    nodesByDepth: { [depth: number]: number };
+    avgDepth: number;
+  } {
+    const depthCounts: { [depth: number]: number } = {};
+    let totalNodes = 0;
+    let totalDepth = 0;
+    let maxDepth = 0;
+    
+    const traverse = (node: ComponentStructure) => {
+      const depth = node.depth;
+      depthCounts[depth] = (depthCounts[depth] || 0) + 1;
+      totalNodes++;
+      totalDepth += depth;
+      maxDepth = Math.max(maxDepth, depth);
+      
+      if (node.children) {
+        for (const child of node.children) {
+          traverse(child);
+        }
+      }
+    };
+    
+    traverse(structure);
+    
+    return {
+      maxDepth,
+      nodesByDepth: depthCounts,
+      avgDepth: totalNodes > 0 ? totalDepth / totalNodes : 0
+    };
+  }
+
+  /**
+   * NEW: Quick test with known component IDs from JSON data
+   */
+  static async runQuickTests(): Promise<void> {
+    console.log(`🧪 Running quick tests for component structure analysis...`);
+    
+    // Test with known component IDs from JSON data
+    const testComponentIds = [
+      "10:3856", // snackbar
+      "10:3907", // Button
+      "10:3918", // Another component if exists
+    ];
+    
+    for (const componentId of testComponentIds) {
+      console.log(`\n🔍 Testing component: ${componentId}`);
+      try {
+        await this.testComponentStructure(componentId);
+      } catch (error) {
+        console.warn(`⚠️ Failed to test component ${componentId}:`, error);
+      }
+    }
+    
+    console.log(`\n✅ Quick tests completed!`);
+  }
+
+  /**
+   * NEW: Export a component structure to JSON for inspection
+   */
+  static async exportComponentStructureToJson(componentId: string): Promise<string | null> {
+    try {
+      const component = figma.getNodeById(componentId);
+      if (!component || (component.type !== 'COMPONENT' && component.type !== 'COMPONENT_SET')) {
+        console.error(`❌ Invalid component: ${componentId}`);
+        return null;
+      }
+      
+      const structure = await this.analyzeComponentStructure(component as SceneNode);
+      return JSON.stringify(structure, null, 2);
+    } catch (error) {
+      console.error(`❌ Error exporting component structure:`, error);
+      return null;
+    }
   }
 
   /**
@@ -1132,13 +1858,14 @@ export class ComponentScanner {
             try {
               const fontSize = typeof textNode.fontSize === 'number' ? textNode.fontSize : 14;
               const fontWeight = textNode.fontWeight || 'normal';
+              const fontWeightValue = (typeof fontWeight === 'symbol') ? 'normal' : fontWeight;
               // NEW: Extract fontFamily for exact matching
               const fontFamily = (textNode.fontName && typeof textNode.fontName === 'object' && textNode.fontName.family) 
                 ? textNode.fontName.family 
                 : 'Unknown';
               
               fontSizes.push(fontSize);
-              textNodeData.push({node: textNode, fontSize, fontWeight, fontFamily});
+              textNodeData.push({node: textNode, fontSize, fontWeight: fontWeightValue, fontFamily});
             } catch (e) {
               console.warn(`Could not read font properties for text node "${textNode.name}"`);
             }
@@ -1200,8 +1927,9 @@ export class ComponentScanner {
           
           try {
             // Get text style ID if available
-            textStyleId = node.textStyleId || undefined;
-            boundTextStyleId = node.boundTextStyleId || undefined;
+            textStyleId = (node.textStyleId && node.textStyleId !== figma.mixed) ? node.textStyleId as string : undefined;
+            // Note: boundTextStyleId doesn't exist in current Figma API
+            boundTextStyleId = undefined;
             
             // Resolve style name using pre-built lookup map (exactly like paintStyleName)
             if (textStyleId) {
@@ -1761,7 +2489,7 @@ export class ComponentScanner {
       if ('strokes' in node && node.strokes && Array.isArray(node.strokes)) {
         // Get strokeStyleId if available
         const strokeStyleId = ('strokeStyleId' in node) ? node.strokeStyleId : undefined;
-        const styleId = (strokeStyleId && strokeStyleId !== figma.mixed) ? strokeStyleId : undefined;
+        const styleId = (strokeStyleId && typeof strokeStyleId === 'string') ? strokeStyleId : undefined;
         
         for (const stroke of node.strokes) {
           if (stroke.visible !== false) {
@@ -1822,7 +2550,7 @@ export class ComponentScanner {
           opacity: paint.opacity || 1,
           
           // NEW: Design System color style references
-          paintStyleId: styleId || undefined,
+          paintStyleId: undefined, // GradientPaint doesn't have paintStyleId
           paintStyleName: paintStyleName,
           boundVariables: paint.boundVariables || undefined,
           usesDesignSystemColor: !!(styleId || usesDesignToken),
@@ -1854,10 +2582,10 @@ export class ComponentScanner {
           opacity: paint.opacity || 1,
           
           // NEW: Design System color style references
-          paintStyleId: styleId || undefined,
+          paintStyleId: undefined, // GradientPaint doesn't have paintStyleId
           paintStyleName: paintStyleName,
-          boundVariables: paint.boundVariables || undefined,
-          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0)),
+          boundVariables: undefined, // GradientPaint doesn't have boundVariables 
+          usesDesignSystemColor: !!(styleId),
           
           // NEW: Design Token fields (gradients don't typically use color variables)
           designToken: undefined,
@@ -1868,11 +2596,12 @@ export class ComponentScanner {
       // Add support for other gradient types
       if ((paint.type === 'GRADIENT_RADIAL' || paint.type === 'GRADIENT_ANGULAR' || paint.type === 'GRADIENT_DIAMOND') && paint.gradientStops) {
         // NEW: Extract Design System color style references for other gradients
+        // Note: GradientPaint doesn't have paintStyleId property in current Figma API
         let paintStyleName: string | undefined;
-        if (paint.paintStyleId) {
-          paintStyleName = this.paintStyleMap.get(paint.paintStyleId);
+        if (styleId) {
+          paintStyleName = this.paintStyleMap.get(styleId);
           if (!paintStyleName) {
-            const baseId = paint.paintStyleId.split(',')[0];
+            const baseId = styleId.split(',')[0];
             const mapFormatId = baseId + ',';
             paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
           }
@@ -1887,10 +2616,10 @@ export class ComponentScanner {
           opacity: paint.opacity || 1,
           
           // NEW: Design System color style references
-          paintStyleId: styleId || undefined,
+          paintStyleId: undefined, // GradientPaint doesn't have paintStyleId
           paintStyleName: paintStyleName,
-          boundVariables: paint.boundVariables || undefined,
-          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0)),
+          boundVariables: undefined, // GradientPaint doesn't have boundVariables 
+          usesDesignSystemColor: !!(styleId),
           
           // NEW: Design Token fields (gradients don't typically use color variables)
           designToken: undefined,
@@ -1933,6 +2662,10 @@ export class ComponentScanner {
    */
   static findPrimaryTextColor(node: SceneNode): ColorInfo | null {
     try {
+      // Type guard: only nodes with children can use findAll
+      if (!('findAll' in node)) {
+        return null;
+      }
       const textNodes = node.findAll(n => n.type === 'TEXT') as TextNode[];
       
       for (const textNode of textNodes) {
@@ -1957,6 +2690,10 @@ export class ComponentScanner {
    */
   static findBackgroundColor(node: SceneNode): ColorInfo | null {
     try {
+      // Type guard: only nodes with children can use findAll
+      if (!('findAll' in node)) {
+        return null;
+      }
       // Look for rectangles that could be backgrounds
       const rectangles = node.findAll(n => 
         n.type === 'RECTANGLE' || n.type === 'FRAME' || n.type === 'COMPONENT'
