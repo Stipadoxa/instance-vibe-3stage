@@ -1,7 +1,7 @@
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
 
-import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails } from './session-manager';
+import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails, VariableDetails, AutoLayoutBehavior } from './session-manager';
 
 export interface ColorStyle {
   id: string;
@@ -77,20 +77,28 @@ export class ComponentScanner {
   // Static cache for color style lookups (id -> name mapping)
   private static paintStyleMap: Map<string, string> = new Map();
   
+  // NEW: Static cache for variable lookups (id -> name mapping)
+  private static variableMap: Map<string, string> = new Map();
+  private static variableDetails: Map<string, VariableDetails> = new Map();
+  
   /**
    * NEW: Scan Figma Variables (Design Tokens) from the local file
    */
   static async scanFigmaVariables(): Promise<DesignToken[]> {
     console.log("🔧 Scanning Figma Variables (Design Tokens)...");
+    console.log("🔍 DEBUG: figma object:", typeof figma);
+    console.log("🔍 DEBUG: figma.variables:", typeof figma.variables);
     
     try {
       // Debug: Check if Variables API exists
       if (!figma.variables) {
         console.warn("❌ figma.variables API not available in this Figma version");
+        console.warn("🔍 DEBUG: figma keys:", Object.keys(figma));
         return [];
       }
       
       console.log("✅ figma.variables API is available");
+      console.log("🔍 DEBUG: figma.variables keys:", Object.keys(figma.variables));
       
       const collections = await figma.variables.getLocalVariableCollectionsAsync();
       console.log(`✅ Found ${collections.length} variable collections`);
@@ -510,13 +518,23 @@ export class ComponentScanner {
       
       // First, scan Design Tokens (Variables)
       console.log("\n🔧 Phase 1: Scanning Design Tokens...");
+      console.log("🔍 DEBUG: About to call scanFigmaVariables()");
       let designTokens: DesignToken[] | undefined;
       try {
+        console.log("🔍 DEBUG: Entering scanFigmaVariables()");
         designTokens = await this.scanFigmaVariables();
+        console.log("🔍 DEBUG: scanFigmaVariables() completed, result:", designTokens);
         
         // Debug: Log what we got from Variables API
         console.log(`🔍 Variables API returned:`, designTokens);
         console.log(`🔍 Type: ${typeof designTokens}, Length: ${designTokens ? designTokens.length : 'undefined'}`);
+        
+        // NEW: Force debug log here to see if this code executes
+        if (designTokens && designTokens.length > 0) {
+          console.log(`🚀 SUCCESS: Found ${designTokens.length} design tokens from Variables API`);
+        } else {
+          console.log(`❌ PROBLEM: Variables API returned empty or undefined`);
+        }
         
         // If Variables API returned no tokens, try fallback method
         if (!designTokens || designTokens.length === 0) {
@@ -568,6 +586,19 @@ export class ComponentScanner {
         } else {
           console.warn('⚠️ No color styles available for lookup map');
           this.paintStyleMap.clear();
+        }
+        
+        // NEW: Build variable lookup map for fast ID->name resolution
+        console.log('🔍 DEBUG: designTokens received:', designTokens);
+        console.log('🔍 DEBUG: designTokens type:', typeof designTokens);
+        console.log('🔍 DEBUG: designTokens length:', designTokens ? designTokens.length : 'undefined');
+        if (designTokens && designTokens.length > 0) {
+          console.log('🔍 DEBUG: First 3 designTokens:', designTokens.slice(0, 3));
+          this.buildVariableMap(designTokens);
+        } else {
+          console.warn('⚠️ No variables available for lookup map');
+          this.variableMap.clear();
+          this.variableDetails.clear();
         }
       } catch (error) {
         console.warn("⚠️ Color Styles scanning failed, continuing without color styles:", error);
@@ -861,6 +892,12 @@ export class ComponentScanner {
           console.log(`📏 Found internal padding for "${comp.name}":`, internalPadding);
       }
       
+      // NEW: Analyze auto-layout behavior
+      const autoLayoutBehavior = this.analyzeAutoLayoutBehavior(comp);
+      if (autoLayoutBehavior && autoLayoutBehavior.isAutoLayout) {
+          console.log(`🎯 Found auto-layout behavior for "${comp.name}":`, autoLayoutBehavior.layoutMode);
+      }
+      
       let variants: string[] = [];
       const variantDetails: { [key: string]: string[] } = {};
       
@@ -894,6 +931,7 @@ export class ComponentScanner {
           imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
           styleInfo: styleInfo, // NEW: Include color and style information
           internalPadding: internalPadding, // NEW: Include internal padding information
+          autoLayoutBehavior: autoLayoutBehavior || undefined, // NEW: Include auto-layout behavior analysis
           isFromLibrary: false
       };
   }
@@ -1604,6 +1642,34 @@ export class ComponentScanner {
   }
 
   /**
+   * NEW: Build Variable Maps (similar to buildTextStyleMap)
+   */
+  private static buildVariableMap(variables: any[]): void {
+    if (variables && variables.length > 0) {
+      this.variableMap.clear();
+      this.variableDetails.clear();
+      
+      variables.forEach(variable => {
+        this.variableMap.set(variable.id, variable.name);
+        
+        this.variableDetails.set(variable.id, {
+          id: variable.id,
+          name: variable.name,
+          resolvedType: variable.resolvedType,
+          scopes: variable.scopes || [],
+          collection: variable.collection?.name
+        });
+      });
+      
+      console.log(`✅ Built variable lookup map with ${this.variableMap.size} entries`);
+      
+      // DEBUG: Log first few entries to understand ID format
+      const firstEntries = Array.from(this.variableMap.entries()).slice(0, 3);
+      console.log('🔍 First variable IDs in map:', firstEntries);
+    }
+  }
+
+  /**
    * NEW: Extract color and style information from component
    */
   static extractStyleInfo(node: ComponentNode | ComponentSetNode): StyleInfo {
@@ -1721,6 +1787,22 @@ export class ComponentScanner {
   static convertPaintToColorInfo(paint: Paint, styleId?: string): ColorInfo | null {
     try {
       if (paint.type === 'SOLID' && paint.color) {
+        let designToken: string | undefined;
+        let usesDesignToken = false;
+        
+        // NEW: Check for boundVariables and resolve to token name
+        if (paint.boundVariables?.color?.id) {
+          const variableId = paint.boundVariables.color.id;
+          designToken = this.variableMap.get(variableId);
+          usesDesignToken = !!designToken;
+          
+          if (designToken) {
+            console.log(`🎨 Resolved variable: ${variableId} → "${designToken}"`);
+          } else {
+            console.warn(`⚠️ Variable ID not found in map: ${variableId}`);
+          }
+        }
+        
         // NEW: Extract Design System color style references using node.fillStyleId/strokeStyleId
         let paintStyleName: string | undefined;
         if (styleId) {
@@ -1743,7 +1825,11 @@ export class ComponentScanner {
           paintStyleId: styleId || undefined,
           paintStyleName: paintStyleName,
           boundVariables: paint.boundVariables || undefined,
-          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0))
+          usesDesignSystemColor: !!(styleId || usesDesignToken),
+          
+          // NEW: Design Token fields
+          designToken: designToken,
+          usesDesignToken: usesDesignToken
         };
       }
 
@@ -1771,7 +1857,11 @@ export class ComponentScanner {
           paintStyleId: styleId || undefined,
           paintStyleName: paintStyleName,
           boundVariables: paint.boundVariables || undefined,
-          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0))
+          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0)),
+          
+          // NEW: Design Token fields (gradients don't typically use color variables)
+          designToken: undefined,
+          usesDesignToken: false
         };
       }
 
@@ -1800,14 +1890,22 @@ export class ComponentScanner {
           paintStyleId: styleId || undefined,
           paintStyleName: paintStyleName,
           boundVariables: paint.boundVariables || undefined,
-          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0))
+          usesDesignSystemColor: !!(styleId || (paint.boundVariables && Object.keys(paint.boundVariables).length > 0)),
+          
+          // NEW: Design Token fields (gradients don't typically use color variables)
+          designToken: undefined,
+          usesDesignToken: false
         };
       }
 
       if (paint.type === 'IMAGE') {
         return {
           type: 'IMAGE',
-          opacity: paint.opacity || 1
+          opacity: paint.opacity || 1,
+          
+          // NEW: Design Token fields (images don't use color variables)
+          designToken: undefined,
+          usesDesignToken: false
         };
       }
 
@@ -1889,5 +1987,164 @@ export class ComponentScanner {
     }
 
     return null;
+  }
+
+  /**
+   * NEW: Analyze auto-layout behavior of a component or frame
+   * Extracts comprehensive auto-layout properties including nested behavior
+   */
+  static analyzeAutoLayoutBehavior(node: ComponentNode | ComponentSetNode | FrameNode | InstanceNode): AutoLayoutBehavior | null {
+    try {
+      console.log(`🎯 Analyzing auto-layout behavior for "${node.name}" (${node.type})`);
+      
+      // Check if node has auto-layout
+      if (!('layoutMode' in node) || !node.layoutMode || node.layoutMode === 'NONE') {
+        console.log(`  ❌ No auto-layout detected for "${node.name}"`);
+        return {
+          isAutoLayout: false,
+          layoutMode: 'NONE'
+        };
+      }
+
+      console.log(`  ✅ Auto-layout detected: ${node.layoutMode}`);
+      
+      // Extract basic auto-layout properties
+      const behavior: AutoLayoutBehavior = {
+        isAutoLayout: true,
+        layoutMode: node.layoutMode as 'HORIZONTAL' | 'VERTICAL' | 'WRAP',
+      };
+
+      // Extract sizing modes with graceful fallbacks
+      if ('primaryAxisSizingMode' in node && node.primaryAxisSizingMode) {
+        behavior.primaryAxisSizingMode = node.primaryAxisSizingMode as 'FIXED' | 'AUTO';
+        console.log(`    primaryAxisSizingMode: ${behavior.primaryAxisSizingMode}`);
+      }
+
+      if ('counterAxisSizingMode' in node && node.counterAxisSizingMode) {
+        behavior.counterAxisSizingMode = node.counterAxisSizingMode as 'FIXED' | 'AUTO';
+        console.log(`    counterAxisSizingMode: ${behavior.counterAxisSizingMode}`);
+      }
+
+      // Extract wrapping behavior
+      if ('layoutWrap' in node && node.layoutWrap) {
+        behavior.layoutWrap = node.layoutWrap as 'NO_WRAP' | 'WRAP';
+        console.log(`    layoutWrap: ${behavior.layoutWrap}`);
+      }
+
+      // Extract spacing properties
+      if ('itemSpacing' in node && typeof node.itemSpacing === 'number') {
+        behavior.itemSpacing = node.itemSpacing;
+        console.log(`    itemSpacing: ${behavior.itemSpacing}`);
+      }
+
+      if ('counterAxisSpacing' in node && typeof node.counterAxisSpacing === 'number') {
+        behavior.counterAxisSpacing = node.counterAxisSpacing;
+        console.log(`    counterAxisSpacing: ${behavior.counterAxisSpacing}`);
+      }
+
+      // Extract padding properties
+      if ('paddingLeft' in node && typeof node.paddingLeft === 'number') {
+        behavior.paddingLeft = node.paddingLeft;
+      }
+      if ('paddingRight' in node && typeof node.paddingRight === 'number') {
+        behavior.paddingRight = node.paddingRight;
+      }
+      if ('paddingTop' in node && typeof node.paddingTop === 'number') {
+        behavior.paddingTop = node.paddingTop;
+      }
+      if ('paddingBottom' in node && typeof node.paddingBottom === 'number') {
+        behavior.paddingBottom = node.paddingBottom;
+      }
+
+      console.log(`    padding: T${behavior.paddingTop || 0} R${behavior.paddingRight || 0} B${behavior.paddingBottom || 0} L${behavior.paddingLeft || 0}`);
+
+      // Extract alignment properties
+      if ('primaryAxisAlignItems' in node && node.primaryAxisAlignItems) {
+        behavior.primaryAxisAlignItems = node.primaryAxisAlignItems as 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+        console.log(`    primaryAxisAlignItems: ${behavior.primaryAxisAlignItems}`);
+      }
+
+      if ('counterAxisAlignItems' in node && node.counterAxisAlignItems) {
+        behavior.counterAxisAlignItems = node.counterAxisAlignItems as 'MIN' | 'CENTER' | 'MAX';
+        console.log(`    counterAxisAlignItems: ${behavior.counterAxisAlignItems}`);
+      }
+
+      if ('counterAxisAlignContent' in node && node.counterAxisAlignContent) {
+        behavior.counterAxisAlignContent = node.counterAxisAlignContent as 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+        console.log(`    counterAxisAlignContent: ${behavior.counterAxisAlignContent}`);
+      }
+
+      // Extract additional properties
+      if ('itemReverseZIndex' in node && typeof node.itemReverseZIndex === 'boolean') {
+        behavior.itemReverseZIndex = node.itemReverseZIndex;
+        console.log(`    itemReverseZIndex: ${behavior.itemReverseZIndex}`);
+      }
+
+      if ('layoutPositioning' in node && node.layoutPositioning) {
+        behavior.layoutPositioning = node.layoutPositioning as 'AUTO' | 'ABSOLUTE';
+        console.log(`    layoutPositioning: ${behavior.layoutPositioning}`);
+      }
+
+      // Analyze children auto-layout behavior (nested analysis)
+      if ('children' in node && node.children && node.children.length > 0) {
+        console.log(`    🔍 Analyzing ${node.children.length} children for nested auto-layout...`);
+        
+        const childrenBehavior: AutoLayoutBehavior['childrenAutoLayoutBehavior'] = [];
+        
+        for (const child of node.children) {
+          try {
+            const childBehavior: any = {
+              nodeId: child.id,
+              nodeName: child.name,
+              nodeType: child.type,
+            };
+
+            // Extract child layout properties
+            if ('layoutAlign' in child && child.layoutAlign) {
+              childBehavior.layoutAlign = child.layoutAlign as 'INHERIT' | 'STRETCH';
+            }
+
+            if ('layoutGrow' in child && typeof child.layoutGrow === 'number') {
+              childBehavior.layoutGrow = child.layoutGrow;
+            }
+
+            if ('layoutSizingHorizontal' in child && child.layoutSizingHorizontal) {
+              childBehavior.layoutSizingHorizontal = child.layoutSizingHorizontal as 'FIXED' | 'HUG' | 'FILL';
+            }
+
+            if ('layoutSizingVertical' in child && child.layoutSizingVertical) {
+              childBehavior.layoutSizingVertical = child.layoutSizingVertical as 'FIXED' | 'HUG' | 'FILL';
+            }
+
+            // Recursive analysis for nested auto-layout frames
+            if ((child.type === 'FRAME' || child.type === 'COMPONENT' || child.type === 'INSTANCE') && 
+                'layoutMode' in child && child.layoutMode && child.layoutMode !== 'NONE') {
+              console.log(`      📦 Found nested auto-layout in child "${child.name}"`);
+              childBehavior.autoLayoutBehavior = this.analyzeAutoLayoutBehavior(child as any);
+            }
+
+            childrenBehavior.push(childBehavior);
+            
+          } catch (childError) {
+            console.warn(`      ⚠️ Failed to analyze child "${child.name}":`, childError);
+          }
+        }
+
+        if (childrenBehavior.length > 0) {
+          behavior.childrenAutoLayoutBehavior = childrenBehavior;
+          console.log(`    ✅ Analyzed ${childrenBehavior.length} children behaviors`);
+        }
+      }
+
+      console.log(`  ✅ Auto-layout analysis completed for "${node.name}"`);
+      return behavior;
+
+    } catch (error) {
+      console.warn(`❌ Error analyzing auto-layout behavior for "${node.name}":`, error);
+      return {
+        isAutoLayout: false,
+        layoutMode: 'NONE'
+      };
+    }
   }
 }

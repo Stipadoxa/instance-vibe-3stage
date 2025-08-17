@@ -1,6 +1,14 @@
 // session-manager.ts
 // Session state management for AIDesigner
 
+export interface VariableDetails {
+  id: string;
+  name: string;
+  resolvedType: 'BOOLEAN' | 'COLOR' | 'FLOAT' | 'STRING';
+  scopes: string[];
+  collection?: string;
+}
+
 export interface ColorInfo {
   type: 'SOLID' | 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL' | 'GRADIENT_ANGULAR' | 'GRADIENT_DIAMOND' | 'IMAGE';
   color?: string; // hex code for solid colors
@@ -15,6 +23,10 @@ export interface ColorInfo {
   paintStyleName?: string;         // Style name for JSON Engineer lookup and fallback
   boundVariables?: any;            // Bound variables for color style
   usesDesignSystemColor?: boolean; // Flag indicating Design System usage
+  
+  // NEW: Design Token fields
+  designToken?: string;            // Variable name (e.g., "Primary/Blue/500")
+  usesDesignToken?: boolean;       // Flag indicating Design Token usage
 }
 
 export interface StyleInfo {
@@ -72,6 +84,46 @@ export interface ImageNode {
   hasImageFill: boolean;
 }
 
+// NEW: Interface for auto-layout behavior analysis
+export interface AutoLayoutBehavior {
+  isAutoLayout: boolean;
+  layoutMode?: 'HORIZONTAL' | 'VERTICAL' | 'WRAP' | 'NONE';
+  layoutWrap?: 'NO_WRAP' | 'WRAP';
+  
+  // Sizing behavior
+  primaryAxisSizingMode?: 'FIXED' | 'AUTO';
+  counterAxisSizingMode?: 'FIXED' | 'AUTO';
+  
+  // Spacing & padding
+  itemSpacing?: number;
+  counterAxisSpacing?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+  paddingTop?: number;
+  paddingBottom?: number;
+  
+  // Alignment
+  primaryAxisAlignItems?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+  counterAxisAlignItems?: 'MIN' | 'CENTER' | 'MAX';
+  counterAxisAlignContent?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+  
+  // Additional properties
+  itemReverseZIndex?: boolean;
+  layoutPositioning?: 'AUTO' | 'ABSOLUTE';
+  
+  // Children behavior (for nested auto-layout analysis)
+  childrenAutoLayoutBehavior?: Array<{
+    nodeId: string;
+    nodeName: string;
+    nodeType: string;
+    layoutAlign?: 'INHERIT' | 'STRETCH';
+    layoutGrow?: number;
+    layoutSizingHorizontal?: 'FIXED' | 'HUG' | 'FILL';
+    layoutSizingVertical?: 'FIXED' | 'HUG' | 'FILL';
+    autoLayoutBehavior?: AutoLayoutBehavior; // Recursive for nested auto-layout
+  }>;
+}
+
 export interface ComponentInfo {
   id: string;
   name: string;
@@ -97,6 +149,7 @@ export interface ComponentInfo {
     paddingRight: number;
     paddingBottom: number;
   };
+  autoLayoutBehavior?: AutoLayoutBehavior; // NEW: Auto-layout behavior analysis
 }
 
 export interface SessionState {
