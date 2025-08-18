@@ -86,16 +86,19 @@ export class ComponentScanner {
    */
   static async scanFigmaVariables(): Promise<DesignToken[]> {
     console.log("🔧 Scanning Figma Variables (Design Tokens)...");
+    console.log("🔍 DEBUG: figma object:", typeof figma);
+    console.log("🔍 DEBUG: figma.variables:", typeof figma.variables);
     
     try {
       // Debug: Check if Variables API exists
       if (!figma.variables) {
         console.warn("❌ figma.variables API not available in this Figma version");
-        // DEBUG log removed for cleaner console output
+        console.warn("🔍 DEBUG: figma keys:", Object.keys(figma));
         return [];
       }
       
       console.log("✅ figma.variables API is available");
+      console.log("🔍 DEBUG: figma.variables keys:", Object.keys(figma.variables));
       
       const collections = await figma.variables.getLocalVariableCollectionsAsync();
       console.log(`✅ Found ${collections.length} variable collections`);
@@ -109,6 +112,7 @@ export class ComponentScanner {
         
         // Try to get ALL variables (not just local)
         try {
+          console.log("🔍 Checking for non-local variables...");
           // Note: This might not be available, but worth trying
         } catch (e) {
           console.log("📝 Non-local variable check not available");
@@ -518,10 +522,18 @@ export class ComponentScanner {
       
       // First, scan Design Tokens (Variables)
       console.log("\n🔧 Phase 1: Scanning Design Tokens...");
+      console.log("🔍 DEBUG: About to call scanFigmaVariables()");
       let designTokens: DesignToken[] | undefined;
       try {
+        console.log("🔍 DEBUG: Entering scanFigmaVariables()");
         designTokens = await this.scanFigmaVariables();
+        console.log("🔍 DEBUG: scanFigmaVariables() completed, result:", designTokens);
         
+        // Debug: Log what we got from Variables API
+        console.log(`🔍 Variables API returned:`, designTokens);
+        console.log(`🔍 Type: ${typeof designTokens}, Length: ${designTokens ? designTokens.length : 'undefined'}`);
+        
+        // NEW: Force debug log here to see if this code executes
         if (designTokens && designTokens.length > 0) {
           console.log(`🚀 SUCCESS: Found ${designTokens.length} design tokens from Variables API`);
         } else {
@@ -581,7 +593,11 @@ export class ComponentScanner {
         }
         
         // NEW: Build variable lookup map for fast ID->name resolution
+        console.log('🔍 DEBUG: designTokens received:', designTokens);
+        console.log('🔍 DEBUG: designTokens type:', typeof designTokens);
+        console.log('🔍 DEBUG: designTokens length:', designTokens ? designTokens.length : 'undefined');
         if (designTokens && designTokens.length > 0) {
+          console.log('🔍 DEBUG: First 3 designTokens:', designTokens.slice(0, 3));
           this.buildVariableMap(designTokens);
         } else {
           console.warn('⚠️ No variables available for lookup map');
@@ -909,6 +925,7 @@ export class ComponentScanner {
 
     // Recursively analyze children (if node has children and we should traverse them)
     if ('children' in node && node.children && node.children.length > 0 && this.shouldTraverseChildren(node)) {
+      console.log(`  📁 Found ${node.children.length} children in "${node.name}"`);
       
       for (let i = 0; i < node.children.length; i++) {
         const child = node.children[i];
@@ -1011,11 +1028,14 @@ export class ComponentScanner {
     if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
       if (parentId) {
         structure.isNestedAutoLayout = true;
+        console.log(`  🎯 Marked "${node.name}" as nested auto-layout (mode: ${node.layoutMode})`);
         
         // Special handling for nested auto-layouts within component instances
         if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+          console.log(`    💡 This is a component instance with auto-layout - special case for icon containers`);
         }
       } else {
+        console.log(`  🎯 Root auto-layout detected for "${node.name}" (mode: ${node.layoutMode})`);
       }
     }
 
@@ -1025,9 +1045,11 @@ export class ComponentScanner {
       
       // Enhanced logging for component instances
       const hasAutoLayout = 'layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE';
+      console.log(`  📦 Marked "${node.name}" as component instance reference${hasAutoLayout ? ' (with auto-layout)' : ''}`);
       
       // If this is a component instance with auto-layout in a nested context, it's likely an icon container
       if (hasAutoLayout && parentId) {
+        console.log(`    💡 Component instance with nested auto-layout - likely icon container or complex component`);
       }
     }
 
@@ -1085,17 +1107,17 @@ export class ComponentScanner {
       const hasAutoLayout = 'layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE';
       
       if (hasAutoLayout) {
-        // Structural analysis log removed for cleaner console output
+        console.log(`  🎯 Component/Instance "${node.name}" has auto-layout, allowing shallow traversal`);
         return true; // Allow traversal to capture nested auto-layout structure
       }
       
-      // Component reference log removed for cleaner console output
+      console.log(`  📦 Component/Instance "${node.name}" - noting relationship but not deep analysis`);
       return false; // Standard behavior: don't analyze internal structure deeply
     }
 
     // SPECIAL CASE: Nested auto-layout containers - always traverse these
     if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
-      // Auto-layout traversal log removed for cleaner console output
+      console.log(`  🎯 Auto-layout container "${node.name}" - traversing for nested structure`);
       return true;
     }
 
@@ -1159,19 +1181,23 @@ export class ComponentScanner {
     
     if (isAutoLayoutParent) {
       const layoutMode = (parent as any).layoutMode;
+      console.log(`    🔍 Analyzing icon "${node.name}" in auto-layout parent (mode: ${layoutMode})`);
       
       // In horizontal layouts
       if (layoutMode === 'HORIZONTAL') {
         if (nodeIndex === 0) {
+          console.log(`      📍 First child in horizontal layout - likely leading icon`);
           return 'leading';
         }
         if (nodeIndex === children.length - 1) {
+          console.log(`      📍 Last child in horizontal layout - likely trailing icon`);
           return 'trailing';
         }
       }
       
       // In vertical layouts, icons are more likely decorative or standalone
       if (layoutMode === 'VERTICAL') {
+        console.log(`      📍 In vertical layout - likely decorative or standalone icon`);
         return 'decorative';
       }
     }
@@ -1183,8 +1209,10 @@ export class ComponentScanner {
       const firstTextIndex = children.indexOf(textNodes[0]);
       
       if (nodeIndex < firstTextIndex) {
+        console.log(`      📍 Icon before text - likely leading`);
         return 'leading';
       } else {
+        console.log(`      📍 Icon after text - likely trailing`);
         return 'trailing';
       }
     }
@@ -1195,8 +1223,10 @@ export class ComponentScanner {
       const parentWidth = (parent as any).width;
       
       if (relativeX < parentWidth * 0.3) {
+        console.log(`      📍 Icon on left side (x: ${relativeX}) - likely leading`);
         return 'leading';
       } else if (relativeX > parentWidth * 0.7) {
+        console.log(`      📍 Icon on right side (x: ${relativeX}) - likely trailing`);
         return 'trailing';
       }
     }
@@ -1516,6 +1546,7 @@ export class ComponentScanner {
    */
   static async testComponentStructure(componentId: string): Promise<void> {
     try {
+      console.log(`🧪 Testing component structure for ID: ${componentId}`);
       
       // Find the component by ID
       const component = figma.getNodeById(componentId);
@@ -1529,17 +1560,22 @@ export class ComponentScanner {
         return;
       }
       
+      console.log(`📋 Found component: "${component.name}" (${component.type})`);
       
       // Analyze the component structure
       const structure = await this.analyzeComponentStructure(component as SceneNode);
       
       // Generate and log the structure summary
+      console.log(`🏗️ Component Structure Summary:`);
+      console.log(this.generateStructureSummary(structure));
       
       // Count nodes
       const nodeCount = this.countStructureNodes(structure);
+      console.log(`📊 Total nodes analyzed: ${nodeCount}`);
       
       // Log depth statistics
       const depthStats = this.calculateDepthStatistics(structure);
+      console.log(`📏 Depth statistics:`, depthStats);
       
     } catch (error) {
       console.error(`❌ Error testing component structure:`, error);
@@ -1586,6 +1622,7 @@ export class ComponentScanner {
    * NEW: Quick test with known component IDs from JSON data
    */
   static async runQuickTests(): Promise<void> {
+    console.log(`🧪 Running quick tests for component structure analysis...`);
     
     // Test with known component IDs from JSON data
     const testComponentIds = [
@@ -1595,6 +1632,7 @@ export class ComponentScanner {
     ];
     
     for (const componentId of testComponentIds) {
+      console.log(`\n🔍 Testing component: ${componentId}`);
       try {
         await this.testComponentStructure(componentId);
       } catch (error) {
@@ -1602,6 +1640,7 @@ export class ComponentScanner {
       }
     }
     
+    console.log(`\n✅ Quick tests completed!`);
   }
 
   /**
@@ -2817,7 +2856,7 @@ export class ComponentScanner {
             // Recursive analysis for nested auto-layout frames
             if ((child.type === 'FRAME' || child.type === 'COMPONENT' || child.type === 'INSTANCE') && 
                 'layoutMode' in child && child.layoutMode && child.layoutMode !== 'NONE') {
-              // Nested auto-layout log removed for cleaner console output
+              console.log(`      📦 Found nested auto-layout in child "${child.name}"`);
               childBehavior.autoLayoutBehavior = this.analyzeAutoLayoutBehavior(child as any);
             }
 

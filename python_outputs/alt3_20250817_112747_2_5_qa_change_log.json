@@ -1,0 +1,102 @@
+{
+  "timestamp": "2025-08-17T11:30:09.763009",
+  "total_iterations": 3,
+  "total_issues_found": 24,
+  "total_changes_made": 13,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 14,
+      "changes_made": 5,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system?",
+        "- Do content containers have itemSpacing between children (8, 12, 16, or 24)?",
+        "- Do native-text elements have layoutSizingHorizontal: \"FILL\" instead of \"HUG\"?",
+        "- Are three-panel layouts structured as: Header (auto) + Content (layoutGrow: 1) + Footer (auto)?",
+        "- Are there width properties on any native-text elements?",
+        "- Does every component have ALL required variants from its schema?",
+        "- Do all variant values match exactly with variantDetails options? (case-sensitive)",
+        "- Are visibilityOverrides added for text layers  without assigned content?",
+        "- Is the bottom navigation the LAST item in the root container's items array?",
+        "- Does the content container (middle item) have layoutGrow: 1?",
+        "- Does the ROOT container have all padding values set to 0?",
+        "- Is the top navigation the FIRST item in the root container's items array?",
+        "- Are all component IDs using \"componentNodeId\" (not \"id\" or \"componentId\")?",
+        "- Are color properties using correct names from DESIGN_SYSTEM_DATA?"
+      ],
+      "changes": [
+        "- Added `layoutSizingHorizontal: \"FILL\"` to all native-text elements.",
+        "- Added `itemSpacing: 24` to root container.",
+        "- Added `itemSpacing: 16` to the content container.",
+        "- Removed `width` properties from native-text elements.",
+        "- Added missing variants to components"
+      ],
+      "detailed_change_log": [
+        "- [ADDITION] Added property \"itemSpacing\": 24 to \"Product Details - Mobile\" (Reason: Root container needs itemSpacing)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 0\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 2\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 3\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 5 > items > 0\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 5 > items > 1 > items > 0\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 5 > items > 1 > items > 1\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 5 > items > 1 > items > 2\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 5 > items > 1 > items > 3\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 6\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 7\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 8\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 9 > items > 0\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 5 > items > 1 > items > 0\" (Reason: Native text needs fill width)",
+        "- [ADDITION] Added property \"itemSpacing\": 16 to \"Product Details - Mobile > items > 1\" (Reason: Content container needs itemSpacing)",
+        "- [ADDITION] Added property \"layoutSizingHorizontal\": \"FILL\" to \"Product Details - Mobile > items > 1 > items > 4\" (Reason: Native text needs fill width)"
+      ]
+    },
+    {
+      "iteration_number": 2,
+      "issues_found": 6,
+      "changes_made": 5,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system?",
+        "- Does every component have ALL required variants from its schema?",
+        "- Do all variant values match exactly with variantDetails options? (case-sensitive)",
+        "- `10:3907` Button component `horizontalSizing` property should be \"FILL\" not \"HUG\".",
+        "- `10:7816` Thumbnail component is missing required variants.",
+        "- `635:4744` icon/bookmark component  `horizontalSizing` property should be \"FILL\" not \"HUG\"."
+      ],
+      "changes": [
+        "- Changed textStyle from \"Headline/Medium\" to \"Title/Large\" in \"$450\" native-text.",
+        "- Added missing \"State\" variant to `10:3907` Button component.",
+        "- Changed `horizontalSizing` property of Button component with `componentNodeId` \"10:3907\" from \"HUG\" to \"FILL\".",
+        "- Added missing variants to `10:7816` Thumbnail component.",
+        "- Changed `horizontalSizing` property of icon/bookmark component with `componentNodeId` \"635:4744\" from \"HUG\" to \"FILL\"."
+      ],
+      "detailed_change_log": [
+        "- `COMPONENT` Component \"10:3907\" variant \"State\": \"Default\" \u2192 \"Default, Disabled, Hover, Pressed, Progress\" (Reason: Added missing variants to match design system)",
+        "- `PROPERTY` Property \"items[1].items[2].properties.textStyle\": \"Headline/Medium\" \u2192 \"Title/Large\" (Reason:  \"Headline/Medium\" is not a valid text style. Using \"Title/Large\" which is closer to the design)",
+        "- `PROPERTY` Property \"items[1].items[12].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason:  Buttons in horizontal containers should fill available space.)",
+        "- `COMPONENT` Component \"10:7816\" variant \"Type\": \"2+ images\" \u2192 \"1 image, 2+ images\" (Reason: Added missing variant to match design system)",
+        "- `PROPERTY` Property \"items[1].items[13].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Icons in horizontal containers should fill available space.)"
+      ]
+    },
+    {
+      "iteration_number": 3,
+      "issues_found": 4,
+      "changes_made": 3,
+      "issues": [
+        "- `10:3907` Button component is missing the \"State\" variant.",
+        "- `10:7816` Thumbnail component is missing required variants.  The `variantDetails` show \"1 image\" and \"2+ images\" as options for the \"Type\" variant. The JSON should include this variant.",
+        "- Text style \"Title/Large\" is not found in the design system data for the \"$450\" text element.  The closest match is \"Title/Large\".",
+        "- `635:4744` icon/bookmark component uses \"filled\" instead of \"Filled\" in variants.  Case sensitivity is needed."
+      ],
+      "changes": [
+        "- Added \"State\": \"Default\" variant to component with `componentNodeId` \"10:3907\".",
+        "- Added \"Type\": \"2+ images\" variant to component with `componentNodeId` \"10:7816\".",
+        "- Changed variant \"style\": \"filled\" to \"style\": \"Filled\" in component with `componentNodeId` \"635:4744\"."
+      ],
+      "detailed_change_log": [
+        "COMPONENT Component \"10:3907\" variant \"State\": \"Default\" \u2192 \"Default\" (Reason: Missing required variant from schema)",
+        "COMPONENT Component \"10:7816\" variant \"Type\": \"2+ images\" \u2192 \"2+ images\" (Reason: Missing required variant from schema)",
+        "COMPONENT Component \"635:4744\" variant \"style\": \"filled\" \u2192 \"Filled\" (Reason: Variant value must match design system exactly, case-sensitive)"
+      ]
+    }
+  ]
+}

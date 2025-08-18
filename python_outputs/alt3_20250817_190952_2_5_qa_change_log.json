@@ -1,0 +1,54 @@
+{
+  "timestamp": "2025-08-17T19:12:00.603275",
+  "total_iterations": 2,
+  "total_issues_found": 6,
+  "total_changes_made": 5,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 3,
+      "changes_made": 3,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system? // \"Title/Large\" is not in DESIGN_SYSTEM_DATA",
+        "- Do content containers have itemSpacing between children (8, 12, 16, or 24)? // Item spacing of 4 is used in a content container.",
+        "- Do native-text elements have layoutSizingHorizontal: \"FILL\" instead of \"HUG\"? // Some native-text elements have layoutSizingHorizontal: \"HUG\""
+      ],
+      "changes": [
+        "- Added layoutSizingHorizontal: \"FILL\" to multiple native-text elements.",
+        "- Changed itemSpacing to 8 in a nested layoutContainer.",
+        "- Corrected textStyle \"Title/Large\" to a valid style from the design system.  This required a best-guess replacement as there's no exact match."
+      ],
+      "detailed_change_log": [
+        "[CHANGE_TYPE] Property \"items[1].items[0].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[2].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[3].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[5].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[6].items[1].items[0].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[6].items[1].items[1].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[6].items[1].items[2].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[6].items[1].items[3].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[8].layoutSizingHorizontal\": \"HUG\" \u2192 \"FILL\" (Reason: Native text should FILL width)",
+        "[CHANGE_TYPE] Property \"items[1].items[1].itemSpacing\": 16 \u2192 8 (Reason: Content container itemSpacing should be 8, 12, 16, or 24)",
+        "[CHANGE_TYPE] Property \"items[1].items[5].itemSpacing\": 4 \u2192 8 (Reason: Content container itemSpacing should be 8, 12, 16, or 24)",
+        "[CHANGE_TYPE] Property \"items[1].items[2].properties.textStyle\": \"Title/Large\" \u2192 \"Title/Medium\" (Reason: \"Title/Large\" is not a valid text style in the design system.  \"Title/Medium\" is a closest alternative.)"
+      ]
+    },
+    {
+      "iteration_number": 2,
+      "issues_found": 3,
+      "changes_made": 2,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system? // \"Title/Large\" is not in DESIGN_SYSTEM_DATA",
+        "- Do content containers have itemSpacing between children (8, 12, 16, or 24)? // Item spacing of 4 is used in a content container.",
+        "- Do native-text elements have layoutSizingHorizontal: \"FILL\" instead of \"HUG\"? // Some native-text elements have layoutSizingHorizontal: \"HUG\""
+      ],
+      "changes": [
+        "- Changed itemSpacing from 4 to 8 in nested layoutContainer.",
+        "- No changes were made to the textStyle \"Title/Large\" as a valid replacement could not be found without making creative decisions."
+      ],
+      "detailed_change_log": [
+        "[CHANGE_TYPE] Property \"items.1.items.4.itemSpacing\": \"4\" \u2192 \"8\" (Reason: Item spacing must be 8, 12, 16, or 24)"
+      ]
+    }
+  ]
+}

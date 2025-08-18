@@ -1,20 +1,12 @@
 // code.ts - COMPLETE MODULAR VERSION WITH VALIDATION ENGINE
-import { SessionManager, SessionState, ComponentInfo } from './src/core/session-manager';
-import { SessionService } from './src/core/session-service';
-import { GeminiService } from './src/core/gemini-service';
-import { ScanSession } from './src/core/component-scanner';
 import { DesignSystemScannerService } from './src/core/design-system-scanner-service';
 import { FigmaRenderer } from './src/core/figma-renderer';
 import { GeminiAPI, GeminiRequest } from './src/ai/gemini-api';
 import { GeminiClient } from './src/ai/gemini-client';
 import { ValidationEngine, ValidationResult } from './src/core/validation-engine';
-import { PipelineLogger } from './src/utils/pipeline-logger';
-import { EnvironmentValidator } from './src/utils/environment-validator';
-import { PromptLoader } from './src/pipeline/PromptLoader';
-import { BaseRole } from './src/pipeline/roles/BaseRole';
-import { ProductManagerRole } from './src/pipeline/roles/ProductManagerRole';
+import { SessionService } from './src/core/session-service';
+import { GeminiService } from './src/core/gemini-service';
 import { PipelineOrchestrator } from './src/pipeline/orchestrator/PipelineOrchestrator';
-import { StaticPromptLoader } from './src/pipeline/StaticPromptLoader';
 import { ComponentPropertyEngine } from './src/core/component-property-engine';
 import { ComponentScanner } from './src/core/component-scanner';
 import { JSONMigrator } from './src/core/json-migrator';
@@ -71,44 +63,7 @@ initializeAIPipeline().then(orchestrator => {
 });
 */
 
-// 🧪 CLEAN STATIC IMPORT TEST
-async function runStaticImportTest() {
-   console.log('🧪 === STATIC IMPORT TEST START ===');
-   
-   // Environment Analysis
-   console.log('🔍 Environment Analysis:');
-   console.log('- typeof require:', typeof require);
-   console.log('- typeof fetch:', typeof fetch);
-   console.log('- typeof globalThis:', typeof globalThis);
-   
-   // MAIN TEST: Updated PromptLoader with static imports
-   console.log('🧪 TESTING UPDATED PROMPTLOADER:');
-   
-   const availablePrompts = PromptLoader.getAvailablePrompts();
-   console.log('📋 Available prompts:', availablePrompts);
-   
-   // Test all 5 prompts
-   for (const promptName of availablePrompts) {
-       try {
-           const prompt = await PromptLoader.loadPrompt(promptName);
-           console.log(`✅ ${promptName}: ${prompt.length} characters`);
-       } catch (error) {
-           console.log(`❌ ${promptName}: FAILED -`, error.message);
-       }
-   }
-   
-   console.log('🧪 === STATIC IMPORT TEST END ===');
-   
-   // Summary
-   console.log('📊 TEST SUMMARY:');
-   console.log('- If ✅ STATIC IMPORT SUCCESS: External files work via webpack bundling');
-   console.log('- If ❌ STATIC IMPORT FAILED: Need to embed prompts as constants');
-}
-
-// Static import test disabled for cleaner console
-// runStaticImportTest().catch(error => {
-//    console.error('🚨 Static test failed:', error);
-// });
+// Static import test function removed to reduce unused code
 
 async function navigateToComponent(componentId: string, pageName?: string): Promise<void> {
     try {
@@ -120,7 +75,7 @@ async function navigateToComponent(componentId: string, pageName?: string): Prom
         if (pageName) {
             const targetPage = figma.root.children.find(p => p.name === pageName) as PageNode | undefined;
             if (targetPage && targetPage.id !== figma.currentPage.id) {
-                figma.currentPage = targetPage;
+                await figma.setCurrentPageAsync(targetPage);
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
         }
@@ -135,7 +90,7 @@ async function navigateToComponent(componentId: string, pageName?: string): Prom
 
 // ENHANCED: API-driven UI generation with validation
 async function generateUIFromAPI(prompt: string, systemPrompt: string, enableValidation: boolean = true): Promise<{
-  layoutData: any;
+  layoutData: Record<string, unknown>;
   validationResult?: ValidationResult;
   finalJSON: string;
   retryCount: number;
@@ -206,7 +161,7 @@ async function generateUIFromAPI(prompt: string, systemPrompt: string, enableVal
 
 // UPDATED: initializeSession with new SessionService
 // Function to create GeminiClient from stored API key
-async function createGeminiClientFromStorage(): Promise<GeminiClient | null> {
+async function _createGeminiClientFromStorage(): Promise<GeminiClient | null> {
     try {
         const apiKey = await figma.clientStorage.getAsync('geminiApiKey');
         if (apiKey) {
@@ -395,8 +350,10 @@ async function initializePlugin() {
 }
 
 async function main() {
-  console.log("🚀 AIDesigner plugin started");
+  console.log("🚀 AIDesigner plugin started - TESTING VERSION");
+  console.log("🔍 DEBUG: Plugin main() function called");
   figma.showUI(__html__, { width: 400, height: 720 });
+  console.log("🔍 DEBUG: UI shown, waiting for messages...");
   
   await initializeSession();
   
@@ -417,8 +374,9 @@ async function main() {
   }
 });
 
-figma.ui.onmessage = async (msg: any) => {
-    console.log("📨 Message from UI:", msg.type); 
+figma.ui.onmessage = async (msg: { type: string; [key: string]: unknown }) => {
+    console.log("📨 Message from UI:", msg.type);
+    console.log("📨 FULL MESSAGE DEBUG:", msg); 
 
     switch (msg.type) {
         case 'test-migration':
@@ -426,7 +384,7 @@ figma.ui.onmessage = async (msg: any) => {
             break;
         case 'generate-ui-from-json':
             try {
-                const layoutData = JSON.parse(msg.payload);
+                const layoutData = JSON.parse(String(msg.payload || '{}'));
                 const newFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
                 if (newFrame) {
                     figma.ui.postMessage({ 
@@ -435,7 +393,7 @@ figma.ui.onmessage = async (msg: any) => {
                         generatedJSON: layoutData 
                     });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("JSON parsing error: " + errorMessage, { error: true });
                 figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
@@ -446,7 +404,8 @@ figma.ui.onmessage = async (msg: any) => {
         // ENHANCED: API-driven UI generation with validation
         case 'generate-ui-from-prompt':
             try {
-                const { prompt, systemPrompt, enableValidation = true } = msg.payload;
+                const payload = msg.payload as { prompt: string; systemPrompt: string; enableValidation?: boolean };
+                const { prompt, systemPrompt, enableValidation = true } = payload;
                 const generationResult = await generateUIFromAPI(prompt, systemPrompt, enableValidation);
                 const newFrame = await FigmaRenderer.generateUIFromDataDynamic(generationResult.layoutData);
                 
@@ -459,7 +418,7 @@ figma.ui.onmessage = async (msg: any) => {
                         retryCount: generationResult.retryCount
                     });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("API generation error: " + errorMessage, { error: true });
                 figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
@@ -468,7 +427,8 @@ figma.ui.onmessage = async (msg: any) => {
 
         case 'modify-existing-ui':
             try {
-                const { modifiedJSON, frameId } = msg.payload;
+                const payload = msg.payload as { modifiedJSON: string; frameId: string };
+                const { modifiedJSON, frameId } = payload;
                 const modifiedFrame = await FigmaRenderer.modifyExistingUI(modifiedJSON, frameId);
                 if (modifiedFrame) {
                     figma.ui.postMessage({ 
@@ -477,7 +437,7 @@ figma.ui.onmessage = async (msg: any) => {
                         modifiedJSON: modifiedJSON 
                     });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("Modification error: " + errorMessage, { error: true });
                 figma.ui.postMessage({ type: 'ui-generation-error', error: errorMessage });
@@ -508,7 +468,7 @@ figma.ui.onmessage = async (msg: any) => {
                     error: !validationResult.isValid 
                 });
                 
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("Validation error: " + errorMessage, { error: true });
                 figma.ui.postMessage({ type: 'validation-error', error: errorMessage });
@@ -524,7 +484,7 @@ figma.ui.onmessage = async (msg: any) => {
                     figma.ui.postMessage({ type: 'validation-config-updated' });
                     figma.notify("Validation settings updated", { timeout: 2000 });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("Config update error: " + errorMessage, { error: true });
             }
@@ -550,7 +510,7 @@ figma.ui.onmessage = async (msg: any) => {
                     const errorMsg = GeminiService.formatErrorMessage(result.error || 'Connection failed');
                     figma.notify(`❌ ${errorMsg}`, { error: true });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.ui.postMessage({ 
                     type: 'connection-test-result', 
@@ -581,7 +541,7 @@ figma.ui.onmessage = async (msg: any) => {
                 });
                 figma.notify("Session restored!", { timeout: 2000 });
                 
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 figma.notify("Session restore error: " + errorMessage, { error: true });
             }
@@ -647,10 +607,13 @@ figma.ui.onmessage = async (msg: any) => {
 
         case 'scan-design-system':
             try {
+                console.log("📨 DEBUG: Received scan-design-system message");
                 figma.notify("🔍 Scanning design system with color styles...", { timeout: 30000 });
                 
+                console.log("📨 DEBUG: About to call DesignSystemScannerService.scanDesignSystem()");
                 // Use comprehensive scanner from DesignSystemScannerService
                 const scanSession = await DesignSystemScannerService.scanDesignSystem();
+                console.log("📨 DEBUG: DesignSystemScannerService.scanDesignSystem() completed, result:", scanSession);
                 
                 // Save the complete session
                 await DesignSystemScannerService.saveScanSession(scanSession);
@@ -726,14 +689,14 @@ figma.ui.onmessage = async (msg: any) => {
                 } else {
                     figma.notify("Scan components first", { error: true });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 console.error("❌ Error generating LLM prompt:", errorMessage);
                 figma.notify("Error generating prompt", { error: true });
             }
             break;
 
-        case 'update-component-type':
+        case 'update-component-type': {
             const { componentId, newType } = msg.payload;
             try {
                 const result = await DesignSystemScannerService.updateComponentType(componentId, newType);
@@ -748,12 +711,13 @@ figma.ui.onmessage = async (msg: any) => {
                 } else {
                     figma.notify("Component not found for update", { error: true });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 console.error("❌ Error updating component type:", errorMessage);
                 figma.notify("Error updating type", { error: true });
             }
             break;
+        }
 
         case 'navigate-to-component':
             await navigateToComponent(msg.componentId, msg.pageName);
@@ -833,7 +797,7 @@ figma.ui.onmessage = async (msg: any) => {
                     });
                     figma.notify(`❌ ${errorMsg}`, { error: true });
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
                 console.error("❌ Generation error:", errorMessage);
                 figma.ui.postMessage({ 
@@ -939,7 +903,7 @@ figma.ui.onmessage = async (msg: any) => {
                 }
                 
                 // Call HTTP server with live design system data
-                const requestBody: any = { prompt: prompt };
+                const requestBody: { prompt: string; design_system_data?: unknown } = { prompt: prompt };
                 if (designSystemData) {
                     requestBody.design_system_data = designSystemData;
                 }

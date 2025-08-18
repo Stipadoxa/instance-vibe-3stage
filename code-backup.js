@@ -52,12 +52,16 @@
         static async scanFigmaVariables() {
           var _a;
           console.log("\u{1F527} Scanning Figma Variables (Design Tokens)...");
+          console.log("\u{1F50D} DEBUG: figma object:", typeof figma);
+          console.log("\u{1F50D} DEBUG: figma.variables:", typeof figma.variables);
           try {
             if (!figma.variables) {
               console.warn("\u274C figma.variables API not available in this Figma version");
+              console.warn("\u{1F50D} DEBUG: figma keys:", Object.keys(figma));
               return [];
             }
             console.log("\u2705 figma.variables API is available");
+            console.log("\u{1F50D} DEBUG: figma.variables keys:", Object.keys(figma.variables));
             const collections = await figma.variables.getLocalVariableCollectionsAsync();
             console.log(`\u2705 Found ${collections.length} variable collections`);
             if (collections.length === 0) {
@@ -66,6 +70,7 @@
               console.warn("  2. Variables are in a different library/file");
               console.warn("  3. Variables API permissions issue");
               try {
+                console.log("\u{1F50D} Checking for non-local variables...");
               } catch (e) {
                 console.log("\u{1F4DD} Non-local variable check not available");
               }
@@ -272,6 +277,12 @@
               if (style.textCase) {
                 textStyle.textCase = style.textCase;
               }
+              if (style.textAlignHorizontal) {
+                textStyle.textAlignHorizontal = style.textAlignHorizontal;
+              }
+              if (style.textAlignVertical) {
+                textStyle.textAlignVertical = style.textAlignVertical;
+              }
               if (style.paragraphSpacing !== void 0) {
                 textStyle.paragraphSpacing = style.paragraphSpacing;
               }
@@ -298,8 +309,7 @@
             id: paintStyle.id,
             name: paintStyle.name,
             description: paintStyle.description || void 0,
-            paints: [...paintStyle.paints],
-            // Convert readonly to mutable array
+            paints: paintStyle.paints,
             category,
             variant,
             colorInfo: colorInfo || { type: "SOLID", color: "#000000", opacity: 1 }
@@ -372,14 +382,14 @@
             await figma.loadAllPagesAsync();
             console.log("\u2705 All pages loaded");
             console.log("\n\u{1F527} Phase 1: Scanning Design Tokens...");
+            console.log("\u{1F50D} DEBUG: About to call scanFigmaVariables()");
             let designTokens;
             try {
+              console.log("\u{1F50D} DEBUG: Entering scanFigmaVariables()");
               designTokens = await this.scanFigmaVariables();
-              if (designTokens && designTokens.length > 0) {
-                console.log(`\u{1F680} SUCCESS: Found ${designTokens.length} design tokens from Variables API`);
-              } else {
-                console.log(`\u274C PROBLEM: Variables API returned empty or undefined`);
-              }
+              console.log("\u{1F50D} DEBUG: scanFigmaVariables() completed, result:", designTokens);
+              console.log(`\u{1F50D} Variables API returned:`, designTokens);
+              console.log(`\u{1F50D} Type: ${typeof designTokens}, Length: ${designTokens ? designTokens.length : "undefined"}`);
               if (!designTokens || designTokens.length === 0) {
                 console.log("\u{1F504} No Variables found, trying fallback design tokens from color styles...");
                 designTokens = await this.createDesignTokensFromColorStyles();
@@ -639,387 +649,6 @@
           }
         }
         /**
-         * NEW: Recursively analyzes component structure to build hierarchical tree
-         * @param node Starting node (component, frame, or any child node)
-         * @param parentId Parent node ID (undefined for root)
-         * @param depth Current depth in hierarchy (0 for root)
-         * @param maxDepth Maximum recursion depth to prevent infinite loops
-         */
-        static async analyzeComponentStructure(node, parentId, depth = 0, maxDepth = 10) {
-          console.log(`\u{1F50D} Analyzing structure for "${node.name}" at depth ${depth} (type: ${node.type})`);
-          if (depth > maxDepth) {
-            console.warn(`\u26A0\uFE0F Max depth ${maxDepth} reached for node "${node.name}", stopping recursion`);
-            return {
-              id: node.id,
-              type: node.type,
-              name: node.name,
-              children: [],
-              parent: parentId,
-              depth,
-              visible: node.visible
-            };
-          }
-          const structure = {
-            id: node.id,
-            type: node.type,
-            name: node.name,
-            children: [],
-            parent: parentId,
-            depth,
-            visible: node.visible
-          };
-          try {
-            structure.nodeProperties = await this.extractNodeProperties(node);
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Failed to extract properties for "${node.name}":`, error);
-          }
-          this.setSpecialFlags(structure, node, parentId);
-          if ("children" in node && node.children && node.children.length > 0 && this.shouldTraverseChildren(node)) {
-            for (let i = 0; i < node.children.length; i++) {
-              const child = node.children[i];
-              try {
-                const childStructure = await this.analyzeComponentStructure(child, node.id, depth + 1, maxDepth);
-                structure.children.push(childStructure);
-              } catch (error) {
-                console.warn(`\u26A0\uFE0F Failed to analyze child "${child.name}" of "${node.name}":`, error);
-              }
-            }
-            console.log(`  \u2705 Analyzed ${structure.children.length} children for "${node.name}"`);
-          }
-          return structure;
-        }
-        /**
-         * NEW: Extract node-specific properties based on node type
-         */
-        static async extractNodeProperties(node) {
-          const properties = {};
-          if ("width" in node && "height" in node) {
-            properties.width = node.width;
-            properties.height = node.height;
-          }
-          if ("x" in node && "y" in node) {
-            properties.x = node.x;
-            properties.y = node.y;
-          }
-          if ("layoutAlign" in node && node.layoutAlign) {
-            properties.layoutAlign = node.layoutAlign;
-          }
-          if ("layoutGrow" in node && typeof node.layoutGrow === "number") {
-            properties.layoutGrow = node.layoutGrow;
-          }
-          if ("layoutSizingHorizontal" in node && node.layoutSizingHorizontal) {
-            properties.layoutSizingHorizontal = node.layoutSizingHorizontal;
-          }
-          if ("layoutSizingVertical" in node && node.layoutSizingVertical) {
-            properties.layoutSizingVertical = node.layoutSizingVertical;
-          }
-          switch (node.type) {
-            case "TEXT":
-              properties.textHierarchy = await this.extractSingleTextHierarchy(node);
-              break;
-            case "COMPONENT":
-            case "INSTANCE":
-              properties.componentInstance = await this.extractSingleComponentInstance(node);
-              break;
-            case "VECTOR":
-              properties.vectorNode = this.extractSingleVectorNode(node);
-              break;
-            case "RECTANGLE":
-            case "ELLIPSE":
-              properties.imageNode = this.extractSingleImageNode(node);
-              break;
-          }
-          if ("layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE") {
-            try {
-              const autoLayout = this.analyzeAutoLayoutBehavior(node);
-              properties.autoLayoutBehavior = autoLayout || void 0;
-            } catch (error) {
-              console.warn(`\u26A0\uFE0F Failed to analyze auto-layout for "${node.name}":`, error);
-            }
-          }
-          if (this.isVisualNode(node)) {
-            try {
-              properties.styleInfo = this.extractStyleInfo(node);
-            } catch (error) {
-              console.warn(`\u26A0\uFE0F Failed to extract style info for "${node.name}":`, error);
-            }
-          }
-          return Object.keys(properties).length > 0 ? properties : void 0;
-        }
-        /**
-         * NEW: Set special flags for component structure
-         */
-        static setSpecialFlags(structure, node, parentId) {
-          if ("layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE") {
-            if (parentId) {
-              structure.isNestedAutoLayout = true;
-              if (node.type === "COMPONENT" || node.type === "INSTANCE") {
-              }
-            } else {
-            }
-          }
-          if (node.type === "COMPONENT" || node.type === "INSTANCE") {
-            structure.isComponentInstanceReference = true;
-            const hasAutoLayout = "layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE";
-            if (hasAutoLayout && parentId) {
-            }
-          }
-          if (this.isLikelyIcon(node)) {
-            structure.iconContext = this.determineIconContext(node, parentId);
-            if (structure.iconContext) {
-              console.log(`  \u{1F3A8} Icon context for "${node.name}": ${structure.iconContext}`);
-            }
-          }
-        }
-        /**
-         * NEW: Enhanced icon detection
-         */
-        static isLikelyIcon(node) {
-          const name = node.name.toLowerCase();
-          if (node.type === "VECTOR") {
-            return true;
-          }
-          if ((node.type === "COMPONENT" || node.type === "INSTANCE") && name.includes("icon")) {
-            return true;
-          }
-          if ((node.type === "COMPONENT" || node.type === "INSTANCE") && "width" in node && "height" in node) {
-            const maxDimension = Math.max(node.width, node.height);
-            if (maxDimension <= 48) {
-              console.log(`    \u{1F50D} Small component "${node.name}" (${node.width}x${node.height}) - likely icon`);
-              return true;
-            }
-          }
-          const iconKeywords = ["arrow", "chevron", "star", "heart", "plus", "minus", "close", "menu", "search", "check", "cross"];
-          if (iconKeywords.some((keyword) => name.includes(keyword))) {
-            return true;
-          }
-          return false;
-        }
-        /**
-         * NEW: Determine whether to traverse children of a node
-         */
-        static shouldTraverseChildren(node) {
-          if (node.type === "COMPONENT" || node.type === "INSTANCE") {
-            const hasAutoLayout = "layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE";
-            if (hasAutoLayout) {
-              return true;
-            }
-            return false;
-          }
-          if ("layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE") {
-            return true;
-          }
-          if (node.type === "FRAME" || node.type === "GROUP" || node.type === "COMPONENT_SET") {
-            return true;
-          }
-          if (["TEXT", "VECTOR", "RECTANGLE", "ELLIPSE", "LINE", "STAR", "POLYGON"].includes(node.type)) {
-            return false;
-          }
-          return true;
-        }
-        /**
-         * NEW: Enhanced icon context determination based on position, parent, and siblings
-         */
-        static determineIconContext(node, parentId) {
-          if (!parentId) return "standalone";
-          const name = node.name.toLowerCase();
-          if (name.includes("leading") || name.includes("start") || name.includes("left")) {
-            return "leading";
-          }
-          if (name.includes("trailing") || name.includes("end") || name.includes("right") || name.includes("chevron") || name.includes("arrow")) {
-            return "trailing";
-          }
-          if (name.includes("decoration") || name.includes("ornament") || name.includes("badge")) {
-            return "decorative";
-          }
-          try {
-            const parent = node.parent;
-            if (parent && "children" in parent && parent.children) {
-              return this.analyzeIconPositionInParent(node, parent);
-            }
-          } catch (error) {
-            console.warn(`Could not analyze parent context for icon "${node.name}"`);
-          }
-          return "standalone";
-        }
-        /**
-         * NEW: Analyze icon position within its parent to determine context
-         */
-        static analyzeIconPositionInParent(node, parent) {
-          const children = parent.children;
-          const nodeIndex = children.indexOf(node);
-          if (nodeIndex === -1) return "standalone";
-          const isAutoLayoutParent = "layoutMode" in parent && parent.layoutMode && parent.layoutMode !== "NONE";
-          if (isAutoLayoutParent) {
-            const layoutMode = parent.layoutMode;
-            if (layoutMode === "HORIZONTAL") {
-              if (nodeIndex === 0) {
-                return "leading";
-              }
-              if (nodeIndex === children.length - 1) {
-                return "trailing";
-              }
-            }
-            if (layoutMode === "VERTICAL") {
-              return "decorative";
-            }
-          }
-          const hasTextSiblings = children.some((child) => child.type === "TEXT");
-          if (hasTextSiblings) {
-            const textNodes = children.filter((child) => child.type === "TEXT");
-            const firstTextIndex = children.indexOf(textNodes[0]);
-            if (nodeIndex < firstTextIndex) {
-              return "leading";
-            } else {
-              return "trailing";
-            }
-          }
-          if ("x" in node && "x" in parent && "width" in parent) {
-            const relativeX = node.x;
-            const parentWidth = parent.width;
-            if (relativeX < parentWidth * 0.3) {
-              return "leading";
-            } else if (relativeX > parentWidth * 0.7) {
-              return "trailing";
-            }
-          }
-          return "standalone";
-        }
-        /**
-         * NEW: Check if node is a visual node that can have style information
-         */
-        static isVisualNode(node) {
-          return ["TEXT", "RECTANGLE", "ELLIPSE", "VECTOR", "FRAME", "COMPONENT", "INSTANCE"].includes(node.type);
-        }
-        /**
-         * NEW: Extract text hierarchy for a single text node
-         */
-        static async extractSingleTextHierarchy(textNode) {
-          const fontSize = typeof textNode.fontSize === "number" ? textNode.fontSize : 14;
-          const fontWeight = textNode.fontWeight || "normal";
-          const fontFamily = textNode.fontName && typeof textNode.fontName === "object" && textNode.fontName.family ? textNode.fontName.family : "Unknown";
-          let characters;
-          try {
-            characters = textNode.characters || "[empty]";
-          } catch (e) {
-            characters = void 0;
-          }
-          let textColor;
-          try {
-            if (textNode.fills && Array.isArray(textNode.fills) && textNode.fills.length > 0) {
-              const fillStyleId = "fillStyleId" in textNode ? textNode.fillStyleId : void 0;
-              const styleId = fillStyleId && fillStyleId !== figma.mixed ? fillStyleId : void 0;
-              const firstFill = textNode.fills[0];
-              if (firstFill.visible !== false) {
-                textColor = this.convertPaintToColorInfo(firstFill, styleId) || void 0;
-              }
-            }
-          } catch (e) {
-            console.warn(`Could not extract text color for "${textNode.name}"`);
-          }
-          let textStyleId;
-          let textStyleName;
-          let boundTextStyleId;
-          try {
-            textStyleId = textNode.textStyleId && textNode.textStyleId !== figma.mixed ? textNode.textStyleId : void 0;
-            boundTextStyleId = void 0;
-            if (textStyleId) {
-              textStyleName = this.textStyleMap.get(textStyleId);
-              if (!textStyleName) {
-                const baseId = textStyleId.split(",")[0];
-                const mapFormatId = baseId + ",";
-                textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
-                if (!textStyleName) {
-                  console.log(`\u{1F504} External textStyleId detected: ${textStyleId}, trying exact match fallback`);
-                  const weightValue2 = typeof fontWeight === "symbol" ? "normal" : fontWeight;
-                  textStyleName = this.findExactMatchingLocalStyle(fontSize, fontFamily, weightValue2);
-                  if (textStyleName) {
-                    console.log(`\u2705 External style mapped to local: "${textStyleName}"`);
-                  }
-                }
-              }
-            }
-          } catch (e) {
-            console.warn(`Could not extract text style references for "${textNode.name}"`, e);
-          }
-          let classification = "tertiary";
-          const weightValue = typeof fontWeight === "symbol" ? "normal" : fontWeight;
-          const weight = String(weightValue).toLowerCase();
-          if (weight.includes("bold") || weight.includes("700") || weight.includes("800") || weight.includes("900")) {
-            classification = "primary";
-          } else if (weight.includes("medium") || weight.includes("500") || weight.includes("600")) {
-            classification = "secondary";
-          }
-          const usesDesignSystemStyle = !!(textStyleId || boundTextStyleId);
-          return {
-            nodeName: textNode.name,
-            nodeId: textNode.id,
-            fontSize,
-            fontWeight: weightValue,
-            // Use the cleaned weight value
-            classification,
-            visible: textNode.visible,
-            characters,
-            textColor,
-            textStyleId,
-            textStyleName,
-            boundTextStyleId,
-            usesDesignSystemStyle
-          };
-        }
-        /**
-         * NEW: Extract component instance for a single component/instance node
-         */
-        static async extractSingleComponentInstance(node) {
-          const instance = {
-            nodeName: node.name,
-            nodeId: node.id,
-            visible: node.visible
-          };
-          if (node.type === "INSTANCE") {
-            try {
-              const mainComponent = await node.getMainComponentAsync();
-              instance.componentId = mainComponent == null ? void 0 : mainComponent.id;
-            } catch (e) {
-              console.warn(`Could not get main component ID for instance "${node.name}"`);
-            }
-          }
-          return instance;
-        }
-        /**
-         * NEW: Extract vector node for a single vector
-         */
-        static extractSingleVectorNode(vectorNode) {
-          return {
-            nodeName: vectorNode.name,
-            nodeId: vectorNode.id,
-            visible: vectorNode.visible
-          };
-        }
-        /**
-         * NEW: Extract image node for a single rectangle/ellipse
-         */
-        static extractSingleImageNode(node) {
-          let hasImageFill = false;
-          try {
-            const fills = node.fills;
-            if (Array.isArray(fills)) {
-              hasImageFill = fills.some(
-                (fill) => typeof fill === "object" && fill !== null && fill.type === "IMAGE"
-              );
-            }
-          } catch (e) {
-            console.warn(`Could not check fills for node "${node.name}"`);
-          }
-          return {
-            nodeName: node.name,
-            nodeId: node.id,
-            nodeType: node.type,
-            visible: node.visible,
-            hasImageFill
-          };
-        }
-        /**
          * Analyzes a single component to extract metadata
          */
         static async analyzeComponent(comp) {
@@ -1031,26 +660,10 @@
           const componentInstances = await this.findComponentInstances(comp);
           const vectorNodes = this.findVectorNodes(comp);
           const imageNodes = this.findImageNodes(comp);
-          console.log(`\u{1F3D7}\uFE0F Building hierarchical structure for "${comp.name}"`);
-          let componentStructure;
-          try {
-            let nodeToAnalyze = comp;
-            if (comp.type === "COMPONENT_SET" && comp.children.length > 0) {
-              nodeToAnalyze = comp.defaultVariant || comp.children[0];
-            }
-            componentStructure = await this.analyzeComponentStructure(nodeToAnalyze);
-            console.log(`\u2705 Built hierarchical structure with ${this.countStructureNodes(componentStructure)} total nodes`);
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Failed to build hierarchical structure for "${comp.name}":`, error);
-          }
           const styleInfo = this.extractStyleInfo(comp);
           const internalPadding = this.extractInternalPadding(comp);
           if (internalPadding) {
             console.log(`\u{1F4CF} Found internal padding for "${comp.name}":`, internalPadding);
-          }
-          const autoLayoutBehavior = this.analyzeAutoLayoutBehavior(comp);
-          if (autoLayoutBehavior && autoLayoutBehavior.isAutoLayout) {
-            console.log(`\u{1F3AF} Found auto-layout behavior for "${comp.name}":`, autoLayoutBehavior.layoutMode);
           }
           let variants = [];
           const variantDetails = {};
@@ -1075,165 +688,16 @@
             variants: variants.length > 0 ? variants : void 0,
             variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
             textLayers: textLayers.length > 0 ? textLayers : void 0,
-            // DEPRECATED: Keep for backward compatibility
             textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0,
-            // DEPRECATED: Keep for backward compatibility
             componentInstances: componentInstances.length > 0 ? componentInstances : void 0,
-            // DEPRECATED: Keep for backward compatibility
             vectorNodes: vectorNodes.length > 0 ? vectorNodes : void 0,
-            // DEPRECATED: Keep for backward compatibility
             imageNodes: imageNodes.length > 0 ? imageNodes : void 0,
-            // DEPRECATED: Keep for backward compatibility
             styleInfo,
             // NEW: Include color and style information
-            internalPadding: internalPadding || void 0,
+            internalPadding,
             // NEW: Include internal padding information
-            autoLayoutBehavior: autoLayoutBehavior || void 0,
-            // NEW: Include auto-layout behavior analysis
-            componentStructure,
-            // NEW: Include hierarchical structure
             isFromLibrary: false
           };
-        }
-        /**
-         * NEW: Count total nodes in component structure (for debugging)
-         */
-        static countStructureNodes(structure) {
-          let count = 1;
-          if (structure.children && structure.children.length > 0) {
-            for (const child of structure.children) {
-              count += this.countStructureNodes(child);
-            }
-          }
-          return count;
-        }
-        /**
-         * NEW: Generate a summary of component structure for debugging
-         */
-        static generateStructureSummary(structure, indent = "") {
-          var _a, _b;
-          let summary = `${indent}${structure.type}:${structure.name} (id:${structure.id.slice(-8)})`;
-          const flags = [];
-          if (structure.isNestedAutoLayout) flags.push("\u{1F3AF}nested-auto");
-          if (structure.isComponentInstanceReference) flags.push("\u{1F4E6}comp-ref");
-          if (structure.iconContext) flags.push(`\u{1F3A8}${structure.iconContext}`);
-          if (flags.length > 0) {
-            summary += ` [${flags.join(", ")}]`;
-          }
-          if (structure.nodeProperties) {
-            const props = [];
-            if ((_a = structure.nodeProperties.autoLayoutBehavior) == null ? void 0 : _a.isAutoLayout) {
-              props.push(`auto-layout:${structure.nodeProperties.autoLayoutBehavior.layoutMode}`);
-            }
-            if (structure.nodeProperties.textHierarchy) {
-              props.push(`text:${((_b = structure.nodeProperties.textHierarchy.characters) == null ? void 0 : _b.slice(0, 20)) || "empty"}`);
-            }
-            if (structure.nodeProperties.componentInstance) {
-              props.push("component-instance");
-            }
-            if (structure.nodeProperties.vectorNode) {
-              props.push("vector");
-            }
-            if (structure.nodeProperties.imageNode) {
-              props.push(`image:${structure.nodeProperties.imageNode.hasImageFill ? "has-fill" : "no-fill"}`);
-            }
-            if (props.length > 0) {
-              summary += ` {${props.join(", ")}}`;
-            }
-          }
-          summary += `
-`;
-          if (structure.children && structure.children.length > 0) {
-            for (const child of structure.children) {
-              summary += this.generateStructureSummary(child, indent + "  ");
-            }
-          }
-          return summary;
-        }
-        /**
-         * NEW: Test function to analyze a specific component by ID and log the structure
-         */
-        static async testComponentStructure(componentId) {
-          try {
-            const component = figma.getNodeById(componentId);
-            if (!component) {
-              console.error(`\u274C Component not found: ${componentId}`);
-              return;
-            }
-            if (component.type !== "COMPONENT" && component.type !== "COMPONENT_SET") {
-              console.error(`\u274C Node is not a component: ${component.type}`);
-              return;
-            }
-            const structure = await this.analyzeComponentStructure(component);
-            const nodeCount = this.countStructureNodes(structure);
-            const depthStats = this.calculateDepthStatistics(structure);
-          } catch (error) {
-            console.error(`\u274C Error testing component structure:`, error);
-          }
-        }
-        /**
-         * NEW: Calculate depth statistics for a component structure
-         */
-        static calculateDepthStatistics(structure) {
-          const depthCounts = {};
-          let totalNodes = 0;
-          let totalDepth = 0;
-          let maxDepth = 0;
-          const traverse = (node) => {
-            const depth = node.depth;
-            depthCounts[depth] = (depthCounts[depth] || 0) + 1;
-            totalNodes++;
-            totalDepth += depth;
-            maxDepth = Math.max(maxDepth, depth);
-            if (node.children) {
-              for (const child of node.children) {
-                traverse(child);
-              }
-            }
-          };
-          traverse(structure);
-          return {
-            maxDepth,
-            nodesByDepth: depthCounts,
-            avgDepth: totalNodes > 0 ? totalDepth / totalNodes : 0
-          };
-        }
-        /**
-         * NEW: Quick test with known component IDs from JSON data
-         */
-        static async runQuickTests() {
-          const testComponentIds = [
-            "10:3856",
-            // snackbar
-            "10:3907",
-            // Button
-            "10:3918"
-            // Another component if exists
-          ];
-          for (const componentId of testComponentIds) {
-            try {
-              await this.testComponentStructure(componentId);
-            } catch (error) {
-              console.warn(`\u26A0\uFE0F Failed to test component ${componentId}:`, error);
-            }
-          }
-        }
-        /**
-         * NEW: Export a component structure to JSON for inspection
-         */
-        static async exportComponentStructureToJson(componentId) {
-          try {
-            const component = figma.getNodeById(componentId);
-            if (!component || component.type !== "COMPONENT" && component.type !== "COMPONENT_SET") {
-              console.error(`\u274C Invalid component: ${componentId}`);
-              return null;
-            }
-            const structure = await this.analyzeComponentStructure(component);
-            return JSON.stringify(structure, null, 2);
-          } catch (error) {
-            console.error(`\u274C Error exporting component structure:`, error);
-            return null;
-          }
         }
         /**
          * Intelligent component type detection based on naming patterns
@@ -1437,10 +901,9 @@
                   try {
                     const fontSize = typeof textNode.fontSize === "number" ? textNode.fontSize : 14;
                     const fontWeight = textNode.fontWeight || "normal";
-                    const fontWeightValue = typeof fontWeight === "symbol" ? "normal" : fontWeight;
                     const fontFamily = textNode.fontName && typeof textNode.fontName === "object" && textNode.fontName.family ? textNode.fontName.family : "Unknown";
                     fontSizes.push(fontSize);
-                    textNodeData.push({ node: textNode, fontSize, fontWeight: fontWeightValue, fontFamily });
+                    textNodeData.push({ node: textNode, fontSize, fontWeight, fontFamily });
                   } catch (e) {
                     console.warn(`Could not read font properties for text node "${textNode.name}"`);
                   }
@@ -1488,8 +951,8 @@
                 let textStyleName;
                 let boundTextStyleId;
                 try {
-                  textStyleId = node.textStyleId && node.textStyleId !== figma.mixed ? node.textStyleId : void 0;
-                  boundTextStyleId = void 0;
+                  textStyleId = node.textStyleId || void 0;
+                  boundTextStyleId = node.boundTextStyleId || void 0;
                   if (textStyleId) {
                     textStyleName = this.textStyleMap.get(textStyleId);
                     if (!textStyleName) {
@@ -2045,7 +1508,7 @@
           try {
             if ("strokes" in node && node.strokes && Array.isArray(node.strokes)) {
               const strokeStyleId = "strokeStyleId" in node ? node.strokeStyleId : void 0;
-              const styleId = strokeStyleId && typeof strokeStyleId === "string" ? strokeStyleId : void 0;
+              const styleId = strokeStyleId && strokeStyleId !== figma.mixed ? strokeStyleId : void 0;
               for (const stroke of node.strokes) {
                 if (stroke.visible !== false) {
                   const colorInfo = this.convertPaintToColorInfo(stroke, styleId);
@@ -2095,8 +1558,7 @@
                 color: this.rgbToHex(paint.color),
                 opacity: paint.opacity || 1,
                 // NEW: Design System color style references
-                paintStyleId: void 0,
-                // GradientPaint doesn't have paintStyleId
+                paintStyleId: styleId || void 0,
                 paintStyleName,
                 boundVariables: paint.boundVariables || void 0,
                 usesDesignSystemColor: !!(styleId || usesDesignToken),
@@ -2123,12 +1585,10 @@
                 })),
                 opacity: paint.opacity || 1,
                 // NEW: Design System color style references
-                paintStyleId: void 0,
-                // GradientPaint doesn't have paintStyleId
+                paintStyleId: styleId || void 0,
                 paintStyleName,
-                boundVariables: void 0,
-                // GradientPaint doesn't have boundVariables 
-                usesDesignSystemColor: !!styleId,
+                boundVariables: paint.boundVariables || void 0,
+                usesDesignSystemColor: !!(styleId || paint.boundVariables && Object.keys(paint.boundVariables).length > 0),
                 // NEW: Design Token fields (gradients don't typically use color variables)
                 designToken: void 0,
                 usesDesignToken: false
@@ -2136,10 +1596,10 @@
             }
             if ((paint.type === "GRADIENT_RADIAL" || paint.type === "GRADIENT_ANGULAR" || paint.type === "GRADIENT_DIAMOND") && paint.gradientStops) {
               let paintStyleName;
-              if (styleId) {
-                paintStyleName = this.paintStyleMap.get(styleId);
+              if (paint.paintStyleId) {
+                paintStyleName = this.paintStyleMap.get(paint.paintStyleId);
                 if (!paintStyleName) {
-                  const baseId = styleId.split(",")[0];
+                  const baseId = paint.paintStyleId.split(",")[0];
                   const mapFormatId = baseId + ",";
                   paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
                 }
@@ -2152,12 +1612,10 @@
                 })),
                 opacity: paint.opacity || 1,
                 // NEW: Design System color style references
-                paintStyleId: void 0,
-                // GradientPaint doesn't have paintStyleId
+                paintStyleId: styleId || void 0,
                 paintStyleName,
-                boundVariables: void 0,
-                // GradientPaint doesn't have boundVariables 
-                usesDesignSystemColor: !!styleId,
+                boundVariables: paint.boundVariables || void 0,
+                usesDesignSystemColor: !!(styleId || paint.boundVariables && Object.keys(paint.boundVariables).length > 0),
                 // NEW: Design Token fields (gradients don't typically use color variables)
                 designToken: void 0,
                 usesDesignToken: false
@@ -2192,9 +1650,6 @@
          */
         static findPrimaryTextColor(node) {
           try {
-            if (!("findAll" in node)) {
-              return null;
-            }
             const textNodes = node.findAll((n) => n.type === "TEXT");
             for (const textNode of textNodes) {
               if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
@@ -2216,9 +1671,6 @@
          */
         static findBackgroundColor(node) {
           try {
-            if (!("findAll" in node)) {
-              return null;
-            }
             const rectangles = node.findAll(
               (n) => n.type === "RECTANGLE" || n.type === "FRAME" || n.type === "COMPONENT"
             );
@@ -2244,123 +1696,6 @@
             console.warn("Error finding background color:", error);
           }
           return null;
-        }
-        /**
-         * NEW: Analyze auto-layout behavior of a component or frame
-         * Extracts comprehensive auto-layout properties including nested behavior
-         */
-        static analyzeAutoLayoutBehavior(node) {
-          try {
-            console.log(`\u{1F3AF} Analyzing auto-layout behavior for "${node.name}" (${node.type})`);
-            if (!("layoutMode" in node) || !node.layoutMode || node.layoutMode === "NONE") {
-              console.log(`  \u274C No auto-layout detected for "${node.name}"`);
-              return {
-                isAutoLayout: false,
-                layoutMode: "NONE"
-              };
-            }
-            console.log(`  \u2705 Auto-layout detected: ${node.layoutMode}`);
-            const behavior = {
-              isAutoLayout: true,
-              layoutMode: node.layoutMode
-            };
-            if ("primaryAxisSizingMode" in node && node.primaryAxisSizingMode) {
-              behavior.primaryAxisSizingMode = node.primaryAxisSizingMode;
-              console.log(`    primaryAxisSizingMode: ${behavior.primaryAxisSizingMode}`);
-            }
-            if ("counterAxisSizingMode" in node && node.counterAxisSizingMode) {
-              behavior.counterAxisSizingMode = node.counterAxisSizingMode;
-              console.log(`    counterAxisSizingMode: ${behavior.counterAxisSizingMode}`);
-            }
-            if ("layoutWrap" in node && node.layoutWrap) {
-              behavior.layoutWrap = node.layoutWrap;
-              console.log(`    layoutWrap: ${behavior.layoutWrap}`);
-            }
-            if ("itemSpacing" in node && typeof node.itemSpacing === "number") {
-              behavior.itemSpacing = node.itemSpacing;
-              console.log(`    itemSpacing: ${behavior.itemSpacing}`);
-            }
-            if ("counterAxisSpacing" in node && typeof node.counterAxisSpacing === "number") {
-              behavior.counterAxisSpacing = node.counterAxisSpacing;
-              console.log(`    counterAxisSpacing: ${behavior.counterAxisSpacing}`);
-            }
-            if ("paddingLeft" in node && typeof node.paddingLeft === "number") {
-              behavior.paddingLeft = node.paddingLeft;
-            }
-            if ("paddingRight" in node && typeof node.paddingRight === "number") {
-              behavior.paddingRight = node.paddingRight;
-            }
-            if ("paddingTop" in node && typeof node.paddingTop === "number") {
-              behavior.paddingTop = node.paddingTop;
-            }
-            if ("paddingBottom" in node && typeof node.paddingBottom === "number") {
-              behavior.paddingBottom = node.paddingBottom;
-            }
-            console.log(`    padding: T${behavior.paddingTop || 0} R${behavior.paddingRight || 0} B${behavior.paddingBottom || 0} L${behavior.paddingLeft || 0}`);
-            if ("primaryAxisAlignItems" in node && node.primaryAxisAlignItems) {
-              behavior.primaryAxisAlignItems = node.primaryAxisAlignItems;
-              console.log(`    primaryAxisAlignItems: ${behavior.primaryAxisAlignItems}`);
-            }
-            if ("counterAxisAlignItems" in node && node.counterAxisAlignItems) {
-              behavior.counterAxisAlignItems = node.counterAxisAlignItems;
-              console.log(`    counterAxisAlignItems: ${behavior.counterAxisAlignItems}`);
-            }
-            if ("counterAxisAlignContent" in node && node.counterAxisAlignContent) {
-              behavior.counterAxisAlignContent = node.counterAxisAlignContent;
-              console.log(`    counterAxisAlignContent: ${behavior.counterAxisAlignContent}`);
-            }
-            if ("itemReverseZIndex" in node && typeof node.itemReverseZIndex === "boolean") {
-              behavior.itemReverseZIndex = node.itemReverseZIndex;
-              console.log(`    itemReverseZIndex: ${behavior.itemReverseZIndex}`);
-            }
-            if ("layoutPositioning" in node && node.layoutPositioning) {
-              behavior.layoutPositioning = node.layoutPositioning;
-              console.log(`    layoutPositioning: ${behavior.layoutPositioning}`);
-            }
-            if ("children" in node && node.children && node.children.length > 0) {
-              console.log(`    \u{1F50D} Analyzing ${node.children.length} children for nested auto-layout...`);
-              const childrenBehavior = [];
-              for (const child of node.children) {
-                try {
-                  const childBehavior = {
-                    nodeId: child.id,
-                    nodeName: child.name,
-                    nodeType: child.type
-                  };
-                  if ("layoutAlign" in child && child.layoutAlign) {
-                    childBehavior.layoutAlign = child.layoutAlign;
-                  }
-                  if ("layoutGrow" in child && typeof child.layoutGrow === "number") {
-                    childBehavior.layoutGrow = child.layoutGrow;
-                  }
-                  if ("layoutSizingHorizontal" in child && child.layoutSizingHorizontal) {
-                    childBehavior.layoutSizingHorizontal = child.layoutSizingHorizontal;
-                  }
-                  if ("layoutSizingVertical" in child && child.layoutSizingVertical) {
-                    childBehavior.layoutSizingVertical = child.layoutSizingVertical;
-                  }
-                  if ((child.type === "FRAME" || child.type === "COMPONENT" || child.type === "INSTANCE") && "layoutMode" in child && child.layoutMode && child.layoutMode !== "NONE") {
-                    childBehavior.autoLayoutBehavior = this.analyzeAutoLayoutBehavior(child);
-                  }
-                  childrenBehavior.push(childBehavior);
-                } catch (childError) {
-                  console.warn(`      \u26A0\uFE0F Failed to analyze child "${child.name}":`, childError);
-                }
-              }
-              if (childrenBehavior.length > 0) {
-                behavior.childrenAutoLayoutBehavior = childrenBehavior;
-                console.log(`    \u2705 Analyzed ${childrenBehavior.length} children behaviors`);
-              }
-            }
-            console.log(`  \u2705 Auto-layout analysis completed for "${node.name}"`);
-            return behavior;
-          } catch (error) {
-            console.warn(`\u274C Error analyzing auto-layout behavior for "${node.name}":`, error);
-            return {
-              isAutoLayout: false,
-              layoutMode: "NONE"
-            };
-          }
         }
       };
       // Static cache for text style lookups (id -> name mapping)
@@ -7156,6 +6491,431 @@ not found`;
     }
   });
 
+  // src/core/session-service.ts
+  var SessionService = class {
+    /**
+     * Get current file information
+     */
+    static getCurrentFileInfo() {
+      const fileKey = figma.fileKey || "unknown";
+      const fileName = figma.root.name || "Untitled";
+      return { fileId: fileKey, fileName };
+    }
+    /**
+     * Save session data for current file
+     */
+    static async saveSession(sessionData) {
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+      try {
+        const { fileId, fileName } = this.getCurrentFileInfo();
+        const existingSession = await this.getSession(fileId);
+        const updatedSession = {
+          fileId,
+          fileName,
+          designState: {
+            original: ((_a = sessionData.designState) == null ? void 0 : _a.original) || ((_b = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _b.original) || null,
+            current: ((_c = sessionData.designState) == null ? void 0 : _c.current) || ((_d = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _d.current) || null,
+            history: ((_e = sessionData.designState) == null ? void 0 : _e.history) || ((_f = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _f.history) || [],
+            frameId: ((_g = sessionData.designState) == null ? void 0 : _g.frameId) || ((_h = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _h.frameId) || null,
+            frameName: ((_i = sessionData.designState) == null ? void 0 : _i.frameName) || ((_j = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _j.frameName) || "Unknown Frame",
+            isIterating: ((_k = sessionData.designState) == null ? void 0 : _k.isIterating) || ((_l = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _l.isIterating) || false
+          },
+          scanResults: sessionData.scanResults || (existingSession == null ? void 0 : existingSession.scanResults) || [],
+          lastModified: Date.now(),
+          currentTab: sessionData.currentTab || (existingSession == null ? void 0 : existingSession.currentTab) || "design-system",
+          currentPlatform: sessionData.currentPlatform || (existingSession == null ? void 0 : existingSession.currentPlatform) || "mobile"
+        };
+        const storageKey = this.STORAGE_PREFIX + fileId;
+        await figma.clientStorage.setAsync(storageKey, updatedSession);
+        await this.updateAllSessionsIndex(fileId, updatedSession);
+        console.log("\u2705 Session saved for file:", fileName);
+      } catch (error) {
+        console.error("\u274C Failed to save session:", error);
+        throw error;
+      }
+    }
+    /**
+     * Get session data for specific file
+     */
+    static async getSession(fileId) {
+      try {
+        const targetFileId = fileId || this.getCurrentFileInfo().fileId;
+        const storageKey = this.STORAGE_PREFIX + targetFileId;
+        const sessionData = await figma.clientStorage.getAsync(storageKey);
+        return sessionData || null;
+      } catch (error) {
+        console.error("\u274C Failed to get session:", error);
+        return null;
+      }
+    }
+    /**
+     * Get current file session data
+     */
+    static async getCurrentSession() {
+      const { fileId } = this.getCurrentFileInfo();
+      return await this.getSession(fileId);
+    }
+    /**
+     * Check if current file has a session
+     */
+    static async hasCurrentSession() {
+      const session = await this.getCurrentSession();
+      return session !== null && (session.scanResults.length > 0 || session.designState.history.length > 0 || session.designState.current !== null);
+    }
+    /**
+     * Clear session for current file
+     */
+    static async clearCurrentSession() {
+      try {
+        const { fileId } = this.getCurrentFileInfo();
+        const storageKey = this.STORAGE_PREFIX + fileId;
+        await figma.clientStorage.deleteAsync(storageKey);
+        await this.removeFromAllSessionsIndex(fileId);
+        console.log("\u2705 Session cleared for current file");
+      } catch (error) {
+        console.error("\u274C Failed to clear session:", error);
+        throw error;
+      }
+    }
+    /**
+     * Get all sessions across all files
+     */
+    static async getAllSessions() {
+      try {
+        const allSessionsIndex = await figma.clientStorage.getAsync(this.ALL_SESSIONS_KEY) || {};
+        const sessions = [];
+        for (const fileId of Object.keys(allSessionsIndex)) {
+          const session = await this.getSession(fileId);
+          if (session) {
+            sessions.push(session);
+          }
+        }
+        return sessions.sort((a, b) => b.lastModified - a.lastModified);
+      } catch (error) {
+        console.error("\u274C Failed to get all sessions:", error);
+        return [];
+      }
+    }
+    /**
+     * Delete specific session
+     */
+    static async deleteSession(fileId) {
+      try {
+        const storageKey = this.STORAGE_PREFIX + fileId;
+        await figma.clientStorage.deleteAsync(storageKey);
+        await this.removeFromAllSessionsIndex(fileId);
+        console.log("\u2705 Session deleted for file:", fileId);
+      } catch (error) {
+        console.error("\u274C Failed to delete session:", error);
+        throw error;
+      }
+    }
+    /**
+     * Clear all sessions (used by "Clear All Data" function)
+     */
+    static async clearAllSessions() {
+      try {
+        const allSessions = await this.getAllSessions();
+        for (const session of allSessions) {
+          const storageKey = this.STORAGE_PREFIX + session.fileId;
+          await figma.clientStorage.deleteAsync(storageKey);
+        }
+        await figma.clientStorage.deleteAsync(this.ALL_SESSIONS_KEY);
+        console.log("\u2705 All sessions cleared");
+      } catch (error) {
+        console.error("\u274C Failed to clear all sessions:", error);
+        throw error;
+      }
+    }
+    /**
+     * Update the index of all sessions
+     */
+    static async updateAllSessionsIndex(fileId, sessionData) {
+      try {
+        const allSessionsIndex = await figma.clientStorage.getAsync(this.ALL_SESSIONS_KEY) || {};
+        allSessionsIndex[fileId] = {
+          fileName: sessionData.fileName,
+          lastModified: sessionData.lastModified
+        };
+        await figma.clientStorage.setAsync(this.ALL_SESSIONS_KEY, allSessionsIndex);
+      } catch (error) {
+        console.error("\u274C Failed to update sessions index:", error);
+      }
+    }
+    /**
+     * Remove file from all sessions index
+     */
+    static async removeFromAllSessionsIndex(fileId) {
+      try {
+        const allSessionsIndex = await figma.clientStorage.getAsync(this.ALL_SESSIONS_KEY) || {};
+        delete allSessionsIndex[fileId];
+        await figma.clientStorage.setAsync(this.ALL_SESSIONS_KEY, allSessionsIndex);
+      } catch (error) {
+        console.error("\u274C Failed to remove from sessions index:", error);
+      }
+    }
+    /**
+     * Format session data for UI display
+     */
+    static formatSessionForUI(session) {
+      return {
+        fileId: session.fileId,
+        fileName: session.fileName,
+        designState: session.designState,
+        lastModified: session.lastModified,
+        frameName: session.designState.frameName,
+        historyCount: session.designState.history.length,
+        componentCount: session.scanResults.length
+      };
+    }
+  };
+  SessionService.STORAGE_PREFIX = "aidesigner_session_";
+  SessionService.ALL_SESSIONS_KEY = "aidesigner_all_sessions";
+
+  // src/core/gemini-service.ts
+  var GeminiService = class {
+    /**
+     * Get API key from storage
+     */
+    static async getApiKey() {
+      try {
+        const apiKey = await figma.clientStorage.getAsync("geminiApiKey");
+        return apiKey || null;
+      } catch (error) {
+        console.error("\u274C Failed to get API key:", error);
+        return null;
+      }
+    }
+    /**
+     * Save API key to storage
+     */
+    static async saveApiKey(apiKey) {
+      try {
+        if (!apiKey || apiKey.trim().length === 0) {
+          throw new Error("API key cannot be empty");
+        }
+        await figma.clientStorage.setAsync("geminiApiKey", apiKey.trim());
+        console.log("\u2705 API key saved successfully");
+        return true;
+      } catch (error) {
+        console.error("\u274C Failed to save API key:", error);
+        return false;
+      }
+    }
+    /**
+     * Test connection to Gemini API
+     */
+    static async testConnection() {
+      try {
+        const apiKey = await this.getApiKey();
+        if (!apiKey) {
+          return {
+            success: false,
+            error: "No API key found. Please configure your API key first."
+          };
+        }
+        console.log("\u{1F9EA} Testing Gemini API connection...");
+        const testPrompt = 'Respond with a simple JSON object containing a "status" field with value "ok"';
+        const response = await this.callGeminiAPI(apiKey, testPrompt);
+        if (response.success) {
+          console.log("\u2705 Gemini API connection test successful");
+          return {
+            success: true,
+            data: "Connection successful"
+          };
+        } else {
+          return {
+            success: false,
+            error: response.error || "Connection test failed"
+          };
+        }
+      } catch (error) {
+        console.error("\u274C Connection test failed:", error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error"
+        };
+      }
+    }
+    /**
+     * Generate UI with Gemini API
+     */
+    static async generateUI(request) {
+      try {
+        const apiKey = await this.getApiKey();
+        if (!apiKey) {
+          return {
+            success: false,
+            error: "No API key found. Please configure your API key first."
+          };
+        }
+        console.log("\u{1F916} Starting UI generation with Gemini...");
+        const response = await this.callGeminiAPI(
+          apiKey,
+          request.prompt,
+          request.image,
+          request.config
+        );
+        if (response.success) {
+          console.log("\u2705 UI generation successful");
+          return {
+            success: true,
+            data: response.data
+          };
+        } else {
+          console.error("\u274C UI generation failed:", response.error);
+          return {
+            success: false,
+            error: response.error || "Generation failed"
+          };
+        }
+      } catch (error) {
+        console.error("\u274C UI generation error:", error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error"
+        };
+      }
+    }
+    /**
+     * Core Gemini API calling function
+     */
+    static async callGeminiAPI(apiKey, prompt, image, config) {
+      var _a;
+      try {
+        const generationConfig = __spreadValues(__spreadValues({}, this.DEFAULT_CONFIG), config);
+        const apiParts = [{ text: prompt }];
+        if (image) {
+          apiParts.push({
+            inlineData: {
+              mimeType: image.type,
+              data: image.base64
+            }
+          });
+        }
+        const response = await fetch(`${this.API_BASE_URL}?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: apiParts }],
+            generationConfig
+          })
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = ((_a = errorData.error) == null ? void 0 : _a.message) || `HTTP ${response.status}: ${response.statusText}`;
+          return {
+            success: false,
+            error: errorMessage
+          };
+        }
+        const data = await response.json();
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0] || !data.candidates[0].content.parts[0].text) {
+          return {
+            success: false,
+            error: "Invalid response structure from Gemini API"
+          };
+        }
+        const responseText = data.candidates[0].content.parts[0].text;
+        return {
+          success: true,
+          data: responseText
+        };
+      } catch (error) {
+        console.error("\u274C Gemini API call failed:", error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "Network error"
+        };
+      }
+    }
+    /**
+     * Clear API key from storage
+     */
+    static async clearApiKey() {
+      try {
+        await figma.clientStorage.setAsync("geminiApiKey", null);
+        console.log("\u2705 API key cleared");
+        return true;
+      } catch (error) {
+        console.error("\u274C Failed to clear API key:", error);
+        return false;
+      }
+    }
+    /**
+     * Check if API key exists
+     */
+    static async hasApiKey() {
+      const apiKey = await this.getApiKey();
+      return apiKey !== null && apiKey.length > 0;
+    }
+    /**
+     * Get masked API key for display (shows only last 4 characters)
+     */
+    static async getMaskedApiKey() {
+      const apiKey = await this.getApiKey();
+      if (!apiKey) return null;
+      if (apiKey.length <= 4) {
+        return "\u25CF".repeat(apiKey.length);
+      }
+      return "\u25CF".repeat(apiKey.length - 4) + apiKey.slice(-4);
+    }
+    /**
+     * Analyze image with Gemini API for design feedback
+     */
+    static async analyzeImage(imageBytes, prompt) {
+      try {
+        const apiKey = await this.getApiKey();
+        if (!apiKey) {
+          throw new Error("No API key found. Please configure your API key first.");
+        }
+        const base64 = btoa(String.fromCharCode(...imageBytes));
+        const response = await this.callGeminiAPI(
+          apiKey,
+          prompt,
+          { base64, type: "image/png" },
+          {
+            temperature: 0.1,
+            maxOutputTokens: 1024,
+            responseMimeType: "application/json"
+          }
+        );
+        if (response.success) {
+          return response.data || "";
+        } else {
+          throw new Error(response.error || "Analysis failed");
+        }
+      } catch (error) {
+        console.error("Vision analysis failed:", error);
+        throw error;
+      }
+    }
+    /**
+     * Format error message for user display
+     */
+    static formatErrorMessage(error) {
+      if (error.includes("API_KEY_INVALID")) {
+        return "Invalid API key. Please check your Gemini API key.";
+      }
+      if (error.includes("QUOTA_EXCEEDED")) {
+        return "API quota exceeded. Please check your billing or try again later.";
+      }
+      if (error.includes("RATE_LIMIT_EXCEEDED")) {
+        return "Rate limit exceeded. Please wait a moment and try again.";
+      }
+      if (error.includes("Network error")) {
+        return "Network connection failed. Please check your internet connection.";
+      }
+      return error;
+    }
+  };
+  GeminiService.API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+  GeminiService.DEFAULT_CONFIG = {
+    temperature: 0.2,
+    maxOutputTokens: 8192,
+    responseMimeType: "application/json"
+  };
+
   // code.ts
   init_design_system_scanner_service();
   init_figma_renderer();
@@ -8283,701 +8043,6 @@ Please provide the corrected JSON that fixes these errors while maintaining the 
     autoFixEnabled: true
   };
   var ValidationEngine = _ValidationEngine;
-
-  // src/core/session-service.ts
-  var SessionService = class {
-    /**
-     * Get current file information
-     */
-    static getCurrentFileInfo() {
-      const fileKey = figma.fileKey || "unknown";
-      const fileName = figma.root.name || "Untitled";
-      return { fileId: fileKey, fileName };
-    }
-    /**
-     * Save session data for current file
-     */
-    static async saveSession(sessionData) {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
-      try {
-        const { fileId, fileName } = this.getCurrentFileInfo();
-        const existingSession = await this.getSession(fileId);
-        const updatedSession = {
-          fileId,
-          fileName,
-          designState: {
-            original: ((_a = sessionData.designState) == null ? void 0 : _a.original) || ((_b = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _b.original) || null,
-            current: ((_c = sessionData.designState) == null ? void 0 : _c.current) || ((_d = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _d.current) || null,
-            history: ((_e = sessionData.designState) == null ? void 0 : _e.history) || ((_f = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _f.history) || [],
-            frameId: ((_g = sessionData.designState) == null ? void 0 : _g.frameId) || ((_h = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _h.frameId) || null,
-            frameName: ((_i = sessionData.designState) == null ? void 0 : _i.frameName) || ((_j = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _j.frameName) || "Unknown Frame",
-            isIterating: ((_k = sessionData.designState) == null ? void 0 : _k.isIterating) || ((_l = existingSession == null ? void 0 : existingSession.designState) == null ? void 0 : _l.isIterating) || false
-          },
-          scanResults: sessionData.scanResults || (existingSession == null ? void 0 : existingSession.scanResults) || [],
-          lastModified: Date.now(),
-          currentTab: sessionData.currentTab || (existingSession == null ? void 0 : existingSession.currentTab) || "design-system",
-          currentPlatform: sessionData.currentPlatform || (existingSession == null ? void 0 : existingSession.currentPlatform) || "mobile"
-        };
-        const storageKey = this.STORAGE_PREFIX + fileId;
-        await figma.clientStorage.setAsync(storageKey, updatedSession);
-        await this.updateAllSessionsIndex(fileId, updatedSession);
-        console.log("\u2705 Session saved for file:", fileName);
-      } catch (error) {
-        console.error("\u274C Failed to save session:", error);
-        throw error;
-      }
-    }
-    /**
-     * Get session data for specific file
-     */
-    static async getSession(fileId) {
-      try {
-        const targetFileId = fileId || this.getCurrentFileInfo().fileId;
-        const storageKey = this.STORAGE_PREFIX + targetFileId;
-        const sessionData = await figma.clientStorage.getAsync(storageKey);
-        return sessionData || null;
-      } catch (error) {
-        console.error("\u274C Failed to get session:", error);
-        return null;
-      }
-    }
-    /**
-     * Get current file session data
-     */
-    static async getCurrentSession() {
-      const { fileId } = this.getCurrentFileInfo();
-      return await this.getSession(fileId);
-    }
-    /**
-     * Check if current file has a session
-     */
-    static async hasCurrentSession() {
-      const session = await this.getCurrentSession();
-      return session !== null && (session.scanResults.length > 0 || session.designState.history.length > 0 || session.designState.current !== null);
-    }
-    /**
-     * Clear session for current file
-     */
-    static async clearCurrentSession() {
-      try {
-        const { fileId } = this.getCurrentFileInfo();
-        const storageKey = this.STORAGE_PREFIX + fileId;
-        await figma.clientStorage.deleteAsync(storageKey);
-        await this.removeFromAllSessionsIndex(fileId);
-        console.log("\u2705 Session cleared for current file");
-      } catch (error) {
-        console.error("\u274C Failed to clear session:", error);
-        throw error;
-      }
-    }
-    /**
-     * Get all sessions across all files
-     */
-    static async getAllSessions() {
-      try {
-        const allSessionsIndex = await figma.clientStorage.getAsync(this.ALL_SESSIONS_KEY) || {};
-        const sessions = [];
-        for (const fileId of Object.keys(allSessionsIndex)) {
-          const session = await this.getSession(fileId);
-          if (session) {
-            sessions.push(session);
-          }
-        }
-        return sessions.sort((a, b) => b.lastModified - a.lastModified);
-      } catch (error) {
-        console.error("\u274C Failed to get all sessions:", error);
-        return [];
-      }
-    }
-    /**
-     * Delete specific session
-     */
-    static async deleteSession(fileId) {
-      try {
-        const storageKey = this.STORAGE_PREFIX + fileId;
-        await figma.clientStorage.deleteAsync(storageKey);
-        await this.removeFromAllSessionsIndex(fileId);
-        console.log("\u2705 Session deleted for file:", fileId);
-      } catch (error) {
-        console.error("\u274C Failed to delete session:", error);
-        throw error;
-      }
-    }
-    /**
-     * Clear all sessions (used by "Clear All Data" function)
-     */
-    static async clearAllSessions() {
-      try {
-        const allSessions = await this.getAllSessions();
-        for (const session of allSessions) {
-          const storageKey = this.STORAGE_PREFIX + session.fileId;
-          await figma.clientStorage.deleteAsync(storageKey);
-        }
-        await figma.clientStorage.deleteAsync(this.ALL_SESSIONS_KEY);
-        console.log("\u2705 All sessions cleared");
-      } catch (error) {
-        console.error("\u274C Failed to clear all sessions:", error);
-        throw error;
-      }
-    }
-    /**
-     * Update the index of all sessions
-     */
-    static async updateAllSessionsIndex(fileId, sessionData) {
-      try {
-        const allSessionsIndex = await figma.clientStorage.getAsync(this.ALL_SESSIONS_KEY) || {};
-        allSessionsIndex[fileId] = {
-          fileName: sessionData.fileName,
-          lastModified: sessionData.lastModified
-        };
-        await figma.clientStorage.setAsync(this.ALL_SESSIONS_KEY, allSessionsIndex);
-      } catch (error) {
-        console.error("\u274C Failed to update sessions index:", error);
-      }
-    }
-    /**
-     * Remove file from all sessions index
-     */
-    static async removeFromAllSessionsIndex(fileId) {
-      try {
-        const allSessionsIndex = await figma.clientStorage.getAsync(this.ALL_SESSIONS_KEY) || {};
-        delete allSessionsIndex[fileId];
-        await figma.clientStorage.setAsync(this.ALL_SESSIONS_KEY, allSessionsIndex);
-      } catch (error) {
-        console.error("\u274C Failed to remove from sessions index:", error);
-      }
-    }
-    /**
-     * Format session data for UI display
-     */
-    static formatSessionForUI(session) {
-      return {
-        fileId: session.fileId,
-        fileName: session.fileName,
-        designState: session.designState,
-        lastModified: session.lastModified,
-        frameName: session.designState.frameName,
-        historyCount: session.designState.history.length,
-        componentCount: session.scanResults.length
-      };
-    }
-  };
-  SessionService.STORAGE_PREFIX = "aidesigner_session_";
-  SessionService.ALL_SESSIONS_KEY = "aidesigner_all_sessions";
-
-  // src/core/gemini-service.ts
-  var GeminiService = class {
-    /**
-     * Get API key from storage
-     */
-    static async getApiKey() {
-      try {
-        const apiKey = await figma.clientStorage.getAsync("geminiApiKey");
-        return apiKey || null;
-      } catch (error) {
-        console.error("\u274C Failed to get API key:", error);
-        return null;
-      }
-    }
-    /**
-     * Save API key to storage
-     */
-    static async saveApiKey(apiKey) {
-      try {
-        if (!apiKey || apiKey.trim().length === 0) {
-          throw new Error("API key cannot be empty");
-        }
-        await figma.clientStorage.setAsync("geminiApiKey", apiKey.trim());
-        console.log("\u2705 API key saved successfully");
-        return true;
-      } catch (error) {
-        console.error("\u274C Failed to save API key:", error);
-        return false;
-      }
-    }
-    /**
-     * Test connection to Gemini API
-     */
-    static async testConnection() {
-      try {
-        const apiKey = await this.getApiKey();
-        if (!apiKey) {
-          return {
-            success: false,
-            error: "No API key found. Please configure your API key first."
-          };
-        }
-        console.log("\u{1F9EA} Testing Gemini API connection...");
-        const testPrompt = 'Respond with a simple JSON object containing a "status" field with value "ok"';
-        const response = await this.callGeminiAPI(apiKey, testPrompt);
-        if (response.success) {
-          console.log("\u2705 Gemini API connection test successful");
-          return {
-            success: true,
-            data: "Connection successful"
-          };
-        } else {
-          return {
-            success: false,
-            error: response.error || "Connection test failed"
-          };
-        }
-      } catch (error) {
-        console.error("\u274C Connection test failed:", error);
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Unknown error"
-        };
-      }
-    }
-    /**
-     * Generate UI with Gemini API
-     */
-    static async generateUI(request) {
-      try {
-        const apiKey = await this.getApiKey();
-        if (!apiKey) {
-          return {
-            success: false,
-            error: "No API key found. Please configure your API key first."
-          };
-        }
-        console.log("\u{1F916} Starting UI generation with Gemini...");
-        const response = await this.callGeminiAPI(
-          apiKey,
-          request.prompt,
-          request.image,
-          request.config
-        );
-        if (response.success) {
-          console.log("\u2705 UI generation successful");
-          return {
-            success: true,
-            data: response.data
-          };
-        } else {
-          console.error("\u274C UI generation failed:", response.error);
-          return {
-            success: false,
-            error: response.error || "Generation failed"
-          };
-        }
-      } catch (error) {
-        console.error("\u274C UI generation error:", error);
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Unknown error"
-        };
-      }
-    }
-    /**
-     * Core Gemini API calling function
-     */
-    static async callGeminiAPI(apiKey, prompt, image, config) {
-      var _a;
-      try {
-        const generationConfig = __spreadValues(__spreadValues({}, this.DEFAULT_CONFIG), config);
-        const apiParts = [{ text: prompt }];
-        if (image) {
-          apiParts.push({
-            inlineData: {
-              mimeType: image.type,
-              data: image.base64
-            }
-          });
-        }
-        const response = await fetch(`${this.API_BASE_URL}?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ role: "user", parts: apiParts }],
-            generationConfig
-          })
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          const errorMessage = ((_a = errorData.error) == null ? void 0 : _a.message) || `HTTP ${response.status}: ${response.statusText}`;
-          return {
-            success: false,
-            error: errorMessage
-          };
-        }
-        const data = await response.json();
-        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0] || !data.candidates[0].content.parts[0].text) {
-          return {
-            success: false,
-            error: "Invalid response structure from Gemini API"
-          };
-        }
-        const responseText = data.candidates[0].content.parts[0].text;
-        return {
-          success: true,
-          data: responseText
-        };
-      } catch (error) {
-        console.error("\u274C Gemini API call failed:", error);
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Network error"
-        };
-      }
-    }
-    /**
-     * Clear API key from storage
-     */
-    static async clearApiKey() {
-      try {
-        await figma.clientStorage.setAsync("geminiApiKey", null);
-        console.log("\u2705 API key cleared");
-        return true;
-      } catch (error) {
-        console.error("\u274C Failed to clear API key:", error);
-        return false;
-      }
-    }
-    /**
-     * Check if API key exists
-     */
-    static async hasApiKey() {
-      const apiKey = await this.getApiKey();
-      return apiKey !== null && apiKey.length > 0;
-    }
-    /**
-     * Get masked API key for display (shows only last 4 characters)
-     */
-    static async getMaskedApiKey() {
-      const apiKey = await this.getApiKey();
-      if (!apiKey) return null;
-      if (apiKey.length <= 4) {
-        return "\u25CF".repeat(apiKey.length);
-      }
-      return "\u25CF".repeat(apiKey.length - 4) + apiKey.slice(-4);
-    }
-    /**
-     * Analyze image with Gemini API for design feedback
-     */
-    static async analyzeImage(imageBytes, prompt) {
-      try {
-        const apiKey = await this.getApiKey();
-        if (!apiKey) {
-          throw new Error("No API key found. Please configure your API key first.");
-        }
-        const base64 = btoa(String.fromCharCode(...imageBytes));
-        const response = await this.callGeminiAPI(
-          apiKey,
-          prompt,
-          { base64, type: "image/png" },
-          {
-            temperature: 0.1,
-            maxOutputTokens: 1024,
-            responseMimeType: "application/json"
-          }
-        );
-        if (response.success) {
-          return response.data || "";
-        } else {
-          throw new Error(response.error || "Analysis failed");
-        }
-      } catch (error) {
-        console.error("Vision analysis failed:", error);
-        throw error;
-      }
-    }
-    /**
-     * Format error message for user display
-     */
-    static formatErrorMessage(error) {
-      if (error.includes("API_KEY_INVALID")) {
-        return "Invalid API key. Please check your Gemini API key.";
-      }
-      if (error.includes("QUOTA_EXCEEDED")) {
-        return "API quota exceeded. Please check your billing or try again later.";
-      }
-      if (error.includes("RATE_LIMIT_EXCEEDED")) {
-        return "Rate limit exceeded. Please wait a moment and try again.";
-      }
-      if (error.includes("Network error")) {
-        return "Network connection failed. Please check your internet connection.";
-      }
-      return error;
-    }
-  };
-  GeminiService.API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-  GeminiService.DEFAULT_CONFIG = {
-    temperature: 0.2,
-    maxOutputTokens: 8192,
-    responseMimeType: "application/json"
-  };
-
-  // src/utils/pipeline-logger.ts
-  var PipelineLogger = class {
-    constructor() {
-      this.logs = [];
-      const now = /* @__PURE__ */ new Date();
-      this.timestamp = now.toTimeString().split(" ")[0].replace(/:/g, "-");
-      const dateStr = now.toISOString().split("T")[0];
-      this.runId = `${dateStr}_${this.timestamp}`;
-      console.log(`\u{1F4DD} Pipeline Logger initialized: ${this.runId}`);
-      this.setupGlobalAccess();
-    }
-    setupGlobalAccess() {
-      try {
-        if (typeof globalThis !== "undefined") {
-          globalThis.pipelineLogger = this;
-          console.log(`\u{1F5C2}\uFE0F Use this in DevTools: globalThis.pipelineLogger`);
-        } else if (typeof window !== "undefined") {
-          window.pipelineLogger = this;
-          console.log(`\u{1F5C2}\uFE0F Use this in DevTools: window.pipelineLogger`);
-        } else if (typeof global !== "undefined") {
-          global.pipelineLogger = this;
-          console.log(`\u{1F5C2}\uFE0F Logger available as: global.pipelineLogger`);
-        }
-      } catch (error) {
-        console.log(`\u26A0\uFE0F Could not set global logger reference: ${error.message}`);
-      }
-    }
-    logStageInput(stageNumber, stageName, input) {
-      try {
-        console.group(`\u{1F4E5} Stage ${stageNumber} (${stageName}) - INPUT`);
-        console.log("Input:", input);
-        console.log("Input length:", typeof input === "string" ? input.length : String(input).length);
-        console.groupEnd();
-      } catch (error) {
-        console.log(`\u{1F4E5} Stage ${stageNumber} (${stageName}) - INPUT`);
-        console.log("Input:", input);
-      }
-      this.logs.push({
-        type: "input",
-        stage: `stage${stageNumber}-${stageName}`,
-        data: { input, inputLength: typeof input === "string" ? input.length : String(input).length },
-        timestamp: /* @__PURE__ */ new Date()
-      });
-    }
-    logStageOutput(stageNumber, stageName, output) {
-      var _a;
-      try {
-        console.group(`\u{1F4E4} Stage ${stageNumber} (${stageName}) - OUTPUT`);
-        console.log("Success:", !!output);
-        console.log("Content length:", (output == null ? void 0 : output.content) ? output.content.length : 0);
-        console.log("Content preview:", (_a = output == null ? void 0 : output.content) == null ? void 0 : _a.substring(0, 200));
-        console.groupEnd();
-      } catch (error) {
-        console.log(`\u{1F4E4} Stage ${stageNumber} (${stageName}) - OUTPUT`);
-        console.log("Output:", output);
-      }
-      this.logs.push({
-        type: "output",
-        stage: `stage${stageNumber}-${stageName}`,
-        data: output,
-        timestamp: /* @__PURE__ */ new Date()
-      });
-    }
-    logError(stage, error) {
-      const errorData = {
-        message: error instanceof Error ? error.message : error,
-        stack: error instanceof Error ? error.stack : void 0
-      };
-      try {
-        console.group(`\u274C ERROR in ${stage}`);
-        console.error("Error:", errorData);
-        console.groupEnd();
-      } catch (e) {
-        console.error(`\u274C ERROR in ${stage}:`, errorData);
-      }
-      this.logs.push({
-        type: "error",
-        stage,
-        data: errorData,
-        timestamp: /* @__PURE__ */ new Date()
-      });
-    }
-    getLogs() {
-      return this.logs;
-    }
-    getLogsByType(type) {
-      return this.logs.filter((log) => log.type === type);
-    }
-    exportLogs() {
-      try {
-        console.log(JSON.stringify(this.logs, null, 2));
-      } catch (error) {
-        console.log("Export logs:", this.logs);
-      }
-      return this.logs;
-    }
-  };
-
-  // src/utils/pipeline-debug-logger.ts
-  var PipelineDebugLogger = class {
-    constructor() {
-      this.logBuffer = [];
-      this.startTime = /* @__PURE__ */ new Date();
-      this.runId = this.startTime.toISOString().replace(/[:.]/g, "-");
-      this.logBuffer = [];
-      this.addLog(`=== PIPELINE DEBUG LOG ===`);
-      this.addLog(`Run ID: ${this.runId}`);
-      this.addLog(`Started: ${this.startTime.toLocaleString()}`);
-      this.addLog(`=`.repeat(50));
-      this.addLog("");
-    }
-    logUserInput(input) {
-      this.addLog(`\u{1F680} USER INPUT:`);
-      this.addLog(`"${input}"`);
-      this.addLog(`Length: ${input.length} characters`);
-      this.addLog("");
-    }
-    logStageStart(stageNumber, stageName) {
-      this.addLog(`${"=".repeat(20)} STAGE ${stageNumber}: ${stageName.toUpperCase()} ${"=".repeat(20)}`);
-      this.addLog("");
-    }
-    logContextSentToAI(stageName, context) {
-      this.addLog(`\u{1F4E4} CONTEXT SENT TO AI (${context.length} chars):`);
-      this.addLog("-".repeat(40));
-      this.addLog(context);
-      this.addLog("-".repeat(40));
-      this.addLog("");
-    }
-    logAIResponse(stageName, aiResponse, success, usage) {
-      this.addLog(`\u{1F4E5} AI RESPONSE - ${success ? "SUCCESS" : "FAILED"} (${aiResponse.length} chars):`);
-      if (usage) {
-        this.addLog(`Usage: ${JSON.stringify(usage, null, 2)}`);
-      }
-      this.addLog("-".repeat(40));
-      this.addLog(aiResponse);
-      this.addLog("-".repeat(40));
-      this.addLog("");
-    }
-    logFallback(stageName, reason, fallbackContent) {
-      this.addLog(`\u26A0\uFE0F FALLBACK USED - ${reason}:`);
-      this.addLog("-".repeat(40));
-      this.addLog(fallbackContent);
-      this.addLog("-".repeat(40));
-      this.addLog("");
-    }
-    logStageComplete(stageNumber, stageName, aiUsed, outputLength) {
-      this.addLog(`\u2705 STAGE ${stageNumber} COMPLETE:`);
-      this.addLog(`- AI Used: ${aiUsed ? "YES" : "NO"}`);
-      this.addLog(`- Output Length: ${outputLength} characters`);
-      this.addLog("");
-    }
-    logDesignSystemData(totalComponents, componentTypes, firstComponents) {
-      this.addLog(`\u{1F3A8} DESIGN SYSTEM DATA:`);
-      this.addLog(`- Total Components: ${totalComponents}`);
-      this.addLog(`- Component Types: ${componentTypes.join(", ")}`);
-      this.addLog(`- First Components: ${firstComponents.join(", ")}`);
-      this.addLog("");
-    }
-    logPipelineComplete(totalTime, aiStagesUsed, totalStages) {
-      this.addLog(`${"=".repeat(50)}`);
-      this.addLog(`\u{1F3AF} PIPELINE COMPLETE`);
-      this.addLog(`- Total Time: ${totalTime}ms`);
-      this.addLog(`- AI Stages Used: ${aiStagesUsed}/${totalStages}`);
-      this.addLog(`- Completed: ${(/* @__PURE__ */ new Date()).toLocaleString()}`);
-      this.addLog(`${"=".repeat(50)}`);
-      this.saveToConsole();
-      this.saveToStorage();
-    }
-    addLog(text) {
-      this.logBuffer.push(text);
-      console.log(`[DEBUG] ${text}`);
-    }
-    saveToConsole() {
-      console.log(`
-${"=".repeat(80)}`);
-      console.log(`\u{1F4C4} COMPLETE DEBUG LOG (${this.logBuffer.length} lines, ${this.getLogContent().length} chars)`);
-      console.log(`${"=".repeat(80)}`);
-      console.log(this.getLogContent());
-      console.log(`${"=".repeat(80)}
-`);
-    }
-    async saveToStorage() {
-      try {
-        const storageKey = `pipeline-debug-log-${this.runId}`;
-        const content = this.getLogContent();
-        if (typeof figma !== "undefined" && figma.clientStorage) {
-          await figma.clientStorage.setAsync(storageKey, {
-            content,
-            runId: this.runId,
-            timestamp: this.startTime.toISOString(),
-            lines: this.logBuffer.length,
-            chars: content.length
-          });
-          await figma.clientStorage.setAsync("pipeline-debug-log-latest", {
-            content,
-            runId: this.runId,
-            timestamp: this.startTime.toISOString(),
-            lines: this.logBuffer.length,
-            chars: content.length
-          });
-          console.log(`\u{1F4BE} Debug log saved to storage: ${storageKey}`);
-          console.log(`\u{1F4C4} Access latest log: figma.clientStorage.getAsync('pipeline-debug-log-latest')`);
-        }
-      } catch (error) {
-        console.error("\u274C Failed to save debug log to storage:", error);
-      }
-    }
-    // Method to get current log content
-    getLogContent() {
-      return this.logBuffer.join("\n");
-    }
-    // Static method to retrieve latest debug log
-    static async getLatestDebugLog() {
-      try {
-        if (typeof figma !== "undefined" && figma.clientStorage) {
-          const data = await figma.clientStorage.getAsync("pipeline-debug-log-latest");
-          return (data == null ? void 0 : data.content) || null;
-        }
-        return null;
-      } catch (error) {
-        console.error("\u274C Failed to retrieve debug log:", error);
-        return null;
-      }
-    }
-    // Static method to list all debug logs
-    static async listDebugLogs() {
-      try {
-        if (typeof figma !== "undefined" && figma.clientStorage) {
-          const keys = await figma.clientStorage.keysAsync();
-          const debugKeys = keys.filter((key) => key.startsWith("pipeline-debug-log-") && key !== "pipeline-debug-log-latest");
-          const logs = [];
-          for (const key of debugKeys) {
-            const data = await figma.clientStorage.getAsync(key);
-            if (data) {
-              logs.push({
-                key,
-                runId: data.runId,
-                timestamp: data.timestamp,
-                lines: data.lines,
-                chars: data.chars
-              });
-            }
-          }
-          return logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-        }
-        return [];
-      } catch (error) {
-        console.error("\u274C Failed to list debug logs:", error);
-        return [];
-      }
-    }
-  };
-
-  // src/pipeline/roles/BaseRole.ts
-  var BaseRole = class {
-    constructor(logger) {
-      this.logger = logger;
-      this.safeLog("BaseRole initialized");
-    }
-    safeLog(message, data) {
-      try {
-        if (this.logger) {
-          console.log(`[${this.constructor.name}] ${message}`, data || "");
-        }
-      } catch (error) {
-        console.warn(`Logging failed: ${error instanceof Error ? error.message : error}`);
-      }
-    }
-  };
 
   // src/prompts/roles/product-manager.js
   var PRODUCT_MANAGER_PROMPT = `You are a Senior Product Manager with 8+ years of cross-industry experience. You excel at domain analysis and translating user requests into detailed, actionable product specifications.
@@ -10543,6 +9608,276 @@ Create a PRD that eliminates guesswork for the UX Designer.`,
     "json-engineer": JSON_ENGINEER_PROMPT
   };
 
+  // src/utils/pipeline-logger.ts
+  var PipelineLogger = class {
+    constructor() {
+      this.logs = [];
+      const now = /* @__PURE__ */ new Date();
+      this.timestamp = now.toTimeString().split(" ")[0].replace(/:/g, "-");
+      const dateStr = now.toISOString().split("T")[0];
+      this.runId = `${dateStr}_${this.timestamp}`;
+      console.log(`\u{1F4DD} Pipeline Logger initialized: ${this.runId}`);
+      this.setupGlobalAccess();
+    }
+    setupGlobalAccess() {
+      try {
+        if (typeof globalThis !== "undefined") {
+          globalThis.pipelineLogger = this;
+          console.log(`\u{1F5C2}\uFE0F Use this in DevTools: globalThis.pipelineLogger`);
+        } else if (typeof window !== "undefined") {
+          window.pipelineLogger = this;
+          console.log(`\u{1F5C2}\uFE0F Use this in DevTools: window.pipelineLogger`);
+        } else if (typeof global !== "undefined") {
+          global.pipelineLogger = this;
+          console.log(`\u{1F5C2}\uFE0F Logger available as: global.pipelineLogger`);
+        }
+      } catch (error) {
+        console.log(`\u26A0\uFE0F Could not set global logger reference: ${error.message}`);
+      }
+    }
+    logStageInput(stageNumber, stageName, input) {
+      try {
+        console.group(`\u{1F4E5} Stage ${stageNumber} (${stageName}) - INPUT`);
+        console.log("Input:", input);
+        console.log("Input length:", typeof input === "string" ? input.length : String(input).length);
+        console.groupEnd();
+      } catch (error) {
+        console.log(`\u{1F4E5} Stage ${stageNumber} (${stageName}) - INPUT`);
+        console.log("Input:", input);
+      }
+      this.logs.push({
+        type: "input",
+        stage: `stage${stageNumber}-${stageName}`,
+        data: { input, inputLength: typeof input === "string" ? input.length : String(input).length },
+        timestamp: /* @__PURE__ */ new Date()
+      });
+    }
+    logStageOutput(stageNumber, stageName, output) {
+      var _a;
+      try {
+        console.group(`\u{1F4E4} Stage ${stageNumber} (${stageName}) - OUTPUT`);
+        console.log("Success:", !!output);
+        console.log("Content length:", (output == null ? void 0 : output.content) ? output.content.length : 0);
+        console.log("Content preview:", (_a = output == null ? void 0 : output.content) == null ? void 0 : _a.substring(0, 200));
+        console.groupEnd();
+      } catch (error) {
+        console.log(`\u{1F4E4} Stage ${stageNumber} (${stageName}) - OUTPUT`);
+        console.log("Output:", output);
+      }
+      this.logs.push({
+        type: "output",
+        stage: `stage${stageNumber}-${stageName}`,
+        data: output,
+        timestamp: /* @__PURE__ */ new Date()
+      });
+    }
+    logError(stage, error) {
+      const errorData = {
+        message: error instanceof Error ? error.message : error,
+        stack: error instanceof Error ? error.stack : void 0
+      };
+      try {
+        console.group(`\u274C ERROR in ${stage}`);
+        console.error("Error:", errorData);
+        console.groupEnd();
+      } catch (e) {
+        console.error(`\u274C ERROR in ${stage}:`, errorData);
+      }
+      this.logs.push({
+        type: "error",
+        stage,
+        data: errorData,
+        timestamp: /* @__PURE__ */ new Date()
+      });
+    }
+    getLogs() {
+      return this.logs;
+    }
+    getLogsByType(type) {
+      return this.logs.filter((log) => log.type === type);
+    }
+    exportLogs() {
+      try {
+        console.log(JSON.stringify(this.logs, null, 2));
+      } catch (error) {
+        console.log("Export logs:", this.logs);
+      }
+      return this.logs;
+    }
+  };
+
+  // src/utils/pipeline-debug-logger.ts
+  var PipelineDebugLogger = class {
+    constructor() {
+      this.logBuffer = [];
+      this.startTime = /* @__PURE__ */ new Date();
+      this.runId = this.startTime.toISOString().replace(/[:.]/g, "-");
+      this.logBuffer = [];
+      this.addLog(`=== PIPELINE DEBUG LOG ===`);
+      this.addLog(`Run ID: ${this.runId}`);
+      this.addLog(`Started: ${this.startTime.toLocaleString()}`);
+      this.addLog(`=`.repeat(50));
+      this.addLog("");
+    }
+    logUserInput(input) {
+      this.addLog(`\u{1F680} USER INPUT:`);
+      this.addLog(`"${input}"`);
+      this.addLog(`Length: ${input.length} characters`);
+      this.addLog("");
+    }
+    logStageStart(stageNumber, stageName) {
+      this.addLog(`${"=".repeat(20)} STAGE ${stageNumber}: ${stageName.toUpperCase()} ${"=".repeat(20)}`);
+      this.addLog("");
+    }
+    logContextSentToAI(stageName, context) {
+      this.addLog(`\u{1F4E4} CONTEXT SENT TO AI (${context.length} chars):`);
+      this.addLog("-".repeat(40));
+      this.addLog(context);
+      this.addLog("-".repeat(40));
+      this.addLog("");
+    }
+    logAIResponse(stageName, aiResponse, success, usage) {
+      this.addLog(`\u{1F4E5} AI RESPONSE - ${success ? "SUCCESS" : "FAILED"} (${aiResponse.length} chars):`);
+      if (usage) {
+        this.addLog(`Usage: ${JSON.stringify(usage, null, 2)}`);
+      }
+      this.addLog("-".repeat(40));
+      this.addLog(aiResponse);
+      this.addLog("-".repeat(40));
+      this.addLog("");
+    }
+    logFallback(stageName, reason, fallbackContent) {
+      this.addLog(`\u26A0\uFE0F FALLBACK USED - ${reason}:`);
+      this.addLog("-".repeat(40));
+      this.addLog(fallbackContent);
+      this.addLog("-".repeat(40));
+      this.addLog("");
+    }
+    logStageComplete(stageNumber, stageName, aiUsed, outputLength) {
+      this.addLog(`\u2705 STAGE ${stageNumber} COMPLETE:`);
+      this.addLog(`- AI Used: ${aiUsed ? "YES" : "NO"}`);
+      this.addLog(`- Output Length: ${outputLength} characters`);
+      this.addLog("");
+    }
+    logDesignSystemData(totalComponents, componentTypes, firstComponents) {
+      this.addLog(`\u{1F3A8} DESIGN SYSTEM DATA:`);
+      this.addLog(`- Total Components: ${totalComponents}`);
+      this.addLog(`- Component Types: ${componentTypes.join(", ")}`);
+      this.addLog(`- First Components: ${firstComponents.join(", ")}`);
+      this.addLog("");
+    }
+    logPipelineComplete(totalTime, aiStagesUsed, totalStages) {
+      this.addLog(`${"=".repeat(50)}`);
+      this.addLog(`\u{1F3AF} PIPELINE COMPLETE`);
+      this.addLog(`- Total Time: ${totalTime}ms`);
+      this.addLog(`- AI Stages Used: ${aiStagesUsed}/${totalStages}`);
+      this.addLog(`- Completed: ${(/* @__PURE__ */ new Date()).toLocaleString()}`);
+      this.addLog(`${"=".repeat(50)}`);
+      this.saveToConsole();
+      this.saveToStorage();
+    }
+    addLog(text) {
+      this.logBuffer.push(text);
+      console.log(`[DEBUG] ${text}`);
+    }
+    saveToConsole() {
+      console.log(`
+${"=".repeat(80)}`);
+      console.log(`\u{1F4C4} COMPLETE DEBUG LOG (${this.logBuffer.length} lines, ${this.getLogContent().length} chars)`);
+      console.log(`${"=".repeat(80)}`);
+      console.log(this.getLogContent());
+      console.log(`${"=".repeat(80)}
+`);
+    }
+    async saveToStorage() {
+      try {
+        const storageKey = `pipeline-debug-log-${this.runId}`;
+        const content = this.getLogContent();
+        if (typeof figma !== "undefined" && figma.clientStorage) {
+          await figma.clientStorage.setAsync(storageKey, {
+            content,
+            runId: this.runId,
+            timestamp: this.startTime.toISOString(),
+            lines: this.logBuffer.length,
+            chars: content.length
+          });
+          await figma.clientStorage.setAsync("pipeline-debug-log-latest", {
+            content,
+            runId: this.runId,
+            timestamp: this.startTime.toISOString(),
+            lines: this.logBuffer.length,
+            chars: content.length
+          });
+          console.log(`\u{1F4BE} Debug log saved to storage: ${storageKey}`);
+          console.log(`\u{1F4C4} Access latest log: figma.clientStorage.getAsync('pipeline-debug-log-latest')`);
+        }
+      } catch (error) {
+        console.error("\u274C Failed to save debug log to storage:", error);
+      }
+    }
+    // Method to get current log content
+    getLogContent() {
+      return this.logBuffer.join("\n");
+    }
+    // Static method to retrieve latest debug log
+    static async getLatestDebugLog() {
+      try {
+        if (typeof figma !== "undefined" && figma.clientStorage) {
+          const data = await figma.clientStorage.getAsync("pipeline-debug-log-latest");
+          return (data == null ? void 0 : data.content) || null;
+        }
+        return null;
+      } catch (error) {
+        console.error("\u274C Failed to retrieve debug log:", error);
+        return null;
+      }
+    }
+    // Static method to list all debug logs
+    static async listDebugLogs() {
+      try {
+        if (typeof figma !== "undefined" && figma.clientStorage) {
+          const keys = await figma.clientStorage.keysAsync();
+          const debugKeys = keys.filter((key) => key.startsWith("pipeline-debug-log-") && key !== "pipeline-debug-log-latest");
+          const logs = [];
+          for (const key of debugKeys) {
+            const data = await figma.clientStorage.getAsync(key);
+            if (data) {
+              logs.push({
+                key,
+                runId: data.runId,
+                timestamp: data.timestamp,
+                lines: data.lines,
+                chars: data.chars
+              });
+            }
+          }
+          return logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        }
+        return [];
+      } catch (error) {
+        console.error("\u274C Failed to list debug logs:", error);
+        return [];
+      }
+    }
+  };
+
+  // src/pipeline/roles/BaseRole.ts
+  var BaseRole = class {
+    constructor(logger) {
+      this.logger = logger;
+      this.safeLog("BaseRole initialized");
+    }
+    safeLog(message, data) {
+      try {
+        if (this.logger) {
+          console.log(`[${this.constructor.name}] ${message}`, data || "");
+        }
+      } catch (error) {
+        console.warn(`Logging failed: ${error instanceof Error ? error.message : error}`);
+      }
+    }
+  };
+
   // src/pipeline/roles/ProductManagerRole.ts
   var ProductManagerRole = class extends BaseRole {
     constructor(geminiClient, debugLogger) {
@@ -11688,7 +11023,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
       if (pageName) {
         const targetPage = figma.root.children.find((p) => p.name === pageName);
         if (targetPage && targetPage.id !== figma.currentPage.id) {
-          await figma.setCurrentPageAsync(targetPage);
+          figma.currentPage = targetPage;
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
       }
@@ -11887,10 +11222,8 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
     }
   }
   async function main() {
-    console.log("\u{1F680} AIDesigner plugin started - TESTING VERSION");
-    console.log("\u{1F50D} DEBUG: Plugin main() function called");
+    console.log("\u{1F680} AIDesigner plugin started");
     figma.showUI(__html__, { width: 400, height: 720 });
-    console.log("\u{1F50D} DEBUG: UI shown, waiting for messages...");
     await initializeSession();
     figma.on("run", async (event) => {
       const { command, parameters } = event;
@@ -11909,14 +11242,13 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
     figma.ui.onmessage = async (msg) => {
       var _a, _b, _c, _d;
       console.log("\u{1F4E8} Message from UI:", msg.type);
-      console.log("\u{1F4E8} FULL MESSAGE DEBUG:", msg);
       switch (msg.type) {
         case "test-migration":
           handleMigrationTest();
           break;
         case "generate-ui-from-json":
           try {
-            const layoutData = JSON.parse(String(msg.payload || "{}"));
+            const layoutData = JSON.parse(msg.payload);
             const newFrame = await FigmaRenderer.generateUIFromDataDynamic(layoutData);
             if (newFrame) {
               figma.ui.postMessage({
@@ -11935,8 +11267,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
         // ENHANCED: API-driven UI generation with validation
         case "generate-ui-from-prompt":
           try {
-            const payload = msg.payload;
-            const { prompt, systemPrompt, enableValidation = true } = payload;
+            const { prompt, systemPrompt, enableValidation = true } = msg.payload;
             const generationResult = await generateUIFromAPI(prompt, systemPrompt, enableValidation);
             const newFrame = await FigmaRenderer.generateUIFromDataDynamic(generationResult.layoutData);
             if (newFrame) {
@@ -11956,8 +11287,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
           break;
         case "modify-existing-ui":
           try {
-            const payload = msg.payload;
-            const { modifiedJSON, frameId } = payload;
+            const { modifiedJSON, frameId } = msg.payload;
             const modifiedFrame = await FigmaRenderer.modifyExistingUI(modifiedJSON, frameId);
             if (modifiedFrame) {
               figma.ui.postMessage({
@@ -12186,7 +11516,7 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
             figma.notify("Error generating prompt", { error: true });
           }
           break;
-        case "update-component-type": {
+        case "update-component-type":
           const { componentId, newType } = msg.payload;
           try {
             const result = await DesignSystemScannerService.updateComponentType(componentId, newType);
@@ -12207,7 +11537,6 @@ Previous Stage Design System Used: ${input.metadata.designSystemUsed || false}`;
             figma.notify("Error updating type", { error: true });
           }
           break;
-        }
         case "navigate-to-component":
           await navigateToComponent(msg.componentId, msg.pageName);
           break;

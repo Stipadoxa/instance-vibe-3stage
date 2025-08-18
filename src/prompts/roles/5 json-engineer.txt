@@ -358,6 +358,35 @@ def add_effective_width_metadata(container, parentWidth=375, depth=0):
 add_effective_width_metadata(root_container)
 ```
 
+## DESIGN TOKEN INTELLIGENCE
+
+When processing ColorInfo with designToken:
+
+### Priority Order:
+1. **designToken** (if present) - Use semantic token name
+2. **paintStyleId** - Use Design System color style  
+3. **color** - Use raw hex value as fallback
+
+### Example Processing:
+```json
+// Input ColorInfo:
+{
+  "color": "#3B82F6",
+  "designToken": "Primary/Blue/500", 
+  "usesDesignToken": true
+}
+
+// Output Properties:
+{
+  "color": "Primary/Blue/500"  // Use token name, not hex
+}
+```
+
+### Token Name Validation:
+- Check if token exists in DESIGN_SYSTEM_DATA variables
+- Fallback to paintStyleId if token invalid
+- Ultimate fallback to hex color
+
 ## INPUT PROCESSING 
 
 You will receive:

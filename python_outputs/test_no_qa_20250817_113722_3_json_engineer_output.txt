@@ -1,0 +1,273 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "10:5622": "arrow",
+        "10:5632": "settings"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "_effectiveWidth": 343,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "2015 MacBook Pro 13-inch - Excellent Condition",
+            "textStyle": "Headline/Large",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "_effectiveWidth": 343,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7816",
+              "variants": {
+                "Type": "2+ images"
+              },
+              "properties": {
+                "image1": "image_url_1",
+                "image2": "image_url_2",
+                "image3": "image_url_3",
+                "image4": "image_url_4"
+              },
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "$450",
+            "textStyle": "Headline/Medium",
+            "color": "Primary/primary50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Condition: Excellent - Minor scratches on the bottom casing. Fully functional.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "_effectiveWidth": 343,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7773",
+              "variants": {
+                "Photo": "Yes"
+              },
+              "properties": {
+                "image": "seller_profile_picture_url" 
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "_effectiveWidth": 287,
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "John Doe",
+                    "textStyle": "Title/Medium",
+                    "color": "Neutral/neutral90"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "⭐⭐⭐⭐ (4.8/5 stars) (123 reviews)",
+                    "textStyle": "Body/Small",
+                    "color": "Neutral/neutral50"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "_effectiveWidth": 343,
+          "items": [
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Specifications:",
+                "textStyle": "Title/Medium",
+                "color": "Neutral/neutral90"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "VERTICAL"
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "itemSpacing": 4,
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "_effectiveWidth": 343,
+              "items": [
+                {"type": "native-text", "properties": {"content": "Processor: 2.7 GHz Intel Core i5", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}, "_useFlexFill": true, "_parentLayout": "VERTICAL"},
+                {"type": "native-text", "properties": {"content": "RAM: 8GB", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}, "_useFlexFill": true, "_parentLayout": "VERTICAL"},
+                {"type": "native-text", "properties": {"content": "Storage: 256GB SSD", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}, "_useFlexFill": true, "_parentLayout": "VERTICAL"},
+                {"type": "native-text", "properties": {"content": "Operating System: macOS Monterey", "textStyle": "Body/Medium", "color": "Neutral/neutral50"}, "_useFlexFill": true, "_parentLayout": "VERTICAL"}
+              ]
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Description:",
+            "textStyle": "Title/Medium",
+            "color": "Neutral/neutral90"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Lightly used MacBook Pro in excellent condition. Battery health is at 85%. Includes original charger. Selling because I upgraded to a newer model.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Shipping Information: Free shipping within the US.",
+            "textStyle": "Body/Medium",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Last updated: 2 hours ago",
+            "textStyle": "Body/Small",
+            "color": "Neutral/neutral50"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "_effectiveWidth": 343,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Contact Seller"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4744",
+              "variants": {
+                "style": "filled"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```

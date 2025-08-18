@@ -7,11 +7,6 @@ Transform analyzed user requirements and domain content into complete, contextua
 
 ## 💡 DESIGN PRINCIPLES
 
-**Headline Styles:**
-- **"Headline/Large"**: 32px, Roboto Medium - For main page titles
-- **"Headline/Medium"**: 28px, Roboto Medium - For section headers
-- **"Headline/Small"**: 24px, Roboto Medium - For subsection headers
-
 **Design System Mastery**: Leverage deep knowledge of component properties, variants, and contextual usage
 **Typography Intelligence**: Apply proper text hierarchy, font weights, and classification systems
 **Contextual Awareness**: Choose components, icons, and styling based on user context and domain
@@ -131,189 +126,60 @@ When creating native-text elements, reference exact design system style names:
 
 ### Color System Intelligence
 
-**Design System Color Categories:**
-When using colors in native elements or background properties, reference EXACT color style names from DESIGN_SYSTEM_DATA:
+**Color Resolution Strategy (in order of priority):**
 
-**PRIMARY Colors** - Main brand and action colors:
-- **"Primary/primary90"**: #006304 - Dark primary for headers, icons
-- **"Primary/primary80"**: #00831e - Medium dark for buttons
-- **"Primary/primary50"**: #00b53f - Main brand color for CTAs
-- **"Primary/primary30"**: #6ccc7b - Light primary for highlights
-- **"Primary/primary10"**: #c2e8c6 - Very light for backgrounds
-- **"Primary/primary5"**: #e5f6e8 - Subtle background tints
+1. **Color Styles** (primary method)
+   - Format: `"Primary/primary50"`, `"Neutral/neutral90"`
+   - Reference from `colorStyles` in DESIGN_SYSTEM_DATA
 
-**SECONDARY Colors** - Supporting brand colors:
-- **"Secondary/secondary90"**: #de622e - Dark secondary
-- **"Secondary/secondary80"**: #ea7832 - Medium secondary
-- **"Secondary/secondary50"**: Orange spectrum for accents
-- **"Secondary/secondary30"**: Light secondary for highlights
-- **"Secondary/secondary10"**: Very light secondary backgrounds
+2. **Component-Extracted Colors** (fallback)
+   - Extract from component `styleInfo.primaryColor`, `textColor`, `backgroundColor`
+   - Use hex values: `"#00b53f"`, `"#415661"`
 
-**TERTIARY Colors** - Additional accent colors:
-- **"Tertiary/tertiary50"**: #51c1f0 - Blue accent color
-- **"Tertiary/tertiary10"**: #b3e4f9 - Light blue backgrounds
-- **"Tertiary/tertiary5"**: #e1f5fd - Subtle blue tints
-
-**NEUTRAL Colors** - Text, borders, backgrounds:
-- **"Neutral/neutral90"**: #304049 - Dark text, headers
-- **"Neutral/neutral80"**: #415661 - Medium dark text
-- **"Neutral/neutral50"**: Medium gray for secondary text
-- **"Neutral/neutral30"**: Light gray for disabled states
-- **"Neutral/neutral10"**: Very light gray for backgrounds
-- **"Black/black100"**: #000000 - Pure black for text
-- **"Black/black80"**: 80% opacity black
-- **"Black/black50"**: 50% opacity black for overlays
-- **"White/white100"**: #ffffff - Pure white backgrounds
-- **"White/white80"**: 80% opacity white for overlays
-
-**Color Usage Guidelines:**
-- **Use PRIMARY colors** for main actions, headers, and brand elements
-- **Use SECONDARY colors** for supporting actions and accents
-- **Use TERTIARY colors** for informational highlights and secondary CTAs
-- **Use NEUTRAL colors** for text, backgrounds, and borders
-- **Use SEMANTIC colors** for success/error/warning states
-- **Reference colors by exact name**: "Primary/primary50" (never abbreviated or assumed)
-
-**Color Application Examples:**
+**Working Examples:**
 ```json
-// ✅ CORRECT: Use exact color names from design system
+// Color styles (preferred)
 {
-  "type": "native-rectangle",
-  "properties": {
-    "backgroundColor": "Primary/primary10",
-    "borderColor": "Primary/primary50"
-  }
+  "backgroundColor": "Primary/primary10",
+  "color": "Neutral/neutral90",
+  "borderColor": "Primary/primary50"
 }
 
+// Component hex (fallback)
 {
-  "type": "native-text",
-  "properties": {
-    "content": "Important message",
-    "textStyle": "Body/Medium",
-    "color": "Neutral/neutral90"
-  }
+  "backgroundColor": "#e5f6e8",
+  "color": "#304049", 
+  "borderColor": "#00b53f"
 }
+Smart Color Extraction Rules:
 
-// ❌ WRONG: Don't use arbitrary color values
-{
-  "type": "native-text",
-  "properties": {
-    "color": "#333333"  // Use "Neutral/neutral90" instead
-  }
-}
-```
+Primary Actions: Use primaryColor from button/CTA components
+Text Colors: Use textColor from text-heavy components (list items, cards)
+Backgrounds: Use backgroundColor from container components
+Borders: Use muted version of primaryColor or neutral colors
 
-**How to Apply Colors in JSON:**
+Context-Aware Application:
 
-**For layoutContainer backgrounds:**
-```json
-{
-  "type": "layoutContainer",
-  "layoutMode": "VERTICAL",
-  "backgroundColor": "White/white100",    // Use color style name
-  "borderColor": "Neutral/neutral30",     // Border color reference
-  "items": [...]
-}
-```
+✅ Buttons/CTAs: Use primary colors for prominence
+✅ Text: Use neutral colors for readability
+✅ Backgrounds: Use light tints/surfaces
+❌ Don't: Make body text orange just because button is orange
 
-**For native-rectangle fills:**
-```json
-{
-  "type": "native-rectangle", 
-  "properties": {
-    "fill": "Primary/primary50",          // Solid fill with color style
-    "stroke": "Primary/primary80",        // Border color
-    "cornerRadius": 8
-  }
-}
-```
+Property Names by Element:
+json// Layout containers
+{"backgroundColor": "color-value", "borderColor": "color-value"}
 
-**For native-text colors:**
-```json
-{
-  "type": "native-text",
-  "properties": {
-    "content": "Header text",
-    "textStyle": "Headline/Large",
-    "color": "Neutral/neutral90"          // Text color from design system
-  }
-}
-```
+// Native rectangles/circles  
+{"fill": "color-value", "stroke": "color-value"}
 
-**For component styling (when supported):**
-```json
-{
-  "type": "component",
-  "componentNodeId": "10:5620",
-  "properties": {
-    "backgroundColor": "Surface/surface100",  // Component background
-    "textColor": "Neutral/neutral90",         // Override text color if needed
-    "borderColor": "Primary/primary30"        // Component border
-  }
-}
-```
-
-**Color Token vs Color Style Usage:**
-
-**Design Tokens** (when available in DESIGN_SYSTEM_DATA):
-- Reference semantic tokens: `"color": "button.primary"`
-- Use collection names: `"backgroundColor": "surface.background"`
-
-**Color Styles** (always available):
-- Reference exact style names: `"color": "Primary/primary50"`
-- Use hierarchical naming: `"backgroundColor": "Neutral/neutral10"`
-
-**Color Property Names:**
-- `backgroundColor` - For container and shape backgrounds
-- `color` - For text color 
-- `borderColor` / `stroke` - For borders and strokes
-- `fill` - For shape fills (rectangles, circles)
-- `shadowColor` - For drop shadows (if supported)
-
-**Native Text with Design System Styles:**
-```json
-// ✅ CORRECT: Use design system style names for native-text
-{
-  "type": "native-text",
-  "properties": {
-    "content": "Custom Page Title",
-    "textStyle": "Headline/Large",
-    "color": "Neutral/neutral90"
-  }
-}
-
-// ✅ CORRECT: For content not covered by components
-{
-  "type": "native-text", 
-  "properties": {
-    "content": "Additional description text",
-    "textStyle": "Body/Medium",
-    "color": "Neutral/neutral90"
-  }
-}
-
-// ❌ WRONG: Don't use arbitrary sizes for native-text
-{
-  "type": "native-text",
-  "properties": {
-    "content": "Title",
-    "fontSize": 22,
-    "fontWeight": 500
-  }
-}
-```
-
-**When to Use Native Text vs Components:**
-- **Use Components**: When design system has appropriate component (buttons, list items, headers)
-- **Use Native Text**: For custom content, unique text blocks, placeholder text, or content that doesn't fit existing components
-
-**Native Text Style Selection:**
-- **Page titles, hero text**: "Headline/Large" or "Headline/Medium"
-- **Custom section headers**: "Title/Large" or "Headline/Small" 
-- **Standalone paragraphs**: "Body/Large" or "Body/Medium"
-- **Captions, metadata**: "Body/Small" or "Caption/Small"
-- **Custom labels**: "Label/Large" or "Label/Medium"
-
+// Native text
+{"color": "color-value"}
+Implementation Logic:
+IF colorStyles exist in DESIGN_SYSTEM_DATA:
+  → Use style names: "Primary/primary50"
+ELSE:
+  → Extract hex from components: "#00b53f"
+  → Apply semantic rules (primary for actions, neutral for text)
 ### Spacing & Layout Intelligence
 
 **Enhanced Spacing & Layout Patterns:**
@@ -897,79 +763,38 @@ Example:
 }
 ```
 
-## ✅ ENHANCED VALIDATION CHECKLIST
+✅ VALIDATION CHECKLIST
+🚫 CRITICAL COMPLETENESS (Must Fix)
 
-**🚫 COMPLETION MANDATE (CRITICAL - CHECK FIRST):**
-- [ ] **ZERO placeholders** - No "placeholder_id", "needs_definition", or "TBD" values
-- [ ] **NO skeletal structures** - Every component fully defined and complete
-- [ ] **REAL IDs only** - All componentNodeId values exist in DESIGN_SYSTEM_DATA
-- [ ] **Complete fallbacks** - Missing components replaced with native elements or alternatives
-- [ ] **NO explanatory notes** - JSON works without additional comments or manual fixes
-- [ ] **ALL properties filled** - No null, undefined, or missing required values
+ NO placeholders - Zero "placeholder_id", "needs_definition", "TBD" values
+ REAL component IDs - All componentNodeId exist in DESIGN_SYSTEM_DATA (format: "10:1234")
+ ALL properties filled - No null, undefined, or missing required values
 
-**Design System Compliance:**
-- [ ] All componentNodeIds exist in DESIGN_SYSTEM_DATA
-- [ ] Text properties use exact textLayers names from schema
-- [ ] All required variants included with valid values
-- [ ] Text styles use exact design system names ("Headline/Large", "Body/Medium", etc.)
-- [ ] **Colors use exact design system names** ("Primary/primary50", "Neutral/neutral90", etc.)
-- [ ] **Color properties use correct names** (backgroundColor, color, borderColor, fill, stroke)
-- [ ] **No arbitrary hex codes** - only verified color style names from DESIGN_SYSTEM_DATA
-- [ ] **Color tokens referenced correctly** (if available: "button.primary", "surface.background")
-- [ ] Spacing uses consistent design system values
+🏗️ MOBILE APP STRUCTURE (Must Fix)
 
-**Component Behavior:**
-- [ ] Icon choices are semantically appropriate for context
-- [ ] Variant combinations make sense for use case
-- [ ] Visibility overrides serve user context
-- [ ] Image fills specified where relevant
-- [ ] Touch targets meet minimum 44px height
+ 3-container architecture - Root has exactly: top nav → content → bottom nav
+ Root container spacing - paddingTop/Bottom/Left/Right: 0, itemSpacing: 0
+ Content container growth - Middle container has layoutGrow: 1
+ Navigation width - Top/bottom nav have horizontalSizing: "FILL"
 
-**Layout Intelligence:**
-- [ ] ItemSpacing reflects content relationships
-- [ ] Padding follows section hierarchy patterns
-- [ ] Layout directions support natural content flow
-- [ ] Container sizing modes optimize for mobile
-- [ ] Horizontal sizing and layout align work together
+🎨 DESIGN SYSTEM COMPLIANCE (Must Fix)
 
-**Content Integration:**
-- [ ] All analyzer requirements implemented
-- [ ] Text content matches user intent and domain
-- [ ] Sample data is realistic and contextual
-- [ ] Empty states and edge cases considered
-- [ ] Primary/secondary action hierarchy clear
+ Component variants - All required variants included with exact values from schema
+ Text properties - Use exact textLayers names from component schema
+ Text styles - Use exact design system names ("Headline/Large", "Body/Medium")
+ Color references - Use exact color style names ("Primary/primary50") or hex fallback
 
-## 🎯 **CONCRETE VERIFICATION RULES - ADDED**
+📱 TEXT ELEMENTS (Must Fix)
 
-**Before submitting, verify each item:**
+ Native text properties - All have "flexFillRequired": true
+ NO width on text - Remove width/constraint properties from native-text
+ Text sizing - Use layoutSizingHorizontal: "FILL" not "HUG"
 
-**Real Data Only:**
-- [ ] Every componentNodeId matches an ID from DESIGN_SYSTEM_DATA (format: "10:1234")
-- [ ] Every textStyle name exists in the provided text styles list
-- [ ] Every color reference uses exact names from color styles
-- [ ] All variant values match the variantDetails exactly (case-sensitive)
+🎯 CONTENT QUALITY (Should Fix)
 
-**Mobile App Structure Verification:**
-- [ ] Root container has exactly 3 children: top nav, content container, bottom nav
-- [ ] Root container has ALL padding values set to 0
-- [ ] Root container has itemSpacing set to 0
-- [ ] Top navigation has horizontalSizing: "FILL" and layoutAlign: "STRETCH"
-- [ ] Bottom navigation has horizontalSizing: "FILL" and layoutAlign: "STRETCH"
-- [ ] Middle content container has layoutGrow: 1
-- [ ] Content padding is INSIDE the middle container, not on root
-- [ ] No padding overrides on navigation components
-
-**No Abstract References:**
-- [ ] No text contains "placeholder", "example", "sample", or "TBD"
-- [ ] No componentNodeId contains "placeholder", "needs_", or "to_be_"
-- [ ] No properties have null or undefined values where content is required
-- [ ] All image containers have either imageUrl or are marked as native-rectangle
-
-**Concrete Fallbacks:**
-- [ ] If component type X doesn't exist in DESIGN_SYSTEM_DATA → use native elements
-- [ ] If specific variant doesn't exist → use closest available variant
-- [ ] If textLayer name doesn't match → use alternative component or native-text
-- [ ] If color style missing → use closest semantic color from available styles
+ Real content - No "sample", "example", "placeholder" text
+ App bar titles - Under 20 characters, navigation context only
+ Semantic icons - Icons match context (bookmark for save, not generic)
 
 ## 🎯 SUCCESS CRITERIA
 

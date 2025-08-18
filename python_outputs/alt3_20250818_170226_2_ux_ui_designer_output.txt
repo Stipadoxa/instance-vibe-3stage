@@ -1,0 +1,258 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "leading-icon": "arrow-left"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutGrow": 1,
+      "items": [
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "2015 MacBook Pro 13\" - Excellent Condition",
+            "textStyle": "Headline/Large"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7816",
+              "variants": {
+                "Type": "2+ images"
+              },
+              "properties": {
+                "image": "[Image URLs]"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "$450",
+            "textStyle": "Title/Large",
+            "color": "Primary/primary50"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Excellent - Minor scratches on the bottom case. Fully functional.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7773",
+              "variants": {
+                "Photo": "Yes"
+              },
+              "properties": {
+                "image": "[John Doe Avatar URL]"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "John Doe (4.8 rating (123 reviews))",
+                "textStyle": "Body/Medium"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Selling my well-maintained 2015 MacBook Pro 13\". Includes original charger. Battery life is excellent. Runs macOS Ventura smoothly. Some minor cosmetic wear and tear as shown in pictures.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Specifications:",
+            "textStyle": "Title/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Processor: 2.7 GHz Intel Core i5",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "RAM: 8GB",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Storage: 256GB SSD",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Operating System: macOS Ventura",
+                "textStyle": "Body/Medium"
+              }
+            }
+          ]
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Contact Seller"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Large",
+            "Type": "Filled",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:3907",
+          "properties": {
+            "Action": "Add to Wishlist"
+          },
+          "variants": {
+            "Platform": "Android+Web",
+            "Size": "Medium",
+            "Type": "Outlined",
+            "State": "Default",
+            "Color": "Green"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Listed 3 days ago",
+            "textStyle": "Caption/Small",
+            "color": "Neutral/neutral50"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```
+
+```markdown
+# DESIGN RATIONALE
+
+## Component Intelligence Applied
+- **Typography Hierarchy**: Headline/Large is used for the product title to make it prominent. Title/Large is used for the price for emphasis. Title/Medium is used for the "Specifications" header. Body/Medium is used for the description and specifications details, ensuring readability. Caption/Small is used for the "Listed 3 days ago" text for a less prominent status update.
+
+- **Spacing System**:  The `itemSpacing` of 0 at the root level ensures the app bar and bottom navigation bar are flush with the edges.  `paddingTop` and `paddingBottom` of 16 in the content container provide appropriate spacing around the content.  An `itemSpacing` of 8 is used within the specifications list for better visual separation.
+
+- **Component Behavior**: The image carousel uses a `Thumbnail` component, modified to show multiple images.  Buttons use the standard `Button` component with appropriate size and type variants for primary and secondary actions.  The `appbar` component is modified for a clean top navigation using visibility overrides to hide unnecessary trailing icons.
+
+- **Color Application**: Primary color (`Primary/primary50: #00b53f`) is used for the price to highlight its importance.  Neutral colors (`Neutral/neutral50: #6c8ea0` and `Neutral/neutral90: #304049`) are used for the text to ensure readability.
+
+
+- **Layout Strategy**: A vertical layout is used for the overall screen structure.  Within the content area, a vertical layout is used for the information blocks, while a horizontal layout is used for the seller profile to group the avatar and name together.
+
+## Domain Context Integration
+- **Industry Patterns**: The design follows standard e-commerce patterns, including prominent product images, pricing, seller information, detailed product description, and clear calls to action.
+
+- **User Mental Models**:  The layout is intuitive, with information presented in a logical order. The most important information (title, price, images) is placed at the top, followed by seller information, product description, and specifications.
+
+- **Contextual Adaptations**: The app bar is adapted to display a concise "Product Details" title, instead of the full product title.
+
+
+## Design System Compliance
+- **Component Verification**: All componentNodeIds used are present in the provided `DESIGN_SYSTEM_DATA`.
+- **Variant Completeness**: All required variants are specified with values that exist in the design system.
+- **Text Property Mapping**: Text properties match the `textLayers` names from the corresponding components.
+- **Schema Adherence**: All properties and their values adhere to the component definitions as provided.
+
+```
