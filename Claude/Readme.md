@@ -15,7 +15,22 @@ This document provides a comprehensive understanding of the UXPal pipeline archi
 
 ### Command Usage
 ```bash
-python3 instance.py alt3 [timestamp]
+python3 instance.py alt3 [max_qa_loops]
+```
+
+**QA Loop Configuration** (New Feature):
+- `max_qa_loops`: Optional positional argument (0-3, default: 0)
+  - `0`: QA validation completely disabled (fastest)
+  - `1-3`: Run up to specified number of QA iterations
+  - Values < 0 automatically clamped to 0
+  - Values > 3 automatically clamped to 3
+
+**Examples**:
+```bash
+python3 instance.py alt3           # 0 QA loops (disabled)
+python3 instance.py alt3 2         # Up to 2 QA loops
+python3 instance.py alt3 -5        # Clamped to 0 loops
+python3 instance.py alt3 10        # Clamped to 3 loops
 ```
 
 ### Stage 1: User Request Analyzer
@@ -130,6 +145,37 @@ When specific components don't exist:
 #### Outputs:
 - `python_outputs/alt3_{timestamp}_2_ux_ui_designer.json` - Full metadata
 - `python_outputs/alt3_{timestamp}_2_ux_ui_designer_output.txt` - Clean text output
+
+### Stage 2.5: Design QA Validation (Optional)
+**File**: `scripts/design_qa.py`  
+**AI Model**: Gemini 1.5 Flash  
+**Purpose**: Automated validation and correction of UX/UI Designer output
+
+#### QA Validation Process:
+When `max_qa_loops > 0`, the system automatically validates Stage 2 output:
+
+1. **JSON Extraction**: Parse JSON from UX/UI Designer rationale format
+2. **Component Validation**: Verify all `componentNodeId`s exist in design system
+3. **Property Compliance**: Check sizing, spacing, and layout properties
+4. **Iterative Fixes**: Apply corrections up to `max_qa_loops` iterations
+5. **Change Tracking**: Log all modifications for retrospective analysis
+
+#### QA Checks Performed:
+- ✅ Component existence validation against design system
+- ✅ Layout sizing mode consistency (`horizontalSizing`, `primaryAxisSizingMode`)
+- ✅ Text layer visibility and content mapping
+- ✅ Spacing value compliance (8, 12, 16, 24px standards)
+- ✅ Three-panel layout structure validation
+- ✅ Native element property restrictions
+
+#### QA Outputs:
+- `python_outputs/alt3_{timestamp}_2_5_qa_validated.json` - Validated JSON and metadata
+- `python_outputs/alt3_{timestamp}_2_5_qa_change_log.json` - Detailed change history
+
+#### QA Performance Impact:
+- **0 loops**: No QA overhead (~0s additional)
+- **1-2 loops**: Moderate validation (~15-30s additional)
+- **3 loops**: Comprehensive validation (~30-45s additional)
 
 ### Stage 3: JSON Engineer
 **File**: `src/prompts/roles/5 json-engineer.txt`  
@@ -361,10 +407,16 @@ current_json = load_from(figma_ready_file)
 ## Performance Metrics
 
 ### Base 3-Stage Pipeline:
-- **Total Time**: ~45-60 seconds
-- **API Calls**: 3 Gemini requests
+- **Total Time**: ~45-60 seconds (0 QA loops)
+- **API Calls**: 3 Gemini requests (+ QA loops if enabled)
 - **Success Rate**: High for JSON generation
 - **Output Quality**: Production-ready Figma JSON
+
+### With QA Validation:
+- **Total Time**: ~60-105 seconds (1-3 QA loops)
+- **API Calls**: 3-6 Gemini requests (base + QA iterations)
+- **Success Rate**: Higher due to automated validation
+- **Output Quality**: Validated + corrected Figma JSON
 
 ### Enhanced with Design Reviewer:
 - **Total Time**: ~60-75 seconds (15s additional)
@@ -384,18 +436,31 @@ current_json = load_from(figma_ready_file)
 
 ### For Standard UI Generation:
 ```bash
+# No QA validation (fastest)
 python3 instance.py alt3
 # Outputs: figma-ready/figma_ready_{timestamp}.json
+
+# With QA validation (higher quality)
+python3 instance.py alt3 2
+# Outputs: figma-ready/figma_ready_{timestamp}.json + QA change logs
 ```
 
 ### For Enhanced UX Review:
 ```bash
-python3 instance.py alt3 {timestamp}
+python3 instance.py alt3 {max_qa_loops}
 python3 scripts/run_review.py {timestamp} {screenshot.png}  
 # Outputs: figma-ready/final_design.json
 ```
 
 ### Production Recommendations:
+
+#### QA Configuration:
+- ✅ **Development**: Use 0 QA loops for rapid prototyping
+- ✅ **Production**: Use 1-2 QA loops for balanced quality/speed
+- ✅ **Critical**: Use 3 QA loops for maximum validation
+- ⚠️ **Performance**: Consider QA overhead in time-sensitive workflows
+
+#### Design Workflow:
 - ✅ Use Design Reviewer workflow for high-quality output
 - ✅ Always provide screenshots for visual analysis  
 - ✅ Leverage figma-ready JSON as reviewer input source
