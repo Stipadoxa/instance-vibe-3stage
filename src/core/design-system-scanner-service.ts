@@ -2,7 +2,7 @@
 // Design System Scanner service for AIDesigner plugin - handles all component scanning logic
 
 import { ComponentInfo } from './session-manager';
-import { ComponentScanner, ScanSession } from './component-scanner';
+import { ComponentScanner, OptimizedScanSession } from './component-scanner';
 import { FigmaRenderer } from './figma-renderer';
 
 interface ScanProgressCallback {
@@ -14,7 +14,7 @@ export class DesignSystemScannerService {
     /**
      * Main scanning function - scans all pages for components, Color Styles, and Text Styles
      */
-    static async scanDesignSystem(progressCallback?: ScanProgressCallback): Promise<ScanSession> {
+    static async scanDesignSystem(progressCallback?: ScanProgressCallback): Promise<OptimizedScanSession> {
         console.log("🔍 Starting comprehensive design system scan with Color Styles and Text Styles...");
         
         try {

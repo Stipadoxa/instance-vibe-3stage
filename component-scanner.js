@@ -1,404 +1,313 @@
 "use strict";
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComponentScanner = void 0;
-var ComponentScanner = /** @class */ (function () {
-    function ComponentScanner() {
-    }
+class ComponentScanner {
     /**
      * NEW: Scan Figma Variables (Design Tokens) from the local file
      */
-    ComponentScanner.scanFigmaVariables = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var collections, tokens, _i, collections_1, collection, variables, _a, variables_1, variable, modes, firstMode, value, token, collectionError_1, colorTokens, otherTokens, error_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        console.log("🔧 Scanning Figma Variables (Design Tokens)...");
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 9, , 10]);
-                        // Debug: Check if Variables API exists
-                        if (!figma.variables) {
-                            console.warn("❌ figma.variables API not available in this Figma version");
-                            return [2 /*return*/, []];
-                        }
-                        console.log("✅ figma.variables API is available");
-                        return [4 /*yield*/, figma.variables.getLocalVariableCollectionsAsync()];
-                    case 2:
-                        collections = _b.sent();
-                        console.log("\u2705 Found ".concat(collections.length, " variable collections"));
-                        // Debug: Check if we have any collections at all
-                        if (collections.length === 0) {
-                            console.warn("⚠️ No variable collections found. Possible reasons:");
-                            console.warn("  1. File has no Variables/Design Tokens defined");
-                            console.warn("  2. Variables are in a different library/file");
-                            console.warn("  3. Variables API permissions issue");
-                            // Try to get ALL variables (not just local)
-                            try {
-                                console.log("🔍 Checking for non-local variables...");
-                                // Note: This might not be available, but worth trying
-                            }
-                            catch (e) {
-                                console.log("📝 Non-local variable check not available");
-                            }
-                            return [2 /*return*/, []];
-                        }
-                        tokens = [];
-                        _i = 0, collections_1 = collections;
-                        _b.label = 3;
-                    case 3:
-                        if (!(_i < collections_1.length)) return [3 /*break*/, 8];
-                        collection = collections_1[_i];
-                        console.log("\uD83D\uDCE6 Processing collection: \"".concat(collection.name, "\" (ID: ").concat(collection.id, ")"));
-                        _b.label = 4;
-                    case 4:
-                        _b.trys.push([4, 6, , 7]);
-                        return [4 /*yield*/, figma.variables.getVariablesByCollectionAsync(collection.id)];
-                    case 5:
-                        variables = _b.sent();
-                        console.log("  Found ".concat(variables.length, " variables in \"").concat(collection.name, "\""));
-                        // Debug: Log collection details
-                        console.log("  Collection modes:", Object.keys(collection.modes || {}));
-                        for (_a = 0, variables_1 = variables; _a < variables_1.length; _a++) {
-                            variable = variables_1[_a];
-                            try {
-                                console.log("    Processing variable: \"".concat(variable.name, "\" (Type: ").concat(variable.resolvedType, ")"));
-                                modes = Object.keys(variable.valuesByMode);
-                                console.log("      Available modes: [".concat(modes.join(', '), "]"));
-                                if (modes.length === 0) {
-                                    console.warn("      \u26A0\uFE0F Variable \"".concat(variable.name, "\" has no modes"));
-                                    continue;
-                                }
-                                firstMode = modes[0];
-                                value = variable.valuesByMode[firstMode];
-                                console.log("      Using mode \"".concat(firstMode, "\" with value:"), value);
-                                token = {
-                                    id: variable.id,
-                                    name: variable.name,
-                                    type: variable.resolvedType,
-                                    value: value,
-                                    collection: collection.name,
-                                    mode: firstMode,
-                                    description: variable.description || undefined
-                                };
-                                tokens.push(token);
-                                if (variable.resolvedType === 'COLOR') {
-                                    console.log("\uD83C\uDFA8 Color token: \"".concat(variable.name, "\" = ").concat(JSON.stringify(value)));
-                                }
-                                else {
-                                    console.log("\uD83D\uDD27 ".concat(variable.resolvedType, " token: \"").concat(variable.name, "\""));
-                                }
-                            }
-                            catch (varError) {
-                                console.warn("\u26A0\uFE0F Failed to process variable \"".concat(variable.name, "\":"), varError);
-                            }
-                        }
-                        return [3 /*break*/, 7];
-                    case 6:
-                        collectionError_1 = _b.sent();
-                        console.warn("\u26A0\uFE0F Failed to process collection \"".concat(collection.name, "\":"), collectionError_1);
-                        return [3 /*break*/, 7];
-                    case 7:
-                        _i++;
-                        return [3 /*break*/, 3];
-                    case 8:
-                        colorTokens = tokens.filter(function (t) { return t.type === 'COLOR'; });
-                        otherTokens = tokens.filter(function (t) { return t.type !== 'COLOR'; });
-                        console.log("\uD83D\uDD27 Design Tokens Summary:");
-                        console.log("   Color Tokens: ".concat(colorTokens.length));
-                        console.log("   Other Tokens: ".concat(otherTokens.length));
-                        console.log("   Total: ".concat(tokens.length, " tokens"));
-                        if (tokens.length === 0) {
-                            console.log("🤔 Debug suggestions:");
-                            console.log("  1. Check if this file has Variables in the right panel");
-                            console.log("  2. Try creating a simple color variable as a test");
-                            console.log("  3. Check if Variables are published from a library");
-                        }
-                        return [2 /*return*/, tokens];
-                    case 9:
-                        error_1 = _b.sent();
-                        console.warn("⚠️ Failed to scan design tokens:", error_1);
-                        console.warn("  This could be due to:");
-                        console.warn("  - Variables API not available in this Figma version");
-                        console.warn("  - Plugin permissions");
-                        console.warn("  - File access restrictions");
-                        return [2 /*return*/, []];
-                    case 10: return [2 /*return*/];
+    static async scanFigmaVariables() {
+        var _a;
+        console.log("🔧 Scanning Figma Variables (Design Tokens)...");
+        try {
+            // Debug: Check if Variables API exists
+            if (!figma.variables) {
+                console.warn("❌ figma.variables API not available in this Figma version");
+                // DEBUG log removed for cleaner console output
+                return [];
+            }
+            console.log("✅ figma.variables API is available");
+            const collections = await figma.variables.getLocalVariableCollectionsAsync();
+            console.log(`✅ Found ${collections.length} variable collections`);
+            // Debug: Check if we have any collections at all
+            if (collections.length === 0) {
+                console.warn("⚠️ No variable collections found. Possible reasons:");
+                console.warn("  1. File has no Variables/Design Tokens defined");
+                console.warn("  2. Variables are in a different library/file");
+                console.warn("  3. Variables API permissions issue");
+                // Try to get ALL variables (not just local)
+                try {
+                    // Note: This might not be available, but worth trying
                 }
-            });
-        });
-    };
+                catch (e) {
+                    console.log("📝 Non-local variable check not available");
+                }
+                return [];
+            }
+            const tokens = [];
+            for (const collection of collections) {
+                console.log(`📦 Processing collection: "${collection.name}" (ID: ${collection.id})`);
+                try {
+                    // Correct way: use collection.variableIds and getVariableByIdAsync
+                    if (!collection.variableIds || collection.variableIds.length === 0) {
+                        console.log(`  No variables found in collection "${collection.name}"`);
+                        continue;
+                    }
+                    console.log(`  Found ${collection.variableIds.length} variable IDs in "${collection.name}"`);
+                    const variables = [];
+                    // Get each variable by ID
+                    for (const variableId of collection.variableIds) {
+                        try {
+                            const variable = await figma.variables.getVariableByIdAsync(variableId);
+                            if (variable) {
+                                variables.push(variable);
+                            }
+                        }
+                        catch (varErr) {
+                            console.warn(`    Failed to get variable ${variableId}:`, varErr);
+                        }
+                    }
+                    console.log(`  Successfully loaded ${variables.length} variables from "${collection.name}"`);
+                    // Debug: Log collection details
+                    console.log(`  Collection modes:`, Object.keys(collection.modes || {}));
+                    for (const variable of variables) {
+                        try {
+                            console.log(`    Processing variable: "${variable.name}" (Type: ${variable.resolvedType})`);
+                            // Get the first mode for the value
+                            const modes = Object.keys(variable.valuesByMode);
+                            console.log(`      Available modes: [${modes.join(', ')}]`);
+                            if (modes.length === 0) {
+                                console.warn(`      ⚠️ Variable "${variable.name}" has no modes`);
+                                continue;
+                            }
+                            const firstMode = modes[0];
+                            const value = variable.valuesByMode[firstMode];
+                            console.log(`      Using mode "${firstMode}" with value:`, value);
+                            const token = {
+                                id: variable.id,
+                                name: variable.name,
+                                type: variable.resolvedType,
+                                value: value,
+                                collection: collection.name,
+                                mode: firstMode,
+                                description: variable.description || undefined
+                            };
+                            tokens.push(token);
+                            if (variable.resolvedType === 'COLOR') {
+                                console.log(`🎨 Color token: "${variable.name}" = ${JSON.stringify(value)}`);
+                            }
+                            else {
+                                console.log(`🔧 ${variable.resolvedType} token: "${variable.name}"`);
+                            }
+                        }
+                        catch (varError) {
+                            console.warn(`⚠️ Failed to process variable "${variable.name}":`, varError);
+                        }
+                    }
+                }
+                catch (collectionError) {
+                    console.warn(`⚠️ Failed to process collection "${collection.name}": ${collectionError.message}`);
+                    console.warn(`⚠️ Error type: ${typeof collectionError}, Stack:`, collectionError.stack);
+                    // Check if it's specifically the getVariablesByCollectionAsync issue
+                    if ((_a = collectionError.message) === null || _a === void 0 ? void 0 : _a.includes('not a function')) {
+                        console.warn(`⚠️ This appears to be a Figma API version issue`);
+                        console.warn(`⚠️ getVariablesByCollectionAsync may not be available in this Figma version`);
+                    }
+                }
+            }
+            // Log summary
+            const colorTokens = tokens.filter(t => t.type === 'COLOR');
+            const otherTokens = tokens.filter(t => t.type !== 'COLOR');
+            console.log(`🔧 Design Tokens Summary:`);
+            console.log(`   Color Tokens: ${colorTokens.length}`);
+            console.log(`   Other Tokens: ${otherTokens.length}`);
+            console.log(`   Total: ${tokens.length} tokens`);
+            if (tokens.length === 0) {
+                console.log("🤔 Debug suggestions:");
+                console.log("  1. Check if this file has Variables in the right panel");
+                console.log("  2. Try creating a simple color variable as a test");
+                console.log("  3. Check if Variables are published from a library");
+            }
+            return tokens;
+        }
+        catch (error) {
+            console.warn("⚠️ Failed to scan design tokens:", error);
+            console.warn("  This could be due to:");
+            console.warn("  - Variables API not available in this Figma version");
+            console.warn("  - Plugin permissions");
+            console.warn("  - File access restrictions");
+            return [];
+        }
+    }
     /**
      * NEW: Fallback - Create design tokens from color styles for testing
      * This allows testing the token system even when Variables API doesn't work
      */
-    ComponentScanner.createDesignTokensFromColorStyles = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var colorStyleCollection, tokens_1, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        console.log("🔄 Creating fallback design tokens from color styles...");
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, this.scanFigmaColorStyles()];
-                    case 2:
-                        colorStyleCollection = _a.sent();
-                        tokens_1 = [];
-                        // Convert each color style to a design token format
-                        Object.entries(colorStyleCollection).forEach(function (_a) {
-                            var category = _a[0], styles = _a[1];
-                            styles.forEach(function (style) {
-                                // Create a token name from the style name
-                                var tokenName = style.name.toLowerCase()
-                                    .replace(/[\/\s]+/g, '-') // Replace / and spaces with -
-                                    .replace(/[^a-z0-9\-]/g, ''); // Remove special chars
-                                // Convert hex color to RGB format for consistency with Variables API
-                                var rgbValue = { r: 0, g: 0, b: 0 };
-                                if (style.colorInfo.type === 'SOLID' && style.colorInfo.color) {
-                                    var hex = style.colorInfo.color.replace('#', '');
-                                    rgbValue = {
-                                        r: parseInt(hex.substr(0, 2), 16) / 255,
-                                        g: parseInt(hex.substr(2, 2), 16) / 255,
-                                        b: parseInt(hex.substr(4, 2), 16) / 255
-                                    };
-                                }
-                                var token = {
-                                    id: "fallback-".concat(style.id),
-                                    name: tokenName,
-                                    type: 'COLOR',
-                                    value: rgbValue,
-                                    collection: "".concat(category, "-colors"),
-                                    mode: 'default',
-                                    description: "Fallback token from color style: ".concat(style.name)
-                                };
-                                tokens_1.push(token);
-                                console.log("\uD83C\uDFA8 Created fallback token: \"".concat(tokenName, "\" from \"").concat(style.name, "\""));
-                            });
-                        });
-                        console.log("\uD83D\uDD04 Created ".concat(tokens_1.length, " fallback design tokens from color styles"));
-                        return [2 /*return*/, tokens_1];
-                    case 3:
-                        error_2 = _a.sent();
-                        console.warn("⚠️ Failed to create fallback design tokens:", error_2);
-                        return [2 /*return*/, []];
-                    case 4: return [2 /*return*/];
-                }
+    static async createDesignTokensFromColorStyles() {
+        console.log("🔄 Creating fallback design tokens from color styles...");
+        try {
+            const colorStyleCollection = await this.scanFigmaColorStyles();
+            const tokens = [];
+            // Convert each color style to a design token format
+            Object.entries(colorStyleCollection).forEach(([category, styles]) => {
+                styles.forEach(style => {
+                    // Create a token name from the style name
+                    const tokenName = style.name.toLowerCase()
+                        .replace(/[\/\s]+/g, '-') // Replace / and spaces with -
+                        .replace(/[^a-z0-9\-]/g, ''); // Remove special chars
+                    // Convert hex color to RGB format for consistency with Variables API
+                    let rgbValue = { r: 0, g: 0, b: 0 };
+                    if (style.colorInfo.type === 'SOLID' && style.colorInfo.color) {
+                        const hex = style.colorInfo.color.replace('#', '');
+                        rgbValue = {
+                            r: parseInt(hex.substr(0, 2), 16) / 255,
+                            g: parseInt(hex.substr(2, 2), 16) / 255,
+                            b: parseInt(hex.substr(4, 2), 16) / 255
+                        };
+                    }
+                    const token = {
+                        id: `fallback-${style.id}`,
+                        name: tokenName,
+                        type: 'COLOR',
+                        value: rgbValue,
+                        collection: `${category}-colors`,
+                        mode: 'default',
+                        description: `Fallback token from color style: ${style.name}`
+                    };
+                    tokens.push(token);
+                    console.log(`🎨 Created fallback token: "${tokenName}" from "${style.name}"`);
+                });
             });
-        });
-    };
+            console.log(`🔄 Created ${tokens.length} fallback design tokens from color styles`);
+            return tokens;
+        }
+        catch (error) {
+            console.warn("⚠️ Failed to create fallback design tokens:", error);
+            return [];
+        }
+    }
     /**
      * Scan Figma Color Styles from the local file
      */
-    ComponentScanner.scanFigmaColorStyles = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var paintStyles, colorStyleCollection, _i, paintStyles_1, paintStyle, colorStyle, category, error_3, totalStyles, error_4;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        console.log("🎨 Scanning Figma Color Styles...");
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 9, , 10]);
-                        return [4 /*yield*/, figma.getLocalPaintStylesAsync()];
-                    case 2:
-                        paintStyles = _a.sent();
-                        console.log("\u2705 Found ".concat(paintStyles.length, " paint styles"));
-                        colorStyleCollection = {
-                            primary: [],
-                            secondary: [],
-                            tertiary: [],
-                            neutral: [],
-                            semantic: [],
-                            surface: [],
-                            other: []
-                        };
-                        _i = 0, paintStyles_1 = paintStyles;
-                        _a.label = 3;
-                    case 3:
-                        if (!(_i < paintStyles_1.length)) return [3 /*break*/, 8];
-                        paintStyle = paintStyles_1[_i];
-                        _a.label = 4;
-                    case 4:
-                        _a.trys.push([4, 6, , 7]);
-                        return [4 /*yield*/, this.convertPaintStyleToColorStyle(paintStyle)];
-                    case 5:
-                        colorStyle = _a.sent();
-                        category = this.categorizeColorStyle(colorStyle.name);
-                        colorStyleCollection[category].push(colorStyle);
-                        console.log("\uD83C\uDFA8 Categorized \"".concat(colorStyle.name, "\" as ").concat(category, " (variant: ").concat(colorStyle.variant || 'none', ")"));
-                        return [3 /*break*/, 7];
-                    case 6:
-                        error_3 = _a.sent();
-                        console.warn("\u26A0\uFE0F Failed to process paint style \"".concat(paintStyle.name, "\":"), error_3);
-                        return [3 /*break*/, 7];
-                    case 7:
-                        _i++;
-                        return [3 /*break*/, 3];
-                    case 8:
-                        totalStyles = Object.values(colorStyleCollection).reduce(function (sum, styles) { return sum + styles.length; }, 0);
-                        console.log("\uD83C\uDFA8 Color Styles Summary:");
-                        console.log("   Primary: ".concat(colorStyleCollection.primary.length));
-                        console.log("   Secondary: ".concat(colorStyleCollection.secondary.length));
-                        console.log("   Tertiary: ".concat(colorStyleCollection.tertiary.length));
-                        console.log("   Neutral: ".concat(colorStyleCollection.neutral.length));
-                        console.log("   Semantic: ".concat(colorStyleCollection.semantic.length));
-                        console.log("   Surface: ".concat(colorStyleCollection.surface.length));
-                        console.log("   Other: ".concat(colorStyleCollection.other.length));
-                        console.log("   Total: ".concat(totalStyles, " styles"));
-                        return [2 /*return*/, colorStyleCollection];
-                    case 9:
-                        error_4 = _a.sent();
-                        console.error("❌ Failed to scan color styles:", error_4);
-                        return [2 /*return*/, {
-                                primary: [],
-                                secondary: [],
-                                tertiary: [],
-                                neutral: [],
-                                semantic: [],
-                                surface: [],
-                                other: []
-                            }];
-                    case 10: return [2 /*return*/];
+    static async scanFigmaColorStyles() {
+        console.log("🎨 Scanning Figma Color Styles...");
+        try {
+            const paintStyles = await figma.getLocalPaintStylesAsync();
+            console.log(`✅ Found ${paintStyles.length} paint styles`);
+            const colorStyleCollection = {
+                primary: [],
+                secondary: [],
+                tertiary: [],
+                neutral: [],
+                semantic: [],
+                surface: [],
+                other: []
+            };
+            for (const paintStyle of paintStyles) {
+                try {
+                    const colorStyle = await this.convertPaintStyleToColorStyle(paintStyle);
+                    const category = this.categorizeColorStyle(colorStyle.name);
+                    colorStyleCollection[category].push(colorStyle);
+                    console.log(`🎨 Categorized "${colorStyle.name}" as ${category} (variant: ${colorStyle.variant || 'none'})`);
                 }
-            });
-        });
-    };
+                catch (error) {
+                    console.warn(`⚠️ Failed to process paint style "${paintStyle.name}":`, error);
+                }
+            }
+            // Log summary
+            const totalStyles = Object.values(colorStyleCollection).reduce((sum, styles) => sum + styles.length, 0);
+            console.log(`🎨 Color Styles Summary:`);
+            console.log(`   Primary: ${colorStyleCollection.primary.length}`);
+            console.log(`   Secondary: ${colorStyleCollection.secondary.length}`);
+            console.log(`   Tertiary: ${colorStyleCollection.tertiary.length}`);
+            console.log(`   Neutral: ${colorStyleCollection.neutral.length}`);
+            console.log(`   Semantic: ${colorStyleCollection.semantic.length}`);
+            console.log(`   Surface: ${colorStyleCollection.surface.length}`);
+            console.log(`   Other: ${colorStyleCollection.other.length}`);
+            console.log(`   Total: ${totalStyles} styles`);
+            return colorStyleCollection;
+        }
+        catch (error) {
+            console.error("❌ Failed to scan color styles:", error);
+            return {
+                primary: [],
+                secondary: [],
+                tertiary: [],
+                neutral: [],
+                semantic: [],
+                surface: [],
+                other: []
+            };
+        }
+    }
     /**
      * Scans all local text styles in the current Figma file
      * Mirrors the scanFigmaColorStyles pattern exactly
      */
-    ComponentScanner.scanFigmaTextStyles = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var figmaTextStyles, textStyles, error_5;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        console.log('🔍 Scanning text styles...');
-                        return [4 /*yield*/, figma.getLocalTextStylesAsync()];
-                    case 1:
-                        figmaTextStyles = _a.sent();
-                        console.log("Found ".concat(figmaTextStyles.length, " text styles"));
-                        textStyles = figmaTextStyles.map(function (style) {
-                            // Build text style object with safe property access
-                            var textStyle = {
-                                id: style.id,
-                                name: style.name,
-                                description: style.description || '',
-                                fontSize: style.fontSize,
-                                fontName: style.fontName,
-                                lineHeight: style.lineHeight,
-                                letterSpacing: style.letterSpacing,
-                            };
-                            // Add optional properties if they exist
-                            if (style.textDecoration) {
-                                textStyle.textDecoration = style.textDecoration;
-                            }
-                            if (style.textCase) {
-                                textStyle.textCase = style.textCase;
-                            }
-                            if (style.textAlignHorizontal) {
-                                textStyle.textAlignHorizontal = style.textAlignHorizontal;
-                            }
-                            if (style.textAlignVertical) {
-                                textStyle.textAlignVertical = style.textAlignVertical;
-                            }
-                            if (style.paragraphSpacing !== undefined) {
-                                textStyle.paragraphSpacing = style.paragraphSpacing;
-                            }
-                            if (style.paragraphIndent !== undefined) {
-                                textStyle.paragraphIndent = style.paragraphIndent;
-                            }
-                            console.log("\u2705 Processed text style: ".concat(style.name, " (").concat(style.fontSize, "px)"));
-                            return textStyle;
-                        });
-                        console.log("\uD83D\uDCDD Successfully scanned ".concat(textStyles.length, " text styles"));
-                        return [2 /*return*/, textStyles];
-                    case 2:
-                        error_5 = _a.sent();
-                        console.error('❌ Error scanning text styles:', error_5);
-                        throw new Error("Failed to scan text styles: ".concat(error_5.message));
-                    case 3: return [2 /*return*/];
+    static async scanFigmaTextStyles() {
+        try {
+            console.log('🔍 Scanning text styles...');
+            const figmaTextStyles = await figma.getLocalTextStylesAsync();
+            console.log(`Found ${figmaTextStyles.length} text styles`);
+            const textStyles = figmaTextStyles.map(style => {
+                // Build text style object with safe property access
+                const textStyle = {
+                    id: style.id,
+                    name: style.name,
+                    description: style.description || '',
+                    fontSize: style.fontSize,
+                    fontName: style.fontName,
+                    lineHeight: style.lineHeight,
+                    letterSpacing: style.letterSpacing,
+                };
+                // Add optional properties if they exist
+                if (style.textDecoration) {
+                    textStyle.textDecoration = style.textDecoration;
                 }
+                if (style.textCase) {
+                    textStyle.textCase = style.textCase;
+                }
+                // Note: textAlignHorizontal and textAlignVertical don't exist in current Figma API
+                // Skip these properties for now - they may have been moved or renamed
+                /*
+                if (style.textAlignHorizontal) {
+                  textStyle.textAlignHorizontal = style.textAlignHorizontal;
+                }
+                
+                if (style.textAlignVertical) {
+                  textStyle.textAlignVertical = style.textAlignVertical;
+                }
+                */
+                if (style.paragraphSpacing !== undefined) {
+                    textStyle.paragraphSpacing = style.paragraphSpacing;
+                }
+                if (style.paragraphIndent !== undefined) {
+                    textStyle.paragraphIndent = style.paragraphIndent;
+                }
+                console.log(`✅ Processed text style: ${style.name} (${style.fontSize}px)`);
+                return textStyle;
             });
-        });
-    };
+            console.log(`📝 Successfully scanned ${textStyles.length} text styles`);
+            return textStyles;
+        }
+        catch (error) {
+            console.error('❌ Error scanning text styles:', error);
+            throw new Error(`Failed to scan text styles: ${error.message}`);
+        }
+    }
     /**
      * Convert Figma PaintStyle to our ColorStyle interface
      */
-    ComponentScanner.convertPaintStyleToColorStyle = function (paintStyle) {
-        return __awaiter(this, void 0, void 0, function () {
-            var colorInfo, _a, category, variant;
-            return __generator(this, function (_b) {
-                colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0]);
-                _a = this.parseColorStyleName(paintStyle.name), category = _a.category, variant = _a.variant;
-                return [2 /*return*/, {
-                        id: paintStyle.id,
-                        name: paintStyle.name,
-                        description: paintStyle.description || undefined,
-                        paints: paintStyle.paints,
-                        category: category,
-                        variant: variant,
-                        colorInfo: colorInfo || { type: 'SOLID', color: '#000000', opacity: 1 }
-                    }];
-            });
-        });
-    };
+    static async convertPaintStyleToColorStyle(paintStyle) {
+        const colorInfo = this.convertPaintToColorInfo(paintStyle.paints[0], paintStyle.id);
+        const { category, variant } = this.parseColorStyleName(paintStyle.name);
+        return {
+            id: paintStyle.id,
+            name: paintStyle.name,
+            description: paintStyle.description || undefined,
+            paints: [...paintStyle.paints], // Convert readonly to mutable array
+            category,
+            variant,
+            colorInfo: colorInfo || { type: 'SOLID', color: '#000000', opacity: 1 }
+        };
+    }
     /**
      * Categorize a color style based on its name
      * Supports patterns like: 'primary90', 'secondary50', 'neutral-100', 'Primary/500', etc.
      */
-    ComponentScanner.categorizeColorStyle = function (styleName) {
-        var name = styleName.toLowerCase();
+    static categorizeColorStyle(styleName) {
+        const name = styleName.toLowerCase();
         // Primary patterns
         if (name.includes('primary') || name.includes('brand')) {
             return 'primary';
@@ -430,31 +339,31 @@ var ComponentScanner = /** @class */ (function () {
         }
         // Default to other
         return 'other';
-    };
+    }
     /**
      * Parse color style name to extract category and variant
      * Examples: 'primary90' -> { category: 'primary', variant: '90' }
      *          'Primary/500' -> { category: 'primary', variant: '500' }
      *          'neutral-100' -> { category: 'neutral', variant: '100' }
      */
-    ComponentScanner.parseColorStyleName = function (styleName) {
-        var name = styleName.toLowerCase();
+    static parseColorStyleName(styleName) {
+        const name = styleName.toLowerCase();
         // Pattern 1: name + number (e.g., 'primary90', 'secondary50')
-        var pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
+        const pattern1 = name.match(/^(primary|secondary|tertiary|neutral|semantic|surface|brand|accent|gray|grey|success|error|warning|info|danger|green|red|yellow|blue|orange)(\d+)$/);
         if (pattern1) {
-            var colorName = pattern1[1], variant = pattern1[2];
+            const [, colorName, variant] = pattern1;
             return {
                 category: this.categorizeColorStyle(colorName),
-                variant: variant
+                variant
             };
         }
         // Pattern 2: name/number or name-number (e.g., 'Primary/500', 'neutral-100')
-        var pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
+        const pattern2 = name.match(/^([^\/\-\d]+)[\/-](\d+)$/);
         if (pattern2) {
-            var colorName = pattern2[1], variant = pattern2[2];
+            const [, colorName, variant] = pattern2;
             return {
                 category: this.categorizeColorStyle(colorName),
-                variant: variant
+                variant
             };
         }
         // Pattern 3: just category name
@@ -462,213 +371,231 @@ var ComponentScanner = /** @class */ (function () {
             category: this.categorizeColorStyle(name),
             variant: undefined
         };
-    };
+    }
     /**
      * Main scanning function - scans all pages for components and color styles
      */
-    ComponentScanner.scanDesignSystem = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var components, colorStyles, textStyles, designTokens, error_6, fallbackError_1, error_7, error_8, _i, _a, page, allNodes, _b, allNodes_1, node, componentInfo, e_1, e_2, scanSession, e_3;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        console.log("🔍 Starting comprehensive design system scan...");
-                        components = [];
-                        _c.label = 1;
-                    case 1:
-                        _c.trys.push([1, 34, , 35]);
-                        return [4 /*yield*/, figma.loadAllPagesAsync()];
-                    case 2:
-                        _c.sent();
-                        console.log("✅ All pages loaded");
-                        // First, scan Design Tokens (Variables)
-                        console.log("\n🔧 Phase 1: Scanning Design Tokens...");
-                        designTokens = void 0;
-                        _c.label = 3;
-                    case 3:
-                        _c.trys.push([3, 8, , 13]);
-                        return [4 /*yield*/, this.scanFigmaVariables()];
-                    case 4:
-                        designTokens = _c.sent();
-                        // Debug: Log what we got from Variables API
-                        console.log("\uD83D\uDD0D Variables API returned:", designTokens);
-                        console.log("\uD83D\uDD0D Type: ".concat(typeof designTokens, ", Length: ").concat(designTokens ? designTokens.length : 'undefined'));
-                        if (!(!designTokens || designTokens.length === 0)) return [3 /*break*/, 6];
-                        console.log("🔄 No Variables found, trying fallback design tokens from color styles...");
-                        return [4 /*yield*/, this.createDesignTokensFromColorStyles()];
-                    case 5:
-                        designTokens = _c.sent();
-                        if (designTokens && designTokens.length > 0) {
-                            console.log("✅ Using fallback design tokens created from color styles");
-                        }
-                        else {
-                            console.log("⚠️ Fallback also returned no tokens");
-                        }
-                        return [3 /*break*/, 7];
-                    case 6:
-                        console.log("✅ Using Variables API design tokens");
-                        _c.label = 7;
-                    case 7: return [3 /*break*/, 13];
-                    case 8:
-                        error_6 = _c.sent();
-                        console.warn("⚠️ Design Tokens scanning failed, trying fallback:", error_6);
-                        _c.label = 9;
-                    case 9:
-                        _c.trys.push([9, 11, , 12]);
-                        return [4 /*yield*/, this.createDesignTokensFromColorStyles()];
-                    case 10:
-                        designTokens = _c.sent();
-                        console.log("✅ Using fallback design tokens despite Variables API error");
-                        return [3 /*break*/, 12];
-                    case 11:
-                        fallbackError_1 = _c.sent();
-                        console.warn("⚠️ Fallback design tokens also failed:", fallbackError_1);
-                        designTokens = undefined;
-                        return [3 /*break*/, 12];
-                    case 12: return [3 /*break*/, 13];
-                    case 13:
-                        // Second, scan Color Styles
-                        console.log("\n🎨 Phase 2: Scanning Color Styles...");
-                        _c.label = 14;
-                    case 14:
-                        _c.trys.push([14, 16, , 17]);
-                        return [4 /*yield*/, this.scanFigmaColorStyles()];
-                    case 15:
-                        colorStyles = _c.sent();
-                        return [3 /*break*/, 17];
-                    case 16:
-                        error_7 = _c.sent();
-                        console.warn("⚠️ Color Styles scanning failed, continuing without color styles:", error_7);
-                        colorStyles = undefined;
-                        return [3 /*break*/, 17];
-                    case 17:
-                        // Third, scan Text Styles
-                        console.log("\n📝 Phase 3: Scanning Text Styles...");
-                        _c.label = 18;
-                    case 18:
-                        _c.trys.push([18, 20, , 21]);
-                        return [4 /*yield*/, this.scanFigmaTextStyles()];
-                    case 19:
-                        textStyles = _c.sent();
-                        return [3 /*break*/, 21];
-                    case 20:
-                        error_8 = _c.sent();
-                        console.warn("⚠️ Text Styles scanning failed, continuing without text styles:", error_8);
-                        textStyles = undefined;
-                        return [3 /*break*/, 21];
-                    case 21:
-                        // Fourth, scan components
-                        console.log("\n🧩 Phase 4: Scanning Components...");
-                        _i = 0, _a = figma.root.children;
-                        _c.label = 22;
-                    case 22:
-                        if (!(_i < _a.length)) return [3 /*break*/, 33];
-                        page = _a[_i];
-                        console.log("\uD83D\uDCCB Scanning page: \"".concat(page.name, "\""));
-                        _c.label = 23;
-                    case 23:
-                        _c.trys.push([23, 31, , 32]);
-                        allNodes = page.findAll(function (node) {
-                            if (node.type === 'COMPONENT_SET') {
-                                return true;
-                            }
-                            if (node.type === 'COMPONENT') {
-                                return !!(node.parent && node.parent.type !== 'COMPONENT_SET');
-                            }
-                            return false;
-                        });
-                        console.log("\u2705 Found ".concat(allNodes.length, " main components on page \"").concat(page.name, "\""));
-                        _b = 0, allNodes_1 = allNodes;
-                        _c.label = 24;
-                    case 24:
-                        if (!(_b < allNodes_1.length)) return [3 /*break*/, 30];
-                        node = allNodes_1[_b];
-                        _c.label = 25;
-                    case 25:
-                        _c.trys.push([25, 28, , 29]);
-                        if (!(node.type === 'COMPONENT' || node.type === 'COMPONENT_SET')) return [3 /*break*/, 27];
-                        return [4 /*yield*/, this.analyzeComponent(node)];
-                    case 26:
-                        componentInfo = _c.sent();
-                        if (componentInfo) {
-                            componentInfo.pageInfo = {
-                                pageName: page.name,
-                                pageId: page.id,
-                                isCurrentPage: page.id === figma.currentPage.id
-                            };
-                            components.push(componentInfo);
-                        }
-                        _c.label = 27;
-                    case 27: return [3 /*break*/, 29];
-                    case 28:
-                        e_1 = _c.sent();
-                        console.error("\u274C Error analyzing component \"".concat(node.name, "\":"), e_1);
-                        return [3 /*break*/, 29];
-                    case 29:
-                        _b++;
-                        return [3 /*break*/, 24];
-                    case 30: return [3 /*break*/, 32];
-                    case 31:
-                        e_2 = _c.sent();
-                        console.error("\u274C Error scanning page \"".concat(page.name, "\":"), e_2);
-                        return [3 /*break*/, 32];
-                    case 32:
-                        _i++;
-                        return [3 /*break*/, 22];
-                    case 33:
-                        scanSession = {
-                            components: components,
-                            colorStyles: colorStyles,
-                            textStyles: textStyles,
-                            designTokens: designTokens, // NEW: Include design tokens
-                            scanTime: Date.now(),
-                            version: "2.1.0", // Bump version for token support
-                            fileKey: figma.fileKey || undefined
-                        };
-                        console.log("\n\uD83C\uDF89 Comprehensive scan complete!");
-                        console.log("   \uD83D\uDCE6 Components: ".concat(components.length));
-                        console.log("   \uD83D\uDD27 Design Tokens: ".concat(designTokens ? designTokens.length : 0));
-                        console.log("   \uD83C\uDFA8 Color Styles: ".concat(colorStyles ? Object.values(colorStyles).reduce(function (sum, styles) { return sum + styles.length; }, 0) : 0));
-                        console.log("   \uD83D\uDCDD Text Styles: ".concat(textStyles ? textStyles.length : 0));
-                        console.log("   \uD83D\uDCC4 File Key: ".concat(scanSession.fileKey || 'Unknown'));
-                        return [2 /*return*/, scanSession];
-                    case 34:
-                        e_3 = _c.sent();
-                        console.error("❌ Critical error in scanDesignSystem:", e_3);
-                        throw e_3;
-                    case 35: return [2 /*return*/];
+    static async scanDesignSystem() {
+        console.log("🔍 Starting comprehensive design system scan with optimization...");
+        const components = [];
+        let colorStyles;
+        let textStyles;
+        try {
+            await figma.loadAllPagesAsync();
+            console.log("✅ All pages loaded");
+            // First, scan Design Tokens (Variables)
+            console.log("\n🔧 Phase 1: Scanning Design Tokens...");
+            let designTokens;
+            try {
+                designTokens = await this.scanFigmaVariables();
+                if (designTokens && designTokens.length > 0) {
+                    console.log(`🚀 SUCCESS: Found ${designTokens.length} design tokens from Variables API`);
                 }
-            });
-        });
-    };
+                else {
+                    console.log(`❌ PROBLEM: Variables API returned empty or undefined`);
+                }
+                // If Variables API returned no tokens, try fallback method
+                if (!designTokens || designTokens.length === 0) {
+                    console.log("🔄 No Variables found, trying fallback design tokens from color styles...");
+                    designTokens = await this.createDesignTokensFromColorStyles();
+                    if (designTokens && designTokens.length > 0) {
+                        console.log("✅ Using fallback design tokens created from color styles");
+                    }
+                    else {
+                        console.log("⚠️ Fallback also returned no tokens");
+                    }
+                }
+                else {
+                    console.log("✅ Using Variables API design tokens");
+                }
+            }
+            catch (error) {
+                console.warn("⚠️ Design Tokens scanning failed, trying fallback:", error);
+                try {
+                    designTokens = await this.createDesignTokensFromColorStyles();
+                    console.log("✅ Using fallback design tokens despite Variables API error");
+                }
+                catch (fallbackError) {
+                    console.warn("⚠️ Fallback design tokens also failed:", fallbackError);
+                    designTokens = undefined;
+                }
+            }
+            // Second, scan Color Styles
+            console.log("\n🎨 Phase 2: Scanning Color Styles...");
+            try {
+                colorStyles = await this.scanFigmaColorStyles();
+                // NEW: Build color style lookup map for fast ID->name resolution
+                if (colorStyles && Object.keys(colorStyles).length > 0) {
+                    this.paintStyleMap.clear();
+                    // Iterate through all categories and their styles
+                    Object.values(colorStyles).forEach(categoryStyles => {
+                        if (Array.isArray(categoryStyles)) {
+                            categoryStyles.forEach(style => {
+                                this.paintStyleMap.set(style.id, style.name);
+                            });
+                        }
+                    });
+                    console.log(`✅ Built color style lookup map with ${this.paintStyleMap.size} entries`);
+                    // DEBUG: Log first few entries to understand ID format
+                    const firstEntries = Array.from(this.paintStyleMap.entries()).slice(0, 3);
+                    console.log('🔍 First color style IDs in map:', firstEntries);
+                }
+                else {
+                    console.warn('⚠️ No color styles available for lookup map');
+                    this.paintStyleMap.clear();
+                }
+                // NEW: Build variable lookup map for fast ID->name resolution
+                if (designTokens && designTokens.length > 0) {
+                    this.buildVariableMap(designTokens);
+                }
+                else {
+                    console.warn('⚠️ No variables available for lookup map');
+                    this.variableMap.clear();
+                    this.variableDetails.clear();
+                }
+            }
+            catch (error) {
+                console.warn("⚠️ Color Styles scanning failed, continuing without color styles:", error);
+                colorStyles = undefined;
+                this.paintStyleMap.clear();
+            }
+            // Third, scan Text Styles
+            console.log("\n📝 Phase 3: Scanning Text Styles...");
+            try {
+                textStyles = await this.scanFigmaTextStyles();
+                // NEW: Build text style lookup map for fast ID->name resolution
+                if (textStyles && textStyles.length > 0) {
+                    this.textStyleMap.clear();
+                    this.textStyleDetails.clear();
+                    textStyles.forEach(style => {
+                        var _a, _b;
+                        this.textStyleMap.set(style.id, style.name);
+                        // NEW: Build detailed style properties for exact matching
+                        this.textStyleDetails.set(style.id, {
+                            id: style.id,
+                            name: style.name,
+                            fontSize: style.fontSize,
+                            fontFamily: ((_a = style.fontName) === null || _a === void 0 ? void 0 : _a.family) || 'Unknown',
+                            fontWeight: ((_b = style.fontName) === null || _b === void 0 ? void 0 : _b.style) || 'Regular'
+                        });
+                    });
+                    console.log(`✅ Built text style lookup map with ${this.textStyleMap.size} entries`);
+                    console.log(`✅ Built text style details map with ${this.textStyleDetails.size} entries`);
+                    // DEBUG: Log first few entries to understand ID format
+                    const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
+                    console.log('🔍 First text style IDs in map:', firstEntries);
+                }
+            }
+            catch (error) {
+                console.warn("⚠️ Text Styles scanning failed, continuing without text styles:", error);
+                textStyles = undefined;
+                this.textStyleMap.clear();
+            }
+            // Fourth, scan components
+            console.log("\n🧩 Phase 4: Scanning Components...");
+            for (const page of figma.root.children) {
+                console.log(`📋 Scanning page: "${page.name}"`);
+                try {
+                    const allNodes = page.findAll(node => {
+                        if (node.type === 'COMPONENT_SET') {
+                            return true;
+                        }
+                        if (node.type === 'COMPONENT') {
+                            return !!(node.parent && node.parent.type !== 'COMPONENT_SET');
+                        }
+                        return false;
+                    });
+                    console.log(`✅ Found ${allNodes.length} main components on page "${page.name}"`);
+                    for (const node of allNodes) {
+                        try {
+                            if (node.type === 'COMPONENT' || node.type === 'COMPONENT_SET') {
+                                const componentInfo = await this.analyzeComponentOptimized(node);
+                                if (componentInfo) {
+                                    componentInfo.pageInfo = {
+                                        pageName: page.name,
+                                        pageId: page.id,
+                                        isCurrentPage: page.id === figma.currentPage.id
+                                    };
+                                    components.push(componentInfo);
+                                }
+                            }
+                        }
+                        catch (e) {
+                            console.error(`❌ Error analyzing component "${node.name}":`, e);
+                        }
+                    }
+                }
+                catch (e) {
+                    console.error(`❌ Error scanning page "${page.name}":`, e);
+                }
+            }
+            const scanSession = {
+                components,
+                colorStyles,
+                textStyles,
+                designTokens, // NEW: Include design tokens
+                scanTime: Date.now(),
+                version: "2.1.0", // Bump version for token support
+                fileKey: figma.fileKey || undefined
+            };
+            console.log(`\n🎉 Comprehensive scan complete!`);
+            console.log(`   📦 Components: ${components.length}`);
+            console.log(`   🔧 Design Tokens: ${designTokens ? designTokens.length : 0}`);
+            console.log(`   🎨 Color Styles: ${colorStyles ? Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0) : 0}`);
+            console.log(`   📝 Text Styles: ${textStyles ? textStyles.length : 0}`);
+            console.log(`   📄 File Key: ${scanSession.fileKey || 'Unknown'}`);
+            // NEW: Build text style lookup map for component analysis (done at the end to ensure textStyles are available)
+            if (textStyles && textStyles.length > 0) {
+                this.textStyleMap.clear();
+                this.textStyleDetails.clear();
+                textStyles.forEach(style => {
+                    var _a, _b;
+                    this.textStyleMap.set(style.id, style.name);
+                    // NEW: Build detailed style properties for exact matching
+                    this.textStyleDetails.set(style.id, {
+                        id: style.id,
+                        name: style.name,
+                        fontSize: style.fontSize,
+                        fontFamily: ((_a = style.fontName) === null || _a === void 0 ? void 0 : _a.family) || 'Unknown',
+                        fontWeight: ((_b = style.fontName) === null || _b === void 0 ? void 0 : _b.style) || 'Regular'
+                    });
+                });
+                console.log(`✅ Built text style lookup map with ${this.textStyleMap.size} entries`);
+                console.log(`✅ Built text style details map with ${this.textStyleDetails.size} entries`);
+                // DEBUG: Log first few entries to understand ID format
+                const firstEntries = Array.from(this.textStyleMap.entries()).slice(0, 3);
+                console.log('🔍 First text style IDs in map:', firstEntries);
+            }
+            else {
+                console.warn('⚠️ No text styles available for lookup map');
+                this.textStyleMap.clear();
+                this.textStyleDetails.clear();
+            }
+            return scanSession;
+        }
+        catch (e) {
+            console.error("❌ Critical error in scanDesignSystem:", e);
+            throw e;
+        }
+    }
     /**
      * Legacy method for backward compatibility - returns only components
      */
-    ComponentScanner.scanComponents = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var session;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.scanDesignSystem()];
-                    case 1:
-                        session = _a.sent();
-                        return [2 /*return*/, session.components];
-                }
-            });
-        });
-    };
+    static async scanComponents() {
+        const session = await this.scanDesignSystem();
+        return session.components;
+    }
     /**
      * Recursively searches for auto-layout containers with padding to find visual padding
      */
-    ComponentScanner.findNestedAutolayoutPadding = function (node, depth) {
-        if (depth === void 0) { depth = 0; }
+    static findNestedAutolayoutPadding(node, depth = 0) {
         // Limit recursion depth to prevent infinite loops
         if (depth > 3)
             return null;
         try {
             // Check if current node has auto-layout with meaningful padding
             if (node.layoutMode && node.layoutMode !== 'NONE') {
-                var padding = {
+                const padding = {
                     paddingTop: node.paddingTop || 0,
                     paddingLeft: node.paddingLeft || 0,
                     paddingRight: node.paddingRight || 0,
@@ -677,15 +604,14 @@ var ComponentScanner = /** @class */ (function () {
                 // If this auto-layout has meaningful padding, return it
                 if (padding.paddingTop > 0 || padding.paddingLeft > 0 ||
                     padding.paddingRight > 0 || padding.paddingBottom > 0) {
-                    console.log("  \uD83D\uDD0D Found nested auto-layout padding at depth ".concat(depth, ":"), padding, "(".concat(node.name, ")"));
+                    console.log(`  🔍 Found nested auto-layout padding at depth ${depth}:`, padding, `(${node.name})`);
                     return padding;
                 }
             }
             // Recursively search children
             if (node.children && node.children.length > 0) {
-                for (var _i = 0, _a = node.children; _i < _a.length; _i++) {
-                    var child = _a[_i];
-                    var childPadding = this.findNestedAutolayoutPadding(child, depth + 1);
+                for (const child of node.children) {
+                    const childPadding = this.findNestedAutolayoutPadding(child, depth + 1);
                     if (childPadding) {
                         return childPadding;
                     }
@@ -694,28 +620,28 @@ var ComponentScanner = /** @class */ (function () {
             return null;
         }
         catch (error) {
-            console.warn("\u26A0\uFE0F Error searching nested padding at depth ".concat(depth, ":"), error);
+            console.warn(`⚠️ Error searching nested padding at depth ${depth}:`, error);
             return null;
         }
-    };
+    }
     /**
      * Extracts internal padding information from a component, including nested auto-layout containers
      */
-    ComponentScanner.extractInternalPadding = function (comp) {
+    static extractInternalPadding(comp) {
         try {
             // For component sets, analyze the default variant
-            var targetNode = comp;
+            let targetNode = comp;
             if (comp.type === 'COMPONENT_SET') {
-                var defaultVariant = comp.defaultVariant || comp.children[0];
+                const defaultVariant = comp.defaultVariant || comp.children[0];
                 if (defaultVariant && defaultVariant.type === 'COMPONENT') {
                     targetNode = defaultVariant;
                 }
             }
             if (targetNode.type === 'COMPONENT') {
-                console.log("\uD83D\uDD0D Analyzing component \"".concat(comp.name, "\" for padding..."));
+                console.log(`🔍 Analyzing component "${comp.name}" for padding...`);
                 // Method 1: Check if root component has auto-layout with padding
                 if (targetNode.layoutMode !== 'NONE') {
-                    var rootPadding = {
+                    const rootPadding = {
                         paddingTop: targetNode.paddingTop || 0,
                         paddingLeft: targetNode.paddingLeft || 0,
                         paddingRight: targetNode.paddingRight || 0,
@@ -724,113 +650,971 @@ var ComponentScanner = /** @class */ (function () {
                     // If root has meaningful padding, return it
                     if (rootPadding.paddingTop > 0 || rootPadding.paddingLeft > 0 ||
                         rootPadding.paddingRight > 0 || rootPadding.paddingBottom > 0) {
-                        console.log("  \u2705 Found root auto-layout padding:", rootPadding);
+                        console.log(`  ✅ Found root auto-layout padding:`, rootPadding);
                         return rootPadding;
                     }
                 }
                 // Method 2: Search for nested auto-layout containers with padding
-                var nestedPadding = this.findNestedAutolayoutPadding(targetNode);
+                const nestedPadding = this.findNestedAutolayoutPadding(targetNode);
                 if (nestedPadding) {
-                    console.log("  \u2705 Using nested auto-layout padding:", nestedPadding);
+                    console.log(`  ✅ Using nested auto-layout padding:`, nestedPadding);
                     return nestedPadding;
                 }
                 // Method 3: Fallback to geometric detection (original method)
                 if (targetNode.children && targetNode.children.length > 0) {
-                    var firstChild = targetNode.children[0];
+                    const firstChild = targetNode.children[0];
                     if (firstChild.x !== undefined && firstChild.y !== undefined) {
-                        var paddingLeft = firstChild.x;
-                        var paddingTop = firstChild.y;
-                        var paddingRight = targetNode.width - (firstChild.x + firstChild.width);
-                        var paddingBottom = targetNode.height - (firstChild.y + firstChild.height);
+                        const paddingLeft = firstChild.x;
+                        const paddingTop = firstChild.y;
+                        const paddingRight = targetNode.width - (firstChild.x + firstChild.width);
+                        const paddingBottom = targetNode.height - (firstChild.y + firstChild.height);
                         // Only return if padding values are reasonable (between 0 and 100)
                         if (paddingLeft >= 0 && paddingTop >= 0 && paddingRight >= 0 && paddingBottom >= 0 &&
                             paddingLeft <= 100 && paddingTop <= 100 && paddingRight <= 100 && paddingBottom <= 100) {
-                            var geometricPadding = {
+                            const geometricPadding = {
                                 paddingTop: Math.round(paddingTop),
                                 paddingLeft: Math.round(paddingLeft),
                                 paddingRight: Math.round(paddingRight),
                                 paddingBottom: Math.round(paddingBottom)
                             };
-                            console.log("  \u2705 Using geometric padding detection:", geometricPadding);
+                            console.log(`  ✅ Using geometric padding detection:`, geometricPadding);
                             return geometricPadding;
                         }
                     }
                 }
-                console.log("  \u274C No meaningful padding found for \"".concat(comp.name, "\""));
+                console.log(`  ❌ No meaningful padding found for "${comp.name}"`);
             }
             return null;
         }
         catch (error) {
-            console.warn("\u26A0\uFE0F Error extracting padding for component ".concat(comp.name, ":"), error);
+            console.warn(`⚠️ Error extracting padding for component ${comp.name}:`, error);
             return null;
         }
-    };
+    }
+    /**
+     * DEPRECATED: Heavy recursive method - replaced by analyzeComponentOptimized
+     * This method was causing 3.2MB JSON files due to deep recursion and coordinate data
+     * Keeping for backup - DO NOT USE in production
+     *
+     * @param node Starting node (component, frame, or any child node)
+     * @param parentId Parent node ID (undefined for root)
+     * @param depth Current depth in hierarchy (0 for root)
+     * @param maxDepth Maximum recursion depth to prevent infinite loops
+     */
+    /*
+    static async analyzeComponentStructure(
+      node: SceneNode,
+      parentId?: string,
+      depth: number = 0,
+      maxDepth: number = 10
+    ): Promise<ComponentStructure> {
+      console.log(`🔍 Analyzing structure for "${node.name}" at depth ${depth} (type: ${node.type})`);
+      
+      // Prevent infinite recursion
+      if (depth > maxDepth) {
+        console.warn(`⚠️ Max depth ${maxDepth} reached for node "${node.name}", stopping recursion`);
+        return {
+          id: node.id,
+          type: node.type,
+          name: node.name,
+          children: [],
+          parent: parentId,
+          depth,
+          visible: node.visible
+        };
+      }
+  
+      const structure: ComponentStructure = {
+        id: node.id,
+        type: node.type,
+        name: node.name,
+        children: [],
+        parent: parentId,
+        depth,
+        visible: node.visible
+      };
+  
+      // Extract node-specific properties
+      try {
+        structure.nodeProperties = await this.extractNodeProperties(node);
+      } catch (error) {
+        console.warn(`⚠️ Failed to extract properties for "${node.name}":`, error);
+      }
+  
+      // Check for special flags
+      this.setSpecialFlags(structure, node, parentId);
+  
+      // Recursively analyze children (if node has children and we should traverse them)
+      if ('children' in node && node.children && node.children.length > 0 && this.shouldTraverseChildren(node)) {
+        
+        for (let i = 0; i < node.children.length; i++) {
+          const child = node.children[i];
+          try {
+            const childStructure = await this.analyzeComponentStructure(child, node.id, depth + 1, maxDepth);
+            structure.children.push(childStructure);
+          } catch (error) {
+            console.warn(`⚠️ Failed to analyze child "${child.name}" of "${node.name}":`, error);
+          }
+        }
+        
+        console.log(`  ✅ Analyzed ${structure.children.length} children for "${node.name}"`);
+      }
+  
+      return structure;
+    }
+  
+    /**
+     * NEW: Extract node-specific properties based on node type
+     */
+    static async extractNodeProperties(node) {
+        const properties = {};
+        // Extract basic dimensions and positioning
+        if ('width' in node && 'height' in node) {
+            properties.width = node.width;
+            properties.height = node.height;
+        }
+        if ('x' in node && 'y' in node) {
+            properties.x = node.x;
+            properties.y = node.y;
+        }
+        // Extract layout properties
+        if ('layoutAlign' in node && node.layoutAlign) {
+            properties.layoutAlign = node.layoutAlign;
+        }
+        if ('layoutGrow' in node && typeof node.layoutGrow === 'number') {
+            properties.layoutGrow = node.layoutGrow;
+        }
+        if ('layoutSizingHorizontal' in node && node.layoutSizingHorizontal) {
+            properties.layoutSizingHorizontal = node.layoutSizingHorizontal;
+        }
+        if ('layoutSizingVertical' in node && node.layoutSizingVertical) {
+            properties.layoutSizingVertical = node.layoutSizingVertical;
+        }
+        // Extract type-specific properties
+        switch (node.type) {
+            case 'TEXT':
+                properties.textHierarchy = await this.extractSingleTextHierarchy(node);
+                break;
+            case 'COMPONENT':
+            case 'INSTANCE':
+                properties.componentInstance = await this.extractSingleComponentInstance(node);
+                break;
+            case 'VECTOR':
+                properties.vectorNode = this.extractSingleVectorNode(node);
+                break;
+            case 'RECTANGLE':
+            case 'ELLIPSE':
+                properties.imageNode = this.extractSingleImageNode(node);
+                break;
+        }
+        // Extract auto-layout behavior if node has it
+        if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
+            try {
+                const autoLayout = this.analyzeAutoLayoutBehavior(node);
+                properties.autoLayoutBehavior = autoLayout || undefined;
+            }
+            catch (error) {
+                console.warn(`⚠️ Failed to analyze auto-layout for "${node.name}":`, error);
+            }
+        }
+        // Extract style information for visual nodes
+        if (this.isVisualNode(node)) {
+            try {
+                properties.styleInfo = this.extractStyleInfo(node);
+            }
+            catch (error) {
+                console.warn(`⚠️ Failed to extract style info for "${node.name}":`, error);
+            }
+        }
+        return Object.keys(properties).length > 0 ? properties : undefined;
+    }
+    /**
+     * NEW: Set special flags for component structure
+     */
+    static setSpecialFlags(structure, node, parentId) {
+        // Check if this is a nested auto-layout
+        if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
+            if (parentId) {
+                structure.isNestedAutoLayout = true;
+                // Special handling for nested auto-layouts within component instances
+                if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+                }
+            }
+            else {
+            }
+        }
+        // Check if this is a component instance reference
+        if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+            structure.isComponentInstanceReference = true;
+            // Enhanced logging for component instances
+            const hasAutoLayout = 'layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE';
+            // If this is a component instance with auto-layout in a nested context, it's likely an icon container
+            if (hasAutoLayout && parentId) {
+            }
+        }
+        // Enhanced icon context detection
+        if (this.isLikelyIcon(node)) {
+            structure.iconContext = this.determineIconContext(node, parentId);
+            if (structure.iconContext) {
+                console.log(`  🎨 Icon context for "${node.name}": ${structure.iconContext}`);
+            }
+        }
+    }
+    /**
+     * NEW: Enhanced icon detection
+     */
+    static isLikelyIcon(node) {
+        const name = node.name.toLowerCase();
+        // Vector nodes are often icons
+        if (node.type === 'VECTOR') {
+            return true;
+        }
+        // Component instances with "icon" in the name
+        if ((node.type === 'COMPONENT' || node.type === 'INSTANCE') && name.includes('icon')) {
+            return true;
+        }
+        // Small components/instances that are likely icons (heuristic based on size)
+        if ((node.type === 'COMPONENT' || node.type === 'INSTANCE') && 'width' in node && 'height' in node) {
+            const maxDimension = Math.max(node.width, node.height);
+            if (maxDimension <= 48) { // Icons are usually 48px or smaller
+                console.log(`    🔍 Small component "${node.name}" (${node.width}x${node.height}) - likely icon`);
+                return true;
+            }
+        }
+        // Names that suggest icons
+        const iconKeywords = ['arrow', 'chevron', 'star', 'heart', 'plus', 'minus', 'close', 'menu', 'search', 'check', 'cross'];
+        if (iconKeywords.some(keyword => name.includes(keyword))) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * NEW: Determine whether to traverse children of a node
+     */
+    static shouldTraverseChildren(node) {
+        // SPECIAL CASE: Component instances - note relationship but don't analyze deeply
+        if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+            // Exception: If this is a top-level component we're analyzing, we DO want to traverse
+            // Exception: If this contains nested auto-layout patterns, we may want shallow traversal
+            const hasAutoLayout = 'layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE';
+            if (hasAutoLayout) {
+                // Structural analysis log removed for cleaner console output
+                return true; // Allow traversal to capture nested auto-layout structure
+            }
+            // Component reference log removed for cleaner console output
+            return false; // Standard behavior: don't analyze internal structure deeply
+        }
+        // SPECIAL CASE: Nested auto-layout containers - always traverse these
+        if ('layoutMode' in node && node.layoutMode && node.layoutMode !== 'NONE') {
+            // Auto-layout traversal log removed for cleaner console output
+            return true;
+        }
+        // Always traverse standard containers
+        if (node.type === 'FRAME' || node.type === 'GROUP' || node.type === 'COMPONENT_SET') {
+            return true;
+        }
+        // Don't traverse into basic elements like TEXT, VECTOR, RECTANGLE, ELLIPSE
+        if (['TEXT', 'VECTOR', 'RECTANGLE', 'ELLIPSE', 'LINE', 'STAR', 'POLYGON'].includes(node.type)) {
+            return false;
+        }
+        // Default to traversing for other types
+        return true;
+    }
+    /**
+     * NEW: Enhanced icon context determination based on position, parent, and siblings
+     */
+    static determineIconContext(node, parentId) {
+        if (!parentId)
+            return 'standalone';
+        const name = node.name.toLowerCase();
+        // Explicit naming patterns
+        if (name.includes('leading') || name.includes('start') || name.includes('left')) {
+            return 'leading';
+        }
+        if (name.includes('trailing') || name.includes('end') || name.includes('right') || name.includes('chevron') || name.includes('arrow')) {
+            return 'trailing';
+        }
+        if (name.includes('decoration') || name.includes('ornament') || name.includes('badge')) {
+            return 'decorative';
+        }
+        // Try to get parent node for contextual analysis
+        try {
+            const parent = node.parent;
+            if (parent && 'children' in parent && parent.children) {
+                return this.analyzeIconPositionInParent(node, parent);
+            }
+        }
+        catch (error) {
+            console.warn(`Could not analyze parent context for icon "${node.name}"`);
+        }
+        return 'standalone';
+    }
+    /**
+     * NEW: Analyze icon position within its parent to determine context
+     */
+    static analyzeIconPositionInParent(node, parent) {
+        const children = parent.children;
+        const nodeIndex = children.indexOf(node);
+        if (nodeIndex === -1)
+            return 'standalone';
+        // Check if parent is an auto-layout container
+        const isAutoLayoutParent = 'layoutMode' in parent && parent.layoutMode && parent.layoutMode !== 'NONE';
+        if (isAutoLayoutParent) {
+            const layoutMode = parent.layoutMode;
+            // In horizontal layouts
+            if (layoutMode === 'HORIZONTAL') {
+                if (nodeIndex === 0) {
+                    return 'leading';
+                }
+                if (nodeIndex === children.length - 1) {
+                    return 'trailing';
+                }
+            }
+            // In vertical layouts, icons are more likely decorative or standalone
+            if (layoutMode === 'VERTICAL') {
+                return 'decorative';
+            }
+        }
+        // Look for text siblings to determine icon relationship
+        const hasTextSiblings = children.some(child => child.type === 'TEXT');
+        if (hasTextSiblings) {
+            const textNodes = children.filter(child => child.type === 'TEXT');
+            const firstTextIndex = children.indexOf(textNodes[0]);
+            if (nodeIndex < firstTextIndex) {
+                return 'leading';
+            }
+            else {
+                return 'trailing';
+            }
+        }
+        // Check position based on coordinates (fallback for non-auto-layout)
+        if ('x' in node && 'x' in parent && 'width' in parent) {
+            const relativeX = node.x;
+            const parentWidth = parent.width;
+            if (relativeX < parentWidth * 0.3) {
+                return 'leading';
+            }
+            else if (relativeX > parentWidth * 0.7) {
+                return 'trailing';
+            }
+        }
+        return 'standalone';
+    }
+    /**
+     * NEW: Check if node is a visual node that can have style information
+     */
+    static isVisualNode(node) {
+        return ['TEXT', 'RECTANGLE', 'ELLIPSE', 'VECTOR', 'FRAME', 'COMPONENT', 'INSTANCE'].includes(node.type);
+    }
+    /**
+     * NEW: Extract text hierarchy for a single text node
+     */
+    static async extractSingleTextHierarchy(textNode) {
+        const fontSize = typeof textNode.fontSize === 'number' ? textNode.fontSize : 14;
+        const fontWeight = textNode.fontWeight || 'normal';
+        const fontFamily = (textNode.fontName && typeof textNode.fontName === 'object' && textNode.fontName.family)
+            ? textNode.fontName.family
+            : 'Unknown';
+        let characters;
+        try {
+            characters = textNode.characters || '[empty]';
+        }
+        catch (e) {
+            characters = undefined;
+        }
+        // Extract text color
+        let textColor;
+        try {
+            if (textNode.fills && Array.isArray(textNode.fills) && textNode.fills.length > 0) {
+                const fillStyleId = ('fillStyleId' in textNode) ? textNode.fillStyleId : undefined;
+                const styleId = (fillStyleId && fillStyleId !== figma.mixed) ? fillStyleId : undefined;
+                const firstFill = textNode.fills[0];
+                if (firstFill.visible !== false) {
+                    textColor = this.convertPaintToColorInfo(firstFill, styleId) || undefined;
+                }
+            }
+        }
+        catch (e) {
+            console.warn(`Could not extract text color for "${textNode.name}"`);
+        }
+        // Extract Design System text style references
+        let textStyleId;
+        let textStyleName;
+        let boundTextStyleId;
+        try {
+            textStyleId = (textNode.textStyleId && textNode.textStyleId !== figma.mixed) ? textNode.textStyleId : undefined;
+            // Note: boundTextStyleId doesn't exist in current Figma API
+            boundTextStyleId = undefined;
+            if (textStyleId) {
+                textStyleName = this.textStyleMap.get(textStyleId);
+                if (!textStyleName) {
+                    const baseId = textStyleId.split(',')[0];
+                    const mapFormatId = baseId + ',';
+                    textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
+                    if (!textStyleName) {
+                        console.log(`🔄 External textStyleId detected: ${textStyleId}, trying exact match fallback`);
+                        const weightValue = (typeof fontWeight === 'symbol') ? 'normal' : fontWeight;
+                        textStyleName = this.findExactMatchingLocalStyle(fontSize, fontFamily, weightValue);
+                        if (textStyleName) {
+                            console.log(`✅ External style mapped to local: "${textStyleName}"`);
+                        }
+                    }
+                }
+            }
+        }
+        catch (e) {
+            console.warn(`Could not extract text style references for "${textNode.name}"`, e);
+        }
+        // Determine classification (simplified for single node)
+        let classification = 'tertiary';
+        const weightValue = (typeof fontWeight === 'symbol') ? 'normal' : fontWeight;
+        const weight = String(weightValue).toLowerCase();
+        if (weight.includes('bold') || weight.includes('700') || weight.includes('800') || weight.includes('900')) {
+            classification = 'primary';
+        }
+        else if (weight.includes('medium') || weight.includes('500') || weight.includes('600')) {
+            classification = 'secondary';
+        }
+        const usesDesignSystemStyle = !!(textStyleId || boundTextStyleId);
+        return {
+            nodeName: textNode.name,
+            nodeId: textNode.id,
+            fontSize,
+            fontWeight: weightValue, // Use the cleaned weight value
+            classification,
+            visible: textNode.visible,
+            characters,
+            textColor,
+            textStyleId,
+            textStyleName,
+            boundTextStyleId,
+            usesDesignSystemStyle
+        };
+    }
+    /**
+     * NEW: Extract component instance for a single component/instance node
+     */
+    static async extractSingleComponentInstance(node) {
+        const instance = {
+            nodeName: node.name,
+            nodeId: node.id,
+            visible: node.visible
+        };
+        if (node.type === 'INSTANCE') {
+            try {
+                const mainComponent = await node.getMainComponentAsync();
+                instance.componentId = mainComponent === null || mainComponent === void 0 ? void 0 : mainComponent.id;
+            }
+            catch (e) {
+                console.warn(`Could not get main component ID for instance "${node.name}"`);
+            }
+        }
+        return instance;
+    }
+    /**
+     * NEW: Extract vector node for a single vector
+     */
+    static extractSingleVectorNode(vectorNode) {
+        return {
+            nodeName: vectorNode.name,
+            nodeId: vectorNode.id,
+            visible: vectorNode.visible
+        };
+    }
+    /**
+     * NEW: Extract image node for a single rectangle/ellipse
+     */
+    static extractSingleImageNode(node) {
+        let hasImageFill = false;
+        try {
+            const fills = node.fills;
+            if (Array.isArray(fills)) {
+                hasImageFill = fills.some(fill => typeof fill === 'object' && fill !== null && fill.type === 'IMAGE');
+            }
+        }
+        catch (e) {
+            console.warn(`Could not check fills for node "${node.name}"`);
+        }
+        return {
+            nodeName: node.name,
+            nodeId: node.id,
+            nodeType: node.type,
+            visible: node.visible,
+            hasImageFill
+        };
+    }
     /**
      * Analyzes a single component to extract metadata
      */
-    ComponentScanner.analyzeComponent = function (comp) {
-        return __awaiter(this, void 0, void 0, function () {
-            var name, suggestedType, confidence, textLayers, textHierarchy, componentInstances, vectorNodes, imageNodes, styleInfo, internalPadding, variants, variantDetails, variantProps;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        name = comp.name;
-                        suggestedType = this.guessComponentType(name.toLowerCase());
-                        confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-                        textLayers = this.findTextLayers(comp);
-                        textHierarchy = this.analyzeTextHierarchy(comp);
-                        return [4 /*yield*/, this.findComponentInstances(comp)];
-                    case 1:
-                        componentInstances = _a.sent();
-                        vectorNodes = this.findVectorNodes(comp);
-                        imageNodes = this.findImageNodes(comp);
-                        styleInfo = this.extractStyleInfo(comp);
-                        internalPadding = this.extractInternalPadding(comp);
-                        if (internalPadding) {
-                            console.log("\uD83D\uDCCF Found internal padding for \"".concat(comp.name, "\":"), internalPadding);
-                        }
-                        variants = [];
-                        variantDetails = {};
-                        if (comp.type === 'COMPONENT_SET') {
-                            variantProps = comp.variantGroupProperties;
-                            if (variantProps) {
-                                variants = Object.keys(variantProps);
-                                Object.entries(variantProps).forEach(function (_a) {
-                                    var propName = _a[0], propInfo = _a[1];
-                                    if (propInfo.values && propInfo.values.length > 0) {
-                                        variantDetails[propName] = __spreadArray([], propInfo.values, true).sort();
-                                        console.log("\u2705 Found variant property: ".concat(propName, " with values: [").concat(propInfo.values.join(', '), "]"));
-                                    }
-                                });
-                                console.log("\uD83C\uDFAF Variant details for \"".concat(comp.name, "\":"), variantDetails);
-                            }
-                        }
-                        return [2 /*return*/, {
-                                id: comp.id,
-                                name: name,
-                                suggestedType: suggestedType,
-                                confidence: confidence,
-                                variants: variants.length > 0 ? variants : undefined,
-                                variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : undefined,
-                                textLayers: textLayers.length > 0 ? textLayers : undefined,
-                                textHierarchy: textHierarchy.length > 0 ? textHierarchy : undefined,
-                                componentInstances: componentInstances.length > 0 ? componentInstances : undefined,
-                                vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined,
-                                imageNodes: imageNodes.length > 0 ? imageNodes : undefined,
-                                styleInfo: styleInfo, // NEW: Include color and style information
-                                internalPadding: internalPadding, // NEW: Include internal padding information
-                                isFromLibrary: false
-                            }];
+    static async analyzeComponent(comp) {
+        const name = comp.name;
+        const suggestedType = this.guessComponentType(name.toLowerCase());
+        const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+        // DEPRECATED: Heavy methods disabled for optimization
+        // const textLayers = this.findTextLayers(comp);
+        // const textHierarchy = await this.analyzeTextHierarchy(comp);
+        // const componentInstances = await this.findComponentInstances(comp);
+        // const vectorNodes = this.findVectorNodes(comp);
+        // const imageNodes = this.findImageNodes(comp);
+        // NEW: Extract hierarchical component structure
+        console.log(`🏗️ Building hierarchical structure for "${comp.name}"`);
+        let componentStructure;
+        try {
+            // For component sets, analyze the default variant or first variant
+            let nodeToAnalyze = comp;
+            if (comp.type === 'COMPONENT_SET' && comp.children.length > 0) {
+                nodeToAnalyze = comp.defaultVariant || comp.children[0];
+            }
+            // DEPRECATED: Heavy method disabled - use analyzeComponentOptimized instead
+            // componentStructure = await this.analyzeComponentStructure(nodeToAnalyze as SceneNode);
+            // console.log(`✅ Built hierarchical structure with ${this.countStructureNodes(componentStructure)} total nodes`);
+        }
+        catch (error) {
+            console.warn(`⚠️ Failed to build hierarchical structure for "${comp.name}":`, error);
+        }
+        // NEW: Extract color and style information
+        const styleInfo = this.extractStyleInfo(comp);
+        // NEW: Extract internal padding information
+        const internalPadding = this.extractInternalPadding(comp);
+        if (internalPadding) {
+            console.log(`📏 Found internal padding for "${comp.name}":`, internalPadding);
+        }
+        // NEW: Analyze auto-layout behavior
+        const autoLayoutBehavior = this.analyzeAutoLayoutBehavior(comp);
+        if (autoLayoutBehavior && autoLayoutBehavior.isAutoLayout) {
+            console.log(`🎯 Found auto-layout behavior for "${comp.name}":`, autoLayoutBehavior.layoutMode);
+        }
+        let variants = [];
+        const variantDetails = {};
+        if (comp.type === 'COMPONENT_SET') {
+            const variantProps = comp.variantGroupProperties;
+            if (variantProps) {
+                variants = Object.keys(variantProps);
+                Object.entries(variantProps).forEach(([propName, propInfo]) => {
+                    if (propInfo.values && propInfo.values.length > 0) {
+                        variantDetails[propName] = [...propInfo.values].sort();
+                        console.log(`✅ Found variant property: ${propName} with values: [${propInfo.values.join(', ')}]`);
+                    }
+                });
+                console.log(`🎯 Variant details for "${comp.name}":`, variantDetails);
+            }
+        }
+        return {
+            id: comp.id,
+            name: name,
+            suggestedType,
+            confidence,
+            variants: variants.length > 0 ? variants : undefined,
+            variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : undefined,
+            textLayers: undefined, // DEPRECATED: Disabled for optimization
+            textHierarchy: undefined, // DEPRECATED: Disabled for optimization
+            componentInstances: undefined, // DEPRECATED: Disabled for optimization
+            vectorNodes: undefined, // DEPRECATED: Disabled for optimization
+            imageNodes: undefined, // DEPRECATED: Disabled for optimization
+            styleInfo: styleInfo, // NEW: Include color and style information
+            internalPadding: internalPadding || undefined, // NEW: Include internal padding information
+            autoLayoutBehavior: autoLayoutBehavior || undefined, // NEW: Include auto-layout behavior analysis
+            componentStructure: undefined, // DEPRECATED: Disabled for optimization
+            isFromLibrary: false
+        };
+    }
+    /**
+     * NEW: Count total nodes in component structure (for debugging)
+     */
+    static countStructureNodes(structure) {
+        let count = 1; // Count this node
+        if (structure.children && structure.children.length > 0) {
+            for (const child of structure.children) {
+                count += this.countStructureNodes(child);
+            }
+        }
+        return count;
+    }
+    /**
+     * NEW: Optimized component analysis for LLM context (replaces heavy analyzeComponent)
+     */
+    static async analyzeComponentOptimized(comp) {
+        console.log(`🚀 Optimized analysis for "${comp.name}"`);
+        try {
+            const name = comp.name;
+            const suggestedType = this.guessComponentType(name.toLowerCase());
+            const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+            // Extract variant OPTIONS only (not combinations)
+            const variantOptions = this.extractVariantOptionsOptimized(comp);
+            // Shallow text slot analysis (no deep recursion)
+            const textSlots = this.extractTextSlotsOptimized(comp);
+            // Component slots with exact names (for visibility override)
+            const componentSlots = await this.extractComponentSlotsOptimized(comp);
+            // Layout behavior hints (no absolute coordinates)
+            const layoutBehavior = this.extractLayoutBehaviorOptimized(comp);
+            // Style context (no detailed fills/strokes)
+            const styleContext = this.extractStyleContextOptimized(comp);
+            console.log(`✅ Optimized analysis complete for "${name}"`);
+            return {
+                id: comp.id,
+                name,
+                suggestedType,
+                confidence,
+                isFromLibrary: false,
+                variantOptions,
+                textSlots,
+                componentSlots,
+                layoutBehavior,
+                styleContext
+            };
+        }
+        catch (error) {
+            console.error(`❌ Failed to analyze component "${comp.name}":`, error);
+            // Retry once with basic fallback
+            try {
+                console.log(`🔄 Retrying with basic analysis for "${comp.name}"`);
+                const name = comp.name;
+                const suggestedType = this.guessComponentType(name.toLowerCase());
+                const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+                return {
+                    id: comp.id,
+                    name,
+                    suggestedType,
+                    confidence: Math.max(0.1, confidence - 0.3), // Lower confidence for failed analysis
+                    isFromLibrary: false
+                };
+            }
+            catch (retryError) {
+                console.error(`❌ Retry failed for component "${comp.name}":`, retryError);
+                throw new Error(`Component analysis completely failed for "${comp.name}": ${retryError.message}`);
+            }
+        }
+    }
+    /**
+     * Extract variant options only (no combinations)
+     */
+    static extractVariantOptionsOptimized(comp) {
+        if (comp.type !== 'COMPONENT_SET')
+            return undefined;
+        const variantOptions = {};
+        const variantProps = comp.variantGroupProperties;
+        if (!variantProps)
+            return undefined;
+        for (const [propName, prop] of Object.entries(variantProps)) {
+            if ('values' in prop && prop.values.length > 0) {
+                variantOptions[propName] = prop.values;
+            }
+        }
+        return Object.keys(variantOptions).length > 0 ? variantOptions : undefined;
+    }
+    /**
+     * Extract text slots with exact names (SHALLOW - no recursion)
+     */
+    static extractTextSlotsOptimized(comp) {
+        const slots = {};
+        const nodeToAnalyze = comp.type === 'COMPONENT_SET' ?
+            (comp.defaultVariant || comp.children[0]) : comp;
+        if (!nodeToAnalyze || !('children' in nodeToAnalyze))
+            return undefined;
+        // ONLY scan immediate children (depth 1)
+        for (const child of nodeToAnalyze.children) {
+            if (child.type === 'TEXT') {
+                const textNode = child;
+                slots[child.name] = {
+                    required: child.visible !== false,
+                    type: textNode.textAutoResize === 'HEIGHT' ? 'multi-line' : 'single-line',
+                    maxLength: this.estimateMaxLength(textNode)
+                };
+            }
+        }
+        return Object.keys(slots).length > 0 ? slots : undefined;
+    }
+    /**
+     * Extract component slots with exact names (SHALLOW - references only)
+     */
+    static async extractComponentSlotsOptimized(comp) {
+        const slots = {};
+        const nodeToAnalyze = comp.type === 'COMPONENT_SET' ?
+            (comp.defaultVariant || comp.children[0]) : comp;
+        if (!nodeToAnalyze || !('children' in nodeToAnalyze))
+            return undefined;
+        // ONLY scan immediate children (depth 1)
+        for (const child of nodeToAnalyze.children) {
+            if (child.type === 'INSTANCE') {
+                const instance = child;
+                try {
+                    const mainComp = await instance.getMainComponentAsync();
+                    const category = this.guessComponentCategory((mainComp === null || mainComp === void 0 ? void 0 : mainComp.name) || child.name);
+                    slots[child.name] = {
+                        componentId: mainComp === null || mainComp === void 0 ? void 0 : mainComp.id,
+                        category,
+                        swappable: true,
+                        required: child.visible !== false
+                    };
                 }
-            });
-        });
-    };
+                catch (error) {
+                    console.warn(`Failed to analyze component slot "${child.name}"`);
+                }
+            }
+        }
+        return Object.keys(slots).length > 0 ? slots : undefined;
+    }
+    /**
+     * Extract layout behavior (semantic, no absolute coordinates)
+     */
+    static extractLayoutBehaviorOptimized(comp) {
+        const node = comp.type === 'COMPONENT_SET' ?
+            (comp.defaultVariant || comp.children[0]) : comp;
+        if (!node || !('layoutMode' in node) || node.layoutMode === 'NONE') {
+            return undefined;
+        }
+        const isIcon = 'width' in node && 'height' in node &&
+            Math.max(node.width, node.height) <= 48;
+        const isTouchTarget = 'height' in node && node.height >= 44;
+        return {
+            type: node.primaryAxisSizingMode === 'AUTO' ? 'hug-content' :
+                node.layoutAlign === 'STRETCH' ? 'fill-container' : 'fixed',
+            direction: node.layoutMode === 'HORIZONTAL' ? 'horizontal' : 'vertical',
+            hasInternalPadding: (node.paddingTop || 0) > 0,
+            canWrap: node.layoutWrap === 'WRAP',
+            minHeight: node.minHeight || undefined,
+            isIcon,
+            isTouchTarget
+        };
+    }
+    /**
+     * Extract style context (design system colors only, no detailed fills)
+     */
+    static extractStyleContextOptimized(comp) {
+        var _a;
+        const node = comp.type === 'COMPONENT_SET' ?
+            (comp.defaultVariant || comp.children[0]) : comp;
+        // Quick check for primary design system color
+        let primaryColor;
+        try {
+            const styleInfo = this.extractStyleInfo(node);
+            primaryColor = (_a = styleInfo === null || styleInfo === void 0 ? void 0 : styleInfo.primaryColor) === null || _a === void 0 ? void 0 : _a.paintStyleName;
+        }
+        catch (error) {
+            // Ignore styling errors
+        }
+        // Quick check for image slots (shallow scan)
+        const hasImageSlot = this.hasImageSlotShallow(node);
+        // Infer semantic role
+        const semanticRole = this.inferSemanticRole(comp.name, comp.id);
+        return {
+            primaryColor,
+            hasImageSlot,
+            semanticRole
+        };
+    }
+    /**
+     * Helper: Guess component category for slots
+     */
+    static guessComponentCategory(name) {
+        const lowName = name.toLowerCase();
+        if (lowName.includes('icon'))
+            return 'icon';
+        if (lowName.includes('button') || lowName.includes('btn'))
+            return 'button';
+        if (lowName.includes('input') || lowName.includes('field'))
+            return 'input';
+        if (lowName.includes('image') || lowName.includes('photo'))
+            return 'image';
+        return 'container';
+    }
+    /**
+     * Helper: Estimate max text length
+     */
+    static estimateMaxLength(textNode) {
+        if (!textNode.width)
+            return undefined;
+        const avgCharWidth = (textNode.fontSize || 14) * 0.6;
+        const lines = textNode.textAutoResize === 'HEIGHT' ? 3 : 1;
+        return Math.floor((textNode.width / avgCharWidth) * lines);
+    }
+    /**
+     * Helper: Check for image slots (shallow)
+     */
+    static hasImageSlotShallow(node) {
+        if (!node || !('children' in node))
+            return false;
+        // Only check immediate children
+        for (const child of node.children) {
+            if (child.type === 'RECTANGLE' || child.type === 'ELLIPSE') {
+                try {
+                    const fills = child.fills;
+                    if (Array.isArray(fills) && fills.some(f => f.type === 'IMAGE')) {
+                        return true;
+                    }
+                }
+                catch (error) {
+                    // Ignore fill check errors
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * Helper: Infer semantic role
+     */
+    static inferSemanticRole(name, id) {
+        const lowName = name.toLowerCase();
+        if (lowName.includes('nav') || lowName.includes('tab') || lowName.includes('menu')) {
+            return 'navigation';
+        }
+        if (lowName.includes('button') || lowName.includes('cta')) {
+            return 'action';
+        }
+        if (lowName.includes('card') || lowName.includes('item') || lowName.includes('list')) {
+            return 'display';
+        }
+        if (lowName.includes('input') || lowName.includes('field') || lowName.includes('form')) {
+            return 'input';
+        }
+        return 'container';
+    }
+    /**
+     * NEW: Generate a summary of component structure for debugging
+     */
+    static generateStructureSummary(structure, indent = "") {
+        var _a, _b;
+        let summary = `${indent}${structure.type}:${structure.name} (id:${structure.id.slice(-8)})`;
+        // Add special flags
+        const flags = [];
+        if (structure.isNestedAutoLayout)
+            flags.push("🎯nested-auto");
+        if (structure.isComponentInstanceReference)
+            flags.push("📦comp-ref");
+        if (structure.iconContext)
+            flags.push(`🎨${structure.iconContext}`);
+        if (flags.length > 0) {
+            summary += ` [${flags.join(", ")}]`;
+        }
+        // Add node properties summary
+        if (structure.nodeProperties) {
+            const props = [];
+            if ((_a = structure.nodeProperties.autoLayoutBehavior) === null || _a === void 0 ? void 0 : _a.isAutoLayout) {
+                props.push(`auto-layout:${structure.nodeProperties.autoLayoutBehavior.layoutMode}`);
+            }
+            if (structure.nodeProperties.textHierarchy) {
+                props.push(`text:${((_b = structure.nodeProperties.textHierarchy.characters) === null || _b === void 0 ? void 0 : _b.slice(0, 20)) || "empty"}`);
+            }
+            if (structure.nodeProperties.componentInstance) {
+                props.push("component-instance");
+            }
+            if (structure.nodeProperties.vectorNode) {
+                props.push("vector");
+            }
+            if (structure.nodeProperties.imageNode) {
+                props.push(`image:${structure.nodeProperties.imageNode.hasImageFill ? "has-fill" : "no-fill"}`);
+            }
+            if (props.length > 0) {
+                summary += ` {${props.join(", ")}}`;
+            }
+        }
+        summary += `\n`;
+        // Recursively add children
+        if (structure.children && structure.children.length > 0) {
+            for (const child of structure.children) {
+                summary += this.generateStructureSummary(child, indent + "  ");
+            }
+        }
+        return summary;
+    }
+    /**
+     * NEW: Test function to analyze a specific component by ID and log the structure
+     */
+    static async testComponentStructure(componentId) {
+        try {
+            // Find the component by ID
+            const component = figma.getNodeById(componentId);
+            if (!component) {
+                console.error(`❌ Component not found: ${componentId}`);
+                return;
+            }
+            if (component.type !== 'COMPONENT' && component.type !== 'COMPONENT_SET') {
+                console.error(`❌ Node is not a component: ${component.type}`);
+                return;
+            }
+            // DEPRECATED: Heavy method disabled
+            // const structure = await this.analyzeComponentStructure(component as SceneNode);
+            // Generate and log the structure summary
+            // Count nodes
+            const nodeCount = this.countStructureNodes(structure);
+            // Log depth statistics
+            const depthStats = this.calculateDepthStatistics(structure);
+        }
+        catch (error) {
+            console.error(`❌ Error testing component structure:`, error);
+        }
+    }
+    /**
+     * NEW: Calculate depth statistics for a component structure
+     */
+    static calculateDepthStatistics(structure) {
+        const depthCounts = {};
+        let totalNodes = 0;
+        let totalDepth = 0;
+        let maxDepth = 0;
+        const traverse = (node) => {
+            const depth = node.depth;
+            depthCounts[depth] = (depthCounts[depth] || 0) + 1;
+            totalNodes++;
+            totalDepth += depth;
+            maxDepth = Math.max(maxDepth, depth);
+            if (node.children) {
+                for (const child of node.children) {
+                    traverse(child);
+                }
+            }
+        };
+        traverse(structure);
+        return {
+            maxDepth,
+            nodesByDepth: depthCounts,
+            avgDepth: totalNodes > 0 ? totalDepth / totalNodes : 0
+        };
+    }
+    /**
+     * NEW: Quick test with known component IDs from JSON data
+     */
+    static async runQuickTests() {
+        // Test with known component IDs from JSON data
+        const testComponentIds = [
+            "10:3856", // snackbar
+            "10:3907", // Button
+            "10:3918", // Another component if exists
+        ];
+        for (const componentId of testComponentIds) {
+            try {
+                await this.testComponentStructure(componentId);
+            }
+            catch (error) {
+                console.warn(`⚠️ Failed to test component ${componentId}:`, error);
+            }
+        }
+    }
+    /**
+     * NEW: Export a component structure to JSON for inspection
+     */
+    static async exportComponentStructureToJson(componentId) {
+        try {
+            const component = figma.getNodeById(componentId);
+            if (!component || (component.type !== 'COMPONENT' && component.type !== 'COMPONENT_SET')) {
+                console.error(`❌ Invalid component: ${componentId}`);
+                return null;
+            }
+            // DEPRECATED: Heavy method disabled
+            // const structure = await this.analyzeComponentStructure(component as SceneNode);
+            return JSON.stringify({}, null, 2);
+        }
+        catch (error) {
+            console.error(`❌ Error exporting component structure:`, error);
+            return null;
+        }
+    }
     /**
      * Intelligent component type detection based on naming patterns
      */
-    ComponentScanner.guessComponentType = function (name) {
+    static guessComponentType(name) {
         var _a;
-        var patterns = {
+        const patterns = {
             'icon-button': /icon.*button|button.*icon/i,
             'upload': /upload|file.*drop|drop.*zone|attach/i,
             'form': /form|captcha|verification/i,
@@ -888,7 +1672,7 @@ var ComponentScanner = /** @class */ (function () {
             'code': /code|syntax/i,
             'terminal': /terminal|console/i
         };
-        var priorityPatterns = [
+        const priorityPatterns = [
             'icon-button', 'upload', 'form', 'context-menu', 'modal-header', 'list-item',
             'appbar', 'dialog', 'snackbar', 'bottomsheet', 'actionsheet', 'searchbar',
             'fab', 'breadcrumb', 'pagination', 'skeleton', 'textarea', 'checkbox',
@@ -896,23 +1680,22 @@ var ComponentScanner = /** @class */ (function () {
             'progress', 'avatar', 'chip', 'stepper', 'chart', 'table', 'calendar',
             'timeline', 'gallery', 'rating'
         ];
-        for (var _i = 0, priorityPatterns_1 = priorityPatterns; _i < priorityPatterns_1.length; _i++) {
-            var type = priorityPatterns_1[_i];
+        for (const type of priorityPatterns) {
             if ((_a = patterns[type]) === null || _a === void 0 ? void 0 : _a.test(name))
                 return type;
         }
-        for (var type in patterns) {
+        for (const type in patterns) {
             if (Object.prototype.hasOwnProperty.call(patterns, type) && !priorityPatterns.includes(type)) {
                 if (patterns[type].test(name))
                     return type;
             }
         }
         return 'unknown';
-    };
+    }
     /**
      * Calculates confidence score for component type detection
      */
-    ComponentScanner.calculateConfidence = function (name, suggestedType) {
+    static calculateConfidence(name, suggestedType) {
         if (suggestedType === 'unknown')
             return 0.1;
         if (name.toLowerCase() === suggestedType.toLowerCase())
@@ -922,82 +1705,138 @@ var ComponentScanner = /** @class */ (function () {
         if (name.toLowerCase().includes(suggestedType + '-') || name.toLowerCase().includes(suggestedType + '_'))
             return 0.85;
         return 0.7;
-    };
+    }
+    /**
+     * NEW: Normalize fontWeight to comparable format
+     */
+    static normalizeFontWeight(fontWeight) {
+        if (typeof fontWeight === 'number') {
+            // Convert number to string representation
+            if (fontWeight <= 300)
+                return 'Light';
+            if (fontWeight <= 400)
+                return 'Regular';
+            if (fontWeight <= 500)
+                return 'Medium';
+            if (fontWeight <= 600)
+                return 'SemiBold';
+            if (fontWeight <= 700)
+                return 'Bold';
+            return 'ExtraBold';
+        }
+        // Normalize string weights
+        const weight = String(fontWeight).toLowerCase();
+        if (weight.includes('regular') || weight.includes('normal'))
+            return 'Regular';
+        if (weight.includes('medium'))
+            return 'Medium';
+        if (weight.includes('light'))
+            return 'Light';
+        if (weight.includes('bold'))
+            return 'Bold';
+        if (weight.includes('semibold'))
+            return 'SemiBold';
+        if (weight.includes('extrabold') || weight.includes('black'))
+            return 'ExtraBold';
+        return String(fontWeight); // fallback to original
+    }
+    /**
+     * NEW: Find exact matching local text style based on fontSize, fontFamily, and fontWeight
+     * Used as fallback when external textStyleId is not found in local styles
+     */
+    static findExactMatchingLocalStyle(fontSize, fontFamily, fontWeight) {
+        const normalizedWeight = this.normalizeFontWeight(fontWeight);
+        console.log(`🔍 Looking for exact match: ${fontSize}px, ${fontFamily}, ${normalizedWeight} (original: ${fontWeight})`);
+        for (const [styleId, styleDetails] of this.textStyleDetails.entries()) {
+            const styleNormalizedWeight = this.normalizeFontWeight(styleDetails.fontWeight);
+            if (styleDetails.fontSize === fontSize &&
+                styleDetails.fontFamily === fontFamily &&
+                styleNormalizedWeight === normalizedWeight) {
+                console.log(`✅ Exact match found: "${styleDetails.name}" (${styleId})`);
+                return styleDetails.name;
+            }
+        }
+        console.warn(`❌ No exact match found for: ${fontSize}px, ${fontFamily}, ${normalizedWeight}`);
+        return undefined;
+    }
     /**
      * Finds and catalogs text layers within a component
      */
-    ComponentScanner.findTextLayers = function (comp) {
-        var textLayers = [];
+    static findTextLayers(comp) {
+        const textLayers = [];
         try {
-            var nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
+            const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
             if (nodeToAnalyze && 'findAll' in nodeToAnalyze) {
-                var allNodes = nodeToAnalyze.findAll(function (node) { return node.type === 'TEXT'; });
-                allNodes.forEach(function (node) {
+                const allNodes = nodeToAnalyze.findAll((node) => node.type === 'TEXT');
+                allNodes.forEach(node => {
                     if (node.type === 'TEXT' && node.name) {
-                        var textNode = node;
+                        const textNode = node;
                         textLayers.push(textNode.name);
                         try {
-                            var chars = textNode.characters || '[empty]';
-                            console.log("\uD83D\uDCDD Found text layer: \"".concat(textNode.name, "\" with content: \"").concat(chars, "\""));
+                            const chars = textNode.characters || '[empty]';
+                            console.log(`📝 Found text layer: "${textNode.name}" with content: "${chars}"`);
                         }
                         catch (charError) {
-                            console.log("\uD83D\uDCDD Found text layer: \"".concat(textNode.name, "\" (could not read characters)"));
+                            console.log(`📝 Found text layer: "${textNode.name}" (could not read characters)`);
                         }
                     }
                 });
             }
         }
         catch (e) {
-            console.error("Error finding text layers in \"".concat(comp.name, "\":"), e);
+            console.error(`Error finding text layers in "${comp.name}":`, e);
         }
         return textLayers;
-    };
+    }
     /**
      * Analyzes text nodes by fontSize/fontWeight and classifies by visual prominence
      */
-    ComponentScanner.analyzeTextHierarchy = function (comp) {
-        var _this = this;
-        var textHierarchy = [];
+    static async analyzeTextHierarchy(comp) {
+        const textHierarchy = [];
         try {
-            var nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
+            const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
             if (nodeToAnalyze && 'findAll' in nodeToAnalyze) {
-                var textNodes = nodeToAnalyze.findAll(function (node) { return node.type === 'TEXT'; });
+                const textNodes = nodeToAnalyze.findAll((node) => node.type === 'TEXT');
                 // Collect font info for classification
-                var fontSizes_1 = [];
-                var textNodeData_1 = [];
-                textNodes.forEach(function (node) {
+                const fontSizes = [];
+                const textNodeData = [];
+                textNodes.forEach(node => {
                     if (node.type === 'TEXT') {
-                        var textNode = node;
+                        const textNode = node;
                         try {
-                            var fontSize = typeof textNode.fontSize === 'number' ? textNode.fontSize : 14;
-                            var fontWeight = textNode.fontWeight || 'normal';
-                            fontSizes_1.push(fontSize);
-                            textNodeData_1.push({ node: textNode, fontSize: fontSize, fontWeight: fontWeight });
+                            const fontSize = typeof textNode.fontSize === 'number' ? textNode.fontSize : 14;
+                            const fontWeight = textNode.fontWeight || 'normal';
+                            const fontWeightValue = (typeof fontWeight === 'symbol') ? 'normal' : fontWeight;
+                            // NEW: Extract fontFamily for exact matching
+                            const fontFamily = (textNode.fontName && typeof textNode.fontName === 'object' && textNode.fontName.family)
+                                ? textNode.fontName.family
+                                : 'Unknown';
+                            fontSizes.push(fontSize);
+                            textNodeData.push({ node: textNode, fontSize, fontWeight: fontWeightValue, fontFamily });
                         }
                         catch (e) {
-                            console.warn("Could not read font properties for text node \"".concat(textNode.name, "\""));
+                            console.warn(`Could not read font properties for text node "${textNode.name}"`);
                         }
                     }
                 });
                 // Sort font sizes to determine hierarchy thresholds
-                var uniqueSizes_1 = __spreadArray([], new Set(fontSizes_1), true).sort(function (a, b) { return b - a; });
-                textNodeData_1.forEach(function (_a) {
-                    var node = _a.node, fontSize = _a.fontSize, fontWeight = _a.fontWeight;
-                    var classification = 'tertiary';
-                    if (uniqueSizes_1.length >= 3) {
-                        if (fontSize >= uniqueSizes_1[0])
+                const uniqueSizes = [...new Set(fontSizes)].sort((a, b) => b - a);
+                for (const { node, fontSize, fontWeight, fontFamily } of textNodeData) {
+                    let classification = 'tertiary';
+                    if (uniqueSizes.length >= 3) {
+                        if (fontSize >= uniqueSizes[0])
                             classification = 'primary';
-                        else if (fontSize >= uniqueSizes_1[1])
+                        else if (fontSize >= uniqueSizes[1])
                             classification = 'secondary';
                         else
                             classification = 'tertiary';
                     }
-                    else if (uniqueSizes_1.length === 2) {
-                        classification = fontSize >= uniqueSizes_1[0] ? 'primary' : 'secondary';
+                    else if (uniqueSizes.length === 2) {
+                        classification = fontSize >= uniqueSizes[0] ? 'primary' : 'secondary';
                     }
                     else {
                         // Single font size or unable to determine - classify by font weight
-                        var weight = String(fontWeight).toLowerCase();
+                        const weight = String(fontWeight).toLowerCase();
                         if (weight.includes('bold') || weight.includes('700') || weight.includes('800') || weight.includes('900')) {
                             classification = 'primary';
                         }
@@ -1008,7 +1847,7 @@ var ComponentScanner = /** @class */ (function () {
                             classification = 'tertiary';
                         }
                     }
-                    var characters;
+                    let characters;
                     try {
                         characters = node.characters || '[empty]';
                     }
@@ -1016,104 +1855,121 @@ var ComponentScanner = /** @class */ (function () {
                         characters = undefined;
                     }
                     // NEW: Extract text color
-                    var textColor;
+                    let textColor;
                     try {
                         if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
-                            var firstFill = node.fills[0];
+                            // Get fillStyleId for text color
+                            const fillStyleId = ('fillStyleId' in node) ? node.fillStyleId : undefined;
+                            const styleId = (fillStyleId && fillStyleId !== figma.mixed) ? fillStyleId : undefined;
+                            const firstFill = node.fills[0];
                             if (firstFill.visible !== false) {
-                                textColor = _this.convertPaintToColorInfo(firstFill) || undefined;
+                                textColor = this.convertPaintToColorInfo(firstFill, styleId) || undefined;
                             }
                         }
                     }
                     catch (e) {
-                        console.warn("Could not extract text color for \"".concat(node.name, "\""));
+                        console.warn(`Could not extract text color for "${node.name}"`);
                     }
+                    // NEW: Extract Design System text style references
+                    let textStyleId;
+                    let textStyleName;
+                    let boundTextStyleId;
+                    try {
+                        // Get text style ID if available
+                        textStyleId = (node.textStyleId && node.textStyleId !== figma.mixed) ? node.textStyleId : undefined;
+                        // Note: boundTextStyleId doesn't exist in current Figma API
+                        boundTextStyleId = undefined;
+                        // Resolve style name using pre-built lookup map (exactly like paintStyleName)
+                        if (textStyleId) {
+                            textStyleName = this.textStyleMap.get(textStyleId);
+                            if (!textStyleName) {
+                                // Try format variations similar to paintStyleId approach
+                                const baseId = textStyleId.split(',')[0];
+                                const mapFormatId = baseId + ',';
+                                textStyleName = this.textStyleMap.get(mapFormatId) || this.textStyleMap.get(baseId);
+                                // NEW: If still not found, try exact matching fallback for external styles
+                                if (!textStyleName) {
+                                    console.log(`🔄 External textStyleId detected: ${textStyleId}, trying exact match fallback`);
+                                    textStyleName = this.findExactMatchingLocalStyle(fontSize, fontFamily, fontWeight);
+                                    if (textStyleName) {
+                                        console.log(`✅ External style mapped to local: "${textStyleName}"`);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (e) {
+                        console.warn(`Could not extract text style references for "${node.name}"`, e);
+                    }
+                    const usesDesignSystemStyle = !!(textStyleId || boundTextStyleId);
                     textHierarchy.push({
                         nodeName: node.name,
                         nodeId: node.id,
-                        fontSize: fontSize,
-                        fontWeight: fontWeight,
-                        classification: classification,
+                        fontSize,
+                        fontWeight,
+                        classification,
                         visible: node.visible,
-                        characters: characters,
-                        textColor: textColor // NEW: Include text color information
+                        characters,
+                        textColor, // Include text color information
+                        // NEW: Include Design System references
+                        textStyleId,
+                        textStyleName,
+                        boundTextStyleId,
+                        usesDesignSystemStyle
                     });
-                });
+                }
             }
         }
         catch (e) {
-            console.error("Error analyzing text hierarchy in \"".concat(comp.name, "\":"), e);
+            console.error(`Error analyzing text hierarchy in "${comp.name}":`, e);
         }
         return textHierarchy;
-    };
+    }
     /**
      * Finds all nested COMPONENT/INSTANCE nodes (often icons)
      */
-    ComponentScanner.findComponentInstances = function (comp) {
-        return __awaiter(this, void 0, void 0, function () {
-            var componentInstances, nodeToAnalyze, instanceNodes, _i, instanceNodes_1, node, instance, mainComponent, e_4, e_5;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        componentInstances = [];
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 9, , 10]);
-                        nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
-                        if (!(nodeToAnalyze && 'findAll' in nodeToAnalyze)) return [3 /*break*/, 8];
-                        instanceNodes = nodeToAnalyze.findAll(function (node) {
-                            return node.type === 'COMPONENT' || node.type === 'INSTANCE';
-                        });
-                        _i = 0, instanceNodes_1 = instanceNodes;
-                        _a.label = 2;
-                    case 2:
-                        if (!(_i < instanceNodes_1.length)) return [3 /*break*/, 8];
-                        node = instanceNodes_1[_i];
-                        if (!(node.type === 'COMPONENT' || node.type === 'INSTANCE')) return [3 /*break*/, 7];
-                        instance = {
+    static async findComponentInstances(comp) {
+        const componentInstances = [];
+        try {
+            const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
+            if (nodeToAnalyze && 'findAll' in nodeToAnalyze) {
+                const instanceNodes = nodeToAnalyze.findAll((node) => node.type === 'COMPONENT' || node.type === 'INSTANCE');
+                for (const node of instanceNodes) {
+                    if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
+                        const instance = {
                             nodeName: node.name,
                             nodeId: node.id,
                             visible: node.visible
                         };
-                        if (!(node.type === 'INSTANCE')) return [3 /*break*/, 6];
-                        _a.label = 3;
-                    case 3:
-                        _a.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, node.getMainComponentAsync()];
-                    case 4:
-                        mainComponent = _a.sent();
-                        instance.componentId = mainComponent === null || mainComponent === void 0 ? void 0 : mainComponent.id;
-                        return [3 /*break*/, 6];
-                    case 5:
-                        e_4 = _a.sent();
-                        console.warn("Could not get main component ID for instance \"".concat(node.name, "\""));
-                        return [3 /*break*/, 6];
-                    case 6:
+                        if (node.type === 'INSTANCE') {
+                            try {
+                                const mainComponent = await node.getMainComponentAsync();
+                                instance.componentId = mainComponent === null || mainComponent === void 0 ? void 0 : mainComponent.id;
+                            }
+                            catch (e) {
+                                console.warn(`Could not get main component ID for instance "${node.name}"`);
+                            }
+                        }
                         componentInstances.push(instance);
-                        _a.label = 7;
-                    case 7:
-                        _i++;
-                        return [3 /*break*/, 2];
-                    case 8: return [3 /*break*/, 10];
-                    case 9:
-                        e_5 = _a.sent();
-                        console.error("Error finding component instances in \"".concat(comp.name, "\":"), e_5);
-                        return [3 /*break*/, 10];
-                    case 10: return [2 /*return*/, componentInstances];
+                    }
                 }
-            });
-        });
-    };
+            }
+        }
+        catch (e) {
+            console.error(`Error finding component instances in "${comp.name}":`, e);
+        }
+        return componentInstances;
+    }
     /**
      * Finds all VECTOR nodes (direct SVG icons)
      */
-    ComponentScanner.findVectorNodes = function (comp) {
-        var vectorNodes = [];
+    static findVectorNodes(comp) {
+        const vectorNodes = [];
         try {
-            var nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
+            const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
             if (nodeToAnalyze && 'findAll' in nodeToAnalyze) {
-                var vectors = nodeToAnalyze.findAll(function (node) { return node.type === 'VECTOR'; });
-                vectors.forEach(function (node) {
+                const vectors = nodeToAnalyze.findAll((node) => node.type === 'VECTOR');
+                vectors.forEach(node => {
                     if (node.type === 'VECTOR') {
                         vectorNodes.push({
                             nodeName: node.name,
@@ -1125,266 +1981,373 @@ var ComponentScanner = /** @class */ (function () {
             }
         }
         catch (e) {
-            console.error("Error finding vector nodes in \"".concat(comp.name, "\":"), e);
+            console.error(`Error finding vector nodes in "${comp.name}":`, e);
         }
         return vectorNodes;
-    };
+    }
     /**
      * Finds all nodes that can accept image fills (RECTANGLE, ELLIPSE with image fills)
      */
-    ComponentScanner.findImageNodes = function (comp) {
-        var imageNodes = [];
+    static findImageNodes(comp) {
+        const imageNodes = [];
         try {
-            var nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
+            const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? comp.defaultVariant : comp;
             if (nodeToAnalyze && 'findAll' in nodeToAnalyze) {
-                var shapeNodes = nodeToAnalyze.findAll(function (node) {
-                    return node.type === 'RECTANGLE' || node.type === 'ELLIPSE';
-                });
-                shapeNodes.forEach(function (node) {
+                const shapeNodes = nodeToAnalyze.findAll((node) => node.type === 'RECTANGLE' || node.type === 'ELLIPSE');
+                shapeNodes.forEach(node => {
                     if (node.type === 'RECTANGLE' || node.type === 'ELLIPSE') {
-                        var hasImageFill = false;
+                        let hasImageFill = false;
                         try {
-                            var fills = node.fills;
+                            const fills = node.fills;
                             if (Array.isArray(fills)) {
-                                hasImageFill = fills.some(function (fill) {
-                                    return typeof fill === 'object' && fill !== null && fill.type === 'IMAGE';
-                                });
+                                hasImageFill = fills.some(fill => typeof fill === 'object' && fill !== null && fill.type === 'IMAGE');
                             }
                         }
                         catch (e) {
-                            console.warn("Could not check fills for node \"".concat(node.name, "\""));
+                            console.warn(`Could not check fills for node "${node.name}"`);
                         }
                         imageNodes.push({
                             nodeName: node.name,
                             nodeId: node.id,
                             nodeType: node.type,
                             visible: node.visible,
-                            hasImageFill: hasImageFill
+                            hasImageFill
                         });
                     }
                 });
             }
         }
         catch (e) {
-            console.error("Error finding image nodes in \"".concat(comp.name, "\":"), e);
+            console.error(`Error finding image nodes in "${comp.name}":`, e);
         }
         return imageNodes;
-    };
+    }
     /**
      * Generate LLM prompt based on scanned components and color styles
      */
-    ComponentScanner.generateLLMPrompt = function (components, colorStyles) {
+    static generateLLMPrompt(components, colorStyles) {
         var _a;
-        var componentsByType = {};
-        components.forEach(function (comp) {
+        const componentsByType = {};
+        components.forEach(comp => {
             if (comp.confidence >= 0.7) {
                 if (!componentsByType[comp.suggestedType])
                     componentsByType[comp.suggestedType] = [];
                 componentsByType[comp.suggestedType].push(comp);
             }
         });
-        var prompt = "# AIDesigner JSON Generation Instructions\n\n";
+        let prompt = `# AIDesigner JSON Generation Instructions\n\n`;
         // Add Color Styles section if available
         if (colorStyles) {
-            var totalColorStyles = Object.values(colorStyles).reduce(function (sum, styles) { return sum + styles.length; }, 0);
+            const totalColorStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
             if (totalColorStyles > 0) {
-                prompt += "## Available Color Styles in Design System:\n\n";
-                Object.entries(colorStyles).forEach(function (_a) {
-                    var category = _a[0], styles = _a[1];
+                prompt += `## Available Color Styles in Design System:\n\n`;
+                Object.entries(colorStyles).forEach(([category, styles]) => {
                     if (styles.length > 0) {
-                        prompt += "### ".concat(category.toUpperCase(), " COLORS\n");
-                        styles.forEach(function (style) {
-                            prompt += "- **".concat(style.name, "**: ").concat(style.colorInfo.color);
+                        prompt += `### ${category.toUpperCase()} COLORS\n`;
+                        styles.forEach(style => {
+                            prompt += `- **${style.name}**: ${style.colorInfo.color}`;
                             if (style.variant) {
-                                prompt += " (variant: ".concat(style.variant, ")");
+                                prompt += ` (variant: ${style.variant})`;
                             }
                             if (style.description) {
-                                prompt += " - ".concat(style.description);
+                                prompt += ` - ${style.description}`;
                             }
-                            prompt += "\n";
+                            prompt += `\n`;
                         });
-                        prompt += "\n";
+                        prompt += `\n`;
                     }
                 });
-                prompt += "### Color Usage Guidelines:\n";
-                prompt += "- Use PRIMARY colors for main actions, headers, and brand elements\n";
-                prompt += "- Use SECONDARY colors for supporting actions and accents\n";
-                prompt += "- Use NEUTRAL colors for text, backgrounds, and borders\n";
-                prompt += "- Use SEMANTIC colors for success/error/warning states\n";
-                prompt += "- Use SURFACE colors for backgrounds and containers\n";
-                prompt += "- Reference colors by their exact name: \"".concat(((_a = colorStyles.primary[0]) === null || _a === void 0 ? void 0 : _a.name) || 'Primary/500', "\"\n\n");
+                prompt += `### Color Usage Guidelines:\n`;
+                prompt += `- Use PRIMARY colors for main actions, headers, and brand elements\n`;
+                prompt += `- Use SECONDARY colors for supporting actions and accents\n`;
+                prompt += `- Use NEUTRAL colors for text, backgrounds, and borders\n`;
+                prompt += `- Use SEMANTIC colors for success/error/warning states\n`;
+                prompt += `- Use SURFACE colors for backgrounds and containers\n`;
+                prompt += `- Reference colors by their exact name: "${((_a = colorStyles.primary[0]) === null || _a === void 0 ? void 0 : _a.name) || 'Primary/500'}"\n\n`;
             }
         }
-        prompt += "## Available Components in Design System:\n\n";
-        Object.keys(componentsByType).sort().forEach(function (type) {
+        // Add renderer constraints section
+        prompt += `## CRITICAL RENDERER CONSTRAINTS\n\n`;
+        prompt += `### The ONLY native elements supported:\n`;
+        prompt += `- **native-text**: Text elements with styling\n`;
+        prompt += `- **native-rectangle**: Rectangles (supports image fills)\n`;
+        prompt += `- **native-circle**: Circles/ellipses (supports image fills)\n\n`;
+        prompt += `### NEVER use these (they don't exist):\n`;
+        prompt += `- ❌ native-grid (use layoutContainer with wrap)\n`;
+        prompt += `- ❌ native-list-item (use list components)\n`;
+        prompt += `- ❌ native-rating (use star components)\n`;
+        prompt += `- ❌ native-image (use native-rectangle with image fill)\n`;
+        prompt += `- ❌ Any other native-* type\n\n`;
+        prompt += `### Sizing Rules:\n`;
+        prompt += `- ✅ Use "horizontalSizing": "FILL" for full width\n`;
+        prompt += `- ✅ Use numeric values for fixed width (e.g., 200)\n`;
+        prompt += `- ❌ NEVER use percentages like "50%" or "100%"\n\n`;
+        prompt += `## Available Components in Design System:\n\n`;
+        Object.keys(componentsByType).sort().forEach(type => {
             var _a, _b, _c, _d, _e, _f;
-            var comps = componentsByType[type];
-            var bestComponent = comps.sort(function (a, b) { return b.confidence - a.confidence; })[0];
-            prompt += "### ".concat(type.toUpperCase(), "\n");
-            prompt += "- Component ID: \"".concat(bestComponent.id, "\"\n");
-            prompt += "- Component Name: \"".concat(bestComponent.name, "\"\n");
+            const comps = componentsByType[type];
+            const bestComponent = comps.sort((a, b) => b.confidence - a.confidence)[0];
+            prompt += `### ${type.toUpperCase()}\n`;
+            prompt += `- Component ID: "${bestComponent.id}"\n`;
+            prompt += `- Component Name: "${bestComponent.name}"\n`;
             if ((_a = bestComponent.textLayers) === null || _a === void 0 ? void 0 : _a.length)
-                prompt += "- Text Layers: ".concat(bestComponent.textLayers.map(function (l) { return "\"".concat(l, "\""); }).join(', '), "\n");
+                prompt += `- Text Layers: ${bestComponent.textLayers.map(l => `"${l}"`).join(', ')}\n`;
             if ((_b = bestComponent.textHierarchy) === null || _b === void 0 ? void 0 : _b.length) {
-                prompt += "- Text Hierarchy:\n";
-                bestComponent.textHierarchy.forEach(function (text) {
-                    prompt += "  - ".concat(text.classification.toUpperCase(), ": \"").concat(text.nodeName, "\" (").concat(text.fontSize, "px, ").concat(text.fontWeight).concat(text.visible ? '' : ', hidden', ")\n");
+                prompt += `- Text Hierarchy:\n`;
+                bestComponent.textHierarchy.forEach(text => {
+                    prompt += `  - ${text.classification.toUpperCase()}: "${text.nodeName}" (${text.fontSize}px, ${text.fontWeight}${text.visible ? '' : ', hidden'})\n`;
                 });
             }
             if ((_c = bestComponent.componentInstances) === null || _c === void 0 ? void 0 : _c.length) {
-                prompt += "- Component Instances: ".concat(bestComponent.componentInstances.map(function (c) { return "\"".concat(c.nodeName, "\"").concat(c.visible ? '' : ' (hidden)'); }).join(', '), "\n");
+                prompt += `- Component Instances: ${bestComponent.componentInstances.map(c => `"${c.nodeName}"${c.visible ? '' : ' (hidden)'}`).join(', ')}\n`;
             }
             if ((_d = bestComponent.vectorNodes) === null || _d === void 0 ? void 0 : _d.length) {
-                prompt += "- Vector Icons: ".concat(bestComponent.vectorNodes.map(function (v) { return "\"".concat(v.nodeName, "\"").concat(v.visible ? '' : ' (hidden)'); }).join(', '), "\n");
+                prompt += `- Vector Icons: ${bestComponent.vectorNodes.map(v => `"${v.nodeName}"${v.visible ? '' : ' (hidden)'}`).join(', ')}\n`;
             }
             if ((_e = bestComponent.imageNodes) === null || _e === void 0 ? void 0 : _e.length) {
-                prompt += "- Image Containers: ".concat(bestComponent.imageNodes.map(function (i) { return "\"".concat(i.nodeName, "\" (").concat(i.nodeType).concat(i.hasImageFill ? ', has image' : '').concat(i.visible ? '' : ', hidden', ")"); }).join(', '), "\n");
+                prompt += `- Image Containers: ${bestComponent.imageNodes.map(i => `"${i.nodeName}" (${i.nodeType}${i.hasImageFill ? ', has image' : ''}${i.visible ? '' : ', hidden'})`).join(', ')}\n`;
             }
             if (bestComponent.variantDetails && Object.keys(bestComponent.variantDetails).length > 0) {
-                prompt += "\n  - \uD83C\uDFAF VARIANTS AVAILABLE:\n";
-                Object.entries(bestComponent.variantDetails).forEach(function (_a) {
-                    var propName = _a[0], values = _a[1];
-                    prompt += "    - **".concat(propName, "**: [").concat(values.map(function (v) { return "\"".concat(v, "\""); }).join(', '), "]\n");
-                    var propLower = propName.toLowerCase();
+                prompt += `\n  - 🎯 VARIANTS AVAILABLE:\n`;
+                Object.entries(bestComponent.variantDetails).forEach(([propName, values]) => {
+                    prompt += `    - **${propName}**: [${values.map(v => `"${v}"`).join(', ')}]\n`;
+                    const propLower = propName.toLowerCase();
                     if (propLower.includes('condition') || propLower.includes('layout')) {
-                        prompt += "      \uD83D\uDCA1 Layout control: ".concat(values.includes('1-line') ? '"1-line" = single line, ' : '').concat(values.includes('2-line') ? '"2-line" = detailed view' : '', "\n");
+                        prompt += `      💡 Layout control: ${values.includes('1-line') ? '"1-line" = single line, ' : ''}${values.includes('2-line') ? '"2-line" = detailed view' : ''}\n`;
                     }
                     if (propLower.includes('leading') || propLower.includes('start')) {
-                        prompt += "      \uD83D\uDCA1 Leading element: \"Icon\" = shows leading icon, \"None\" = text only\n";
+                        prompt += `      💡 Leading element: "Icon" = shows leading icon, "None" = text only\n`;
                     }
                     if (propLower.includes('trailing') || propLower.includes('end')) {
-                        prompt += "      \uD83D\uDCA1 Trailing element: \"Icon\" = shows trailing icon/chevron, \"None\" = no trailing element\n";
+                        prompt += `      💡 Trailing element: "Icon" = shows trailing icon/chevron, "None" = no trailing element\n`;
                     }
                     if (propLower.includes('state') || propLower.includes('status')) {
-                        prompt += "      \uD83D\uDCA1 Component state: controls enabled/disabled/selected appearance\n";
+                        prompt += `      💡 Component state: controls enabled/disabled/selected appearance\n`;
                     }
                     if (propLower.includes('size')) {
-                        prompt += "      \uD83D\uDCA1 Size control: affects padding, text size, and touch targets\n";
+                        prompt += `      💡 Size control: affects padding, text size, and touch targets\n`;
                     }
                     if (propLower.includes('type') || propLower.includes('style') || propLower.includes('emphasis')) {
-                        prompt += "      \uD83D\uDCA1 Visual emphasis: controls hierarchy and visual weight\n";
+                        prompt += `      💡 Visual emphasis: controls hierarchy and visual weight\n`;
                     }
                 });
-                prompt += "\n  - \u26A1 QUICK VARIANT GUIDE:\n";
-                prompt += "    - \"single line\" request \u2192 use \"Condition\": \"1-line\"\n";
-                prompt += "    - \"with icon\" request \u2192 use \"Leading\": \"Icon\"\n";
-                prompt += "    - \"arrow\" or \"chevron\" \u2192 use \"Trailing\": \"Icon\"\n";
-                prompt += "    - \"simple\" or \"minimal\" \u2192 omit variants to use defaults\n";
-                prompt += "    - Only specify variants you want to change from defaults\n";
+                prompt += `\n  - ⚡ QUICK VARIANT GUIDE:\n`;
+                prompt += `    - "single line" request → use "Condition": "1-line"\n`;
+                prompt += `    - "with icon" request → use "Leading": "Icon"\n`;
+                prompt += `    - "arrow" or "chevron" → use "Trailing": "Icon"\n`;
+                prompt += `    - "simple" or "minimal" → omit variants to use defaults\n`;
+                prompt += `    - Only specify variants you want to change from defaults\n`;
             }
-            prompt += "- Page: ".concat(((_f = bestComponent.pageInfo) === null || _f === void 0 ? void 0 : _f.pageName) || 'Unknown', "\n\n");
+            prompt += `- Page: ${((_f = bestComponent.pageInfo) === null || _f === void 0 ? void 0 : _f.pageName) || 'Unknown'}\n\n`;
         });
-        prompt += "## JSON Structure & Rules:\n\n### Variant Usage Rules:\n- **Variants must be in a separate \"variants\" object inside properties**\n- **NEVER mix variants with regular properties at the same level**\n- Variant properties are case-sensitive: \"Condition\" not \"condition\"\n- Variant values are case-sensitive: \"1-line\" not \"1-Line\"\n\n### \u2705 CORRECT Variant Structure:\n```json\n{\n  \"type\": \"list-item\",\n  \"componentNodeId\": \"10:123\",\n  \"properties\": {\n    \"text\": \"Personal details\",\n    \"horizontalSizing\": \"FILL\",\n    \"variants\": {\n      \"Condition\": \"1-line\",\n      \"Leading\": \"Icon\", \n      \"Trailing\": \"Icon\"\n    }\n  }\n}\n```\n\n### \u274C WRONG - Never do this:\n```json\n{\n  \"properties\": {\n    \"text\": \"Personal details\",\n    \"Condition\": \"1-line\",    // WRONG: variants mixed with properties\n    \"Leading\": \"Icon\"         // WRONG: should be in variants object\n  }\n}\n```\n\n### Settings Screen with Proper Variants:\n```json\n{\n  \"layoutContainer\": {\n    \"name\": \"Settings Screen\",\n    \"layoutMode\": \"VERTICAL\",\n    \"width\": 360,\n    \"itemSpacing\": 8\n  },\n  \"items\": [\n    {\n      \"type\": \"list-item\",\n      \"componentNodeId\": \"10:123\",\n      \"properties\": {\n        \"text\": \"Personal details\",\n        \"horizontalSizing\": \"FILL\",\n        \"variants\": {\n          \"Condition\": \"1-line\",\n          \"Leading\": \"Icon\",\n          \"Trailing\": \"None\"\n        }\n      }\n    },\n    {\n      \"type\": \"list-item\",\n      \"componentNodeId\": \"10:123\",\n      \"properties\": {\n        \"text\": \"Change language\",\n        \"trailing-text\": \"English\",\n        \"horizontalSizing\": \"FILL\",\n        \"variants\": {\n          \"Condition\": \"1-line\",\n          \"Leading\": \"Icon\",\n          \"Trailing\": \"Icon\"\n        }\n      }\n    },\n    {\n      \"type\": \"list-item\",\n      \"componentNodeId\": \"10:123\",\n      \"properties\": {\n        \"text\": \"Notifications\",\n        \"supporting-text\": \"Push notifications and email alerts\",\n        \"trailing-text\": \"On\",\n        \"horizontalSizing\": \"FILL\",\n        \"variants\": {\n          \"Condition\": \"2-line\",\n          \"Leading\": \"Icon\",\n          \"Trailing\": \"Icon\"\n        }\n      }\n    }\n  ]\n}\n```\n\n### \u2705 VARIANT BEST PRACTICES:\n- **Always use exact property names**: \"Condition\" not \"condition\"\n- **Use exact values**: \"1-line\" not \"1-Line\" or \"single-line\"\n- **Specify complete variant sets**: Include all required properties for that variant\n- **Common patterns**:\n  - Simple navigation: `\"Condition\": \"1-line\", \"Leading\": \"Icon\", \"Trailing\": \"None\"`\n  - With current value: `\"Condition\": \"1-line\", \"Leading\": \"Icon\", \"Trailing\": \"Icon\"`\n  - Detailed info: `\"Condition\": \"2-line\", \"Leading\": \"Icon\", \"Trailing\": \"Icon\"`\n\n*\uD83C\uDFAF Pro tip: Study your design system's variant combinations in Figma to understand which variants work together.*\n";
+        prompt += `## JSON Structure & Rules:
+
+### Variant Usage Rules:
+- **Variants must be in a separate "variants" object inside properties**
+- **NEVER mix variants with regular properties at the same level**
+- Variant properties are case-sensitive: "Condition" not "condition"
+- Variant values are case-sensitive: "1-line" not "1-Line"
+
+### ✅ CORRECT Variant Structure:
+\`\`\`json
+{
+  "type": "list-item",
+  "componentNodeId": "10:123",
+  "properties": {
+    "text": "Personal details",
+    "horizontalSizing": "FILL",
+    "variants": {
+      "Condition": "1-line",
+      "Leading": "Icon", 
+      "Trailing": "Icon"
+    }
+  }
+}
+\`\`\`
+
+### ❌ WRONG - Never do this:
+\`\`\`json
+{
+  "properties": {
+    "text": "Personal details",
+    "Condition": "1-line",    // WRONG: variants mixed with properties
+    "Leading": "Icon"         // WRONG: should be in variants object
+  }
+}
+\`\`\`
+
+### Settings Screen with Proper Variants:
+\`\`\`json
+{
+  "layoutContainer": {
+    "name": "Settings Screen",
+    "layoutMode": "VERTICAL",
+    "width": 360,
+    "itemSpacing": 8
+  },
+  "items": [
+    {
+      "type": "list-item",
+      "componentNodeId": "10:123",
+      "properties": {
+        "text": "Personal details",
+        "horizontalSizing": "FILL",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "None"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:123",
+      "properties": {
+        "text": "Change language",
+        "trailing-text": "English",
+        "horizontalSizing": "FILL",
+        "variants": {
+          "Condition": "1-line",
+          "Leading": "Icon",
+          "Trailing": "Icon"
+        }
+      }
+    },
+    {
+      "type": "list-item",
+      "componentNodeId": "10:123",
+      "properties": {
+        "text": "Notifications",
+        "supporting-text": "Push notifications and email alerts",
+        "trailing-text": "On",
+        "horizontalSizing": "FILL",
+        "variants": {
+          "Condition": "2-line",
+          "Leading": "Icon",
+          "Trailing": "Icon"
+        }
+      }
+    }
+  ]
+}
+\`\`\`
+
+### ✅ VARIANT BEST PRACTICES:
+- **Always use exact property names**: "Condition" not "condition"
+- **Use exact values**: "1-line" not "1-Line" or "single-line"
+- **Specify complete variant sets**: Include all required properties for that variant
+- **Common patterns**:
+  - Simple navigation: \`"Condition": "1-line", "Leading": "Icon", "Trailing": "None"\`
+  - With current value: \`"Condition": "1-line", "Leading": "Icon", "Trailing": "Icon"\`
+  - Detailed info: \`"Condition": "2-line", "Leading": "Icon", "Trailing": "Icon"\`
+
+*🎯 Pro tip: Study your design system's variant combinations in Figma to understand which variants work together.*
+`;
         return prompt;
-    };
+    }
     /**
      * Save scan results to Figma storage
      */
-    ComponentScanner.saveLastScanResults = function (components) {
-        return __awaiter(this, void 0, void 0, function () {
-            var scanSession, error_9, fallbackError_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 8]);
-                        scanSession = {
-                            components: components,
-                            scanTime: Date.now(),
-                            version: "1.0",
-                            fileKey: figma.root.id
-                        };
-                        return [4 /*yield*/, figma.clientStorage.setAsync('design-system-scan', scanSession)];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, figma.clientStorage.setAsync('last-scan-results', components)];
-                    case 2:
-                        _a.sent();
-                        console.log("\uD83D\uDCBE Saved ".concat(components.length, " components with session data"));
-                        return [3 /*break*/, 8];
-                    case 3:
-                        error_9 = _a.sent();
-                        console.error("❌ Error saving scan results:", error_9);
-                        _a.label = 4;
-                    case 4:
-                        _a.trys.push([4, 6, , 7]);
-                        return [4 /*yield*/, figma.clientStorage.setAsync('last-scan-results', components)];
-                    case 5:
-                        _a.sent();
-                        console.log("💾 Fallback save successful");
-                        return [3 /*break*/, 7];
-                    case 6:
-                        fallbackError_2 = _a.sent();
-                        console.warn("⚠️ Could not save scan results:", fallbackError_2);
-                        return [3 /*break*/, 7];
-                    case 7: return [3 /*break*/, 8];
-                    case 8: return [2 /*return*/];
-                }
-            });
-        });
-    };
+    static async saveLastScanResults(components) {
+        try {
+            const scanSession = {
+                components,
+                scanTime: Date.now(),
+                version: "1.0",
+                fileKey: figma.root.id
+            };
+            await figma.clientStorage.setAsync('design-system-scan', scanSession);
+            await figma.clientStorage.setAsync('last-scan-results', components);
+            console.log(`💾 Saved ${components.length} components with session data`);
+        }
+        catch (error) {
+            console.error("❌ Error saving scan results:", error);
+            try {
+                await figma.clientStorage.setAsync('last-scan-results', components);
+                console.log("💾 Fallback save successful");
+            }
+            catch (fallbackError) {
+                console.warn("⚠️ Could not save scan results:", fallbackError);
+            }
+        }
+    }
     /**
      * Get component ID by type for UI generation
      */
-    ComponentScanner.getComponentIdByType = function (type) {
-        return __awaiter(this, void 0, void 0, function () {
-            var searchType, scanResults, matchingComponent, nameMatchingComponent;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        searchType = type.toLowerCase();
-                        return [4 /*yield*/, figma.clientStorage.getAsync('last-scan-results')];
-                    case 1:
-                        scanResults = _a.sent();
-                        if (scanResults && Array.isArray(scanResults)) {
-                            matchingComponent = scanResults.find(function (comp) { return comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7; });
-                            if (matchingComponent)
-                                return [2 /*return*/, matchingComponent.id];
-                            nameMatchingComponent = scanResults.find(function (comp) { return comp.name.toLowerCase().includes(searchType); });
-                            if (nameMatchingComponent)
-                                return [2 /*return*/, nameMatchingComponent.id];
-                        }
-                        console.log("\u274C ID for type ".concat(type, " not found"));
-                        return [2 /*return*/, null];
-                }
+    static async getComponentIdByType(type) {
+        const searchType = type.toLowerCase();
+        const scanResults = await figma.clientStorage.getAsync('last-scan-results');
+        if (scanResults && Array.isArray(scanResults)) {
+            const matchingComponent = scanResults.find((comp) => comp.suggestedType.toLowerCase() === searchType && comp.confidence >= 0.7);
+            if (matchingComponent)
+                return matchingComponent.id;
+            const nameMatchingComponent = scanResults.find((comp) => comp.name.toLowerCase().includes(searchType));
+            if (nameMatchingComponent)
+                return nameMatchingComponent.id;
+        }
+        console.log(`❌ ID for type ${type} not found`);
+        return null;
+    }
+    /**
+     * NEW: Build Variable Maps (similar to buildTextStyleMap)
+     */
+    static buildVariableMap(variables) {
+        if (variables && variables.length > 0) {
+            this.variableMap.clear();
+            this.variableDetails.clear();
+            variables.forEach(variable => {
+                var _a;
+                this.variableMap.set(variable.id, variable.name);
+                this.variableDetails.set(variable.id, {
+                    id: variable.id,
+                    name: variable.name,
+                    resolvedType: variable.resolvedType,
+                    scopes: variable.scopes || [],
+                    collection: (_a = variable.collection) === null || _a === void 0 ? void 0 : _a.name
+                });
             });
-        });
-    };
+            console.log(`✅ Built variable lookup map with ${this.variableMap.size} entries`);
+            // DEBUG: Log first few entries to understand ID format
+            const firstEntries = Array.from(this.variableMap.entries()).slice(0, 3);
+            console.log('🔍 First variable IDs in map:', firstEntries);
+        }
+    }
     /**
      * NEW: Extract color and style information from component
      */
-    ComponentScanner.extractStyleInfo = function (node) {
+    static extractStyleInfo(node) {
         var _a, _b, _c;
-        var styleInfo = {};
+        const styleInfo = {};
         try {
             // Get the primary node to analyze (for component sets, use the first variant)
-            var primaryNode = node;
+            let primaryNode = node;
             if (node.type === 'COMPONENT_SET' && node.children.length > 0) {
                 primaryNode = node.children[0];
             }
             // Extract fills and background colors
-            var fills = this.extractFills(primaryNode);
+            const fills = this.extractFills(primaryNode);
             if (fills.length > 0) {
                 styleInfo.fills = fills;
                 styleInfo.primaryColor = fills[0]; // Use first fill as primary color
             }
             // Extract strokes
-            var strokes = this.extractStrokes(primaryNode);
+            const strokes = this.extractStrokes(primaryNode);
             if (strokes.length > 0) {
                 styleInfo.strokes = strokes;
             }
             // Find text color from text nodes
-            var textColor = this.findPrimaryTextColor(primaryNode);
+            const textColor = this.findPrimaryTextColor(primaryNode);
             if (textColor) {
                 styleInfo.textColor = textColor;
             }
             // Extract background color (look for the largest rectangle/background)
-            var backgroundColor = this.findBackgroundColor(primaryNode);
+            const backgroundColor = this.findBackgroundColor(primaryNode);
             if (backgroundColor) {
                 styleInfo.backgroundColor = backgroundColor;
             }
             // Log summary of extracted colors for debugging
             if (styleInfo.primaryColor || styleInfo.backgroundColor || styleInfo.textColor) {
-                console.log("\uD83C\uDFA8 Colors extracted for \"".concat(node.name, "\":"), {
+                console.log(`🎨 Colors extracted for "${node.name}":`, {
                     primary: (_a = styleInfo.primaryColor) === null || _a === void 0 ? void 0 : _a.color,
                     background: (_b = styleInfo.backgroundColor) === null || _b === void 0 ? void 0 : _b.color,
                     text: (_c = styleInfo.textColor) === null || _c === void 0 ? void 0 : _c.color
@@ -1392,21 +2355,23 @@ var ComponentScanner = /** @class */ (function () {
             }
         }
         catch (error) {
-            console.warn("\u26A0\uFE0F Error extracting style info for \"".concat(node.name, "\":"), error);
+            console.warn(`⚠️ Error extracting style info for "${node.name}":`, error);
         }
         return styleInfo;
-    };
+    }
     /**
      * Extract fill colors from a node
      */
-    ComponentScanner.extractFills = function (node) {
-        var colorInfos = [];
+    static extractFills(node) {
+        const colorInfos = [];
         try {
             if ('fills' in node && node.fills && Array.isArray(node.fills)) {
-                for (var _i = 0, _a = node.fills; _i < _a.length; _i++) {
-                    var fill = _a[_i];
+                // Get fillStyleId if available
+                const fillStyleId = ('fillStyleId' in node) ? node.fillStyleId : undefined;
+                const styleId = (fillStyleId && fillStyleId !== figma.mixed) ? fillStyleId : undefined;
+                for (const fill of node.fills) {
                     if (fill.visible !== false) {
-                        var colorInfo = this.convertPaintToColorInfo(fill);
+                        const colorInfo = this.convertPaintToColorInfo(fill, styleId);
                         if (colorInfo) {
                             colorInfos.push(colorInfo);
                         }
@@ -1418,18 +2383,20 @@ var ComponentScanner = /** @class */ (function () {
             console.warn('Error extracting fills:', error);
         }
         return colorInfos;
-    };
+    }
     /**
      * Extract stroke colors from a node
      */
-    ComponentScanner.extractStrokes = function (node) {
-        var colorInfos = [];
+    static extractStrokes(node) {
+        const colorInfos = [];
         try {
             if ('strokes' in node && node.strokes && Array.isArray(node.strokes)) {
-                for (var _i = 0, _a = node.strokes; _i < _a.length; _i++) {
-                    var stroke = _a[_i];
+                // Get strokeStyleId if available
+                const strokeStyleId = ('strokeStyleId' in node) ? node.strokeStyleId : undefined;
+                const styleId = (strokeStyleId && typeof strokeStyleId === 'string') ? strokeStyleId : undefined;
+                for (const stroke of node.strokes) {
                     if (stroke.visible !== false) {
-                        var colorInfo = this.convertPaintToColorInfo(stroke);
+                        const colorInfo = this.convertPaintToColorInfo(stroke, styleId);
                         if (colorInfo) {
                             colorInfos.push(colorInfo);
                         }
@@ -1441,45 +2408,120 @@ var ComponentScanner = /** @class */ (function () {
             console.warn('Error extracting strokes:', error);
         }
         return colorInfos;
-    };
+    }
     /**
      * Convert Figma Paint to ColorInfo
+     * @param paint Paint object from Figma API
+     * @param styleId Optional fillStyleId or strokeStyleId from the node
      */
-    ComponentScanner.convertPaintToColorInfo = function (paint) {
-        var _this = this;
+    static convertPaintToColorInfo(paint, styleId) {
+        var _a, _b;
         try {
             if (paint.type === 'SOLID' && paint.color) {
+                let designToken;
+                let usesDesignToken = false;
+                // NEW: Check for boundVariables and resolve to token name
+                if ((_b = (_a = paint.boundVariables) === null || _a === void 0 ? void 0 : _a.color) === null || _b === void 0 ? void 0 : _b.id) {
+                    const variableId = paint.boundVariables.color.id;
+                    designToken = this.variableMap.get(variableId);
+                    usesDesignToken = !!designToken;
+                    if (designToken) {
+                        console.log(`🎨 Resolved variable: ${variableId} → "${designToken}"`);
+                    }
+                    else {
+                        console.warn(`⚠️ Variable ID not found in map: ${variableId}`);
+                    }
+                }
+                // NEW: Extract Design System color style references using node.fillStyleId/strokeStyleId
+                let paintStyleName;
+                if (styleId) {
+                    paintStyleName = this.paintStyleMap.get(styleId);
+                    if (!paintStyleName) {
+                        // Try format variations similar to textStyleId approach
+                        const baseId = styleId.split(',')[0];
+                        const mapFormatId = baseId + ',';
+                        paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
+                    }
+                }
                 return {
                     type: 'SOLID',
                     color: this.rgbToHex(paint.color),
-                    opacity: paint.opacity || 1
+                    opacity: paint.opacity || 1,
+                    // NEW: Design System color style references
+                    paintStyleId: undefined, // GradientPaint doesn't have paintStyleId
+                    paintStyleName: paintStyleName,
+                    boundVariables: paint.boundVariables || undefined,
+                    usesDesignSystemColor: !!(styleId || usesDesignToken),
+                    // NEW: Design Token fields
+                    designToken: designToken,
+                    usesDesignToken: usesDesignToken
                 };
             }
             if (paint.type === 'GRADIENT_LINEAR' && paint.gradientStops) {
+                // NEW: Extract Design System color style references for gradients
+                let paintStyleName;
+                if (styleId) {
+                    paintStyleName = this.paintStyleMap.get(styleId);
+                    if (!paintStyleName) {
+                        const baseId = styleId.split(',')[0];
+                        const mapFormatId = baseId + ',';
+                        paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
+                    }
+                }
                 return {
                     type: 'GRADIENT_LINEAR',
-                    gradientStops: paint.gradientStops.map(function (stop) { return ({
-                        color: _this.rgbToHex(stop.color),
+                    gradientStops: paint.gradientStops.map(stop => ({
+                        color: this.rgbToHex(stop.color),
                         position: stop.position
-                    }); }),
-                    opacity: paint.opacity || 1
+                    })),
+                    opacity: paint.opacity || 1,
+                    // NEW: Design System color style references
+                    paintStyleId: undefined, // GradientPaint doesn't have paintStyleId
+                    paintStyleName: paintStyleName,
+                    boundVariables: undefined, // GradientPaint doesn't have boundVariables 
+                    usesDesignSystemColor: !!(styleId),
+                    // NEW: Design Token fields (gradients don't typically use color variables)
+                    designToken: undefined,
+                    usesDesignToken: false
                 };
             }
             // Add support for other gradient types
             if ((paint.type === 'GRADIENT_RADIAL' || paint.type === 'GRADIENT_ANGULAR' || paint.type === 'GRADIENT_DIAMOND') && paint.gradientStops) {
+                // NEW: Extract Design System color style references for other gradients
+                // Note: GradientPaint doesn't have paintStyleId property in current Figma API
+                let paintStyleName;
+                if (styleId) {
+                    paintStyleName = this.paintStyleMap.get(styleId);
+                    if (!paintStyleName) {
+                        const baseId = styleId.split(',')[0];
+                        const mapFormatId = baseId + ',';
+                        paintStyleName = this.paintStyleMap.get(mapFormatId) || this.paintStyleMap.get(baseId);
+                    }
+                }
                 return {
                     type: paint.type,
-                    gradientStops: paint.gradientStops.map(function (stop) { return ({
-                        color: _this.rgbToHex(stop.color),
+                    gradientStops: paint.gradientStops.map(stop => ({
+                        color: this.rgbToHex(stop.color),
                         position: stop.position
-                    }); }),
-                    opacity: paint.opacity || 1
+                    })),
+                    opacity: paint.opacity || 1,
+                    // NEW: Design System color style references
+                    paintStyleId: undefined, // GradientPaint doesn't have paintStyleId
+                    paintStyleName: paintStyleName,
+                    boundVariables: undefined, // GradientPaint doesn't have boundVariables 
+                    usesDesignSystemColor: !!(styleId),
+                    // NEW: Design Token fields (gradients don't typically use color variables)
+                    designToken: undefined,
+                    usesDesignToken: false
                 };
             }
             if (paint.type === 'IMAGE') {
                 return {
                     type: 'IMAGE',
-                    opacity: paint.opacity || 1
+                    opacity: paint.opacity || 1,
+                    // NEW: Design Token fields (images don't use color variables)
+                    designToken: undefined,
+                    usesDesignToken: false
                 };
             }
         }
@@ -1487,30 +2529,33 @@ var ComponentScanner = /** @class */ (function () {
             console.warn('Error converting paint to color info:', error);
         }
         return null;
-    };
+    }
     /**
      * Convert RGB to hex color
      */
-    ComponentScanner.rgbToHex = function (rgb) {
-        var toHex = function (value) {
-            var hex = Math.round(value * 255).toString(16);
+    static rgbToHex(rgb) {
+        const toHex = (value) => {
+            const hex = Math.round(value * 255).toString(16);
             return hex.length === 1 ? '0' + hex : hex;
         };
-        return "#".concat(toHex(rgb.r)).concat(toHex(rgb.g)).concat(toHex(rgb.b));
-    };
+        return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
+    }
     /**
      * Find primary text color by analyzing text nodes
      */
-    ComponentScanner.findPrimaryTextColor = function (node) {
+    static findPrimaryTextColor(node) {
         try {
-            var textNodes = node.findAll(function (n) { return n.type === 'TEXT'; });
-            for (var _i = 0, textNodes_1 = textNodes; _i < textNodes_1.length; _i++) {
-                var textNode = textNodes_1[_i];
+            // Type guard: only nodes with children can use findAll
+            if (!('findAll' in node)) {
+                return null;
+            }
+            const textNodes = node.findAll(n => n.type === 'TEXT');
+            for (const textNode of textNodes) {
                 if (textNode.visible && textNode.fills && Array.isArray(textNode.fills)) {
-                    for (var _a = 0, _b = textNode.fills; _a < _b.length; _a++) {
-                        var fill = _b[_a];
+                    for (const fill of textNode.fills) {
                         if (fill.visible !== false && fill.type === 'SOLID') {
-                            return this.convertPaintToColorInfo(fill);
+                            const styleId = textNode.fillStyleId && typeof textNode.fillStyleId === 'string' ? textNode.fillStyleId : undefined;
+                            return this.convertPaintToColorInfo(fill, styleId);
                         }
                     }
                 }
@@ -1520,29 +2565,30 @@ var ComponentScanner = /** @class */ (function () {
             console.warn('Error finding text color:', error);
         }
         return null;
-    };
+    }
     /**
      * Find background color by analyzing the largest rectangle or container
      */
-    ComponentScanner.findBackgroundColor = function (node) {
+    static findBackgroundColor(node) {
         try {
+            // Type guard: only nodes with children can use findAll
+            if (!('findAll' in node)) {
+                return null;
+            }
             // Look for rectangles that could be backgrounds
-            var rectangles = node.findAll(function (n) {
-                return n.type === 'RECTANGLE' || n.type === 'FRAME' || n.type === 'COMPONENT';
-            });
+            const rectangles = node.findAll(n => n.type === 'RECTANGLE' || n.type === 'FRAME' || n.type === 'COMPONENT');
             // Sort by size (area) to find the largest one that's likely the background
-            rectangles.sort(function (a, b) {
-                var areaA = a.width * a.height;
-                var areaB = b.width * b.height;
+            rectangles.sort((a, b) => {
+                const areaA = a.width * a.height;
+                const areaB = b.width * b.height;
                 return areaB - areaA;
             });
-            for (var _i = 0, rectangles_1 = rectangles; _i < rectangles_1.length; _i++) {
-                var rect = rectangles_1[_i];
+            for (const rect of rectangles) {
                 if ('fills' in rect && rect.fills && Array.isArray(rect.fills)) {
-                    for (var _a = 0, _b = rect.fills; _a < _b.length; _a++) {
-                        var fill = _b[_a];
+                    for (const fill of rect.fills) {
                         if (fill.visible !== false) {
-                            var colorInfo = this.convertPaintToColorInfo(fill);
+                            const styleId = 'fillStyleId' in rect && rect.fillStyleId && typeof rect.fillStyleId === 'string' ? rect.fillStyleId : undefined;
+                            const colorInfo = this.convertPaintToColorInfo(fill, styleId);
                             if (colorInfo && colorInfo.type === 'SOLID') {
                                 return colorInfo;
                             }
@@ -1555,7 +2601,148 @@ var ComponentScanner = /** @class */ (function () {
             console.warn('Error finding background color:', error);
         }
         return null;
-    };
-    return ComponentScanner;
-}());
+    }
+    /**
+     * NEW: Analyze auto-layout behavior of a component or frame
+     * Extracts comprehensive auto-layout properties including nested behavior
+     */
+    static analyzeAutoLayoutBehavior(node) {
+        try {
+            console.log(`🎯 Analyzing auto-layout behavior for "${node.name}" (${node.type})`);
+            // Check if node has auto-layout
+            if (!('layoutMode' in node) || !node.layoutMode || node.layoutMode === 'NONE') {
+                console.log(`  ❌ No auto-layout detected for "${node.name}"`);
+                return {
+                    isAutoLayout: false,
+                    layoutMode: 'NONE'
+                };
+            }
+            console.log(`  ✅ Auto-layout detected: ${node.layoutMode}`);
+            // Extract basic auto-layout properties
+            const behavior = {
+                isAutoLayout: true,
+                layoutMode: node.layoutMode,
+            };
+            // Extract sizing modes with graceful fallbacks
+            if ('primaryAxisSizingMode' in node && node.primaryAxisSizingMode) {
+                behavior.primaryAxisSizingMode = node.primaryAxisSizingMode;
+                console.log(`    primaryAxisSizingMode: ${behavior.primaryAxisSizingMode}`);
+            }
+            if ('counterAxisSizingMode' in node && node.counterAxisSizingMode) {
+                behavior.counterAxisSizingMode = node.counterAxisSizingMode;
+                console.log(`    counterAxisSizingMode: ${behavior.counterAxisSizingMode}`);
+            }
+            // Extract wrapping behavior
+            if ('layoutWrap' in node && node.layoutWrap) {
+                behavior.layoutWrap = node.layoutWrap;
+                console.log(`    layoutWrap: ${behavior.layoutWrap}`);
+            }
+            // Extract spacing properties
+            if ('itemSpacing' in node && typeof node.itemSpacing === 'number') {
+                behavior.itemSpacing = node.itemSpacing;
+                console.log(`    itemSpacing: ${behavior.itemSpacing}`);
+            }
+            if ('counterAxisSpacing' in node && typeof node.counterAxisSpacing === 'number') {
+                behavior.counterAxisSpacing = node.counterAxisSpacing;
+                console.log(`    counterAxisSpacing: ${behavior.counterAxisSpacing}`);
+            }
+            // Extract padding properties
+            if ('paddingLeft' in node && typeof node.paddingLeft === 'number') {
+                behavior.paddingLeft = node.paddingLeft;
+            }
+            if ('paddingRight' in node && typeof node.paddingRight === 'number') {
+                behavior.paddingRight = node.paddingRight;
+            }
+            if ('paddingTop' in node && typeof node.paddingTop === 'number') {
+                behavior.paddingTop = node.paddingTop;
+            }
+            if ('paddingBottom' in node && typeof node.paddingBottom === 'number') {
+                behavior.paddingBottom = node.paddingBottom;
+            }
+            console.log(`    padding: T${behavior.paddingTop || 0} R${behavior.paddingRight || 0} B${behavior.paddingBottom || 0} L${behavior.paddingLeft || 0}`);
+            // Extract alignment properties
+            if ('primaryAxisAlignItems' in node && node.primaryAxisAlignItems) {
+                behavior.primaryAxisAlignItems = node.primaryAxisAlignItems;
+                console.log(`    primaryAxisAlignItems: ${behavior.primaryAxisAlignItems}`);
+            }
+            if ('counterAxisAlignItems' in node && node.counterAxisAlignItems) {
+                behavior.counterAxisAlignItems = node.counterAxisAlignItems;
+                console.log(`    counterAxisAlignItems: ${behavior.counterAxisAlignItems}`);
+            }
+            if ('counterAxisAlignContent' in node && node.counterAxisAlignContent) {
+                behavior.counterAxisAlignContent = node.counterAxisAlignContent;
+                console.log(`    counterAxisAlignContent: ${behavior.counterAxisAlignContent}`);
+            }
+            // Extract additional properties
+            if ('itemReverseZIndex' in node && typeof node.itemReverseZIndex === 'boolean') {
+                behavior.itemReverseZIndex = node.itemReverseZIndex;
+                console.log(`    itemReverseZIndex: ${behavior.itemReverseZIndex}`);
+            }
+            if ('layoutPositioning' in node && node.layoutPositioning) {
+                behavior.layoutPositioning = node.layoutPositioning;
+                console.log(`    layoutPositioning: ${behavior.layoutPositioning}`);
+            }
+            // Analyze children auto-layout behavior (nested analysis)
+            if ('children' in node && node.children && node.children.length > 0) {
+                console.log(`    🔍 Analyzing ${node.children.length} children for nested auto-layout...`);
+                const childrenBehavior = [];
+                for (const child of node.children) {
+                    try {
+                        const childBehavior = {
+                            nodeId: child.id,
+                            nodeName: child.name,
+                            nodeType: child.type,
+                        };
+                        // Extract child layout properties
+                        if ('layoutAlign' in child && child.layoutAlign) {
+                            childBehavior.layoutAlign = child.layoutAlign;
+                        }
+                        if ('layoutGrow' in child && typeof child.layoutGrow === 'number') {
+                            childBehavior.layoutGrow = child.layoutGrow;
+                        }
+                        if ('layoutSizingHorizontal' in child && child.layoutSizingHorizontal) {
+                            childBehavior.layoutSizingHorizontal = child.layoutSizingHorizontal;
+                        }
+                        if ('layoutSizingVertical' in child && child.layoutSizingVertical) {
+                            childBehavior.layoutSizingVertical = child.layoutSizingVertical;
+                        }
+                        // Recursive analysis for nested auto-layout frames
+                        if ((child.type === 'FRAME' || child.type === 'COMPONENT' || child.type === 'INSTANCE') &&
+                            'layoutMode' in child && child.layoutMode && child.layoutMode !== 'NONE') {
+                            // Nested auto-layout log removed for cleaner console output
+                            childBehavior.autoLayoutBehavior = this.analyzeAutoLayoutBehavior(child);
+                        }
+                        childrenBehavior.push(childBehavior);
+                    }
+                    catch (childError) {
+                        console.warn(`      ⚠️ Failed to analyze child "${child.name}":`, childError);
+                    }
+                }
+                if (childrenBehavior.length > 0) {
+                    behavior.childrenAutoLayoutBehavior = childrenBehavior;
+                    console.log(`    ✅ Analyzed ${childrenBehavior.length} children behaviors`);
+                }
+            }
+            console.log(`  ✅ Auto-layout analysis completed for "${node.name}"`);
+            return behavior;
+        }
+        catch (error) {
+            console.warn(`❌ Error analyzing auto-layout behavior for "${node.name}":`, error);
+            return {
+                isAutoLayout: false,
+                layoutMode: 'NONE'
+            };
+        }
+    }
+}
 exports.ComponentScanner = ComponentScanner;
+// Static cache for text style lookups (id -> name mapping)
+ComponentScanner.textStyleMap = new Map();
+ComponentScanner.loggedMissingIds = new Set();
+// NEW: Static cache for detailed text style properties (for exact matching)
+ComponentScanner.textStyleDetails = new Map();
+// Static cache for color style lookups (id -> name mapping)
+ComponentScanner.paintStyleMap = new Map();
+// NEW: Static cache for variable lookups (id -> name mapping)
+ComponentScanner.variableMap = new Map();
+ComponentScanner.variableDetails = new Map();

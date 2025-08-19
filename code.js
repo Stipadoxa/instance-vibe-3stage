@@ -364,7 +364,7 @@
          * Main scanning function - scans all pages for components and color styles
          */
         static async scanDesignSystem() {
-          console.log("\u{1F50D} Starting comprehensive design system scan...");
+          console.log("\u{1F50D} Starting comprehensive design system scan with optimization...");
           const components = [];
           let colorStyles;
           let textStyles;
@@ -476,7 +476,7 @@
                 for (const node of allNodes) {
                   try {
                     if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
-                      const componentInfo = await this.analyzeComponent(node);
+                      const componentInfo = await this.analyzeComponentOptimized(node);
                       if (componentInfo) {
                         componentInfo.pageInfo = {
                           pageName: page.name,
@@ -639,17 +639,39 @@
           }
         }
         /**
-         * NEW: Recursively analyzes component structure to build hierarchical tree
+         * DEPRECATED: Heavy recursive method - replaced by analyzeComponentOptimized
+         * This method was causing 3.2MB JSON files due to deep recursion and coordinate data
+         * Keeping for backup - DO NOT USE in production
+         * 
          * @param node Starting node (component, frame, or any child node)
          * @param parentId Parent node ID (undefined for root)
          * @param depth Current depth in hierarchy (0 for root)
          * @param maxDepth Maximum recursion depth to prevent infinite loops
          */
-        static async analyzeComponentStructure(node, parentId, depth = 0, maxDepth = 10) {
-          console.log(`\u{1F50D} Analyzing structure for "${node.name}" at depth ${depth} (type: ${node.type})`);
-          if (depth > maxDepth) {
-            console.warn(`\u26A0\uFE0F Max depth ${maxDepth} reached for node "${node.name}", stopping recursion`);
-            return {
+        /*
+          static async analyzeComponentStructure(
+            node: SceneNode, 
+            parentId?: string, 
+            depth: number = 0,
+            maxDepth: number = 10
+          ): Promise<ComponentStructure> {
+            console.log(`🔍 Analyzing structure for "${node.name}" at depth ${depth} (type: ${node.type})`);
+            
+            // Prevent infinite recursion
+            if (depth > maxDepth) {
+              console.warn(`⚠️ Max depth ${maxDepth} reached for node "${node.name}", stopping recursion`);
+              return {
+                id: node.id,
+                type: node.type,
+                name: node.name,
+                children: [],
+                parent: parentId,
+                depth,
+                visible: node.visible
+              };
+            }
+        
+            const structure: ComponentStructure = {
               id: node.id,
               type: node.type,
               name: node.name,
@@ -658,39 +680,39 @@
               depth,
               visible: node.visible
             };
-          }
-          const structure = {
-            id: node.id,
-            type: node.type,
-            name: node.name,
-            children: [],
-            parent: parentId,
-            depth,
-            visible: node.visible
-          };
-          try {
-            structure.nodeProperties = await this.extractNodeProperties(node);
-          } catch (error) {
-            console.warn(`\u26A0\uFE0F Failed to extract properties for "${node.name}":`, error);
-          }
-          this.setSpecialFlags(structure, node, parentId);
-          if ("children" in node && node.children && node.children.length > 0 && this.shouldTraverseChildren(node)) {
-            for (let i = 0; i < node.children.length; i++) {
-              const child = node.children[i];
-              try {
-                const childStructure = await this.analyzeComponentStructure(child, node.id, depth + 1, maxDepth);
-                structure.children.push(childStructure);
-              } catch (error) {
-                console.warn(`\u26A0\uFE0F Failed to analyze child "${child.name}" of "${node.name}":`, error);
-              }
+        
+            // Extract node-specific properties
+            try {
+              structure.nodeProperties = await this.extractNodeProperties(node);
+            } catch (error) {
+              console.warn(`⚠️ Failed to extract properties for "${node.name}":`, error);
             }
-            console.log(`  \u2705 Analyzed ${structure.children.length} children for "${node.name}"`);
+        
+            // Check for special flags
+            this.setSpecialFlags(structure, node, parentId);
+        
+            // Recursively analyze children (if node has children and we should traverse them)
+            if ('children' in node && node.children && node.children.length > 0 && this.shouldTraverseChildren(node)) {
+              
+              for (let i = 0; i < node.children.length; i++) {
+                const child = node.children[i];
+                try {
+                  const childStructure = await this.analyzeComponentStructure(child, node.id, depth + 1, maxDepth);
+                  structure.children.push(childStructure);
+                } catch (error) {
+                  console.warn(`⚠️ Failed to analyze child "${child.name}" of "${node.name}":`, error);
+                }
+              }
+              
+              console.log(`  ✅ Analyzed ${structure.children.length} children for "${node.name}"`);
+            }
+        
+            return structure;
           }
-          return structure;
-        }
-        /**
-         * NEW: Extract node-specific properties based on node type
-         */
+        
+          /**
+           * NEW: Extract node-specific properties based on node type
+           */
         static async extractNodeProperties(node) {
           const properties = {};
           if ("width" in node && "height" in node) {
@@ -749,25 +771,25 @@
         /**
          * NEW: Set special flags for component structure
          */
-        static setSpecialFlags(structure, node, parentId) {
+        static setSpecialFlags(structure2, node, parentId) {
           if ("layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE") {
             if (parentId) {
-              structure.isNestedAutoLayout = true;
+              structure2.isNestedAutoLayout = true;
               if (node.type === "COMPONENT" || node.type === "INSTANCE") {
               }
             } else {
             }
           }
           if (node.type === "COMPONENT" || node.type === "INSTANCE") {
-            structure.isComponentInstanceReference = true;
+            structure2.isComponentInstanceReference = true;
             const hasAutoLayout = "layoutMode" in node && node.layoutMode && node.layoutMode !== "NONE";
             if (hasAutoLayout && parentId) {
             }
           }
           if (this.isLikelyIcon(node)) {
-            structure.iconContext = this.determineIconContext(node, parentId);
-            if (structure.iconContext) {
-              console.log(`  \u{1F3A8} Icon context for "${node.name}": ${structure.iconContext}`);
+            structure2.iconContext = this.determineIconContext(node, parentId);
+            if (structure2.iconContext) {
+              console.log(`  \u{1F3A8} Icon context for "${node.name}": ${structure2.iconContext}`);
             }
           }
         }
@@ -1026,11 +1048,6 @@
           const name = comp.name;
           const suggestedType = this.guessComponentType(name.toLowerCase());
           const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-          const textLayers = this.findTextLayers(comp);
-          const textHierarchy = await this.analyzeTextHierarchy(comp);
-          const componentInstances = await this.findComponentInstances(comp);
-          const vectorNodes = this.findVectorNodes(comp);
-          const imageNodes = this.findImageNodes(comp);
           console.log(`\u{1F3D7}\uFE0F Building hierarchical structure for "${comp.name}"`);
           let componentStructure;
           try {
@@ -1038,8 +1055,6 @@
             if (comp.type === "COMPONENT_SET" && comp.children.length > 0) {
               nodeToAnalyze = comp.defaultVariant || comp.children[0];
             }
-            componentStructure = await this.analyzeComponentStructure(nodeToAnalyze);
-            console.log(`\u2705 Built hierarchical structure with ${this.countStructureNodes(componentStructure)} total nodes`);
           } catch (error) {
             console.warn(`\u26A0\uFE0F Failed to build hierarchical structure for "${comp.name}":`, error);
           }
@@ -1074,68 +1089,273 @@
             confidence,
             variants: variants.length > 0 ? variants : void 0,
             variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
-            textLayers: textLayers.length > 0 ? textLayers : void 0,
-            // DEPRECATED: Keep for backward compatibility
-            textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0,
-            // DEPRECATED: Keep for backward compatibility
-            componentInstances: componentInstances.length > 0 ? componentInstances : void 0,
-            // DEPRECATED: Keep for backward compatibility
-            vectorNodes: vectorNodes.length > 0 ? vectorNodes : void 0,
-            // DEPRECATED: Keep for backward compatibility
-            imageNodes: imageNodes.length > 0 ? imageNodes : void 0,
-            // DEPRECATED: Keep for backward compatibility
+            textLayers: void 0,
+            // DEPRECATED: Disabled for optimization
+            textHierarchy: void 0,
+            // DEPRECATED: Disabled for optimization
+            componentInstances: void 0,
+            // DEPRECATED: Disabled for optimization
+            vectorNodes: void 0,
+            // DEPRECATED: Disabled for optimization
+            imageNodes: void 0,
+            // DEPRECATED: Disabled for optimization
             styleInfo,
             // NEW: Include color and style information
             internalPadding: internalPadding || void 0,
             // NEW: Include internal padding information
             autoLayoutBehavior: autoLayoutBehavior || void 0,
             // NEW: Include auto-layout behavior analysis
-            componentStructure,
-            // NEW: Include hierarchical structure
+            componentStructure: void 0,
+            // DEPRECATED: Disabled for optimization
             isFromLibrary: false
           };
         }
         /**
          * NEW: Count total nodes in component structure (for debugging)
          */
-        static countStructureNodes(structure) {
+        static countStructureNodes(structure2) {
           let count = 1;
-          if (structure.children && structure.children.length > 0) {
-            for (const child of structure.children) {
+          if (structure2.children && structure2.children.length > 0) {
+            for (const child of structure2.children) {
               count += this.countStructureNodes(child);
             }
           }
           return count;
         }
         /**
+         * NEW: Optimized component analysis for LLM context (replaces heavy analyzeComponent)
+         */
+        static async analyzeComponentOptimized(comp) {
+          console.log(`\u{1F680} Optimized analysis for "${comp.name}"`);
+          try {
+            const name = comp.name;
+            const suggestedType = this.guessComponentType(name.toLowerCase());
+            const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+            const variantOptions = this.extractVariantOptionsOptimized(comp);
+            const textSlots = this.extractTextSlotsOptimized(comp);
+            const componentSlots = await this.extractComponentSlotsOptimized(comp);
+            const layoutBehavior = this.extractLayoutBehaviorOptimized(comp);
+            const styleContext = this.extractStyleContextOptimized(comp);
+            console.log(`\u2705 Optimized analysis complete for "${name}"`);
+            return {
+              id: comp.id,
+              name,
+              suggestedType,
+              confidence,
+              isFromLibrary: false,
+              variantOptions,
+              textSlots,
+              componentSlots,
+              layoutBehavior,
+              styleContext
+            };
+          } catch (error) {
+            console.error(`\u274C Failed to analyze component "${comp.name}":`, error);
+            try {
+              console.log(`\u{1F504} Retrying with basic analysis for "${comp.name}"`);
+              const name = comp.name;
+              const suggestedType = this.guessComponentType(name.toLowerCase());
+              const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+              return {
+                id: comp.id,
+                name,
+                suggestedType,
+                confidence: Math.max(0.1, confidence - 0.3),
+                // Lower confidence for failed analysis
+                isFromLibrary: false
+              };
+            } catch (retryError) {
+              console.error(`\u274C Retry failed for component "${comp.name}":`, retryError);
+              throw new Error(`Component analysis completely failed for "${comp.name}": ${retryError.message}`);
+            }
+          }
+        }
+        /**
+         * Extract variant options only (no combinations)
+         */
+        static extractVariantOptionsOptimized(comp) {
+          if (comp.type !== "COMPONENT_SET") return void 0;
+          const variantOptions = {};
+          const variantProps = comp.variantGroupProperties;
+          if (!variantProps) return void 0;
+          for (const [propName, prop] of Object.entries(variantProps)) {
+            if ("values" in prop && prop.values.length > 0) {
+              variantOptions[propName] = prop.values;
+            }
+          }
+          return Object.keys(variantOptions).length > 0 ? variantOptions : void 0;
+        }
+        /**
+         * Extract text slots with exact names (SHALLOW - no recursion)
+         */
+        static extractTextSlotsOptimized(comp) {
+          const slots = {};
+          const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant || comp.children[0] : comp;
+          if (!nodeToAnalyze || !("children" in nodeToAnalyze)) return void 0;
+          for (const child of nodeToAnalyze.children) {
+            if (child.type === "TEXT") {
+              const textNode = child;
+              slots[child.name] = {
+                required: child.visible !== false,
+                type: textNode.textAutoResize === "HEIGHT" ? "multi-line" : "single-line",
+                maxLength: this.estimateMaxLength(textNode)
+              };
+            }
+          }
+          return Object.keys(slots).length > 0 ? slots : void 0;
+        }
+        /**
+         * Extract component slots with exact names (SHALLOW - references only)
+         */
+        static async extractComponentSlotsOptimized(comp) {
+          const slots = {};
+          const nodeToAnalyze = comp.type === "COMPONENT_SET" ? comp.defaultVariant || comp.children[0] : comp;
+          if (!nodeToAnalyze || !("children" in nodeToAnalyze)) return void 0;
+          for (const child of nodeToAnalyze.children) {
+            if (child.type === "INSTANCE") {
+              const instance = child;
+              try {
+                const mainComp = await instance.getMainComponentAsync();
+                const category = this.guessComponentCategory((mainComp == null ? void 0 : mainComp.name) || child.name);
+                slots[child.name] = {
+                  componentId: mainComp == null ? void 0 : mainComp.id,
+                  category,
+                  swappable: true,
+                  required: child.visible !== false
+                };
+              } catch (error) {
+                console.warn(`Failed to analyze component slot "${child.name}"`);
+              }
+            }
+          }
+          return Object.keys(slots).length > 0 ? slots : void 0;
+        }
+        /**
+         * Extract layout behavior (semantic, no absolute coordinates)
+         */
+        static extractLayoutBehaviorOptimized(comp) {
+          const node = comp.type === "COMPONENT_SET" ? comp.defaultVariant || comp.children[0] : comp;
+          if (!node || !("layoutMode" in node) || node.layoutMode === "NONE") {
+            return void 0;
+          }
+          const isIcon = "width" in node && "height" in node && Math.max(node.width, node.height) <= 48;
+          const isTouchTarget = "height" in node && node.height >= 44;
+          return {
+            type: node.primaryAxisSizingMode === "AUTO" ? "hug-content" : node.layoutAlign === "STRETCH" ? "fill-container" : "fixed",
+            direction: node.layoutMode === "HORIZONTAL" ? "horizontal" : "vertical",
+            hasInternalPadding: (node.paddingTop || 0) > 0,
+            canWrap: node.layoutWrap === "WRAP",
+            minHeight: node.minHeight || void 0,
+            isIcon,
+            isTouchTarget
+          };
+        }
+        /**
+         * Extract style context (design system colors only, no detailed fills)
+         */
+        static extractStyleContextOptimized(comp) {
+          var _a;
+          const node = comp.type === "COMPONENT_SET" ? comp.defaultVariant || comp.children[0] : comp;
+          let primaryColor;
+          try {
+            const styleInfo = this.extractStyleInfo(node);
+            primaryColor = (_a = styleInfo == null ? void 0 : styleInfo.primaryColor) == null ? void 0 : _a.paintStyleName;
+          } catch (error) {
+          }
+          const hasImageSlot = this.hasImageSlotShallow(node);
+          const semanticRole = this.inferSemanticRole(comp.name, comp.id);
+          return {
+            primaryColor,
+            hasImageSlot,
+            semanticRole
+          };
+        }
+        /**
+         * Helper: Guess component category for slots
+         */
+        static guessComponentCategory(name) {
+          const lowName = name.toLowerCase();
+          if (lowName.includes("icon")) return "icon";
+          if (lowName.includes("button") || lowName.includes("btn")) return "button";
+          if (lowName.includes("input") || lowName.includes("field")) return "input";
+          if (lowName.includes("image") || lowName.includes("photo")) return "image";
+          return "container";
+        }
+        /**
+         * Helper: Estimate max text length
+         */
+        static estimateMaxLength(textNode) {
+          if (!textNode.width) return void 0;
+          const avgCharWidth = (textNode.fontSize || 14) * 0.6;
+          const lines = textNode.textAutoResize === "HEIGHT" ? 3 : 1;
+          return Math.floor(textNode.width / avgCharWidth * lines);
+        }
+        /**
+         * Helper: Check for image slots (shallow)
+         */
+        static hasImageSlotShallow(node) {
+          if (!node || !("children" in node)) return false;
+          for (const child of node.children) {
+            if (child.type === "RECTANGLE" || child.type === "ELLIPSE") {
+              try {
+                const fills = child.fills;
+                if (Array.isArray(fills) && fills.some((f) => f.type === "IMAGE")) {
+                  return true;
+                }
+              } catch (error) {
+              }
+            }
+          }
+          return false;
+        }
+        /**
+         * Helper: Infer semantic role
+         */
+        static inferSemanticRole(name, id) {
+          const lowName = name.toLowerCase();
+          if (lowName.includes("nav") || lowName.includes("tab") || lowName.includes("menu")) {
+            return "navigation";
+          }
+          if (lowName.includes("button") || lowName.includes("cta")) {
+            return "action";
+          }
+          if (lowName.includes("card") || lowName.includes("item") || lowName.includes("list")) {
+            return "display";
+          }
+          if (lowName.includes("input") || lowName.includes("field") || lowName.includes("form")) {
+            return "input";
+          }
+          return "container";
+        }
+        /**
          * NEW: Generate a summary of component structure for debugging
          */
-        static generateStructureSummary(structure, indent = "") {
+        static generateStructureSummary(structure2, indent = "") {
           var _a, _b;
-          let summary = `${indent}${structure.type}:${structure.name} (id:${structure.id.slice(-8)})`;
+          let summary = `${indent}${structure2.type}:${structure2.name} (id:${structure2.id.slice(-8)})`;
           const flags = [];
-          if (structure.isNestedAutoLayout) flags.push("\u{1F3AF}nested-auto");
-          if (structure.isComponentInstanceReference) flags.push("\u{1F4E6}comp-ref");
-          if (structure.iconContext) flags.push(`\u{1F3A8}${structure.iconContext}`);
+          if (structure2.isNestedAutoLayout) flags.push("\u{1F3AF}nested-auto");
+          if (structure2.isComponentInstanceReference) flags.push("\u{1F4E6}comp-ref");
+          if (structure2.iconContext) flags.push(`\u{1F3A8}${structure2.iconContext}`);
           if (flags.length > 0) {
             summary += ` [${flags.join(", ")}]`;
           }
-          if (structure.nodeProperties) {
+          if (structure2.nodeProperties) {
             const props = [];
-            if ((_a = structure.nodeProperties.autoLayoutBehavior) == null ? void 0 : _a.isAutoLayout) {
-              props.push(`auto-layout:${structure.nodeProperties.autoLayoutBehavior.layoutMode}`);
+            if ((_a = structure2.nodeProperties.autoLayoutBehavior) == null ? void 0 : _a.isAutoLayout) {
+              props.push(`auto-layout:${structure2.nodeProperties.autoLayoutBehavior.layoutMode}`);
             }
-            if (structure.nodeProperties.textHierarchy) {
-              props.push(`text:${((_b = structure.nodeProperties.textHierarchy.characters) == null ? void 0 : _b.slice(0, 20)) || "empty"}`);
+            if (structure2.nodeProperties.textHierarchy) {
+              props.push(`text:${((_b = structure2.nodeProperties.textHierarchy.characters) == null ? void 0 : _b.slice(0, 20)) || "empty"}`);
             }
-            if (structure.nodeProperties.componentInstance) {
+            if (structure2.nodeProperties.componentInstance) {
               props.push("component-instance");
             }
-            if (structure.nodeProperties.vectorNode) {
+            if (structure2.nodeProperties.vectorNode) {
               props.push("vector");
             }
-            if (structure.nodeProperties.imageNode) {
-              props.push(`image:${structure.nodeProperties.imageNode.hasImageFill ? "has-fill" : "no-fill"}`);
+            if (structure2.nodeProperties.imageNode) {
+              props.push(`image:${structure2.nodeProperties.imageNode.hasImageFill ? "has-fill" : "no-fill"}`);
             }
             if (props.length > 0) {
               summary += ` {${props.join(", ")}}`;
@@ -1143,8 +1363,8 @@
           }
           summary += `
 `;
-          if (structure.children && structure.children.length > 0) {
-            for (const child of structure.children) {
+          if (structure2.children && structure2.children.length > 0) {
+            for (const child of structure2.children) {
               summary += this.generateStructureSummary(child, indent + "  ");
             }
           }
@@ -1164,7 +1384,6 @@
               console.error(`\u274C Node is not a component: ${component.type}`);
               return;
             }
-            const structure = await this.analyzeComponentStructure(component);
             const nodeCount = this.countStructureNodes(structure);
             const depthStats = this.calculateDepthStatistics(structure);
           } catch (error) {
@@ -1174,7 +1393,7 @@
         /**
          * NEW: Calculate depth statistics for a component structure
          */
-        static calculateDepthStatistics(structure) {
+        static calculateDepthStatistics(structure2) {
           const depthCounts = {};
           let totalNodes = 0;
           let totalDepth = 0;
@@ -1191,7 +1410,7 @@
               }
             }
           };
-          traverse(structure);
+          traverse(structure2);
           return {
             maxDepth,
             nodesByDepth: depthCounts,
@@ -1228,8 +1447,7 @@
               console.error(`\u274C Invalid component: ${componentId}`);
               return null;
             }
-            const structure = await this.analyzeComponentStructure(component);
-            return JSON.stringify(structure, null, 2);
+            return JSON.stringify({}, null, 2);
           } catch (error) {
             console.error(`\u274C Error exporting component structure:`, error);
             return null;
