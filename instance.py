@@ -327,8 +327,9 @@ class PipelineRunner:
 class Alternative3StagePipeline:
     """Alternative 3-stage pipeline: User Request Analyzer -> UX UI Designer -> JSON Engineer"""
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, max_qa_loops: int = 0):
         self.api_key = api_key
+        self.max_qa_loops = max_qa_loops
         self.gemini_client = None
         self.output_dir = Path("./python_outputs")
         self.output_dir.mkdir(exist_ok=True)
@@ -768,9 +769,9 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
             current_input = result.content
             
             # Add QA validation after Stage 2 (UX/UI Designer)
-            if QA_CONFIG['enabled'] and stage_num == 2:
+            if self.max_qa_loops > 0 and stage_num == 2:
                 print(f"\n{'='*50}")
-                print(f"Stage 2.5: Design QA Validation")
+                print(f"Stage 2.5: Design QA Validation (max {self.max_qa_loops} loops)")
                 print(f"{'='*50}")
                 
                 # Initialize QA
@@ -783,7 +784,7 @@ Focus on: layout patterns, color schemes, visual hierarchy, component arrangemen
                 try:
                     validated_json, qa_history = qa.run_qa_loop(
                         designer_output, 
-                        max_iterations=QA_CONFIG['max_iterations']
+                        max_iterations=self.max_qa_loops
                     )
                     
                     # QA succeeded - use validated output
@@ -913,9 +914,9 @@ Issues fixed:
             current_input = result.content
             
             # Add QA validation after Stage 2 (UX/UI Designer) 
-            if QA_CONFIG['enabled'] and stage_num == 2:
+            if self.max_qa_loops > 0 and stage_num == 2:
                 print(f"\n{'='*50}")
-                print(f"Stage 2.5: Design QA Validation")
+                print(f"Stage 2.5: Design QA Validation (max {self.max_qa_loops} loops)")
                 print(f"{'='*50}")
                 
                 # Initialize QA
@@ -928,7 +929,7 @@ Issues fixed:
                 try:
                     validated_json, qa_history = qa.run_qa_loop(
                         designer_output, 
-                        max_iterations=QA_CONFIG['max_iterations']
+                        max_iterations=self.max_qa_loops
                     )
                     
                     # QA succeeded - use validated output
@@ -1207,6 +1208,7 @@ class HTTPServer:
 def main():
     parser = argparse.ArgumentParser(description="Instance Vibe Pipeline Runner")
     parser.add_argument("stage", help="Stage to run (1-5, 'all', 'alt3', 'alt3-visual', 'server', or 'alt3-1', 'alt3-2', 'alt3-3')")
+    parser.add_argument("max_qa_loops", nargs='?', type=int, default=0, help="Maximum QA loops (0-3, default: 0=disabled)")
     parser.add_argument("--input", help="Custom input for stage 1 or full pipeline")
     parser.add_argument("--api-key", help="Gemini API key (or use GEMINI_API_KEY env var)")
     parser.add_argument("--run-id", help="Run ID to continue from previous execution")
@@ -1221,6 +1223,20 @@ def main():
                        help='Use design-reviewer-json-engineer prompt instead of standard json-engineer')
     
     args = parser.parse_args()
+    
+    # Validate and clamp max_qa_loops parameter
+    max_qa_loops = args.max_qa_loops
+    if max_qa_loops is not None:
+        if max_qa_loops < 0:
+            max_qa_loops = 0
+            print(f"⚠️ QA loops clamped to 0 (was {args.max_qa_loops})")
+        elif max_qa_loops > 3:
+            max_qa_loops = 3
+            print(f"⚠️ QA loops clamped to 3 (was {args.max_qa_loops})")
+        print(f"🔧 QA loops configured: {max_qa_loops}")
+    else:
+        max_qa_loops = 0
+        print(f"🔧 QA loops default: {max_qa_loops} (disabled)")
     
     # Get API key
     api_key = args.api_key or os.getenv("GEMINI_API_KEY")
@@ -1237,7 +1253,7 @@ def main():
     
     elif args.stage == "alt3":
         # Alternative 3-stage pipeline
-        alt_runner = Alternative3StagePipeline(api_key)
+        alt_runner = Alternative3StagePipeline(api_key, max_qa_loops)
         default_input = "create a login page for a SaaS app"
         
         # 🔥 TESTING: Read from user-request.txt if it exists
@@ -1257,7 +1273,7 @@ def main():
     
     elif args.stage == "alt3-visual":
         # Alternative 5-stage pipeline with visual feedback
-        alt_runner = Alternative3StagePipeline(api_key)
+        alt_runner = Alternative3StagePipeline(api_key, max_qa_loops)
         default_input = "create a login page for a SaaS app"
         
         # 🔥 TESTING: Read from user-request.txt if it exists
@@ -1278,7 +1294,7 @@ def main():
     elif args.stage == "alt3" and (args.start_stage or args.end_stage or args.input_file or args.timestamp):
         # Special handling for selective alt3 pipeline runs (for design reviewer)
         async def run_selective_alt3():
-            alt_runner = Alternative3StagePipeline(api_key)
+            alt_runner = Alternative3StagePipeline(api_key, max_qa_loops)
             
             # Load input from file if specified
             if args.input_file and os.path.exists(args.input_file):
@@ -1313,7 +1329,7 @@ def main():
     
     elif args.stage.startswith("alt3-"):
         # Single stage from alternative 3-stage pipeline
-        alt_runner = Alternative3StagePipeline(api_key)
+        alt_runner = Alternative3StagePipeline(api_key, max_qa_loops)
         stage_num = int(args.stage.split("-")[1])
         if stage_num < 1 or stage_num > 3:
             print("❌ Alt3 stage must be between 1 and 3")
