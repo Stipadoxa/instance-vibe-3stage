@@ -204,6 +204,65 @@ export interface ComponentInfo {
   componentStructure?: ComponentStructure; // Root structure with full hierarchy
 }
 
+// NEW: LLM-Optimized component info for reduced context size
+export interface LLMOptimizedComponentInfo {
+  // CORE IDENTITY
+  id: string;
+  name: string;
+  suggestedType: string;
+  confidence: number;
+  isFromLibrary: boolean;
+  
+  // VARIANTS - списки опцій (без default)
+  variantOptions?: {
+    [propName: string]: string[]; // "Size": ["Small", "Medium", "Large"]
+  };
+  
+  // TEXT SLOTS - точні назви для visibility override
+  textSlots?: {
+    [exactLayerName: string]: {
+      required: boolean;
+      type: 'single-line' | 'multi-line' | 'number';
+      maxLength?: number;
+    };
+  };
+  
+  // COMPONENT SLOTS - точні назви слотів + мінімальні метадані  
+  componentSlots?: {
+    [exactSlotName: string]: {
+      componentId?: string;
+      category: 'icon' | 'button' | 'input' | 'image' | 'container';
+      swappable: boolean;
+      required: boolean;
+    };
+  };
+  
+  // LAYOUT HINTS - достатньо для UI рішень
+  layoutBehavior?: {
+    type: 'fixed' | 'hug-content' | 'fill-container';
+    direction?: 'horizontal' | 'vertical';
+    hasInternalPadding: boolean;
+    canWrap?: boolean;
+    minHeight?: number;
+    isIcon: boolean; // ≤ 48px
+    isTouchTarget: boolean; // ≥ 44px
+  };
+  
+  // STYLE CONTEXT - для кольорових рішень
+  styleContext?: {
+    primaryColor?: string; // назва з design system
+    hasImageSlot: boolean;
+    semanticRole: 'navigation' | 'action' | 'display' | 'input' | 'container';
+  };
+  
+  // PAGE INFO (зберегти як є)
+  pageInfo?: {
+    pageName: string;
+    pageId: string;
+    isCurrentPage: boolean;
+  };
+}
+
 export interface SessionState {
   fileId: string;
   fileName: string;

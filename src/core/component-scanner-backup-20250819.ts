@@ -1,7 +1,7 @@
 // component-scanner.ts
 // Design system component scanning and analysis for AIDesigner
 
-import { ComponentInfo, LLMOptimizedComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails, VariableDetails, AutoLayoutBehavior, ComponentStructure } from './session-manager';
+import { ComponentInfo, TextHierarchy, ComponentInstance, VectorNode, ImageNode, StyleInfo, ColorInfo, TextStyleDetails, VariableDetails, AutoLayoutBehavior, ComponentStructure } from './session-manager';
 
 export interface ColorStyle {
   id: string;
@@ -60,17 +60,6 @@ export interface ScanSession {
   colorStyles?: ColorStyleCollection;
   textStyles?: TextStyle[];
   designTokens?: DesignToken[]; // NEW: Design tokens support
-  scanTime: number;
-  version: string;
-  fileKey?: string;
-}
-
-// NEW: Optimized scan session for LLM context
-export interface OptimizedScanSession {
-  components: LLMOptimizedComponentInfo[];
-  colorStyles?: ColorStyleCollection;
-  textStyles?: TextStyle[];
-  designTokens?: DesignToken[];
   scanTime: number;
   version: string;
   fileKey?: string;
@@ -517,9 +506,9 @@ export class ComponentScanner {
   /**
    * Main scanning function - scans all pages for components and color styles
    */
-  static async scanDesignSystem(): Promise<OptimizedScanSession> {
-    console.log("🔍 Starting comprehensive design system scan with optimization...");
-    const components: LLMOptimizedComponentInfo[] = [];
+  static async scanDesignSystem(): Promise<ScanSession> {
+    console.log("🔍 Starting comprehensive design system scan...");
+    const components: ComponentInfo[] = [];
     let colorStyles: ColorStyleCollection | undefined;
     let textStyles: TextStyle[] | undefined;
     
@@ -661,7 +650,7 @@ export class ComponentScanner {
           for (const node of allNodes) {
             try {
               if (node.type === 'COMPONENT' || node.type === 'COMPONENT_SET') {
-                const componentInfo = await this.analyzeComponentOptimized(node as ComponentNode | ComponentSetNode);
+                const componentInfo = await this.analyzeComponent(node as ComponentNode | ComponentSetNode);
                 if (componentInfo) {
                   componentInfo.pageInfo = {
                     pageName: page.name,
@@ -870,16 +859,12 @@ export class ComponentScanner {
   }
 
   /**
-   * DEPRECATED: Heavy recursive method - replaced by analyzeComponentOptimized
-   * This method was causing 3.2MB JSON files due to deep recursion and coordinate data
-   * Keeping for backup - DO NOT USE in production
-   * 
+   * NEW: Recursively analyzes component structure to build hierarchical tree
    * @param node Starting node (component, frame, or any child node)
    * @param parentId Parent node ID (undefined for root)
    * @param depth Current depth in hierarchy (0 for root)
    * @param maxDepth Maximum recursion depth to prevent infinite loops
    */
-  /*
   static async analyzeComponentStructure(
     node: SceneNode, 
     parentId?: string, 
@@ -1386,12 +1371,12 @@ export class ComponentScanner {
       const suggestedType = this.guessComponentType(name.toLowerCase());
       const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
       
-      // DEPRECATED: Heavy methods disabled for optimization
-      // const textLayers = this.findTextLayers(comp);
-      // const textHierarchy = await this.analyzeTextHierarchy(comp);
-      // const componentInstances = await this.findComponentInstances(comp);
-      // const vectorNodes = this.findVectorNodes(comp);
-      // const imageNodes = this.findImageNodes(comp);
+      // DEPRECATED: Keep for backward compatibility, but use new hierarchical structure
+      const textLayers = this.findTextLayers(comp);
+      const textHierarchy = await this.analyzeTextHierarchy(comp);
+      const componentInstances = await this.findComponentInstances(comp);
+      const vectorNodes = this.findVectorNodes(comp);
+      const imageNodes = this.findImageNodes(comp);
       
       // NEW: Extract hierarchical component structure
       console.log(`🏗️ Building hierarchical structure for "${comp.name}"`);
@@ -1403,9 +1388,8 @@ export class ComponentScanner {
           nodeToAnalyze = comp.defaultVariant || (comp.children[0] as ComponentNode);
         }
         
-        // DEPRECATED: Heavy method disabled - use analyzeComponentOptimized instead
-        // componentStructure = await this.analyzeComponentStructure(nodeToAnalyze as SceneNode);
-        // console.log(`✅ Built hierarchical structure with ${this.countStructureNodes(componentStructure)} total nodes`);
+        componentStructure = await this.analyzeComponentStructure(nodeToAnalyze as SceneNode);
+        console.log(`✅ Built hierarchical structure with ${this.countStructureNodes(componentStructure)} total nodes`);
       } catch (error) {
         console.warn(`⚠️ Failed to build hierarchical structure for "${comp.name}":`, error);
       }
@@ -1451,15 +1435,15 @@ export class ComponentScanner {
           confidence,
           variants: variants.length > 0 ? variants : undefined,
           variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : undefined,
-          textLayers: undefined, // DEPRECATED: Disabled for optimization
-          textHierarchy: undefined, // DEPRECATED: Disabled for optimization
-          componentInstances: undefined, // DEPRECATED: Disabled for optimization
-          vectorNodes: undefined, // DEPRECATED: Disabled for optimization
-          imageNodes: undefined, // DEPRECATED: Disabled for optimization
+          textLayers: textLayers.length > 0 ? textLayers : undefined, // DEPRECATED: Keep for backward compatibility
+          textHierarchy: textHierarchy.length > 0 ? textHierarchy : undefined, // DEPRECATED: Keep for backward compatibility
+          componentInstances: componentInstances.length > 0 ? componentInstances : undefined, // DEPRECATED: Keep for backward compatibility
+          vectorNodes: vectorNodes.length > 0 ? vectorNodes : undefined, // DEPRECATED: Keep for backward compatibility
+          imageNodes: imageNodes.length > 0 ? imageNodes : undefined, // DEPRECATED: Keep for backward compatibility
           styleInfo: styleInfo, // NEW: Include color and style information
           internalPadding: internalPadding || undefined, // NEW: Include internal padding information
           autoLayoutBehavior: autoLayoutBehavior || undefined, // NEW: Include auto-layout behavior analysis
-          componentStructure: undefined, // DEPRECATED: Disabled for optimization
+          componentStructure: componentStructure, // NEW: Include hierarchical structure
           isFromLibrary: false
       };
   }
@@ -1475,270 +1459,6 @@ export class ComponentScanner {
       }
     }
     return count;
-  }
-
-  /**
-   * NEW: Optimized component analysis for LLM context (replaces heavy analyzeComponent)
-   */
-  static async analyzeComponentOptimized(comp: ComponentNode | ComponentSetNode): Promise<LLMOptimizedComponentInfo> {
-    console.log(`🚀 Optimized analysis for "${comp.name}"`);
-    
-    try {
-      const name = comp.name;
-      const suggestedType = this.guessComponentType(name.toLowerCase());
-      const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-      
-      // Extract variant OPTIONS only (not combinations)
-      const variantOptions = this.extractVariantOptionsOptimized(comp);
-      
-      // Shallow text slot analysis (no deep recursion)
-      const textSlots = this.extractTextSlotsOptimized(comp);
-      
-      // Component slots with exact names (for visibility override)
-      const componentSlots = await this.extractComponentSlotsOptimized(comp);
-      
-      // Layout behavior hints (no absolute coordinates)
-      const layoutBehavior = this.extractLayoutBehaviorOptimized(comp);
-      
-      // Style context (no detailed fills/strokes)
-      const styleContext = this.extractStyleContextOptimized(comp);
-      
-      console.log(`✅ Optimized analysis complete for "${name}"`);
-      
-      return {
-        id: comp.id,
-        name,
-        suggestedType,
-        confidence,
-        isFromLibrary: false,
-        variantOptions,
-        textSlots,
-        componentSlots,
-        layoutBehavior,
-        styleContext
-      };
-      
-    } catch (error) {
-      console.error(`❌ Failed to analyze component "${comp.name}":`, error);
-      
-      // Retry once with basic fallback
-      try {
-        console.log(`🔄 Retrying with basic analysis for "${comp.name}"`);
-        const name = comp.name;
-        const suggestedType = this.guessComponentType(name.toLowerCase());
-        const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
-        
-        return {
-          id: comp.id,
-          name,
-          suggestedType,
-          confidence: Math.max(0.1, confidence - 0.3), // Lower confidence for failed analysis
-          isFromLibrary: false
-        };
-      } catch (retryError) {
-        console.error(`❌ Retry failed for component "${comp.name}":`, retryError);
-        throw new Error(`Component analysis completely failed for "${comp.name}": ${retryError.message}`);
-      }
-    }
-  }
-
-  /**
-   * Extract variant options only (no combinations)
-   */
-  private static extractVariantOptionsOptimized(comp: ComponentNode | ComponentSetNode): { [key: string]: string[] } | undefined {
-    if (comp.type !== 'COMPONENT_SET') return undefined;
-    
-    const variantOptions: { [key: string]: string[] } = {};
-    const variantProps = comp.variantGroupProperties;
-    
-    if (!variantProps) return undefined;
-    
-    for (const [propName, prop] of Object.entries(variantProps)) {
-      if ('values' in prop && prop.values.length > 0) {
-        variantOptions[propName] = prop.values;
-      }
-    }
-    
-    return Object.keys(variantOptions).length > 0 ? variantOptions : undefined;
-  }
-
-  /**
-   * Extract text slots with exact names (SHALLOW - no recursion)
-   */
-  private static extractTextSlotsOptimized(comp: ComponentNode | ComponentSetNode): { [key: string]: any } | undefined {
-    const slots: any = {};
-    const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? 
-      (comp.defaultVariant || comp.children[0]) : comp;
-    
-    if (!nodeToAnalyze || !('children' in nodeToAnalyze)) return undefined;
-    
-    // ONLY scan immediate children (depth 1)
-    for (const child of nodeToAnalyze.children) {
-      if (child.type === 'TEXT') {
-        const textNode = child as TextNode;
-        slots[child.name] = {
-          required: child.visible !== false,
-          type: textNode.textAutoResize === 'HEIGHT' ? 'multi-line' : 'single-line',
-          maxLength: this.estimateMaxLength(textNode)
-        };
-      }
-    }
-    
-    return Object.keys(slots).length > 0 ? slots : undefined;
-  }
-
-  /**
-   * Extract component slots with exact names (SHALLOW - references only)
-   */
-  private static async extractComponentSlotsOptimized(comp: ComponentNode | ComponentSetNode): Promise<{ [key: string]: any } | undefined> {
-    const slots: any = {};
-    const nodeToAnalyze = comp.type === 'COMPONENT_SET' ? 
-      (comp.defaultVariant || comp.children[0]) : comp;
-    
-    if (!nodeToAnalyze || !('children' in nodeToAnalyze)) return undefined;
-    
-    // ONLY scan immediate children (depth 1)
-    for (const child of nodeToAnalyze.children) {
-      if (child.type === 'INSTANCE') {
-        const instance = child as InstanceNode;
-        try {
-          const mainComp = await instance.getMainComponentAsync();
-          const category = this.guessComponentCategory(mainComp?.name || child.name);
-          
-          slots[child.name] = {
-            componentId: mainComp?.id,
-            category,
-            swappable: true,
-            required: child.visible !== false
-          };
-        } catch (error) {
-          console.warn(`Failed to analyze component slot "${child.name}"`);
-        }
-      }
-    }
-    
-    return Object.keys(slots).length > 0 ? slots : undefined;
-  }
-
-  /**
-   * Extract layout behavior (semantic, no absolute coordinates)
-   */
-  private static extractLayoutBehaviorOptimized(comp: ComponentNode | ComponentSetNode): any {
-    const node = comp.type === 'COMPONENT_SET' ? 
-      (comp.defaultVariant || comp.children[0]) : comp;
-    
-    if (!node || !('layoutMode' in node) || node.layoutMode === 'NONE') {
-      return undefined;
-    }
-    
-    const isIcon = 'width' in node && 'height' in node && 
-      Math.max(node.width, node.height) <= 48;
-    const isTouchTarget = 'height' in node && node.height >= 44;
-    
-    return {
-      type: node.primaryAxisSizingMode === 'AUTO' ? 'hug-content' : 
-            node.layoutAlign === 'STRETCH' ? 'fill-container' : 'fixed',
-      direction: node.layoutMode === 'HORIZONTAL' ? 'horizontal' : 'vertical',
-      hasInternalPadding: (node.paddingTop || 0) > 0,
-      canWrap: node.layoutWrap === 'WRAP',
-      minHeight: node.minHeight || undefined,
-      isIcon,
-      isTouchTarget
-    };
-  }
-
-  /**
-   * Extract style context (design system colors only, no detailed fills)
-   */
-  private static extractStyleContextOptimized(comp: ComponentNode | ComponentSetNode): any {
-    const node = comp.type === 'COMPONENT_SET' ? 
-      (comp.defaultVariant || comp.children[0]) : comp;
-    
-    // Quick check for primary design system color
-    let primaryColor: string | undefined;
-    try {
-      const styleInfo = this.extractStyleInfo(node as any);
-      primaryColor = styleInfo?.primaryColor?.paintStyleName;
-    } catch (error) {
-      // Ignore styling errors
-    }
-    
-    // Quick check for image slots (shallow scan)
-    const hasImageSlot = this.hasImageSlotShallow(node);
-    
-    // Infer semantic role
-    const semanticRole = this.inferSemanticRole(comp.name, comp.id);
-    
-    return {
-      primaryColor,
-      hasImageSlot,
-      semanticRole
-    };
-  }
-
-  /**
-   * Helper: Guess component category for slots
-   */
-  private static guessComponentCategory(name: string): 'icon' | 'button' | 'input' | 'image' | 'container' {
-    const lowName = name.toLowerCase();
-    if (lowName.includes('icon')) return 'icon';
-    if (lowName.includes('button') || lowName.includes('btn')) return 'button';
-    if (lowName.includes('input') || lowName.includes('field')) return 'input';
-    if (lowName.includes('image') || lowName.includes('photo')) return 'image';
-    return 'container';
-  }
-
-  /**
-   * Helper: Estimate max text length
-   */
-  private static estimateMaxLength(textNode: TextNode): number | undefined {
-    if (!textNode.width) return undefined;
-    const avgCharWidth = (textNode.fontSize as number || 14) * 0.6;
-    const lines = textNode.textAutoResize === 'HEIGHT' ? 3 : 1;
-    return Math.floor((textNode.width / avgCharWidth) * lines);
-  }
-
-  /**
-   * Helper: Check for image slots (shallow)
-   */
-  private static hasImageSlotShallow(node: any): boolean {
-    if (!node || !('children' in node)) return false;
-    
-    // Only check immediate children
-    for (const child of node.children) {
-      if (child.type === 'RECTANGLE' || child.type === 'ELLIPSE') {
-        try {
-          const fills = child.fills;
-          if (Array.isArray(fills) && fills.some(f => f.type === 'IMAGE')) {
-            return true;
-          }
-        } catch (error) {
-          // Ignore fill check errors
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Helper: Infer semantic role
-   */
-  private static inferSemanticRole(name: string, id: string): 'navigation' | 'action' | 'display' | 'input' | 'container' {
-    const lowName = name.toLowerCase();
-    
-    if (lowName.includes('nav') || lowName.includes('tab') || lowName.includes('menu')) {
-      return 'navigation';
-    }
-    if (lowName.includes('button') || lowName.includes('cta')) {
-      return 'action';
-    }
-    if (lowName.includes('card') || lowName.includes('item') || lowName.includes('list')) {
-      return 'display';
-    }
-    if (lowName.includes('input') || lowName.includes('field') || lowName.includes('form')) {
-      return 'input';
-    }
-    return 'container';
   }
 
   /**
@@ -1810,8 +1530,8 @@ export class ComponentScanner {
       }
       
       
-      // DEPRECATED: Heavy method disabled
-      // const structure = await this.analyzeComponentStructure(component as SceneNode);
+      // Analyze the component structure
+      const structure = await this.analyzeComponentStructure(component as SceneNode);
       
       // Generate and log the structure summary
       
@@ -1895,9 +1615,8 @@ export class ComponentScanner {
         return null;
       }
       
-      // DEPRECATED: Heavy method disabled
-      // const structure = await this.analyzeComponentStructure(component as SceneNode);
-      return JSON.stringify({}, null, 2);
+      const structure = await this.analyzeComponentStructure(component as SceneNode);
+      return JSON.stringify(structure, null, 2);
     } catch (error) {
       console.error(`❌ Error exporting component structure:`, error);
       return null;
