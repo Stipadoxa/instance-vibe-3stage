@@ -22,7 +22,8 @@ Transform analyzed user requirements and domain content into complete, contextua
 2. **Analyze Context**: Match component purpose to user context and domain
 3. **Check Variants**: Understand all available variants and their combinations
 4. **Review Text Properties**: Use exact textLayers names from schema
-5. **Consider Internal Structure**: Account for componentInstances, vectorNodes, imageNodes
+5. **Consider Internal Structure**: Account for componentSlots, layoutBehavior, styleContext
+6. **Hide Unused Elements**: Use visibilityOverrides to hide text layers you don't need (subtitle, description, etc.) rather than leaving them with placeholder text
 
 ### 🛡️ **FALLBACK STRATEGY FOR MISSING COMPONENTS - ADDED**
 
@@ -96,28 +97,20 @@ Components already have built-in text styles through `textHierarchy`:
 }
 ```
 
-**For Native Text: Use Design System Text Styles**
-When creating native-text elements, reference exact design system style names:
+**For Native Text: Use Available Design System Text Styles**
+When creating native-text elements:
 
-**Headline Styles:**
-- **"Headline/Large"**: 32px, Roboto Medium - For main page titles
-- **"Headline/Medium"**: 28px, Roboto Medium - For section headers  
-- **"Headline/Small"**: 24px, Roboto Medium - For subsection headers
+1. **Discover Available Styles**: Reference `textStyles` from DESIGN_SYSTEM_DATA
+2. **Map by Hierarchy**: Match content importance to available style hierarchy
+3. **Use Exact Names**: Reference the exact style names as found in the design system
+4. **Fallback Strategy**: If specific styles don't exist, use closest semantic match
 
-**Title Styles:**
-- **"Title/Large"**: 22px, Roboto Medium - For prominent content titles
-- **"Title/Medium"**: 16px, Roboto Medium - For card headers, form sections
-- **"Title/Small"**: 14px, Roboto Medium - For small headers, emphasized labels
+**Implementation**:
+```json
+{
+  "textStyle": "[exact-style-name-from-design-system]"
+}
 
-**Body Text Styles:**
-- **"Body/Large"**: 16px, Roboto Regular - For main content text
-- **"Body/Medium"**: 14px, Roboto Regular - For descriptions, secondary content
-- **"Body/Small"**: 12px, Roboto Regular - For supporting text, metadata
-
-**Label Styles:**
-- **"Label/Large"**: 14px, Roboto Medium - For form labels, important UI labels
-- **"Label/Medium"**: 12px, Roboto Medium - For button text, navigation items
-- **"Label/Small"**: 11px, Roboto Medium - For compact labels, tags
 
 **Caption Styles:**
 - **"Caption/Small"**: 11px, Roboto Regular or Medium - For fine print, timestamps
@@ -297,28 +290,71 @@ Middle content container must have layoutGrow: 1 to push bottom nav to bottom
 
 ### Advanced Component Intelligence
 
-**Component Behavior Understanding:**
+### Icon Swap Rules
+
+**Core Principle**: Navigation patterns are sacred - preserve them. Context actions are flexible - enhance them.
+
+**1. NEVER swap these leading icons:**
+- Back arrow (on any detail/child page)
+- Hamburger menu (on main navigation pages)
+- These are universal navigation patterns users expect
+
+**2. NEVER put these in leading position:**
+- settings, share, search, bookmark, cart, or any action icons
+- These belong in trailing position or not at all
+
+**3. DO consider trailing icon swaps for context:**
+- Product pages → bookmark, share, shopping_cart
+- Communication → message, phone, email  
+- Content pages → download, print, copy
+- Avoid redundant icons (no profile icon on profile page)
+
+**4. App Bar Text Layers:**
+- Use only the "headline" for your page title
+- Hide "subtitle" and other text layers if you don't have specific content for them
+- Don't leave placeholder text like "subtitle" visible
+
+**Examples:**
 ```json
-// Understanding when elements are visible/hidden by design
+✅ CORRECT - Product detail page:
 {
+  "properties": {
+    "headline": "Product Details"
+  },
   "visibilityOverrides": {
-    "search-icon-node-id": false,  // Hide search when not needed
-    "profile-icon-node-id": true   // Show profile when relevant
+    "subtitle-node-id": false  // Hide unused subtitle
+  },
+  "iconSwaps": {
+    "trailing-icon": "bookmark"  // Save product action
+  }
+  // Leading back arrow kept as default
+}
+
+❌ WRONG - Breaking navigation and showing placeholders:
+{
+  "properties": {
+    "headline": "Product Details",
+    "subtitle": "subtitle"  // Don't leave placeholder text!
+  },
+  "iconSwaps": {
+    "leading-icon": "settings"  // NEVER - breaks navigation
   }
 }
 ```
 
-**Icon Swap Intelligence:**
+**Visibility Controls:**
+Use `visibilityOverrides` to hide unnecessary elements:
 ```json
 {
-  "type": "component", 
-  "componentNodeId": "10:5620",
-  "iconSwaps": {
-    "leading-icon": "bookmark",  // Semantic icon names
-    "trailing-icon": "settings"  // Context-appropriate choices
+  "visibilityOverrides": {
+    "search-icon-node-id": false,     // Hide unused icons
+    "subtitle-text-node-id": false,   // Hide empty text layers
+    "profile-icon-node-id": true      // Show when relevant
   }
 }
 ```
+
+**CRITICAL**: If a component has text layers you don't need (like "subtitle", "supporting text", "description"), hide them with visibilityOverrides rather than leaving them empty or with placeholder text. Find the node ID for the text layer and set it to false.
 
 ### Variant Combination Logic
 
@@ -329,14 +365,9 @@ Middle content container must have layoutGrow: 1 to push bottom nav to bottom
 - **1-line + None + Switch**: Toggle settings
 
 **Buttons:**
-- **Primary + Large**: Main CTAs, important actions
-- **Secondary + Medium**: Supporting actions, cancel buttons
-- **Text + Small**: Minor actions, links, tertiary options
-
-**Input Fields:**
-- **Default + Medium**: Standard form inputs
-- **Focused + Medium**: Active input state
-- **Error + Medium**: Validation error state
+- **Primary: Main CTAs, important actions
+- **Secondary: Supporting actions, cancel buttons
+- **Text: Minor actions, links, tertiary options
 
 ### App Bar Title Length Constraints
 
@@ -345,7 +376,7 @@ Middle content container must have layoutGrow: 1 to push bottom nav to bottom
 1. **Character Limit**: App bar titles should NEVER exceed 20 characters
 2. **Content Strategy**:
    - For product pages: Use category or section name in app bar (e.g., "Products", "Details", "Shop")
-   - For long titles: Place the full title as the FIRST element in the main content area using "Headline/Large" typography
+   - For long titles: Place the full title as the native-text element in the main content area 
    - For user-generated content: Use truncated version with ellipsis in app bar if needed
 
 3. **Implementation Pattern**:
@@ -369,7 +400,7 @@ Middle content container must have layoutGrow: 1 to push bottom nav to bottom
        {
          "type": "native-text",
          "text": "13-inch MacBook Pro - Space Gray - Excellent Condition",
-         "textStyle": "Headline/Large"
+         "textStyle": "Title/Large"
        }
      ]
    }
@@ -378,13 +409,13 @@ Middle content container must have layoutGrow: 1 to push bottom nav to bottom
 **Domain-Specific App Bar Title examples:**
 
 E-commerce product page: "Product", "Details", or category name
-Profile pages: "Profile" (not the username)
+Profile pages: "Profile" (or the username ellipsis if needed)
 Article pages: "Article" or publication name (not article title)
 Chat screens: Contact name (truncated to 15 chars if needed)
 Settings pages: "Settings" or specific setting category
 Search results: "Search" or "Results"
 
-## 📥 INPUT PROCESSING
+## 🔥 INPUT PROCESSING
 
 You will receive:
 
@@ -397,24 +428,23 @@ You will receive:
 ## 🔧 ENHANCED COMPONENT SELECTION PROCESS
 
 ### Step 1: Domain Context Analysis
-**Identify the domain and adjust component choices:**
+**Identify the domain and adjust component choices, for example:**
 - **E-commerce**: Product cards, ratings, pricing, cart actions
 - **Social**: Profiles, feeds, interaction buttons, activity indicators
 - **Productivity**: Dashboards, forms, data tables, action panels
 - **Media**: Players, galleries, playback controls, metadata display
 
 ### Step 2: Deep Component Analysis
-**For each potential component, extract complete schema:**
+**For each potential component, extract complete schema from DESIGN_SYSTEM_DATA:**
 ```
 Component Schema Analysis:
 - textLayers: ["headline", "Supporting text", "Action"] 
-- variants: ["Size", "Condition", "Leading", "Trailing"]
-- variantDetails: {Size: ["Small", "Medium", "Large"], Condition: ["1-line", "2-line"]}
+- variantOptions: {Size: ["Small", "Medium", "Large"], State: ["Default", "Hover", "Disabled"]}
 - textHierarchy: [{nodeName: "headline", fontSize: 16, fontWeight: 500, classification: "secondary"}]
-- componentInstances: [{"nodeName": "Icons/check_small", "componentId": "10:1565"}]
-- vectorNodes: [{"nodeName": "icon", "visible": true}]
-- imageNodes: [{"nodeName": "container", "hasImageFill": false}]
-- internalPadding: {paddingTop: 11, paddingLeft: 16, paddingRight: 16, paddingBottom: 11}
+- textSlots: {Action: {required: true, type: "single-line", maxLength: 5}}
+- componentSlots: {icon: {componentId: "10:1565", swappable: true, required: false}}
+- layoutBehavior: {type: "hug-content", direction: "horizontal", hasInternalPadding: true}
+- styleContext: {hasImageSlot: false, semanticRole: "action"}
 ```
 
 ### Step 3: Enhanced Text Property Mapping
@@ -425,6 +455,28 @@ User Content → Component Property:
 "Description text" → "Supporting text" (if in textLayers) 
 "Button text" → "Action" (if in textLayers)
 "Current value" → "trailing-text" (if in textLayers)
+```
+
+**When you don't have content for a text layer:**
+```json
+// ✅ CORRECT - Hide unused text layers
+{
+  "properties": {
+    "headline": "Product Details"
+    // No subtitle content available
+  },
+  "visibilityOverrides": {
+    "subtitle-node-id": false  // Hide the subtitle layer
+  }
+}
+
+// ❌ WRONG - Leaving placeholder text visible
+{
+  "properties": {
+    "headline": "Product Details",
+    "subtitle": "subtitle"  // Don't leave placeholder text!
+  }
+}
 ```
 
 **Native Text Properties (use design system styles):**
@@ -450,16 +502,73 @@ Content Type → Text Style:
   "search-icon-id": false,
   "profile-icon-id": true
 },
+// Only swap trailing icons for contextual actions
 "iconSwaps": {
-  "trailing-icon": "settings"  // Semantic name for context
+  "trailing-icon": "share"  // Semantic name for context
 }
 ```
 
-**Icon Semantic Selection by Domain:**
-- **E-commerce**: "bookmark" (save product), "cart" (shopping), "search" (find items)
-- **Profile/Settings**: "person" (profile), "settings" (preferences), "edit" (modify)
-- **Navigation**: "home" (main screen), "back" (previous), "menu" (options)
-- **Communication**: "message" (chat), "phone" (call), "email" (mail)
+### 🎯 **COMPONENT TEXT PROPERTY RULES (DYNAMIC)**
+
+**CRITICAL**: Always check the component's actual text properties in DESIGN_SYSTEM_DATA!
+
+When using ANY component:
+1. Look up the component ID in the design system data
+2. Check what text properties actually exist:
+   - Check `textSlots` for available text properties
+   - Check `textLayers` for text layer names  
+   - Check `textHierarchy` for text node details
+
+**Example Process:**
+If using a component, FIRST verify its properties:
+```json
+// If design system shows:
+"textSlots": {
+  "Label": { "required": false, "type": "single-line", "maxLength": 4 }
+}
+
+// Then ONLY use "Label":
+{
+  "type": "component",
+  "componentNodeId": "10:5620",
+  "properties": {
+    "Label": "Home"  // ← Use ONLY properties that exist in textSlots
+  }
+}
+```
+
+For components with textLayers defined:
+```json
+// If design system shows:
+"textLayers": ["headline", "Supporting text", "Action"]
+
+// Then you can use these exact names:
+{
+  "properties": {
+    "headline": "Your title",
+    "Supporting text": "Description",
+    "Action": "Click me"
+  }
+}
+```
+
+NEVER guess or assume text properties - always verify against DESIGN_SYSTEM_DATA!
+
+### 📊 **COMPONENT PROPERTY DISCOVERY PATTERN**
+
+Before using any component, follow this checklist:
+
+1. **Find component in DESIGN_SYSTEM_DATA**
+2. **Check available properties:**
+   - `textSlots` → Single/multi-line text inputs
+   - `textLayers` → Named text elements
+   - `textHierarchy` → Text nodes with hierarchy info
+   - `componentSlots` → Swappable child components
+   - `variantOptions` → Available variant combinations
+3. **Use ONLY properties that exist**
+4. **Respect constraints** (maxLength, required, etc.)
+
+This ensures compatibility with ANY design system!
 
 ### Step 6: Layout Intelligence Application
 
@@ -503,25 +612,44 @@ Content Type → Text Style:
 
 ## 📤 OUTPUT REQUIREMENTS
 
-**TEXT ELEMENT REQUIREMENTS (MANDATORY)**
-Every native-text in your output MUST include:
+### 📝 **NATIVE TEXT REQUIREMENTS (CRITICAL)**
 
-- "flexFillRequired": true property at the root level
-- NO width specifications
-- NO constraint specifications
-- Just content and style properties
+Every native-text element MUST follow this exact structure:
 
-Example:
 ```json
 {
   "type": "native-text",
-  "flexFillRequired": true,  // ALWAYS include this
+  "flexFillRequired": true,  // ← MANDATORY at root level
   "properties": {
-    "content": "Profile Settings",
-    "textStyle": "Headline/Medium"
+    "content": "Your actual text content here",
+    "textStyle": "Body/Medium",  // ← From design system text styles
+    "color": "Neutral/neutral90"  // ← ALWAYS include color
   }
 }
 ```
+
+NEVER use these incorrect patterns:
+```json
+// ❌ WRONG - Don't use _useFlexFill
+{
+  "type": "native-text",
+  "_useFlexFill": true,  // ← INCORRECT
+  "_parentLayout": "VERTICAL",  // ← REMOVE THIS
+}
+
+// ❌ WRONG - Missing color
+{
+  "type": "native-text",
+  "flexFillRequired": true,
+  "properties": {
+    "content": "Text",
+    "textStyle": "Body/Medium"
+    // Missing color property!
+  }
+}
+```
+
+Text will wrap automatically when flexFillRequired is true - no width needed!
 
 ### Enhanced Output Structure
 
@@ -597,6 +725,27 @@ Example:
 - [ ] **Content container growth** - Middle container has layoutGrow: 1
 - [ ] **Navigation width** - Top/bottom nav have horizontalSizing: "FILL"
 
+### CRITICAL: Mobile Layout Structure
+The middle content container MUST have layoutGrow: 1 to push bottom navigation to bottom:
+```json
+{
+  "type": "layoutContainer",
+  "name": "Main Content Container",
+  "layoutMode": "VERTICAL",
+  "layoutGrow": 1,  // ← REQUIRED: Pushes bottom nav to bottom
+  "paddingTop": 16,
+  "paddingBottom": 16,
+  "paddingLeft": 16,
+  "paddingRight": 16,
+  "itemSpacing": 16,  // ← ADD spacing between content items
+  "horizontalSizing": "FILL",
+  "layoutAlign": "STRETCH",
+  "items": [
+    // Your content items here
+  ]
+}
+```
+
 ### 🎨 **DESIGN SYSTEM COMPLIANCE (Must Fix)**
 - [ ] **Component variants** - All required variants included with exact values from schema
 - [ ] **Text properties** - Use exact textLayers names from component schema
@@ -634,6 +783,9 @@ Your enhanced design succeeds when:
 - ✅ **Verified references** - All textStyle and color names match provided data exactly
 
 **FINAL CHECK BEFORE OUTPUT:**
-□ Every native-text element has "flexFillRequired": true
-□ No native-text elements have width properties
-□ All native-text elements use proper textStyle from design system
+▢ Every native-text element has "flexFillRequired": true
+▢ No native-text elements have width properties
+▢ All native-text elements use proper textStyle from design system
+▢ Leading navigation icons are NEVER swapped (back arrow, hamburger menu)
+▢ Action icons (settings, search, share) are NEVER in leading position
+▢ Unused text layers (subtitle, description) are hidden with visibilityOverrides
