@@ -1,0 +1,73 @@
+{
+  "timestamp": "2025-08-19T21:21:06.400109",
+  "total_iterations": 2,
+  "total_issues_found": 18,
+  "total_changes_made": 3,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 16,
+      "changes_made": 2,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system? // no (Headline/Large is not a valid style)",
+        "- Are there width properties on any native-text elements? // no (should be no)",
+        "- Do content containers have itemSpacing between children (8, 12, 16, or 24)? // no (itemSpacing: 16 is valid)",
+        "- Do native-text elements have layoutSizingHorizontal: \"FILL\" instead of \"HUG\"? // no (horizontalSizing: \"HUG\" on buttons)",
+        "- Are all component IDs using \"componentNodeId\" (not \"id\" or \"componentId\")? // yes",
+        "- Are color properties using correct names from DESIGN_SYSTEM_DATA? // yes",
+        "- Are text properties inside a \"properties\" object for native elements? // yes",
+        "- Does every componentNodeId exist in DESIGN_SYSTEM_DATA? // yes",
+        "- Does every component have ALL required variants from its schema? // yes",
+        "- Do all variant values match exactly with variantDetails options? // yes",
+        "- Are visibilityOverrides added for text layers  without assigned content? // no (should be yes)",
+        "- Is the bottom navigation the LAST item in the root container's items array? // yes",
+        "- Does the content container (middle item) have layoutGrow: 1? // yes",
+        "- Does the ROOT container have all padding values set to 0? // yes",
+        "- Is the top navigation the FIRST item in the root container's items array? // yes",
+        "- Are three-panel layouts structured as: Header (auto) + Content (layoutGrow: 1) + Footer (auto)? // yes"
+      ],
+      "changes": [
+        "- Changed textStyle of the first native-text element to \"Headline/Medium\"",
+        "- Changed horizontalSizing of both \"10:3907\" components to \"FILL\""
+      ],
+      "detailed_change_log": [
+        "- [CHANGE_TYPE] Property \"items[1].items[0].properties.textStyle\": \"Headline/Large\" \u2192 \"Headline/Medium\" (Reason: Headline/Large is not a valid style in the design system)",
+        "- [CHANGE_TYPE] Property \"items[1].items[10].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Native text elements should have layoutSizingHorizontal: \"FILL\")",
+        "- [CHANGE_TYPE] Property \"items[1].items[11].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Native text elements should have layoutSizingHorizontal: \"FILL\")"
+      ]
+    },
+    {
+      "iteration_number": 2,
+      "issues_found": 2,
+      "changes_made": 1,
+      "issues": [
+        "- Do all native-text elements use valid textStyle names from design system? // no",
+        "- Are visibilityOverrides added for text layers  without assigned content? // no"
+      ],
+      "changes": [
+        "- Added visibilityOverrides to handle text layers without assigned content."
+      ],
+      "detailed_change_log": [
+        "[ADDITION] Added property \"items[0].visibilityOverrides\":  (Reason:  To handle potential missing content in the AppBar component.)",
+        "[ADDITION] Added property \"items[1].items[0].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Headline text)",
+        "[ADDITION] Added property \"items[1].items[1].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in image component)",
+        "[ADDITION] Added property \"items[1].items[3].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[4].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in nested layout)",
+        "[ADDITION] Added property \"items[1].items[4].items[0].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[4].items[1].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[4].items[2].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[4].items[3].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[5].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in nested layout)",
+        "[ADDITION] Added property \"items[1].items[5].items[0].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Title text)",
+        "[ADDITION] Added property \"items[1].items[5].items[1].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[6].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Body text)",
+        "[ADDITION] Added property \"items[1].items[7].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in nested layout)",
+        "[ADDITION] Added property \"items[1].items[7].items[0].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Button component)",
+        "[ADDITION] Added property \"items[1].items[7].items[1].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Button component)",
+        "[ADDITION] Added property \"items[1].items[8].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Caption text)",
+        "[ADDITION] Added property \"items[1].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Content layout)",
+        "[ADDITION] Added property \"items[2].visibilityOverrides\": {} (Reason: Added visibilityOverrides to handle potential missing content in Bottom Navigation component)"
+      ]
+    }
+  ]
+}

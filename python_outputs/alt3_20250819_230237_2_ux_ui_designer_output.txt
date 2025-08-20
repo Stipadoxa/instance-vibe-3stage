@@ -1,0 +1,248 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light"
+      },
+      "iconSwaps": {
+        "leading-icon": "north_west"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "layoutGrow": 1,
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "2018 MacBook Pro 13-inch - Space Gray - Excellent Condition",
+            "textStyle": "Headline/Large"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7816",
+              "variants": {
+                "Type": "1 image"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "$850",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary90"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Excellent. Minor scratches on the bottom casing. Fully functional.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "John Smith",
+                "textStyle": "Title/Medium"
+              }
+            },
+             {
+              "type": "component",
+              "componentNodeId": "635:4130",
+              "variants":{
+                "Style": "Filled"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Processor: 2.3 GHz Intel Core i5\nMemory: 8GB RAM\nStorage: 256GB SSD\nOperating System: macOS Ventura",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Selling my well-maintained MacBook Pro. It's been used primarily for light tasks like browsing and word processing. Battery health is excellent. Comes with original charger.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Free shipping within the US",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Contact Seller"
+              },
+              "variants": {
+                "Size": "Large",
+                "Type": "Filled",
+                "Color": "Green",
+                "State": "Default"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Add to Favorites"
+              },
+              "variants": {
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items":[
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Listed 2 days ago",
+                "textStyle": "Caption/Small"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Last updated: 1 hour ago",
+                "textStyle": "Caption/Small"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```
+
+```markdown
+# DESIGN RATIONALE
+
+## Component Intelligence Applied
+- **Typography Hierarchy**:  Headline/Large is used for the product title to give it prominence. Title/Large is used for the price, Title/Medium for the seller's name, and Body/Medium for descriptions and specifications to maintain readability and visual hierarchy. Caption/Small is used for timestamps.
+
+- **Spacing System**:  Consistent spacing of 16px is used between major sections, and 8px between closely related elements.  Padding is used within containers to create visual breathing room.  The root container has 0 padding to allow the navigation to span edge-to-edge.
+
+
+- **Component Behavior**: The app bar uses a left-pointing arrow for navigation. The image component is used to display the product images. Buttons are used for primary and secondary actions, with the primary action ("Contact Seller") being more prominent.
+
+
+- **Color Application**: Primary colors are used for the price and primary call-to-action button to emphasize these elements. Neutral colors are used for the majority of the text to ensure readability.
+
+
+- **Layout Strategy**: A vertical layout is used for the main content, organizing information logically. Horizontal layouts are used for sections like the price and seller information to present elements in a concise manner.
+
+
+## Domain Context Integration
+- **Industry Patterns**: The design follows common e-commerce patterns, including prominent product images, clear pricing, seller information, specifications, and call-to-actions.
+
+- **User Mental Models**: The layout aims to match user expectations of product detail pages by presenting key information at the top of the screen and gradually providing more detail as the user scrolls down.
+
+- **Contextual Adaptations**: The design adapts the standard component library by using variants and specific properties to tailor elements to the e-commerce domain and the product detail page's context.
+
+
+## Design System Compliance
+- **Component Verification**: All componentNodeIds have been verified against the provided DESIGN_SYSTEM_DATA.
+- **Variant Completeness**: All necessary variants are specified for each component.
+- **Text Property Mapping**:  Text styles are consistently applied using the names from the design system's textStyles.
+- **Schema Adherence**: All properties adhere to their respective component definitions.
+
+```

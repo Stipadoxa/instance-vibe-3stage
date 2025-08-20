@@ -1,0 +1,67 @@
+```json
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Headline Text",
+            "textStyle": "headline1",
+            "fontSize": 32,
+            "fontWeight": "bold",
+            "color": "Primary/Blue/500",
+            "alignment": "center"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 50,
+                "height": 50,
+                "fill": {
+                  "type": "SOLID",
+                  "color": "grey"
+                }
+              }
+            },
+            {
+              "type": "native-text",
+              "properties": {
+                "content": "Supporting Text",
+                "textStyle": "body1",
+                "fontSize": 16,
+                "color": "#333",
+                "alignment": "left"
+              },
+              "_useFlexFill": true,
+              "_parentLayout": "HORIZONTAL"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```

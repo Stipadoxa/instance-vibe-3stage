@@ -1382,13 +1382,20 @@ export class ComponentScanner {
    * Analyzes a single component to extract metadata
    */
   static async analyzeComponent(comp: ComponentNode | ComponentSetNode): Promise<ComponentInfo> {
+      // Performance guard: Skip overly complex components
+      if (comp.type === 'COMPONENT_SET' && comp.children.length > 50) {
+          console.warn(`⚠️ Skipping detailed analysis for complex component set "${comp.name}" with ${comp.children.length} variants`);
+          // Return minimal info for very complex components
+          return this.analyzeComponentOptimized(comp);
+      }
+      
       const name = comp.name;
       const suggestedType = this.guessComponentType(name.toLowerCase());
       const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
       
       // DEPRECATED: Heavy methods disabled for optimization
-      // const textLayers = this.findTextLayers(comp);
-      // const textHierarchy = await this.analyzeTextHierarchy(comp);
+      const textLayers = this.findTextLayers(comp);
+      const textHierarchy = await this.analyzeTextHierarchy(comp);
       // const componentInstances = await this.findComponentInstances(comp);
       // const vectorNodes = this.findVectorNodes(comp);
       // const imageNodes = this.findImageNodes(comp);
@@ -1451,8 +1458,8 @@ export class ComponentScanner {
           confidence,
           variants: variants.length > 0 ? variants : undefined,
           variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : undefined,
-          textLayers: undefined, // DEPRECATED: Disabled for optimization
-          textHierarchy: undefined, // DEPRECATED: Disabled for optimization
+          textLayers: textLayers.length > 0 ? textLayers : undefined,
+          textHierarchy: textHierarchy.length > 0 ? textHierarchy : undefined,
           componentInstances: undefined, // DEPRECATED: Disabled for optimization
           vectorNodes: undefined, // DEPRECATED: Disabled for optimization
           imageNodes: undefined, // DEPRECATED: Disabled for optimization
@@ -2065,12 +2072,8 @@ export class ComponentScanner {
                       const textNode = node as TextNode;
                       textLayers.push(textNode.name);
                       
-                      try {
-                          const chars = textNode.characters || '[empty]';
-                          console.log(`📝 Found text layer: "${textNode.name}" with content: "${chars}"`);
-                      } catch (charError) {
-                          console.log(`📝 Found text layer: "${textNode.name}" (could not read characters)`);
-                      }
+                      // Simplified logging without reading characters
+                      console.log(`📝 Found text layer: "${textNode.name}"`);
                   }
               });
           }
@@ -2138,12 +2141,8 @@ export class ComponentScanner {
             }
           }
           
-          let characters: string | undefined;
-          try {
-            characters = node.characters || '[empty]';
-          } catch (e) {
-            characters = undefined;
-          }
+          // Skip reading actual characters for performance
+          const characters = '[text content]';
 
           // NEW: Extract text color
           let textColor: ColorInfo | undefined;

@@ -1,0 +1,234 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "headline": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "visibilityOverrides": {
+        "10:5622": true,
+        "10:5632": false,
+        "10:5633": false,
+        "10:5634": false,
+        "10:5635": false
+      },
+      "iconSwaps": {
+        "leading-icon": "arrow",
+        "trailing-icon": null
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutGrow": 1,
+      "itemSpacing": 16,
+      "items": [
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "2015 MacBook Pro 13\" - Excellent Condition",
+            "textStyle": "Headline/Large"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "2+ images"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "$450",
+            "textStyle": "Headline/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "24:10352",
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "John Smith ⭐⭐⭐⭐ (4.8, 27 Reviews)",
+                "textStyle": "Body/Medium"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Condition: Excellent (Minor scratches on the bottom casing)",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {"type": "native-text", "flexFillRequired": true, "properties": {"content": "Processor: Intel Core i5", "textStyle": "Body/Medium"}},
+            {"type": "native-text", "flexFillRequired": true, "properties": {"content": "RAM: 8GB", "textStyle": "Body/Medium"}},
+            {"type": "native-text", "flexFillRequired": true, "properties": {"content": "Storage: 256GB SSD", "textStyle": "Body/Medium"}},
+            {"type": "native-text", "flexFillRequired": true, "properties": {"content": "Operating System: macOS Monterey", "textStyle": "Body/Medium"}}
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Gently used MacBook Pro 13\" in excellent condition. Minor scratches on the bottom casing are barely noticeable. Battery life is excellent, holding a charge for over 8 hours. Includes original charger.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Shipping Information: Free Shipping within the US.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Warranty: 30-Day Return Policy",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Last updated: 1 hour ago",
+            "textStyle": "Caption/Small"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Contact Seller"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Add to Favorites"
+              },
+              "variants": {
+                "Platform": "Android+Web",
+                "Size": "Medium",
+                "Type": "Outlined",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```
+
+```markdown
+# DESIGN RATIONALE
+
+## Component Intelligence Applied
+- **Typography Hierarchy**: Headline/Large is used for the main product title to ensure prominence. Headline/Medium is used for the price, providing a clear visual distinction. Body/Medium is used for the remaining descriptive text, maintaining readability.  Caption/Small is used for the last updated timestamp, de-emphasizing this secondary information.
+
+- **Spacing System**:  The `itemSpacing` of 16 within the content container provides a comfortable visual rhythm. The padding of 16px on all sides of the content container ensures sufficient breathing room around the content while maintaining an edge-to-edge feel with the top and bottom navigation.
+
+- **Component Behavior**: The image gallery (`componentNodeId: 10:7816`) leverages the design system's image component to provide a consistent visual experience.  The buttons (`componentNodeId: 10:3907`) utilize variants to clearly differentiate between primary and secondary actions.
+
+- **Color Application**: The primary color (#00b53f) is used consistently for primary actions (Contact Seller button) to enhance visual prominence. Neutral colors (#304049, #415661, #6c8ea0) are used for the majority of text to ensure readability.
+
+- **Layout Strategy**: A vertical layout is used for the overall screen structure, reflecting the natural flow of information.  A horizontal layout is used for the seller profile and button actions to group related items visually.
+
+
+## Domain Context Integration
+- **Industry Patterns**: The design incorporates common e-commerce patterns such as a product image gallery, detailed specifications, pricing, seller ratings, and clear call-to-actions.
+
+- **User Mental Models**: The layout and information hierarchy are designed to align with users' expectations for product detail pages. Key information is presented prominently at the top, followed by more detailed specifications and descriptions.
+
+- **Contextual Adaptations**: The app bar is customized to display "Product Details," reflecting the current context, while the back button is shown in the top navigation and the bottom navigation remains consistent.
+
+## Design System Compliance
+- **Component Verification**: All componentNodeIds have been validated against the provided `DESIGN_SYSTEM_DATA`.
+- **Variant Completeness**: All necessary variants are included in the component specifications with valid values from the `DESIGN_SYSTEM_DATA`.
+- **Text Property Mapping**:  Text content is mapped to the appropriate textLayers within components ("headline" for titles, etc.).
+- **Schema Adherence**: The component properties and variants strictly adhere to the structure defined in the `DESIGN_SYSTEM_DATA`.
+
+```

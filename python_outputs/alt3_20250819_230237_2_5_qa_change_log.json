@@ -1,0 +1,87 @@
+{
+  "timestamp": "2025-08-19T23:04:35.242756",
+  "total_iterations": 3,
+  "total_issues_found": 18,
+  "total_changes_made": 6,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 8,
+      "changes_made": 2,
+      "issues": [
+        "- Component 10:7816 has variant \"Type\": \"1 image\" which is not in DESIGN_SYSTEM_DATA.",
+        "- Component 10:7816 has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 10:7798 has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 635:4130 has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 10:3907 (first instance) has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 10:3907 (second instance) has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Native text elements have color property outside of properties object.",
+        "- Native text elements have width property implicitly defined via horizontalSizing: \"HUG\"."
+      ],
+      "changes": [
+        "- Changed horizontalSizing of multiple components from \"HUG\" to \"FILL\".",
+        "- Removed color property from native-text elements and placed it inside the properties object."
+      ],
+      "detailed_change_log": [
+        "[COMPONENT] Component \"10:7816\" variant \"Type\": \"1 image\" \u2192  No change (Reason:  Variant \"Type\":\"1 image\" remains;  no valid replacement in design system data).",
+        "[COMPONENT] Component \"10:7816\" variant \"Type\": \"1 image\" \u2192 \"1 image\" (Reason:Keeping the original design decision. No valid alternative found.)",
+        "[CHANGE_TYPE] Property \"items[1].items[0].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason:  Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[3].items[0].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[3].items[2].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[7].items[0].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[7].items[1].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[ADDITION] Added property \"items[1].items[1].properties.color\": \"Primary/primary90\" (Reason:To ensure color is defined correctly within properties object)"
+      ]
+    },
+    {
+      "iteration_number": 2,
+      "issues_found": 8,
+      "changes_made": 2,
+      "issues": [
+        "- Component 10:7816 has variant \"Type\": \"1 image\" which is not in DESIGN_SYSTEM_DATA.",
+        "- Component 10:7816 has \"horizontalSizing\": \"FILL\" which should be removed.  Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 10:7798 has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 635:4130 has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 10:3907 (first instance) has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 10:3907 (second instance) has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Native text elements have color property outside of properties object.",
+        "- Native text elements should not have width properties implicitly defined via horizontalSizing: \"FILL\"."
+      ],
+      "changes": [
+        "- Removed `horizontalSizing` property from multiple components.",
+        "- No changes needed for color properties as they are already within the `properties` object."
+      ],
+      "detailed_change_log": [
+        "[REMOVAL] Removed property \"items[1].items[0].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[2].items[0].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[2].items[2].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[3].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[4].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)"
+      ]
+    },
+    {
+      "iteration_number": 3,
+      "issues_found": 2,
+      "changes_made": 2,
+      "issues": [
+        "- Component 10:7816 has variant \"Type\": \"1 image\" which is not in DESIGN_SYSTEM_DATA.",
+        "- Component 10:7816 has no required variants from its schema."
+      ],
+      "changes": [
+        "- Added missing variants to \"10:5620\" component.",
+        "- No changes were made to 10:7816 because adding missing variants requires design decisions."
+      ],
+      "detailed_change_log": [
+        "[ADDITION] Added property \"items[0].variants.Type\": \"Default\" (Reason:  The appbar component requires a \"Type\" variant.  \"Default\" is chosen as the most likely default value.)",
+        "[ADDITION] Added property \"items[0].variants.Elevation\": \"flat\" (Reason: The appbar component requires an \"Elevation\" variant. \"flat\" is chosen as the most likely default value.)",
+        "[COMPONENT] Component \"10:5620\" variant \"Mode\": \"\" \u2192 \"Light\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"10:4724\" variant \"Device\": \"\" \u2192 \"Mobile\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"10:7816\" variant \"Type\": \"\" \u2192 \"1 image\" (Reason: No change made, as adding missing variants requires design decisions.)",
+        "[COMPONENT] Component \"10:7798\" variant \"Type\": \"\" \u2192 \"Photo\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"635:4130\" variant \"Style\": \"\" \u2192 \"Filled\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"10:3907\" (first instance) variant \"Size\": \"\" \u2192 \"Large\", \"Type\": \"\" \u2192 \"Filled\", \"Color\": \"\" \u2192 \"Green\", \"State\": \"\" \u2192 \"Default\" (Reason: No change, values already present)",
+        "[COMPONENT] Component \"10:3907\" (second instance) variant \"Size\": \"\" \u2192 \"Medium\", \"Type\": \"\" \u2192 \"Outlined\", \"State\": \"\" \u2192 \"Default\" (Reason: No change, values already present)"
+      ]
+    }
+  ]
+}

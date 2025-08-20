@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-08-19T23:19:16.717591",
+  "total_iterations": 2,
+  "total_issues_found": 5,
+  "total_changes_made": 1,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 3,
+      "changes_made": 1,
+      "issues": [
+        "- componentNodeId \"635:4715\" does not exist in DESIGN_SYSTEM_DATA",
+        "- \"horizontalSizing\": \"HUG\" in component \"10:7798\" should be \"FILL\"",
+        "- Missing visibilityOverrides for text layers without assigned content."
+      ],
+      "changes": [
+        "- Changed horizontalSizing of component with componentNodeId \"10:7798\" from \"HUG\" to \"FILL\"."
+      ],
+      "detailed_change_log": [
+        "[COMPONENT] Component \"10:7798\" variant \"horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Native text components should use layoutSizingHorizontal: \"FILL\" for full width)"
+      ]
+    },
+    {
+      "iteration_number": 2,
+      "issues_found": 2,
+      "changes_made": 0,
+      "issues": [
+        "- componentNodeId \"635:4715\" does not exist in DESIGN_SYSTEM_DATA",
+        "- Missing visibilityOverrides for text layers without assigned content."
+      ],
+      "changes": [],
+      "detailed_change_log": []
+    }
+  ]
+}

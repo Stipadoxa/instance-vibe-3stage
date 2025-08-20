@@ -1,0 +1,90 @@
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Header Text",
+            "textStyle": "Headline1",
+            "fontSize": 32,
+            "fontWeight": "bold",
+            "color": "Primary/Blue/500",
+            "alignment": "CENTER"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "itemSpacing": 16,
+          "paddingLeft": 20,
+          "paddingRight": 20,
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 100,
+                "height": 100,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 10
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Product Title",
+                    "textStyle": "Body1",
+                    "fontSize": 16,
+                    "fontWeight": "normal",
+                    "color": "Text/Primary",
+                    "alignment": "LEFT"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Short description goes here...",
+                    "textStyle": "Body2",
+                    "fontSize": 14,
+                    "fontWeight": "normal",
+                    "color": "Text/Secondary",
+                    "alignment": "LEFT"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

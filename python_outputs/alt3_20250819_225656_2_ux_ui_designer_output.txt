@@ -1,0 +1,250 @@
+```json
+{
+  "type": "layoutContainer",
+  "name": "Product Details - Mobile",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "paddingTop": 0,
+  "paddingBottom": 0,
+  "paddingLeft": 0,
+  "paddingRight": 0,
+  "itemSpacing": 0,
+  "items": [
+    {
+      "type": "component",
+      "componentNodeId": "10:5620",
+      "properties": {
+        "Label": "Product Details"
+      },
+      "variants": {
+        "Mode": "Light",
+        "Type": "Default",
+        "Elevation": "flat"
+      },
+      "iconSwaps": {
+        "leading-icon": "635:4715" 
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    },
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "paddingTop": 16,
+      "paddingBottom": 16,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "primaryAxisSizingMode": "AUTO",
+      "counterAxisSizingMode": "FIXED",
+      "layoutGrow": 1,
+      "items": [
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "2015 MacBook Pro 13-inch - Excellent Condition",
+            "textStyle": "Headline/Large"
+          }
+        },
+        {
+          "type": "component",
+          "componentNodeId": "10:7816",
+          "variants": {
+            "Type": "1 image"
+          },
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 12,
+          "items": [
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "$450",
+                "textStyle": "Title/Large",
+                "color": "Primary/primary50"
+              }
+            },
+            {
+              "type": "component",
+              "componentNodeId": "10:7805",
+              "properties": {
+                "headline": "Excellent"
+              },
+              "variants": {
+                "Type": "Single Digit",
+                "Active": "false"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "VERTICAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Processor: 2.7 GHz Intel Core i5",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "RAM: 8GB",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Storage: 256GB SSD",
+                "textStyle": "Body/Medium"
+              }
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "Operating System: macOS Monterey",
+                "textStyle": "Body/Medium"
+              }
+            }
+          ]
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 8,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:7798",
+              "variants": {
+                "Type": "Photo"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            },
+            {
+              "type": "native-text",
+              "flexFillRequired": true,
+              "properties": {
+                "content": "@techsavvyseller (4.8 stars, 127 reviews)",
+                "textStyle": "Body/Medium"
+              }
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "This MacBook Pro is in excellent condition and has been meticulously cared for. Battery health is at 92%. Includes original charger. Selling due to upgrade.",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Free Shipping within the US",
+            "textStyle": "Body/Medium"
+          }
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "itemSpacing": 16,
+          "items": [
+            {
+              "type": "component",
+              "componentNodeId": "10:3907",
+              "properties": {
+                "Action": "Contact Seller"
+              },
+              "variants": {
+                "Size": "Large",
+                "Type": "Filled",
+                "State": "Default",
+                "Color": "Green"
+              },
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH"
+            },
+            {
+              "type": "component",
+              "componentNodeId": "635:4744",
+              "variants": {
+                "style": "filled"
+              },
+              "horizontalSizing": "HUG",
+              "layoutAlign": "MIN"
+            }
+          ]
+        },
+        {
+          "type": "native-text",
+          "flexFillRequired": true,
+          "properties": {
+            "content": "Listed 2 days ago",
+            "textStyle": "Caption/Small"
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "componentNodeId": "10:4724",
+      "variants": {
+        "Device": "Mobile"
+      },
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH"
+    }
+  ]
+}
+```
+
+```markdown
+# DESIGN RATIONALE
+
+## Component Intelligence Applied
+- **Typography Hierarchy**: The Headline/Large style is used for the product title to give it prominence. Title/Large is used for the price, providing a clear visual distinction. Body/Medium is used for specifications and description to ensure readability. Caption/Small is used for the timestamp to provide a less prominent visual cue.
+
+- **Spacing System**: The 3-container architecture (app bar, content, bottom nav) is used for consistent mobile app structure.  A `paddingTop` and `paddingLeft/Right` of 16px are used within the content container for comfortable content breathing room, and `itemSpacing` is used for vertical arrangement of content blocks, according to semantic relationships.
+
+- **Component Behavior**:  The `10:7816` (Thumbnail) component is used for the image carousel.  The primary action ("Contact Seller") uses a filled button for emphasis; a secondary action (heart icon for "Add to Favorites") is a smaller, less visually prominent component.
+
+- **Color Application**: Primary/primary50 is used for the price to draw attention and highlight it as a key piece of information.  Neutral colors (mainly from the Neutral color palette) are utilized for body text, ensuring readability.
+
+- **Layout Strategy**: A vertical layout (`layoutMode`: "VERTICAL") is adopted for the overall structure, as is typical for mobile product detail views.  Horizontal layouts (`layoutMode`: "HORIZONTAL") are employed for grouping related information such as price and condition, and icon and seller details.
+
+## Domain Context Integration
+- **Industry Patterns**: The design mirrors typical e-commerce product detail pages by clearly presenting the product image, price, key specifications, seller information, and a call to action.
+
+- **User Mental Models**: Users expect product details pages to showcase the product image prominently, followed by price, specifications, seller information and reviews, a description, and a clear action to contact the seller or make a purchase. This order mirrors industry standards and user expectations.
+
+- **Contextual Adaptations**: The design uses the existing components from the provided Design System to optimize visual consistency. Where existing components are not suitable, native UI elements are used.
+
+## Design System Compliance
+- **Component Verification**: All componentNodeIds were checked against the provided `DESIGN_SYSTEM_DATA` and substituted with a fallback option where necessary.
+- **Variant Completeness**: All components are used with their appropriate variants.
+- **Text Property Mapping**: Text content is accurately mapped to component properties and native text elements use designated text styles.
+- **Schema Adherence**:  The JSON structure and properties adhere to the defined schema and best practices.
+
+```
