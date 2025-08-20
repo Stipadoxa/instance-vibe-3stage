@@ -1,0 +1,94 @@
+```json
+{
+  "type": "layoutContainer",
+  "layoutMode": "VERTICAL",
+  "width": 375,
+  "minHeight": 812,
+  "primaryAxisSizingMode": "FIXED",
+  "counterAxisSizingMode": "FIXED",
+  "items": [
+    {
+      "type": "layoutContainer",
+      "layoutMode": "VERTICAL",
+      "horizontalSizing": "FILL",
+      "layoutAlign": "STRETCH",
+      "paddingTop": 20,
+      "paddingBottom": 20,
+      "items": [
+        {
+          "type": "native-text",
+          "properties": {
+            "content": "Header Text",
+            "textStyle": "Headline1",
+            "fontSize": 32,
+            "fontWeight": "bold",
+            "color": "Primary/Blue/500",
+            "alignment": "CENTER"
+          },
+          "_useFlexFill": true,
+          "_parentLayout": "VERTICAL"
+        },
+        {
+          "type": "layoutContainer",
+          "layoutMode": "HORIZONTAL",
+          "horizontalSizing": "FILL",
+          "layoutAlign": "STRETCH",
+          "itemSpacing": 16,
+          "paddingLeft": 20,
+          "paddingRight": 20,
+          "items": [
+            {
+              "type": "native-rectangle",
+              "properties": {
+                "width": 100,
+                "height": 100,
+                "fill": {
+                  "type": "IMAGE",
+                  "scaleMode": "FILL"
+                },
+                "cornerRadius": 10
+              }
+            },
+            {
+              "type": "layoutContainer",
+              "layoutMode": "VERTICAL",
+              "horizontalSizing": "FILL",
+              "layoutAlign": "STRETCH",
+              "items": [
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Product Title",
+                    "textStyle": "Body1",
+                    "fontSize": 16,
+                    "fontWeight": "normal",
+                    "color": "Text/Primary",
+                    "alignment": "LEFT"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                },
+                {
+                  "type": "native-text",
+                  "properties": {
+                    "content": "Short description goes here...",
+                    "textStyle": "Body2",
+                    "fontSize": 14,
+                    "fontWeight": "normal",
+                    "color": "Text/Secondary",
+                    "alignment": "LEFT"
+                  },
+                  "_useFlexFill": true,
+                  "_parentLayout": "VERTICAL"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Note:**  This JSON assumes some placeholder values for properties like `textStyle`, `color` etc.  These would need to be populated from the actual `DESIGN_SYSTEM_DATA` and the `UX UI DESIGNER OUTPUT` or `REVIEWER_OUTPUT` (which were not provided in the prompt).  The structure and essential properties for correct rendering in Figma are included, however.  The algorithms mentioned in the prompt would be used to dynamically populate and validate these values and handle the missing `REVIEWER_OUTPUT`.  Error handling and robustness checks (as specified in the prompt) would be implemented as well.

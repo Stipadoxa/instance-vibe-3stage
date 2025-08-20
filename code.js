@@ -1045,9 +1045,15 @@
          * Analyzes a single component to extract metadata
          */
         static async analyzeComponent(comp) {
+          if (comp.type === "COMPONENT_SET" && comp.children.length > 50) {
+            console.warn(`\u26A0\uFE0F Skipping detailed analysis for complex component set "${comp.name}" with ${comp.children.length} variants`);
+            return this.analyzeComponentOptimized(comp);
+          }
           const name = comp.name;
           const suggestedType = this.guessComponentType(name.toLowerCase());
           const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
+          const textLayers = this.findTextLayers(comp);
+          const textHierarchy = await this.analyzeTextHierarchy(comp);
           console.log(`\u{1F3D7}\uFE0F Building hierarchical structure for "${comp.name}"`);
           let componentStructure;
           try {
@@ -1089,10 +1095,8 @@
             confidence,
             variants: variants.length > 0 ? variants : void 0,
             variantDetails: Object.keys(variantDetails).length > 0 ? variantDetails : void 0,
-            textLayers: void 0,
-            // DEPRECATED: Disabled for optimization
-            textHierarchy: void 0,
-            // DEPRECATED: Disabled for optimization
+            textLayers: textLayers.length > 0 ? textLayers : void 0,
+            textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0,
             componentInstances: void 0,
             // DEPRECATED: Disabled for optimization
             vectorNodes: void 0,
@@ -1133,6 +1137,8 @@
             const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
             const variantOptions = this.extractVariantOptionsOptimized(comp);
             const textSlots = this.extractTextSlotsOptimized(comp);
+            const textLayers = this.findTextLayers(comp);
+            const textHierarchy = await this.analyzeTextHierarchy(comp);
             const componentSlots = await this.extractComponentSlotsOptimized(comp);
             const layoutBehavior = this.extractLayoutBehaviorOptimized(comp);
             const styleContext = this.extractStyleContextOptimized(comp);
@@ -1147,7 +1153,9 @@
               textSlots,
               componentSlots,
               layoutBehavior,
-              styleContext
+              styleContext,
+              textLayers: textLayers.length > 0 ? textLayers : void 0,
+              textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0
             };
           } catch (error) {
             console.error(`\u274C Failed to analyze component "${comp.name}":`, error);
@@ -1624,12 +1632,7 @@
                 if (node.type === "TEXT" && node.name) {
                   const textNode = node;
                   textLayers.push(textNode.name);
-                  try {
-                    const chars = textNode.characters || "[empty]";
-                    console.log(`\u{1F4DD} Found text layer: "${textNode.name}" with content: "${chars}"`);
-                  } catch (charError) {
-                    console.log(`\u{1F4DD} Found text layer: "${textNode.name}" (could not read characters)`);
-                  }
+                  console.log(`\u{1F4DD} Found text layer: "${textNode.name}"`);
                 }
               });
             }
@@ -1683,12 +1686,7 @@
                     classification = "tertiary";
                   }
                 }
-                let characters;
-                try {
-                  characters = node.characters || "[empty]";
-                } catch (e) {
-                  characters = void 0;
-                }
+                const characters = "[text content]";
                 let textColor;
                 try {
                   if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {

@@ -1,0 +1,286 @@
+{
+  "stage": "Design QA",
+  "timestamp": "20250819_230237",
+  "validated_json": {
+    "type": "layoutContainer",
+    "name": "Product Details - Mobile",
+    "layoutMode": "VERTICAL",
+    "width": 375,
+    "minHeight": 812,
+    "primaryAxisSizingMode": "FIXED",
+    "counterAxisSizingMode": "FIXED",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "itemSpacing": 0,
+    "items": [
+      {
+        "type": "component",
+        "componentNodeId": "10:5620",
+        "properties": {
+          "headline": "Product Details"
+        },
+        "variants": {
+          "Mode": "Light",
+          "Type": "Default",
+          "Elevation": "flat"
+        },
+        "iconSwaps": {
+          "leading-icon": "north_west"
+        },
+        "layoutAlign": "STRETCH"
+      },
+      {
+        "type": "layoutContainer",
+        "layoutMode": "VERTICAL",
+        "paddingTop": 16,
+        "paddingBottom": 16,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "layoutAlign": "STRETCH",
+        "primaryAxisSizingMode": "AUTO",
+        "layoutGrow": 1,
+        "itemSpacing": 16,
+        "items": [
+          {
+            "type": "native-text",
+            "flexFillRequired": true,
+            "properties": {
+              "content": "2018 MacBook Pro 13-inch - Space Gray - Excellent Condition",
+              "textStyle": "Headline/Large"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7816",
+                "variants": {
+                  "Type": "1 image"
+                },
+                "layoutAlign": "MIN"
+              },
+              {
+                "type": "native-text",
+                "flexFillRequired": true,
+                "properties": {
+                  "content": "$850",
+                  "textStyle": "Title/Large",
+                  "color": "Primary/primary90"
+                }
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "flexFillRequired": true,
+            "properties": {
+              "content": "Excellent. Minor scratches on the bottom casing. Fully functional.",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:7798",
+                "variants": {
+                  "Type": "Photo"
+                },
+                "layoutAlign": "MIN"
+              },
+              {
+                "type": "native-text",
+                "flexFillRequired": true,
+                "properties": {
+                  "content": "John Smith",
+                  "textStyle": "Title/Medium"
+                }
+              },
+              {
+                "type": "component",
+                "componentNodeId": "635:4130",
+                "variants": {
+                  "Style": "Filled"
+                },
+                "layoutAlign": "MIN"
+              }
+            ]
+          },
+          {
+            "type": "native-text",
+            "flexFillRequired": true,
+            "properties": {
+              "content": "Processor: 2.3 GHz Intel Core i5\nMemory: 8GB RAM\nStorage: 256GB SSD\nOperating System: macOS Ventura",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "native-text",
+            "flexFillRequired": true,
+            "properties": {
+              "content": "Selling my well-maintained MacBook Pro. It's been used primarily for light tasks like browsing and word processing. Battery health is excellent. Comes with original charger.",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "native-text",
+            "flexFillRequired": true,
+            "properties": {
+              "content": "Free shipping within the US",
+              "textStyle": "Body/Medium"
+            }
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 16,
+            "items": [
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "Action": "Contact Seller"
+                },
+                "variants": {
+                  "Size": "Large",
+                  "Type": "Filled",
+                  "Color": "Green",
+                  "State": "Default"
+                },
+                "layoutAlign": "MIN"
+              },
+              {
+                "type": "component",
+                "componentNodeId": "10:3907",
+                "properties": {
+                  "Action": "Add to Favorites"
+                },
+                "variants": {
+                  "Size": "Medium",
+                  "Type": "Outlined",
+                  "State": "Default"
+                },
+                "layoutAlign": "MIN"
+              }
+            ]
+          },
+          {
+            "type": "layoutContainer",
+            "layoutMode": "HORIZONTAL",
+            "itemSpacing": 8,
+            "items": [
+              {
+                "type": "native-text",
+                "flexFillRequired": true,
+                "properties": {
+                  "content": "Listed 2 days ago",
+                  "textStyle": "Caption/Small"
+                }
+              },
+              {
+                "type": "native-text",
+                "flexFillRequired": true,
+                "properties": {
+                  "content": "Last updated: 1 hour ago",
+                  "textStyle": "Caption/Small"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "component",
+        "componentNodeId": "10:4724",
+        "variants": {
+          "Device": "Mobile"
+        },
+        "layoutAlign": "STRETCH"
+      }
+    ]
+  },
+  "history": [
+    {
+      "iteration": 1,
+      "issues": [
+        "- Component 10:7816 has variant \"Type\": \"1 image\" which is not in DESIGN_SYSTEM_DATA.",
+        "- Component 10:7816 has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 10:7798 has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 635:4130 has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 10:3907 (first instance) has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Component 10:3907 (second instance) has \"horizontalSizing\": \"HUG\" which is not compliant.",
+        "- Native text elements have color property outside of properties object.",
+        "- Native text elements have width property implicitly defined via horizontalSizing: \"HUG\"."
+      ],
+      "changes": [
+        "- Changed horizontalSizing of multiple components from \"HUG\" to \"FILL\".",
+        "- Removed color property from native-text elements and placed it inside the properties object."
+      ],
+      "change_log": [
+        "[COMPONENT] Component \"10:7816\" variant \"Type\": \"1 image\" \u2192  No change (Reason:  Variant \"Type\":\"1 image\" remains;  no valid replacement in design system data).",
+        "[COMPONENT] Component \"10:7816\" variant \"Type\": \"1 image\" \u2192 \"1 image\" (Reason:Keeping the original design decision. No valid alternative found.)",
+        "[CHANGE_TYPE] Property \"items[1].items[0].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason:  Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[3].items[0].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[3].items[2].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[7].items[0].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[CHANGE_TYPE] Property \"items[1].items[7].items[1].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Must use FILL for consistent layout)",
+        "[ADDITION] Added property \"items[1].items[1].properties.color\": \"Primary/primary90\" (Reason:To ensure color is defined correctly within properties object)"
+      ]
+    },
+    {
+      "iteration": 2,
+      "issues": [
+        "- Component 10:7816 has variant \"Type\": \"1 image\" which is not in DESIGN_SYSTEM_DATA.",
+        "- Component 10:7816 has \"horizontalSizing\": \"FILL\" which should be removed.  Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 10:7798 has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 635:4130 has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 10:3907 (first instance) has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Component 10:3907 (second instance) has \"horizontalSizing\": \"FILL\" which should be removed. Horizontal sizing is handled by the parent auto-layout.",
+        "- Native text elements have color property outside of properties object.",
+        "- Native text elements should not have width properties implicitly defined via horizontalSizing: \"FILL\"."
+      ],
+      "changes": [
+        "- Removed `horizontalSizing` property from multiple components.",
+        "- No changes needed for color properties as they are already within the `properties` object."
+      ],
+      "change_log": [
+        "[REMOVAL] Removed property \"items[1].items[0].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[2].items[0].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[2].items[2].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[3].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)",
+        "[REMOVAL] Removed property \"items[1].items[4].horizontalSizing\": \"FILL\" (Reason: Horizontal sizing is handled by the parent auto-layout)"
+      ]
+    },
+    {
+      "iteration": 3,
+      "issues": [
+        "- Component 10:7816 has variant \"Type\": \"1 image\" which is not in DESIGN_SYSTEM_DATA.",
+        "- Component 10:7816 has no required variants from its schema."
+      ],
+      "changes": [
+        "- Added missing variants to \"10:5620\" component.",
+        "- No changes were made to 10:7816 because adding missing variants requires design decisions."
+      ],
+      "change_log": [
+        "[ADDITION] Added property \"items[0].variants.Type\": \"Default\" (Reason:  The appbar component requires a \"Type\" variant.  \"Default\" is chosen as the most likely default value.)",
+        "[ADDITION] Added property \"items[0].variants.Elevation\": \"flat\" (Reason: The appbar component requires an \"Elevation\" variant. \"flat\" is chosen as the most likely default value.)",
+        "[COMPONENT] Component \"10:5620\" variant \"Mode\": \"\" \u2192 \"Light\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"10:4724\" variant \"Device\": \"\" \u2192 \"Mobile\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"10:7816\" variant \"Type\": \"\" \u2192 \"1 image\" (Reason: No change made, as adding missing variants requires design decisions.)",
+        "[COMPONENT] Component \"10:7798\" variant \"Type\": \"\" \u2192 \"Photo\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"635:4130\" variant \"Style\": \"\" \u2192 \"Filled\" (Reason: No change, value already present)",
+        "[COMPONENT] Component \"10:3907\" (first instance) variant \"Size\": \"\" \u2192 \"Large\", \"Type\": \"\" \u2192 \"Filled\", \"Color\": \"\" \u2192 \"Green\", \"State\": \"\" \u2192 \"Default\" (Reason: No change, values already present)",
+        "[COMPONENT] Component \"10:3907\" (second instance) variant \"Size\": \"\" \u2192 \"Medium\", \"Type\": \"\" \u2192 \"Outlined\", \"State\": \"\" \u2192 \"Default\" (Reason: No change, values already present)"
+      ]
+    }
+  ],
+  "iterations_used": 3
+}

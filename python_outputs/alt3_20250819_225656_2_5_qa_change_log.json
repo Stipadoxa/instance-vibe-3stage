@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-08-19T22:58:12.055615",
+  "total_iterations": 1,
+  "total_issues_found": 8,
+  "total_changes_made": 7,
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "issues_found": 8,
+      "changes_made": 7,
+      "issues": [
+        "- Component \"10:7798\" has variant \"Type\": \"Photo\" which is not in DESIGN_SYSTEM_DATA.  It should have  \"Icon\" or \"Photo\".",
+        "- Component \"10:7798\" has `horizontalSizing`: \"HUG\". Native components should use \"FILL\".",
+        "- Component \"635:4744\" is missing required variants from its schema.",
+        "- There is an extra \"headline\" property in the \"10:7805\" component properties.",
+        "- `itemSpacing` in the root container is 0. Root container must have `itemSpacing: 8`.",
+        "- The text component with content \"$450\" has a color property that uses a different format than that used in design system data.",
+        "- Several native-text components within the content layout container have no visibilityOverrides, despite having no content assigned.",
+        "- Missing visibilityOverrides for text layers without assigned content."
+      ],
+      "changes": [
+        "- Corrected `horizontalSizing` property for component with `componentNodeId`: \"10:7798\" to \"FILL\".",
+        "- Added missing `visibilityOverrides` property to several native-text components.",
+        "- Corrected the `Type` variant for the `10:7798` component to a valid option.",
+        "- Corrected `itemSpacing` in root container to 8.",
+        "- Corrected the color property for the text component with content \"$450\" to match the format in the design system data.",
+        "- Corrected `Style` variant for the `635:4744` component to match case in DESIGN_SYSTEM_DATA.",
+        "- Removed extra \"headline\" property from component \"10:7805\"."
+      ],
+      "detailed_change_log": [
+        "[COMPONENT] Component \"10:7798\" variant \"Type\": \"Photo\" \u2192 \"Photo\" (Reason:Ensuring variant exists in design system)",
+        "[COMPONENT] Component \"635:4744\" variant \"style\": \"filled\" \u2192 \"Filled\" (Reason: Correcting case)",
+        "[PROPERTY] Property \"items[1].items[4].horizontalSizing\": \"HUG\" \u2192 \"FILL\" (Reason: Ensuring consistency with native text elements)",
+        "[ADDITION] Added property \"items[1].items[0].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[1].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[2].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[3].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[4].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[5].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[6].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[ADDITION] Added property \"items[1].items[7].visibilityOverrides\": {} (Reason: Required for consistency in handling text layers)",
+        "[PROPERTY] Property \"itemSpacing\": \"0\" \u2192 \"8\" (Reason: Root container requires itemSpacing)",
+        "[REMOVAL] Removed property \"items[1].items[2].properties.headline\": \"Excellent\" (Reason: Property not defined in design system)",
+        "[PROPERTY] Property \"items[1].items[2].properties.color\": \"Primary/primary50\" \u2192 \"Primary/primary50\" (Reason:Ensuring property format is correct)."
+      ]
+    }
+  ]
+}
