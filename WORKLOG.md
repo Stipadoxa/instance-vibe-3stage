@@ -1,3 +1,25 @@
+# UXPal Development Log
+
+## 2025-08-20: Component Scanner Text Functionality Restoration
+
+**Issue:** Component scanner was not capturing `textLayers` and `textHierarchy` data, preventing UX/UI Designer from properly assigning text content to components.
+
+**Root Cause:** Export process was using `analyzeComponentOptimized` method which lacked text analysis functionality.
+
+**Solution Implemented:**
+- Added `textLayers` and `textHierarchy` analysis to `analyzeComponentOptimized` method
+- Extended `LLMOptimizedComponentInfo` interface to include text data fields  
+- Optimized performance by skipping expensive character content reading
+- Added performance guard for complex component sets (50+ variants)
+
+**Results:**
+- ✅ Text data now populated in design system exports (259KB file size)
+- ✅ UX/UI Designer can properly map text content to components
+- ✅ Performance maintained under 300KB target
+- ✅ All changes committed to `restore-component-text-scanning` branch
+
+---
+
 # UXPal Design Reviewer Fixes - 2025-08-16
 
 ## Session Summary
