@@ -261,6 +261,10 @@ export interface LLMOptimizedComponentInfo {
     pageId: string;
     isCurrentPage: boolean;
   };
+  
+  // RESTORED TEXT DATA - for UX/UI Designer text assignment
+  textLayers?: string[];
+  textHierarchy?: TextHierarchy[];
 }
 
 export interface SessionState {

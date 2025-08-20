@@ -1501,6 +1501,10 @@ export class ComponentScanner {
       // Shallow text slot analysis (no deep recursion)
       const textSlots = this.extractTextSlotsOptimized(comp);
       
+      // RESTORED: Add text layer analysis for UX/UI Designer
+      const textLayers = this.findTextLayers(comp);
+      const textHierarchy = await this.analyzeTextHierarchy(comp);
+      
       // Component slots with exact names (for visibility override)
       const componentSlots = await this.extractComponentSlotsOptimized(comp);
       
@@ -1522,7 +1526,9 @@ export class ComponentScanner {
         textSlots,
         componentSlots,
         layoutBehavior,
-        styleContext
+        styleContext,
+        textLayers: textLayers.length > 0 ? textLayers : undefined,
+        textHierarchy: textHierarchy.length > 0 ? textHierarchy : undefined
       };
       
     } catch (error) {

@@ -1137,6 +1137,8 @@
             const confidence = this.calculateConfidence(name.toLowerCase(), suggestedType);
             const variantOptions = this.extractVariantOptionsOptimized(comp);
             const textSlots = this.extractTextSlotsOptimized(comp);
+            const textLayers = this.findTextLayers(comp);
+            const textHierarchy = await this.analyzeTextHierarchy(comp);
             const componentSlots = await this.extractComponentSlotsOptimized(comp);
             const layoutBehavior = this.extractLayoutBehaviorOptimized(comp);
             const styleContext = this.extractStyleContextOptimized(comp);
@@ -1151,7 +1153,9 @@
               textSlots,
               componentSlots,
               layoutBehavior,
-              styleContext
+              styleContext,
+              textLayers: textLayers.length > 0 ? textLayers : void 0,
+              textHierarchy: textHierarchy.length > 0 ? textHierarchy : void 0
             };
           } catch (error) {
             console.error(`\u274C Failed to analyze component "${comp.name}":`, error);
