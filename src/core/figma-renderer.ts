@@ -65,7 +65,7 @@ export class FigmaRenderer {
   static async resetRenderPositions(): Promise<void> {
     try {
       await figma.clientStorage.setAsync('uxpal-render-positions', JSON.stringify({ nextX: 0, nextY: 0, currentRow: 0 }));
-      console.log('🔄 Render positions reset to origin');
+      console.log('ðŸ”„ Render positions reset to origin');
     } catch (error) {
       console.warn('Failed to reset positions:', error);
     }
@@ -99,7 +99,7 @@ export class FigmaRenderer {
       // Calculate actual content height
       const contentHeight = this.calculateContentHeight(rootFrame);
       
-      console.log('📏 Content height analysis:', {
+      console.log('ðŸ“ Content height analysis:', {
         contentHeight,
         minHeight,
         shouldAdjust: contentHeight > minHeight,
@@ -110,10 +110,10 @@ export class FigmaRenderer {
       // If content exceeds minimum, let it grow naturally
       // If content is smaller, keep minimum height
       if (contentHeight > minHeight && rootFrame.primaryAxisSizingMode === "AUTO") {
-        console.log('✅ Content height exceeds minimum - frame will hug content');
+        console.log('âœ… Content height exceeds minimum - frame will hug content');
         // Auto-layout will handle this automatically
       } else {
-        console.log('📐 Content fits within minimum - maintaining', minHeight, 'px height');
+        console.log('ðŸ“ Content fits within minimum - maintaining', minHeight, 'px height');
         // Frame will stay at minHeight due to minHeight constraint
       }
       
@@ -125,7 +125,7 @@ export class FigmaRenderer {
       }
       
     } catch (error) {
-      console.warn('⚠️ Failed to adjust root frame height:', error);
+      console.warn('âš ï¸ Failed to adjust root frame height:', error);
     }
   }
 
@@ -150,9 +150,9 @@ export class FigmaRenderer {
         // Step 1: Enable auto-layout
         try {
           currentFrame.layoutMode = containerData.layoutMode;
-          console.log('✅ Set layoutMode to:', containerData.layoutMode);
+          console.log('âœ… Set layoutMode to:', containerData.layoutMode);
         } catch (layoutModeError) {
-          console.warn('⚠️ Could not set layoutMode:', layoutModeError.message);
+          console.warn('âš ï¸ Could not set layoutMode:', layoutModeError.message);
           return currentFrame; // Exit early if auto-layout can't be enabled
         }
         
@@ -160,26 +160,26 @@ export class FigmaRenderer {
         try {
           // Key change: Use AUTO for primary axis (vertical) to hug content
           currentFrame.primaryAxisSizingMode = "AUTO"; // Force content hugging regardless of JSON
-          console.log('✅ Set primaryAxisSizingMode to AUTO');
+          console.log('âœ… Set primaryAxisSizingMode to AUTO');
         } catch (sizingError) {
-          console.warn('⚠️ Could not set primaryAxisSizingMode:', sizingError.message);
+          console.warn('âš ï¸ Could not set primaryAxisSizingMode:', sizingError.message);
         }
         
         try {
           currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
-          console.log('✅ Set counterAxisSizingMode to FIXED');
+          console.log('âœ… Set counterAxisSizingMode to FIXED');
         } catch (counterError) {
-          console.warn('⚠️ Could not set counterAxisSizingMode:', counterError.message);
+          console.warn('âš ï¸ Could not set counterAxisSizingMode:', counterError.message);
         }
         
         // Step 3: Set minimum height constraint AFTER sizing modes
         try {
           if (minHeight) {
             currentFrame.minHeight = minHeight;
-            console.log('✅ Set minHeight to:', minHeight);
+            console.log('âœ… Set minHeight to:', minHeight);
           }
         } catch (minHeightError) {
-          console.warn('⚠️ Could not set minHeight:', minHeightError.message);
+          console.warn('âš ï¸ Could not set minHeight:', minHeightError.message);
         }
       }
       
@@ -220,7 +220,7 @@ export class FigmaRenderer {
             currentFrame.layoutWrap = containerData.layoutWrap;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set layoutWrap:', e.message);
+          console.warn('âš ï¸ Failed to set layoutWrap:', e.message);
         }
         
         // Primary axis alignment
@@ -229,7 +229,7 @@ export class FigmaRenderer {
             currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set primaryAxisAlignItems:', e.message);
+          console.warn('âš ï¸ Failed to set primaryAxisAlignItems:', e.message);
         }
         
         // Counter axis alignment
@@ -238,7 +238,7 @@ export class FigmaRenderer {
             currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set counterAxisAlignItems:', e.message);
+          console.warn('âš ï¸ Failed to set counterAxisAlignItems:', e.message);
         }
         
         // Sizing modes with setter checks
@@ -254,13 +254,13 @@ export class FigmaRenderer {
             currentFrame.primaryAxisSizingMode = "AUTO";
           }
         } else {
-          console.warn('⚠️ Skipping primaryAxisSizingMode - setter not available');
+          console.warn('âš ï¸ Skipping primaryAxisSizingMode - setter not available');
         }
         
         if (hasCounterSetter && containerData.counterAxisSizingMode) {
           currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
         } else if (!hasCounterSetter) {
-          console.warn('⚠️ Skipping counterAxisSizingMode - setter not available');
+          console.warn('âš ï¸ Skipping counterAxisSizingMode - setter not available');
         }
       }
       
@@ -270,7 +270,7 @@ export class FigmaRenderer {
           currentFrame.minWidth = containerData.minWidth;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set minWidth:', e.message);
+        console.warn('âš ï¸ Failed to set minWidth:', e.message);
       }
       
       try {
@@ -278,7 +278,7 @@ export class FigmaRenderer {
           currentFrame.maxWidth = containerData.maxWidth;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set maxWidth:', e.message);
+        console.warn('âš ï¸ Failed to set maxWidth:', e.message);
       }
       
       try {
@@ -286,7 +286,7 @@ export class FigmaRenderer {
           currentFrame.minHeight = containerData.minHeight;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set minHeight:', e.message);
+        console.warn('âš ï¸ Failed to set minHeight:', e.message);
       }
       
       try {
@@ -294,7 +294,7 @@ export class FigmaRenderer {
           currentFrame.maxHeight = containerData.maxHeight;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set maxHeight:', e.message);
+        console.warn('âš ï¸ Failed to set maxHeight:', e.message);
       }
       
       if (containerData.width) {
@@ -321,7 +321,7 @@ export class FigmaRenderer {
         const nestedFrame = figma.createFrame();
         currentFrame.appendChild(nestedFrame);
         
-        console.log('🔍 DEBUG: Created nested frame with default sizing modes:', {
+        console.log('ðŸ” DEBUG: Created nested frame with default sizing modes:', {
           primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
           counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
           layoutMode: nestedFrame.layoutMode
@@ -332,11 +332,11 @@ export class FigmaRenderer {
         
         // CRITICAL FIX: Reset height for horizontal AUTO containers (alternative code path)
         if (nestedFrame.layoutMode === 'HORIZONTAL' && nestedFrame.primaryAxisSizingMode === 'AUTO') {
-          console.log('🔧 HORIZONTAL AUTO CONTAINER (ALT PATH): Forcing height reset from default 100px');
+          console.log('ðŸ”§ HORIZONTAL AUTO CONTAINER (ALT PATH): Forcing height reset from default 100px');
           
           // Direct approach: Force height to hug by resetting the frame height
           try {
-            console.log('📏 Current height before fix:', nestedFrame.height);
+            console.log('ðŸ“ Current height before fix:', nestedFrame.height);
             
             const children = nestedFrame.children;
             if (children.length > 0) {
@@ -348,7 +348,7 @@ export class FigmaRenderer {
                 }
               }
               
-              console.log('📏 Calculated max child height:', maxChildHeight);
+              console.log('ðŸ“ Calculated max child height:', maxChildHeight);
               
               if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
                 // Apply padding if it exists
@@ -356,19 +356,19 @@ export class FigmaRenderer {
                 const paddingBottom = (nestedFrame as any).paddingBottom || 0;
                 const targetHeight = maxChildHeight + paddingTop + paddingBottom;
                 
-                console.log('📏 Setting frame height to:', targetHeight);
+                console.log('ðŸ“ Setting frame height to:', targetHeight);
                 nestedFrame.resize(nestedFrame.width, targetHeight);
               }
             }
             
-            console.log('📏 Final height after fix:', nestedFrame.height);
-            console.log('✅ Height reset complete - should now hug content');
+            console.log('ðŸ“ Final height after fix:', nestedFrame.height);
+            console.log('âœ… Height reset complete - should now hug content');
           } catch (error) {
-            console.error('❌ Height reset failed:', error);
+            console.error('âŒ Height reset failed:', error);
           }
         }
         
-        console.log('🔍 DEBUG: After applyChildLayoutProperties:', {
+        console.log('ðŸ” DEBUG: After applyChildLayoutProperties:', {
           primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
           counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
           layoutMode: nestedFrame.layoutMode,
@@ -377,7 +377,7 @@ export class FigmaRenderer {
         
         await this.generateUIFromData({ layoutContainer: item, items: item.items }, nestedFrame);
         
-        console.log('🔍 DEBUG: Final nested frame properties:', {
+        console.log('ðŸ” DEBUG: Final nested frame properties:', {
           primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
           counterAxisSizingMode: nestedFrame.counterAxisSizingMode,
           layoutMode: nestedFrame.layoutMode,
@@ -394,8 +394,8 @@ export class FigmaRenderer {
       
       // Safe defensive conversion for native elements with children
       else if (item.type?.startsWith('native-') && (item.items || item.properties?.items)) {
-        console.warn(`⚠️ Invalid structure: ${item.type} cannot have child items`);
-        console.warn('📦 Auto-converting to layoutContainer to prevent crash');
+        console.warn(`âš ï¸ Invalid structure: ${item.type} cannot have child items`);
+        console.warn('ðŸ“¦ Auto-converting to layoutContainer to prevent crash');
         
         // Extract the items array (might be in different places)
         const childItems = item.items || item.properties?.items || [];
@@ -431,7 +431,7 @@ export class FigmaRenderer {
         }
         
         // Log what we're doing for debugging
-        console.log('🔄 Converted structure:', {
+        console.log('ðŸ”„ Converted structure:', {
           from: item.type,
           to: 'layoutContainer',
           preservedStyling: {
@@ -468,7 +468,7 @@ export class FigmaRenderer {
         
         const componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
         if (!componentNode) {
-          console.warn(`⚠️ Component with ID ${item.componentNodeId} not found. Skipping.`);
+          console.warn(`âš ï¸ Component with ID ${item.componentNodeId} not found. Skipping.`);
           continue;
         }
         
@@ -477,32 +477,32 @@ export class FigmaRenderer {
           : componentNode) as ComponentNode | null;
           
         if (!masterComponent || masterComponent.type !== 'COMPONENT') {
-          console.warn(`⚠️ Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
+          console.warn(`âš ï¸ Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
           continue;
         }
         
         const instance = masterComponent.createInstance();
         currentFrame.appendChild(instance);
         
-        console.log(`🔧 Creating instance of component: ${masterComponent.name}`);
-        console.log(`🔧 Raw properties:`, item.properties);
+        console.log(`ðŸ”§ Creating instance of component: ${masterComponent.name}`);
+        console.log(`ðŸ”§ Raw properties:`, item.properties);
 
         const {cleanProperties, variants} = this.separateVariantsFromProperties(item.properties, item.componentNodeId);
         const sanitizedProps = this.sanitizeProperties(cleanProperties);
 
-        console.log(`🔧 Clean properties:`, sanitizedProps);
-        console.log(`🔧 Extracted variants:`, variants);
+        console.log(`ðŸ”§ Clean properties:`, sanitizedProps);
+        console.log(`ðŸ”§ Extracted variants:`, variants);
 
         // Apply variants
         if (Object.keys(variants).length > 0) {
           try {
             if (componentNode && componentNode.type === 'COMPONENT_SET') {
               const availableVariants = componentNode.variantGroupProperties;
-              console.log(`🔍 Available variants for ${componentNode.name}:`, Object.keys(availableVariants || {}));
-              console.log(`🔍 Requested variants:`, variants);
+              console.log(`ðŸ” Available variants for ${componentNode.name}:`, Object.keys(availableVariants || {}));
+              console.log(`ðŸ” Requested variants:`, variants);
               
               if (!availableVariants) {
-                console.warn('⚠️ No variant properties found on component, skipping variant application.');
+                console.warn('âš ï¸ No variant properties found on component, skipping variant application.');
               } else {
                 const validVariants: { [key: string]: string } = {};
                 let hasValidVariants = false;
@@ -514,7 +514,7 @@ export class FigmaRenderer {
                     let stringValue: string;
                     if (typeof propValue === 'boolean') {
                       stringValue = propValue ? 'True' : 'False';
-                      console.log(`🔄 Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+                      console.log(`ðŸ”„ Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
                     } else {
                       stringValue = String(propValue);
                     }
@@ -522,29 +522,29 @@ export class FigmaRenderer {
                     if (availableProp.values.includes(stringValue)) {
                       validVariants[propName] = stringValue;
                       hasValidVariants = true;
-                      console.log(`✅ Valid variant: ${propName} = "${stringValue}"`);
+                      console.log(`âœ… Valid variant: ${propName} = "${stringValue}"`);
                     } else {
-                      console.warn(`⚠️ Invalid value for "${propName}": "${stringValue}". Available: [${availableProp.values.join(', ')}]`);
+                      console.warn(`âš ï¸ Invalid value for "${propName}": "${stringValue}". Available: [${availableProp.values.join(', ')}]`);
                     }
                   } else {
-                    console.warn(`⚠️ Unknown variant property: "${propName}". Available: [${Object.keys(availableVariants).join(', ')}]`);
+                    console.warn(`âš ï¸ Unknown variant property: "${propName}". Available: [${Object.keys(availableVariants).join(', ')}]`);
                   }
                 });
                 
                 if (hasValidVariants) {
-                  console.log(`🔧 Applying variants:`, validVariants);
+                  console.log(`ðŸ”§ Applying variants:`, validVariants);
                   instance.setProperties(validVariants);
-                  console.log('✅ Variants applied successfully');
+                  console.log('âœ… Variants applied successfully');
                 } else {
-                  console.warn('⚠️ No valid variants to apply, using default variant');
+                  console.warn('âš ï¸ No valid variants to apply, using default variant');
                 }
               }
             } else {
-              console.log('ℹ️ Component is not a variant set, skipping variant application');
+              console.log('â„¹ï¸ Component is not a variant set, skipping variant application');
             }
           } catch (e) {
-            console.error("❌ Error applying variants:", e);
-            console.log("ℹ️ Continuing with default variant");
+            console.error("âŒ Error applying variants:", e);
+            console.log("â„¹ï¸ Continuing with default variant");
           }
         }
         
@@ -574,7 +574,7 @@ export class FigmaRenderer {
    * Dynamic UI generation with component ID resolution
    */
   static async generateUIFromDataDynamic(layoutData: any): Promise<FrameNode | null> {
-    console.log('🚀 START generateUIFromDataDynamic', { hasLayoutData: !!layoutData, hasItems: !!layoutData?.items });
+    console.log('ðŸš€ START generateUIFromDataDynamic', { hasLayoutData: !!layoutData, hasItems: !!layoutData?.items });
     
     if (!layoutData || (!layoutData.items && !layoutData.layoutContainer)) {
       figma.notify("Invalid JSON structure", { error: true });
@@ -589,13 +589,13 @@ export class FigmaRenderer {
       await this.ensureDesignSystemDataLoaded();
       
       // Skip ComponentPropertyEngine for testing if no schemas available
-      console.log('🔧 Checking ComponentPropertyEngine schemas...');
+      console.log('ðŸ”§ Checking ComponentPropertyEngine schemas...');
       const existingSchemas = ComponentPropertyEngine.getAllSchemas();
       if (existingSchemas.length === 0) {
-        console.log('⚠️ No design system schemas found - running in basic mode');
+        console.log('âš ï¸ No design system schemas found - running in basic mode');
       } else {
         await ComponentPropertyEngine.initialize();
-        console.log('✅ ComponentPropertyEngine initialized with', existingSchemas.length, 'schemas');
+        console.log('âœ… ComponentPropertyEngine initialized with', existingSchemas.length, 'schemas');
       }
 
       // Migrate JSON if needed
@@ -623,7 +623,7 @@ export class FigmaRenderer {
                 item.type === 'text' ||
                 item.type === 'native-rectangle' ||
                 item.type === 'native-circle') {
-              console.log(`ℹ️ Skipping native element: ${item.type}`);
+              console.log(`â„¹ï¸ Skipping native element: ${item.type}`);
               continue;
             }
             
@@ -638,21 +638,21 @@ export class FigmaRenderer {
                   throw new Error(`Component for type "${item.type}" not found in design system. Please scan your design system first.`);
                 }
                 item.componentNodeId = resolvedId;
-                console.log(`✅ Resolved ${item.type} -> ${resolvedId}`);
+                console.log(`âœ… Resolved ${item.type} -> ${resolvedId}`);
               } else {
-                console.log(`✅ Using existing ID for ${item.type}: ${item.componentNodeId}`);
+                console.log(`âœ… Using existing ID for ${item.type}: ${item.componentNodeId}`);
               }
             }
           }
         }
 
       await resolveComponentIds(migratedData.items);
-      console.log('🟢 USING SYSTEMATIC GENERATION METHOD');
+      console.log('ðŸŸ¢ USING SYSTEMATIC GENERATION METHOD');
       
       // Get real design system data for icon swaps
       let designSystemData = null;
       try {
-        console.log('🔍 Loading real design system data from storage...');
+        console.log('ðŸ” Loading real design system data from storage...');
         
         // Try to get design system data from figma.clientStorage
         if (typeof figma !== 'undefined' && figma.clientStorage) {
@@ -666,7 +666,7 @@ export class FigmaRenderer {
             };
             
             const iconCount = scanSession.components.filter((comp: any) => comp.suggestedType === 'icon').length;
-            console.log('✅ Loaded real design system data:', {
+            console.log('âœ… Loaded real design system data:', {
               totalComponents: scanSession.components.length,
               iconComponents: iconCount,
               scanTime: new Date(scanSession.scanTime).toLocaleString(),
@@ -675,10 +675,10 @@ export class FigmaRenderer {
             
             // Log available icons for debugging
             const icons = scanSession.components.filter((comp: any) => comp.suggestedType === 'icon');
-            console.log('🎨 Available icons:', icons.slice(0, 10).map((icon: any) => `${icon.name} (${icon.id})`));
+            console.log('ðŸŽ¨ Available icons:', icons.slice(0, 10).map((icon: any) => `${icon.name} (${icon.id})`));
             
           } else {
-            console.warn('⚠️ No design-system-scan data found in storage');
+            console.warn('âš ï¸ No design-system-scan data found in storage');
             
             // Fallback: try last-scan-results
             const lastScan = await figma.clientStorage.getAsync('last-scan-results');
@@ -687,21 +687,21 @@ export class FigmaRenderer {
                 components: lastScan,
                 totalCount: lastScan.length
               };
-              console.log('✅ Using fallback last-scan-results data:', lastScan.length, 'components');
+              console.log('âœ… Using fallback last-scan-results data:', lastScan.length, 'components');
             }
           }
         } else {
-          console.warn('⚠️ figma.clientStorage not available');
+          console.warn('âš ï¸ figma.clientStorage not available');
         }
       } catch (error) {
-        console.error('❌ Error loading design system data:', error);
+        console.error('âŒ Error loading design system data:', error);
       }
       
       return await this.generateUIFromDataSystematic(migratedData, figma.currentPage, designSystemData);
     } catch (e: any) {
       const errorMessage = e instanceof Error ? e.message : String(e);
       figma.notify(errorMessage, { error: true, timeout: 4000 });
-      console.error("❌ generateUIFromDataDynamic error:", e);
+      console.error("âŒ generateUIFromDataDynamic error:", e);
       return null;
     }
   }
@@ -711,7 +711,7 @@ export class FigmaRenderer {
    * NEW LOGIC: Uses effective width calculation from parent chain
    */
   private static detectWidthConstraint(container: FrameNode): boolean {
-    console.log('🔍 Detecting width constraint for container:', {
+    console.log('ðŸ” Detecting width constraint for container:', {
       type: container.type,
       layoutMode: container.layoutMode,
       width: container.width,
@@ -723,11 +723,11 @@ export class FigmaRenderer {
     
     // Keep 375px threshold as requested
     if (effectiveWidth && effectiveWidth <= 375) {
-      console.log('✅ Width constraint detected: Effective width =', effectiveWidth);
+      console.log('âœ… Width constraint detected: Effective width =', effectiveWidth);
       return true;
     }
     
-    console.log('❌ No width constraint: Effective width =', effectiveWidth || 'null');
+    console.log('âŒ No width constraint: Effective width =', effectiveWidth || 'null');
     return false;
   }
 
@@ -736,7 +736,7 @@ export class FigmaRenderer {
    * Useful for troubleshooting width constraint detection issues
    */
   private static debugParentChain(container: FrameNode): void {
-    console.log('🔍 DEBUG: Parent chain analysis for:', container.name);
+    console.log('ðŸ” DEBUG: Parent chain analysis for:', container.name);
     let current: FrameNode | null = container;
     let level = 0;
     
@@ -769,7 +769,7 @@ export class FigmaRenderer {
    * Walks up the layout hierarchy to find actual width limits
    */
   private static calculateEffectiveWidth(container: FrameNode): number | null {
-    console.log('🧮 Calculating effective width for:', container.name);
+    console.log('ðŸ§® Calculating effective width for:', container.name);
     
     let current: FrameNode | null = container;
     let level = 0;
@@ -778,20 +778,20 @@ export class FigmaRenderer {
       console.log(`  Level ${level}: ${current.name} (${current.layoutMode || 'no-layout'})`);
       
       // Case 1: Root container with explicit fixed width
-      if (current.primaryAxisSizingMode === 'FIXED' && 
-          current.counterAxisSizingMode === 'FIXED' && 
+      if (current.primaryAxisSizingMode === 'FIXED' &&
+          current.counterAxisSizingMode === 'FIXED' &&
           current.width > 0) {
         const rootWidth = current.width;
-        console.log(`  ✅ Case 1 - Found root width: ${rootWidth}px`);
+        console.log(`  âœ… Case 1 - Found root width: ${rootWidth}px`);
         return rootWidth;
       }
       
       // Case 2: Container with actual width (any container that has width set)
       if (current.width > 0) {
-        const constrainedWidth = current.width - 
-          (current.paddingLeft || 0) - 
+        const constrainedWidth = current.width -
+          (current.paddingLeft || 0) -
           (current.paddingRight || 0);
-        console.log(`  ✅ Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
+        console.log(`  âœ… Case 2 - Found container width: ${current.width}px, usable: ${constrainedWidth}px`);
         return Math.max(constrainedWidth, 100); // Minimum 100px
       }
       
@@ -799,7 +799,7 @@ export class FigmaRenderer {
       // This metadata is added during JSON processing to help with width calculation
       if ((current as any)._effectiveWidth) {
         const metadataWidth = (current as any)._effectiveWidth;
-        console.log(`  ✅ Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
+        console.log(`  âœ… Case 3 - Found _effectiveWidth metadata: ${metadataWidth}px`);
         return metadataWidth;
       }
       
@@ -810,10 +810,10 @@ export class FigmaRenderer {
         const parentFrame = parent as FrameNode;
         
         // Check if this container is FILL inside a VERTICAL parent
-        if (parentFrame.layoutMode === 'VERTICAL' && 
+        if (parentFrame.layoutMode === 'VERTICAL' &&
             current.layoutMode !== undefined) { // Current has layout (is a container)
           
-          console.log(`  🔍 Case 4 - Checking FILL in VERTICAL parent`);
+          console.log(`  ðŸ” Case 4 - Checking FILL in VERTICAL parent`);
           console.log(`    Parent: ${parentFrame.name}, layout: VERTICAL`);
           console.log(`    Current horizontalSizing: ${(current as any).horizontalSizing || 'not-set'}`);
           
@@ -822,10 +822,10 @@ export class FigmaRenderer {
           const parentWidth = this.calculateEffectiveWidth(parentFrame);
           if (parentWidth) {
             // Account for parent's padding when calculating available width
-            const availableWidth = parentWidth - 
-              (parentFrame.paddingLeft || 0) - 
+            const availableWidth = parentWidth -
+              (parentFrame.paddingLeft || 0) -
               (parentFrame.paddingRight || 0);
-            console.log(`  ✅ Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
+            console.log(`  âœ… Case 4 - Inherited from VERTICAL parent: ${parentWidth}px, available: ${availableWidth}px`);
             return Math.max(availableWidth, 100);
           }
         }
@@ -833,10 +833,10 @@ export class FigmaRenderer {
         // Case 5: NEW - Check if parent has any width constraint we can use
         if (parentFrame.layoutMode === 'HORIZONTAL' && parentFrame.width > 0) {
           // HORIZONTAL parent with fixed width also constrains children
-          const parentWidth = parentFrame.width - 
-            (parentFrame.paddingLeft || 0) - 
+          const parentWidth = parentFrame.width -
+            (parentFrame.paddingLeft || 0) -
             (parentFrame.paddingRight || 0);
-          console.log(`  ✅ Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
+          console.log(`  âœ… Case 5 - HORIZONTAL parent with width: ${parentWidth}px`);
           return Math.max(parentWidth, 100);
         }
         
@@ -849,7 +849,7 @@ export class FigmaRenderer {
       }
     }
     
-    console.log('  ❌ No effective width found in parent chain (reached top or max depth)');
+    console.log('  âŒ No effective width found in parent chain (reached top or max depth)');
     return null;
   }
 
@@ -876,7 +876,7 @@ export class FigmaRenderer {
     const parentLayout = (textData as any)._parentLayout || null;
     const useFlexFill = (textData as any)._useFlexFill || false;
 
-    console.log('📐 Text metadata:', {
+    console.log('ðŸ“ Text metadata:', {
       constraintWidth,
       parentLayout,
       useFlexFill,
@@ -908,26 +908,26 @@ export class FigmaRenderer {
       if (fills.length > 0 && fills[0].type === 'SOLID') {
         // Check if color is a semantic color name (string)
         if (typeof props.color === 'string') {
-          console.log(`🎨 Attempting to resolve semantic color: "${props.color}"`);
+          console.log(`ðŸŽ¨ Attempting to resolve semantic color: "${props.color}"`);
           
           try {
             // Try to apply actual Figma color style first
             const colorStyle = await this.resolveColorStyleReference(props.color);
             if (colorStyle) {
               await textNode.setFillStyleIdAsync(colorStyle.id);
-              console.log(`✅ Applied semantic color "${props.color}" to text (as style reference)`);
+              console.log(`âœ… Applied semantic color "${props.color}" to text (as style reference)`);
             } else {
               // Fallback to RGB color if style not found
               const resolvedColor = this.resolveColorReference(props.color);
               if (resolvedColor) {
                 textNode.fills = [this.createSolidPaint(resolvedColor)];
-                console.log(`✅ Applied semantic color "${props.color}" to text (as RGB fallback)`);
+                console.log(`âœ… Applied semantic color "${props.color}" to text (as RGB fallback)`);
               } else {
-                console.warn(`⚠️ Could not resolve semantic color "${props.color}", skipping color application`);
+                console.warn(`âš ï¸ Could not resolve semantic color "${props.color}", skipping color application`);
               }
             }
           } catch (error) {
-            console.error(`❌ Error applying color "${props.color}":`, error);
+            console.error(`âŒ Error applying color "${props.color}":`, error);
             // Continue without color if there's an error
           }
         } else if (typeof props.color === 'object' && 'r' in props.color) {
@@ -943,26 +943,26 @@ export class FigmaRenderer {
     
     // Color style name support (new feature) - applies actual Figma color style
     if (props.colorStyleName) {
-      console.log(`🎨 Attempting to resolve color style: "${props.colorStyleName}"`);
+      console.log(`ðŸŽ¨ Attempting to resolve color style: "${props.colorStyleName}"`);
       
       try {
         // Try to apply actual Figma color style first
         const colorStyle = await this.resolveColorStyleReference(props.colorStyleName);
         if (colorStyle) {
           await textNode.setFillStyleIdAsync(colorStyle.id);
-          console.log(`✅ Applied color style "${props.colorStyleName}" to text (as style reference)`);
+          console.log(`âœ… Applied color style "${props.colorStyleName}" to text (as style reference)`);
         } else {
           // Fallback to RGB color if style not found
           const resolvedColor = this.resolveColorReference(props.colorStyleName);
           if (resolvedColor) {
             textNode.fills = [this.createSolidPaint(resolvedColor)];
-            console.log(`✅ Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
+            console.log(`âœ… Applied color style "${props.colorStyleName}" to text (as RGB fallback)`);
           } else {
-            console.warn(`⚠️ Could not resolve color style "${props.colorStyleName}", skipping color application`);
+            console.warn(`âš ï¸ Could not resolve color style "${props.colorStyleName}", skipping color application`);
           }
         }
       } catch (error) {
-        console.error(`❌ Error applying color style "${props.colorStyleName}":`, error);
+        console.error(`âŒ Error applying color style "${props.colorStyleName}":`, error);
         // Continue without color if there's an error
       }
     }
@@ -970,22 +970,24 @@ export class FigmaRenderer {
     // Text style support (new feature) - applies actual Figma text style
     if (props.textStyle || props.textStyleName) {
       const styleName = props.textStyle || props.textStyleName;
-      console.log(`📝 Attempting to apply text style: "${styleName}"`);
+      console.log(`ðŸ“ Attempting to apply text style: "${styleName}"`);
       
       try {
         await FigmaRenderer.applyTextStyle(textNode, styleName);
       } catch (error) {
-        console.error(`❌ Error applying text style "${styleName}":`, error);
+        console.error(`âŒ Error applying text style "${styleName}":`, error);
         // Continue without text style if there's an error
       }
     }
     
-    // FINAL: Enhanced text auto-resize with flex-fill support
+    // ENHANCED: Text auto-resize with flex-fill support and layout properties
+    // _useFlexFill metadata indicates text should fill container width via auto-layout
+    // This requires both textAutoResize: 'HEIGHT' AND proper layoutAlign/layoutGrow properties
     const isInConstrainedContainer = this.detectWidthConstraint(container);
 
     // Debug: Log decision factors
     if (useFlexFill) {
-      console.log('📝 Text flex-fill decision:', {
+      console.log('ðŸ“ Text flex-fill decision:', {
         content: textContent.substring(0, 30) + '...',
         useFlexFill,
         parentLayout,
@@ -1001,18 +1003,40 @@ export class FigmaRenderer {
     if (useFlexFill) {
       // HORIZONTAL containers or VERTICAL-in-HORIZONTAL: Use flex-fill
       textNode.textAutoResize = 'HEIGHT';  // Height flexible, width managed by auto-layout
-      // Don't set explicit width - let container's auto-layout distribute space
       
-      console.log('✅ FINAL: Applied flex-fill (auto-layout managed width)', {
+      // ✅ FIX: Apply layout properties directly to text nodes for flex-fill behavior
+      try {
+        if (parentLayout === 'VERTICAL' || parentLayout === 'VERTICAL_IN_HORIZONTAL') {
+          // In vertical layouts, text should stretch horizontally to fill container width
+          textNode.layoutAlign = 'STRETCH';
+          console.log('🔧 Applied layoutAlign: STRETCH for vertical parent layout');
+        } else if (parentLayout === 'HORIZONTAL') {
+          // In horizontal layouts, text should grow to fill available space
+          textNode.layoutGrow = 1;
+          textNode.layoutAlign = 'STRETCH';
+          console.log('🔧 Applied layoutGrow: 1 and layoutAlign: STRETCH for horizontal parent layout');
+        } else {
+          // Default case: stretch to fill available width
+          textNode.layoutAlign = 'STRETCH';
+          console.log('🔧 Applied default layoutAlign: STRETCH for unknown parent layout');
+        }
+      } catch (layoutError) {
+        console.warn('⚠️ Could not apply layout properties to text node with _useFlexFill:', layoutError.message);
+        // Continue without layout properties - text will still have correct textAutoResize
+      }
+      
+      console.log('✅ FINAL: Applied flex-fill with layout properties', {
         parentLayout,
         textAutoResize: 'HEIGHT',
+        layoutAlign: textNode.layoutAlign,
+        layoutGrow: textNode.layoutGrow || 'not-set',
         strategy: parentLayout === 'VERTICAL_IN_HORIZONTAL' ? 'nested' : 'direct'
       });
     } else if (isInConstrainedContainer && !useFlexFill) {
       textNode.textAutoResize = 'HEIGHT';  // Width constrained, height flexible
       
       // Priority 1: Use metadata from JSON Engineer
-      // Priority 2: Calculate effective width 
+      // Priority 2: Calculate effective width
       // Priority 3: Fallback to container width
       let targetWidth = constraintWidth;
       
@@ -1027,13 +1051,13 @@ export class FigmaRenderer {
       
       // Account for container padding
       const availableWidth = Math.max(
-        targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)), 
+        targetWidth - ((container.paddingLeft || 0) + (container.paddingRight || 0)),
         100  // Minimum 100px
       );
       
       textNode.resize(availableWidth, textNode.height);
       
-      console.log('✅ FINAL: Applied width constraint', {
+      console.log('âœ… FINAL: Applied width constraint', {
         source: constraintWidth ? 'metadata' : 'calculated',
         targetWidth,
         availableWidth,
@@ -1041,7 +1065,7 @@ export class FigmaRenderer {
       });
     } else {
       textNode.textAutoResize = 'WIDTH_AND_HEIGHT';  // Free expansion
-      console.log('✅ FINAL: Applied free expansion (no width constraint detected)');
+      console.log('âœ… FINAL: Applied free expansion (no width constraint detected)');
     }
     
     // Note: applyChildLayoutProperties will safely ignore text nodes (returns early for type 'TEXT')
@@ -1119,18 +1143,18 @@ export class FigmaRenderer {
    * Apply image fill to a shape element (rectangle or ellipse)
    */
   static async applyImageFill(element: RectangleNode | EllipseNode, fillData: any): Promise<void> {
-    console.log('🔍 DEBUG: applyImageFill called with:', fillData);
-    console.log('🔍 DEBUG: Element type:', element.type);
+    console.log('ðŸ” DEBUG: applyImageFill called with:', fillData);
+    console.log('ðŸ” DEBUG: Element type:', element.type);
     
     try {
       const imageUrl = fillData.imageUrl;
       const scaleMode = fillData.scaleMode || 'FILL';
       
-      console.log('🔍 DEBUG: imageUrl:', imageUrl);
-      console.log('🔍 DEBUG: scaleMode:', scaleMode);
+      console.log('ðŸ” DEBUG: imageUrl:', imageUrl);
+      console.log('ðŸ” DEBUG: scaleMode:', scaleMode);
       
       if (!imageUrl) {
-        console.log('🔍 DEBUG: No imageUrl - attempting native placeholder');
+        console.log('ðŸ” DEBUG: No imageUrl - attempting native placeholder');
         
         // Try different approaches to create image placeholder
         try {
@@ -1149,7 +1173,7 @@ export class FigmaRenderer {
           ]);
           
           const placeholderImage = figma.createImage(checkeredPattern);
-          console.log('🔍 DEBUG: Created placeholder image with hash:', placeholderImage.hash);
+          console.log('ðŸ” DEBUG: Created placeholder image with hash:', placeholderImage.hash);
           
           const placeholderPaint: ImagePaint = {
             type: 'IMAGE',
@@ -1157,22 +1181,22 @@ export class FigmaRenderer {
             scaleMode: scaleMode as any
           };
           
-          console.log('🔍 DEBUG: Created ImagePaint:', placeholderPaint);
+          console.log('ðŸ” DEBUG: Created ImagePaint:', placeholderPaint);
           element.fills = [placeholderPaint];
-          console.log('🔍 DEBUG: Applied fills to element');
-          console.log('🔍 DEBUG: Element fills after setting:', element.fills);
+          console.log('ðŸ” DEBUG: Applied fills to element');
+          console.log('ðŸ” DEBUG: Element fills after setting:', element.fills);
           return;
           
         } catch (placeholderError) {
-          console.log('🔍 DEBUG: Placeholder creation failed:', placeholderError);
+          console.log('ðŸ” DEBUG: Placeholder creation failed:', placeholderError);
           throw placeholderError;
         }
       }
       
-      console.log('🔍 DEBUG: Creating image from URL:', imageUrl);
+      console.log('ðŸ” DEBUG: Creating image from URL:', imageUrl);
       // Create image from URL
       const image = await figma.createImageAsync(imageUrl);
-      console.log('🔍 DEBUG: Created image with hash:', image.hash);
+      console.log('ðŸ” DEBUG: Created image with hash:', image.hash);
       
       // Create ImagePaint fill
       const imagePaint: ImagePaint = {
@@ -1181,20 +1205,20 @@ export class FigmaRenderer {
         scaleMode: scaleMode as any // FILL, STRETCH, FIT, CROP, etc.
       };
       
-      console.log('🔍 DEBUG: Created ImagePaint from URL:', imagePaint);
+      console.log('ðŸ” DEBUG: Created ImagePaint from URL:', imagePaint);
       element.fills = [imagePaint];
-      console.log('🔍 DEBUG: Applied URL image fill successfully');
-      console.log('🔍 DEBUG: Element fills after URL setting:', element.fills);
+      console.log('ðŸ” DEBUG: Applied URL image fill successfully');
+      console.log('ðŸ” DEBUG: Element fills after URL setting:', element.fills);
       
     } catch (error) {
-      console.log('🔍 DEBUG: applyImageFill error occurred:', error);
-      console.log('🔍 DEBUG: Falling back to solid gray');
+      console.log('ðŸ” DEBUG: applyImageFill error occurred:', error);
+      console.log('ðŸ” DEBUG: Falling back to solid gray');
       
       // Ultimate fallback to solid gray for debugging
       const grayFill = { type: 'SOLID', color: { r: 0.8, g: 0.8, b: 0.8 } };
       element.fills = [grayFill];
-      console.log('🔍 DEBUG: Applied gray fallback:', grayFill);
-      console.log('🔍 DEBUG: Element fills after fallback:', element.fills);
+      console.log('ðŸ” DEBUG: Applied gray fallback:', grayFill);
+      console.log('ðŸ” DEBUG: Element fills after fallback:', element.fills);
     }
   }
 
@@ -1263,17 +1287,17 @@ export class FigmaRenderer {
   static async applyTextProperties(instance: InstanceNode, properties: any): Promise<void> {
     if (!properties) return;
     
-    console.log("🔍 Applying text properties:", properties);
+    console.log("ðŸ” Applying text properties:", properties);
     
     // Get all text nodes in the instance with error handling
     let allTextNodes: TextNode[] = [];
     try {
       allTextNodes = instance.findAll(n => n.type === 'TEXT') as TextNode[];
     } catch (findError) {
-      console.error(`❌ Error finding text nodes in component instance:`, findError.message);
+      console.error(`âŒ Error finding text nodes in component instance:`, findError.message);
       return; // Skip text property application if we can't find nodes
     }
-    console.log("🔍 Available text nodes in component:",
+    console.log("ðŸ” Available text nodes in component:",
       allTextNodes.map(textNode => ({
         name: textNode.name,
         id: textNode.id,
@@ -1284,7 +1308,7 @@ export class FigmaRenderer {
 
     // Get the component's textHierarchy data from scan results
     const componentTextHierarchy = await this.getComponentTextHierarchy(instance);
-    console.log("🔍 Text hierarchy from scan data:", componentTextHierarchy);
+    console.log("ðŸ” Text hierarchy from scan data:", componentTextHierarchy);
     
     // Define semantic classification mappings
     const semanticMappings: {[key: string]: string[]} = {
@@ -1330,7 +1354,7 @@ export class FigmaRenderer {
         continue;
       }
       
-      console.log(`🔧 Trying to set ${propKey} = "${propValue}"`);
+      console.log(`ðŸ”§ Trying to set ${propKey} = "${propValue}"`);
       
       let textNode: TextNode | null = null;
       let matchMethod = 'none';
@@ -1346,13 +1370,13 @@ export class FigmaRenderer {
           textNode = allTextNodes.find(n => n.id === hierarchyEntry.nodeId) || null;
           if (textNode) {
             matchMethod = 'exact-name';
-            console.log(`✅ Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
+            console.log(`âœ… Found text node by exact name match: "${textNode.name}" (${hierarchyEntry.classification})`);
           } else {
             // Enhanced fallback: match by name when ID fails (for nested components)
             textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
             if (textNode) {
               matchMethod = 'name-fallback';
-              console.log(`✅ Found text node by name fallback: "${textNode.name}" (ID mismatch resolved)`);
+              console.log(`âœ… Found text node by name fallback: "${textNode.name}" (ID mismatch resolved)`);
             }
           }
         }
@@ -1371,14 +1395,14 @@ export class FigmaRenderer {
             textNode = allTextNodes.find(n => n.id === hierarchyEntry.nodeId) || null;
             if (textNode) {
               matchMethod = 'semantic-classification';
-              console.log(`✅ Found text node by semantic classification: "${textNode.name}" (${classification})`);
+              console.log(`âœ… Found text node by semantic classification: "${textNode.name}" (${classification})`);
               break;
             } else {
               // Enhanced fallback: match by name when ID fails (for nested components)
               textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
               if (textNode) {
                 matchMethod = 'semantic-name-fallback';
-                console.log(`✅ Found text node by semantic name fallback: "${textNode.name}" (ID mismatch resolved)`);
+                console.log(`âœ… Found text node by semantic name fallback: "${textNode.name}" (ID mismatch resolved)`);
                 break;
               }
             }
@@ -1397,13 +1421,13 @@ export class FigmaRenderer {
           textNode = allTextNodes.find(n => n.id === hierarchyEntry.nodeId) || null;
           if (textNode) {
             matchMethod = 'partial-name';
-            console.log(`✅ Found text node by partial name match: "${textNode.name}"`);
+            console.log(`âœ… Found text node by partial name match: "${textNode.name}"`);
           } else {
             // Enhanced fallback: match by name when ID fails (for nested components)
             textNode = allTextNodes.find(n => n.name === hierarchyEntry.nodeName) || null;
             if (textNode) {
               matchMethod = 'partial-name-fallback';
-              console.log(`✅ Found text node by partial name fallback: "${textNode.name}" (ID mismatch resolved)`);
+              console.log(`âœ… Found text node by partial name fallback: "${textNode.name}" (ID mismatch resolved)`);
             }
           }
         }
@@ -1420,7 +1444,7 @@ export class FigmaRenderer {
           
           if (textNode) {
             matchMethod = 'legacy-mapping';
-            console.log(`✅ Found text node by legacy mapping: "${textNode.name}"`);
+            console.log(`âœ… Found text node by legacy mapping: "${textNode.name}"`);
             break;
           }
         }
@@ -1431,15 +1455,15 @@ export class FigmaRenderer {
         if (propKey.toLowerCase().includes('headline') || propKey.toLowerCase().includes('title') || propKey.toLowerCase().includes('primary')) {
           textNode = allTextNodes[0] || null;
           matchMethod = 'position-first';
-          console.log(`🔄 Using first text node as fallback for "${propKey}"`);
+          console.log(`ðŸ”„ Using first text node as fallback for "${propKey}"`);
         } else if (propKey.toLowerCase().includes('trailing') || propKey.toLowerCase().includes('tertiary')) {
           textNode = allTextNodes[allTextNodes.length - 1] || null;
           matchMethod = 'position-last';
-          console.log(`🔄 Using last text node as fallback for "${propKey}"`);
+          console.log(`ðŸ”„ Using last text node as fallback for "${propKey}"`);
         } else if (propKey.toLowerCase().includes('supporting') || propKey.toLowerCase().includes('secondary')) {
           textNode = allTextNodes[1] || allTextNodes[0] || null;
           matchMethod = 'position-second';
-          console.log(`🔄 Using second text node as fallback for "${propKey}"`);
+          console.log(`ðŸ”„ Using second text node as fallback for "${propKey}"`);
         }
       }
       
@@ -1449,20 +1473,20 @@ export class FigmaRenderer {
           // Activate hidden text node if needed
           if (!textNode.visible) {
             textNode.visible = true;
-            console.log(`👁️ Activated hidden text node: "${textNode.name}"`);
+            console.log(`ðŸ‘ï¸ Activated hidden text node: "${textNode.name}"`);
           }
           
           // Load font and set text
           if (typeof textNode.fontName !== 'symbol') {
             await figma.loadFontAsync(textNode.fontName as FontName);
             textNode.characters = propValue;
-            console.log(`✅ Successfully set "${textNode.name}" to "${propValue}" (method: ${matchMethod})`);
+            console.log(`âœ… Successfully set "${textNode.name}" to "${propValue}" (method: ${matchMethod})`);
           }
         } catch (fontError) {
-          console.error(`❌ Font loading failed for "${textNode.name}":`, fontError);
+          console.error(`âŒ Font loading failed for "${textNode.name}":`, fontError);
         }
       } else {
-        console.warn(`❌ No text node found for property "${propKey}" with value "${propValue}"`);
+        console.warn(`âŒ No text node found for property "${propKey}" with value "${propValue}"`);
       }
     }
   }
@@ -1496,11 +1520,11 @@ export class FigmaRenderer {
   static async applyMediaProperties(instance: InstanceNode, properties: any): Promise<void> {
     if (!properties) return;
     
-    console.log("🖼️ Validating media properties:", properties);
+    console.log("ðŸ–¼ï¸ Validating media properties:", properties);
     
     // Get the component's media structure from scan data
     const componentMediaData = await this.getComponentMediaData(instance);
-    console.log("🖼️ Media data from scan results:", componentMediaData);
+    console.log("ðŸ–¼ï¸ Media data from scan results:", componentMediaData);
     
     // Define media property patterns to look for
     const mediaPropertyPatterns = [
@@ -1519,28 +1543,28 @@ export class FigmaRenderer {
     });
     
     if (Object.keys(mediaProperties).length === 0) {
-      console.log("🖼️ No media properties found to validate");
+      console.log("ðŸ–¼ï¸ No media properties found to validate");
       return;
     }
     
-    console.log("🖼️ Found media properties to validate:", Object.keys(mediaProperties));
+    console.log("ðŸ–¼ï¸ Found media properties to validate:", Object.keys(mediaProperties));
     
     // Validate each media property against scan data
     for (const [propKey, propValue] of Object.entries(mediaProperties)) {
       if (!propValue || typeof propValue !== 'string' || !propValue.trim()) continue;
       
-      console.log(`🔍 Validating media property: ${propKey} = "${propValue}"`);
+      console.log(`ðŸ” Validating media property: ${propKey} = "${propValue}"`);
       
       let validationResult = this.validateMediaProperty(propKey, propValue, componentMediaData);
       
       if (validationResult.isValid) {
-        console.log(`✅ ${propKey} → would set to "${propValue}" (${validationResult.targetType}: "${validationResult.targetName}")`);
+        console.log(`âœ… ${propKey} â†’ would set to "${propValue}" (${validationResult.targetType}: "${validationResult.targetName}")`);
       } else {
-        console.warn(`❌ Invalid media property: "${propKey}" = "${propValue}" - ${validationResult.reason}`);
+        console.warn(`âŒ Invalid media property: "${propKey}" = "${propValue}" - ${validationResult.reason}`);
         
         // Suggest alternatives if available
         if (validationResult.suggestions?.length) {
-          console.log(`💡 Available media slots: ${validationResult.suggestions.join(', ')}`);
+          console.log(`ðŸ’¡ Available media slots: ${validationResult.suggestions.join(', ')}`);
         }
       }
     }
@@ -1562,7 +1586,7 @@ export class FigmaRenderer {
         return null;
       }
       
-      console.log("🔍 Looking for media data for main component ID:", mainComponent.id);
+      console.log("ðŸ” Looking for media data for main component ID:", mainComponent.id);
       
       // Get scan results from storage
       const scanResults: ComponentInfo[] | undefined = await figma.clientStorage.getAsync('last-scan-results');
@@ -1571,7 +1595,7 @@ export class FigmaRenderer {
         return null;
       }
       
-      console.log("🔍 Available component IDs in scan data:", scanResults.map(c => c.id));
+      console.log("ðŸ” Available component IDs in scan data:", scanResults.map(c => c.id));
       
       // Find the component in scan results
       const componentInfo = scanResults.find(comp => comp.id === mainComponent.id);
@@ -1580,10 +1604,10 @@ export class FigmaRenderer {
         return null;
       }
       
-      console.log("🔍 Found component info:", componentInfo.name);
-      console.log("🔍 Component instances:", componentInfo.componentInstances);
-      console.log("🔍 Vector nodes:", componentInfo.vectorNodes);
-      console.log("🔍 Image nodes:", componentInfo.imageNodes);
+      console.log("ðŸ” Found component info:", componentInfo.name);
+      console.log("ðŸ” Component instances:", componentInfo.componentInstances);
+      console.log("ðŸ” Vector nodes:", componentInfo.vectorNodes);
+      console.log("ðŸ” Image nodes:", componentInfo.imageNodes);
       
       return {
         componentInstances: componentInfo.componentInstances || [],
@@ -1910,7 +1934,7 @@ export class FigmaRenderer {
     Object.entries(properties).forEach(([key, value]) => {
       if (key === 'variants') {
         Object.assign(variants, value);
-        console.log(`🔧 Found existing variants object:`, value);
+        console.log(`ðŸ”§ Found existing variants object:`, value);
         return;
       }
       
@@ -1927,14 +1951,14 @@ export class FigmaRenderer {
       if (variantPropertyNames.includes(key)) {
         const properKey = key.charAt(0).toUpperCase() + key.slice(1);
         variants[properKey] = value;
-        console.log(`🔧 Moved "${key}" -> "${properKey}" from properties to variants`);
+        console.log(`ðŸ”§ Moved "${key}" -> "${properKey}" from properties to variants`);
         return;
       }
       
       cleanProperties[key] = value;
     });
     
-    console.log(`🔍 Final separation for ${componentId}:`);
+    console.log(`ðŸ” Final separation for ${componentId}:`);
     console.log(`   Clean properties:`, cleanProperties);
     console.log(`   Variants:`, variants);
     
@@ -1947,13 +1971,13 @@ export class FigmaRenderer {
   static applyChildLayoutProperties(node: SceneNode, properties: any): void {
     if (!properties || !node) return;
     
-    console.log('🔥 CODE DEPLOYMENT TEST - APPLYING CHILD LAYOUT PROPERTIES:', {
+    console.log('ðŸ”¥ CODE DEPLOYMENT TEST - APPLYING CHILD LAYOUT PROPERTIES:', {
       nodeType: node.type,
       properties: properties,
       DEPLOYMENT_TEST: 'August 12 - If you see this, code is deployed'
     });
     
-    console.log('🔥🔥🔥 BEFORE SIZING MODE LOGIC:', {
+    console.log('ðŸ”¥ðŸ”¥ðŸ”¥ BEFORE SIZING MODE LOGIC:', {
       primaryAxisSizingMode: (node as any).primaryAxisSizingMode,
       counterAxisSizingMode: (node as any).counterAxisSizingMode,
       layoutMode: (node as any).layoutMode,
@@ -1962,7 +1986,7 @@ export class FigmaRenderer {
     
     // Check if node is a frame that supports auto-layout
     if (node.type !== 'FRAME' && node.type !== 'COMPONENT' && node.type !== 'INSTANCE') {
-      console.warn('⚠️ Node type does not support layout properties:', node.type);
+      console.warn('âš ï¸ Node type does not support layout properties:', node.type);
       return;
     }
     
@@ -1989,9 +2013,9 @@ export class FigmaRenderer {
               frame.primaryAxisSizingMode = 'AUTO';
             }
             
-            console.log('✅ Applied FILL for VERTICAL parent - set layoutAlign to STRETCH');
+            console.log('âœ… Applied FILL for VERTICAL parent - set layoutAlign to STRETCH');
           } catch (e) {
-            console.error('❌ Failed to apply FILL sizing:', e);
+            console.error('âŒ Failed to apply FILL sizing:', e);
           }
         } else if (parentFrame.layoutMode === 'HORIZONTAL') {
           // In horizontal layout, FILL means grow to fill available space
@@ -2005,9 +2029,9 @@ export class FigmaRenderer {
               frame.counterAxisSizingMode = 'AUTO';   // Height hugs content
             }
             
-            console.log('✅ Applied FILL for HORIZONTAL parent - set layoutGrow to 1 and layoutAlign to STRETCH');
+            console.log('âœ… Applied FILL for HORIZONTAL parent - set layoutGrow to 1 and layoutAlign to STRETCH');
           } catch (e) {
-            console.error('❌ Failed to apply FILL sizing:', e);
+            console.error('âŒ Failed to apply FILL sizing:', e);
           }
         }
       }
@@ -2018,9 +2042,9 @@ export class FigmaRenderer {
           frame.primaryAxisSizingMode = 'AUTO';
           frame.counterAxisSizingMode = 'AUTO';
         }
-        console.log('✅ Applied HUG/AUTO sizing');
+        console.log('âœ… Applied HUG/AUTO sizing');
       } catch (e) {
-        console.error('❌ Failed to apply HUG sizing:', e);
+        console.error('âŒ Failed to apply HUG sizing:', e);
       }
     }
     
@@ -2028,9 +2052,9 @@ export class FigmaRenderer {
     if (properties.layoutAlign && !properties.horizontalSizing) {
       try {
         frame.layoutAlign = properties.layoutAlign;
-        console.log('✅ Set layoutAlign:', properties.layoutAlign);
+        console.log('âœ… Set layoutAlign:', properties.layoutAlign);
       } catch (e) {
-        console.warn('⚠️ Failed to set layoutAlign:', e);
+        console.warn('âš ï¸ Failed to set layoutAlign:', e);
       }
     }
     
@@ -2038,9 +2062,9 @@ export class FigmaRenderer {
     if (properties.layoutGrow !== undefined && properties.layoutGrow !== null) {
       try {
         frame.layoutGrow = properties.layoutGrow;
-        console.log('✅ Set layoutGrow:', properties.layoutGrow);
+        console.log('âœ… Set layoutGrow:', properties.layoutGrow);
       } catch (e) {
-        console.warn('⚠️ Failed to set layoutGrow:', e);
+        console.warn('âš ï¸ Failed to set layoutGrow:', e);
       }
     }
     
@@ -2048,9 +2072,9 @@ export class FigmaRenderer {
     if (properties.layoutPositioning) {
       try {
         frame.layoutPositioning = properties.layoutPositioning;
-        console.log('✅ Set layoutPositioning:', properties.layoutPositioning);
+        console.log('âœ… Set layoutPositioning:', properties.layoutPositioning);
       } catch (e) {
-        console.warn('⚠️ Failed to set layoutPositioning:', e);
+        console.warn('âš ï¸ Failed to set layoutPositioning:', e);
       }
     }
     
@@ -2059,9 +2083,9 @@ export class FigmaRenderer {
     if (properties.layoutMode && properties.layoutMode !== frame.layoutMode) {
       try {
         frame.layoutMode = properties.layoutMode;
-        console.log('✅ Set child layoutMode:', properties.layoutMode);
+        console.log('âœ… Set child layoutMode:', properties.layoutMode);
       } catch (e) {
-        console.error('❌ Failed to set layoutMode:', e);
+        console.error('âŒ Failed to set layoutMode:', e);
       }
     }
     
@@ -2070,19 +2094,19 @@ export class FigmaRenderer {
       try {
         if (properties.primaryAxisSizingMode) {
           frame.primaryAxisSizingMode = properties.primaryAxisSizingMode;
-          console.log('✅ Set child primaryAxisSizingMode:', properties.primaryAxisSizingMode);
+          console.log('âœ… Set child primaryAxisSizingMode:', properties.primaryAxisSizingMode);
         }
         
         if (properties.counterAxisSizingMode) {
           frame.counterAxisSizingMode = properties.counterAxisSizingMode;
-          console.log('✅ Set child counterAxisSizingMode:', properties.counterAxisSizingMode);
+          console.log('âœ… Set child counterAxisSizingMode:', properties.counterAxisSizingMode);
         }
       } catch (e) {
-        console.error('❌ Failed to apply sizing modes:', e);
+        console.error('âŒ Failed to apply sizing modes:', e);
       }
     }
     
-    console.log('🔥🔥🔥 AFTER ALL LOGIC:', {
+    console.log('ðŸ”¥ðŸ”¥ðŸ”¥ AFTER ALL LOGIC:', {
       primaryAxisSizingMode: (node as any).primaryAxisSizingMode,
       counterAxisSizingMode: (node as any).counterAxisSizingMode,
       layoutMode: (node as any).layoutMode,
@@ -2100,13 +2124,13 @@ export class FigmaRenderer {
     try {
       componentNode = await figma.getNodeByIdAsync(item.componentNodeId);
     } catch (nodeError) {
-      console.error(`❌ Error accessing component ${item.componentNodeId}:`, nodeError.message);
+      console.error(`âŒ Error accessing component ${item.componentNodeId}:`, nodeError.message);
       await this.createMissingComponentPlaceholder(item.componentNodeId, container);
       return;
     }
     
     if (!componentNode) {
-      console.warn(`⚠️ Component with ID ${item.componentNodeId} not found. Skipping.`);
+      console.warn(`âš ï¸ Component with ID ${item.componentNodeId} not found. Skipping.`);
       await this.createMissingComponentPlaceholder(item.componentNodeId, container);
       return;
     }
@@ -2116,7 +2140,7 @@ export class FigmaRenderer {
       : componentNode) as ComponentNode | null;
       
     if (!masterComponent || masterComponent.type !== 'COMPONENT') {
-      console.warn(`⚠️ Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
+      console.warn(`âš ï¸ Could not find a valid master component for ID ${item.componentNodeId}. Skipping.`);
       return;
     }
 
@@ -2134,10 +2158,10 @@ export class FigmaRenderer {
     );
 
     if (validationResult.warnings.length > 0) {
-      console.warn(`⚠️ Warnings:`, validationResult.warnings);
+      console.warn(`âš ï¸ Warnings:`, validationResult.warnings);
     }
     if (validationResult.errors.length > 0) {
-      console.error(`❌ Validation errors:`, validationResult.errors);
+      console.error(`âŒ Validation errors:`, validationResult.errors);
       
       // Create LLM-friendly error message
       const llmErrors = validationResult.errors.map(err =>
@@ -2149,7 +2173,7 @@ export class FigmaRenderer {
 
     const { variants, textProperties, mediaProperties, layoutProperties } = validationResult.processedProperties;
 
-    console.log('🔧 VALIDATION RESULTS:', {
+    console.log('ðŸ”§ VALIDATION RESULTS:', {
       originalVariants: item.variants,
       processedVariants: variants,
       variantCount: Object.keys(variants).length
@@ -2161,7 +2185,7 @@ export class FigmaRenderer {
       instance = masterComponent.createInstance();
       container.appendChild(instance);
     } catch (createError) {
-      console.error(`❌ Error creating instance of ${masterComponent.name}:`, createError.message);
+      console.error(`âŒ Error creating instance of ${masterComponent.name}:`, createError.message);
       // Create a placeholder instead
       await this.createMissingComponentPlaceholder(item.componentNodeId, container);
       return;
@@ -2170,19 +2194,19 @@ export class FigmaRenderer {
     // Apply properties in correct order with error handling
     try {
       if (Object.keys(variants).length > 0) {
-        console.log('✅ About to apply variants:', variants);
+        console.log('âœ… About to apply variants:', variants);
         await this.applyVariantsSystematic(instance, variants, componentNode);
       } else {
-        console.log('⚠️ NO VARIANTS TO APPLY - variants object is empty');
+        console.log('âš ï¸ NO VARIANTS TO APPLY - variants object is empty');
       }
     } catch (variantError) {
-      console.error(`❌ Error applying variants to ${masterComponent.name}:`, variantError.message);
+      console.error(`âŒ Error applying variants to ${masterComponent.name}:`, variantError.message);
     }
     
     try {
       this.applyChildLayoutProperties(instance, layoutProperties);
     } catch (layoutError) {
-      console.error(`❌ Error applying layout properties to ${masterComponent.name}:`, layoutError.message);
+      console.error(`âŒ Error applying layout properties to ${masterComponent.name}:`, layoutError.message);
     }
     
     try {
@@ -2190,7 +2214,7 @@ export class FigmaRenderer {
         await this.applyTextPropertiesSystematic(instance, textProperties, item.componentNodeId);
       }
     } catch (textError) {
-      console.error(`❌ Error applying text properties to ${masterComponent.name}:`, textError.message);
+      console.error(`âŒ Error applying text properties to ${masterComponent.name}:`, textError.message);
     }
     
     try {
@@ -2198,14 +2222,14 @@ export class FigmaRenderer {
         await this.applyMediaPropertiesSystematic(instance, mediaProperties, item.componentNodeId);
       }
     } catch (mediaError) {
-      console.error(`❌ Error applying media properties to ${masterComponent.name}:`, mediaError.message);
+      console.error(`âŒ Error applying media properties to ${masterComponent.name}:`, mediaError.message);
     }
     
     // Apply visibility overrides and icon swaps at the very end after all other properties
     try {
       await this.applyVisibilityOverrides(instance, item);
     } catch (visibilityError) {
-      console.error(`❌ Error applying visibility overrides to ${masterComponent.name}:`, visibilityError.message);
+      console.error(`âŒ Error applying visibility overrides to ${masterComponent.name}:`, visibilityError.message);
     }
     
     // Apply icon swaps AFTER everything else is rendered
@@ -2214,7 +2238,7 @@ export class FigmaRenderer {
         await this.applyIconSwaps(instance, item.iconSwaps);
       }
     } catch (iconError) {
-      console.error(`❌ Error applying icon swaps to ${masterComponent.name}:`, iconError.message);
+      console.error(`âŒ Error applying icon swaps to ${masterComponent.name}:`, iconError.message);
     }
   }
 
@@ -2222,7 +2246,7 @@ export class FigmaRenderer {
    * Apply variants with modern Component Properties API
    */
   static async applyVariantsSystematic(instance: InstanceNode, variants: any, componentNode: any): Promise<void> {
-    console.log('🎨 VARIANT APPLICATION START', {
+    console.log('ðŸŽ¨ VARIANT APPLICATION START', {
       variants,
       componentType: componentNode?.type,
       instanceName: instance.name
@@ -2235,7 +2259,7 @@ export class FigmaRenderer {
           const propertyDefinitions = componentNode.componentPropertyDefinitions;
           
           if (!propertyDefinitions) {
-            console.warn('⚠️ No component property definitions found');
+            console.warn('âš ï¸ No component property definitions found');
             return;
           }
 
@@ -2248,30 +2272,30 @@ export class FigmaRenderer {
               let stringValue: string;
               if (typeof propValue === 'boolean') {
                 stringValue = propValue ? 'True' : 'False';
-                console.log(`🔄 Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
+                console.log(`ðŸ”„ Boolean conversion: ${propName} = ${propValue} -> "${stringValue}"`);
               } else {
                 stringValue = String(propValue);
               }
               
               if (propertyDef.variantOptions && propertyDef.variantOptions.includes(stringValue)) {
                 validVariants[propName] = stringValue;
-                console.log(`✅ Valid variant: ${propName} = "${stringValue}"`);
+                console.log(`âœ… Valid variant: ${propName} = "${stringValue}"`);
               } else {
-                console.warn(`⚠️ Invalid value for "${propName}": "${stringValue}". Available: [${propertyDef.variantOptions?.join(', ') || ''}]`);
+                console.warn(`âš ï¸ Invalid value for "${propName}": "${stringValue}". Available: [${propertyDef.variantOptions?.join(', ') || ''}]`);
               }
             } else {
-              console.warn(`⚠️ Unknown variant property: "${propName}"`);
+              console.warn(`âš ï¸ Unknown variant property: "${propName}"`);
             }
           });
           
           if (Object.keys(validVariants).length > 0) {
             instance.setProperties(validVariants);
-            console.log('✅ Variants applied successfully');
+            console.log('âœ… Variants applied successfully');
           }
         }
       });
     } catch (e) {
-      console.error("❌ Error applying variants:", e);
+      console.error("âŒ Error applying variants:", e);
     }
   }
 
@@ -2279,7 +2303,7 @@ export class FigmaRenderer {
    * Apply visibility overrides to component child elements
    */
   private static async applyVisibilityOverrides(instance: InstanceNode, itemData: any): Promise<void> {
-    console.log('🐛 applyVisibilityOverrides CALLED', {
+    console.log('ðŸ› applyVisibilityOverrides CALLED', {
       hasOverrides: !!itemData.visibilityOverrides,
       hasIconSwaps: !!itemData.iconSwaps,
       overrideCount: Object.keys(itemData.visibilityOverrides || {}).length,
@@ -2290,12 +2314,12 @@ export class FigmaRenderer {
     });
 
     if (!itemData.visibilityOverrides && !itemData.iconSwaps) {
-      console.log('🐛 No overrides to apply, returning early');
+      console.log('ðŸ› No overrides to apply, returning early');
       return;
     }
     
     // Log all instance children for debugging
-    console.log('🐛 Instance children:', instance.children.map(child => ({
+    console.log('ðŸ› Instance children:', instance.children.map(child => ({
       name: child.name,
       id: child.id,
       type: child.type,
@@ -2305,30 +2329,30 @@ export class FigmaRenderer {
     try {
       // Apply visibility overrides
       if (itemData.visibilityOverrides) {
-        console.log('🐛 Processing visibility overrides:', itemData.visibilityOverrides);
+        console.log('ðŸ› Processing visibility overrides:', itemData.visibilityOverrides);
         Object.entries(itemData.visibilityOverrides).forEach(([nodeId, visible]) => {
-          console.log(`🐛 Looking for node ${nodeId} to set visibility to ${visible}`);
+          console.log(`ðŸ› Looking for node ${nodeId} to set visibility to ${visible}`);
           
           // Try exact match first
           let child = instance.findChild(node => node.id === nodeId);
           
           // If not found, try matching by base node ID (handles instance-prefixed IDs)
           if (!child) {
-            console.log(`🐛 Exact match failed, trying base node ID matching for ${nodeId}`);
+            console.log(`ðŸ› Exact match failed, trying base node ID matching for ${nodeId}`);
             
             // First try direct children
             child = instance.findChild(node => node.id.endsWith(nodeId) || node.id.includes(nodeId));
             
             // If still not found, search recursively through all descendants
             if (!child) {
-              console.log(`🐛 Direct child search failed, searching all descendants for ${nodeId}`);
+              console.log(`ðŸ› Direct child search failed, searching all descendants for ${nodeId}`);
               try {
                 child = instance.findAll(node => node.id.includes(nodeId))[0];
                 if (child) {
-                  console.log(`🐛 Found in descendants: ${child.id} (${child.name})`);
+                  console.log(`ðŸ› Found in descendants: ${child.id} (${child.name})`);
                 }
               } catch (findAllError) {
-                console.warn(`🐛 findAll search failed:`, findAllError);
+                console.warn(`ðŸ› findAll search failed:`, findAllError);
               }
             }
           }
@@ -2339,22 +2363,22 @@ export class FigmaRenderer {
               child.visible = visible as boolean;
               // Safely access name property
               const childName = child.name || 'unnamed';
-              console.log(`✅ Applied visibility override: ${nodeId} = ${visible} (was: ${previousVisible}, name: ${childName}, actualId: ${child.id})`);
+              console.log(`âœ… Applied visibility override: ${nodeId} = ${visible} (was: ${previousVisible}, name: ${childName}, actualId: ${child.id})`);
             } catch (nodeError) {
-              console.warn(`⚠️ Error accessing node ${nodeId}:`, nodeError);
-              console.warn(`🐛 Node may have been invalidated during component instantiation`);
+              console.warn(`âš ï¸ Error accessing node ${nodeId}:`, nodeError);
+              console.warn(`ðŸ› Node may have been invalidated during component instantiation`);
             }
           } else {
-            console.warn(`⚠️ Child node ${nodeId} not found for visibility override`);
-            console.warn(`🐛 Available node IDs:`, instance.children.map(c => c.id));
+            console.warn(`âš ï¸ Child node ${nodeId} not found for visibility override`);
+            console.warn(`ðŸ› Available node IDs:`, instance.children.map(c => c.id));
           }
         });
       }
 
       
-      console.log('🐛 applyVisibilityOverrides completed successfully');
+      console.log('ðŸ› applyVisibilityOverrides completed successfully');
     } catch (error) {
-      console.error('❌ Visibility override application failed:', error);
+      console.error('âŒ Visibility override application failed:', error);
     }
   }
 
@@ -2363,12 +2387,12 @@ export class FigmaRenderer {
    */
   private static resolveIcon(iconName: string, designSystemData: any): string | null {
     if (!designSystemData?.components) {
-      console.warn('⚠️ No design system data available for icon resolution');
+      console.warn('âš ï¸ No design system data available for icon resolution');
       return null;
     }
     
-    console.log(`🔍 Resolving icon "${iconName}" from ${designSystemData.components.length} components`);
-    console.log(`🔍 Available icons:`, designSystemData.components
+    console.log(`ðŸ” Resolving icon "${iconName}" from ${designSystemData.components.length} components`);
+    console.log(`ðŸ” Available icons:`, designSystemData.components
       .filter(comp => comp.suggestedType === 'icon')
       .map(comp => `${comp.name} (${comp.id})`)
     );
@@ -2379,11 +2403,11 @@ export class FigmaRenderer {
     );
     
     if (iconComponent) {
-      console.log(`✅ Resolved icon "${iconName}" → ${iconComponent.id} (${iconComponent.name})`);
+      console.log(`âœ… Resolved icon "${iconName}" â†’ ${iconComponent.id} (${iconComponent.name})`);
       return iconComponent.id;
     }
     
-    console.warn(`❌ Icon "${iconName}" not found in design system`);
+    console.warn(`âŒ Icon "${iconName}" not found in design system`);
     return null;
   }
 
@@ -2395,10 +2419,10 @@ export class FigmaRenderer {
    */
   private static getCachedDesignSystemData(): any {
     if (!this.currentDesignSystemData) {
-      console.warn('⚠️ No design system data available for icon resolution');
+      console.warn('âš ï¸ No design system data available for icon resolution');
       return null;
     }
-    console.log('✅ Using design system data with', this.currentDesignSystemData?.components?.length || 0, 'components');
+    console.log('âœ… Using design system data with', this.currentDesignSystemData?.components?.length || 0, 'components');
     return this.currentDesignSystemData;
   }
   
@@ -2407,14 +2431,14 @@ export class FigmaRenderer {
    */
   private static setDesignSystemData(data: any): void {
     this.currentDesignSystemData = data;
-    console.log('📋 Design system data loaded for rendering:', data?.components?.length || 0, 'components');
+    console.log('ðŸ“‹ Design system data loaded for rendering:', data?.components?.length || 0, 'components');
   }
 
   /**
    * Apply icon swaps after component rendering is complete
    */
   private static async applyIconSwaps(instance: InstanceNode, iconSwaps: Record<string, string>): Promise<void> {
-    console.log('🔄 Applying icon swaps AFTER rendering:', iconSwaps);
+    console.log('ðŸ”„ Applying icon swaps AFTER rendering:', iconSwaps);
     const designSystemData = this.getCachedDesignSystemData();
     
     // Get component schema to understand the structure
@@ -2427,33 +2451,33 @@ export class FigmaRenderer {
       if (componentId) {
         schema = ComponentPropertyEngine.getComponentSchema(componentId);
         if (schema) {
-          console.log(`📋 Using schema for component ${componentId}:`, schema);
+          console.log(`ðŸ“‹ Using schema for component ${componentId}:`, schema);
         } else {
-          console.warn(`⚠️ No schema found for component ${componentId}`);
+          console.warn(`âš ï¸ No schema found for component ${componentId}`);
         }
       } else {
-        console.warn(`⚠️ No main component found for instance`);
+        console.warn(`âš ï¸ No main component found for instance`);
       }
     } catch (error) {
-      console.warn(`⚠️ Error getting main component:`, error);
+      console.warn(`âš ï¸ Error getting main component:`, error);
     }
     
     for (const [nodeId, iconName] of Object.entries(iconSwaps)) {
-      console.log(`🔄 Icon swap: ${nodeId} → ${iconName}`);
+      console.log(`ðŸ”„ Icon swap: ${nodeId} â†’ ${iconName}`);
       
       let targetInstance: InstanceNode | null = null;
       
       // Strategy 1: Use schema to find component instances
       if (schema && schema.componentInstances) {
-        console.log(`📋 Schema-based search for "${nodeId}"...`);
-        console.log(`📋 Available componentInstances:`, schema.componentInstances);
+        console.log(`ðŸ“‹ Schema-based search for "${nodeId}"...`);
+        console.log(`ðŸ“‹ Available componentInstances:`, schema.componentInstances);
         
         // Look for matching component instances in schema
         for (const compInstance of schema.componentInstances) {
           const instName = compInstance.nodeName.toLowerCase();
           const instId = compInstance.nodeId;
           
-          console.log(`📋 Checking schema instance: ${compInstance.nodeName} (${instId})`);
+          console.log(`ðŸ“‹ Checking schema instance: ${compInstance.nodeName} (${instId})`);
           
           // Try to match by semantic name
           if (nodeId.includes('leading') && instName.includes('leading')) {
@@ -2464,24 +2488,24 @@ export class FigmaRenderer {
               
               if (foundNode && foundNode.type === 'INSTANCE') {
                 targetInstance = foundNode as InstanceNode;
-                console.log(`📋 Found leading instance via schema: ${foundNode.name} (${foundNode.id})`);
+                console.log(`ðŸ“‹ Found leading instance via schema: ${foundNode.name} (${foundNode.id})`);
                 break;
               } else if (foundNode) {
                 // If it's a container (like "Leading element"), search inside it for icons
-                console.log(`📋 Found container "${foundNode.name}", searching for icon instances inside...`);
+                console.log(`ðŸ“‹ Found container "${foundNode.name}", searching for icon instances inside...`);
                 try {
                   const iconInstances = (foundNode as any).findAll?.((n: any) => n.type === 'INSTANCE') || [];
                   if (iconInstances.length > 0) {
                     targetInstance = iconInstances[0] as InstanceNode;
-                    console.log(`📋 Found icon inside container: ${targetInstance.name} (${targetInstance.id})`);
+                    console.log(`ðŸ“‹ Found icon inside container: ${targetInstance.name} (${targetInstance.id})`);
                     break;
                   }
                 } catch (nestedError) {
-                  console.warn(`📋 Error searching inside container:`, nestedError);
+                  console.warn(`ðŸ“‹ Error searching inside container:`, nestedError);
                 }
               }
             } catch (error) {
-              console.warn(`📋 Error finding schema instance ${instId}:`, error);
+              console.warn(`ðŸ“‹ Error finding schema instance ${instId}:`, error);
             }
           }
         }
@@ -2489,95 +2513,95 @@ export class FigmaRenderer {
       
       // Strategy 2: Fallback semantic search if schema didn't work
       if (!targetInstance) {
-        console.log(`🔍 Fallback search for "${nodeId}"...`);
+        console.log(`ðŸ” Fallback search for "${nodeId}"...`);
         try {
           // First, let's see what ALL children look like
-          console.log(`🔍 All children of ${instance.name}:`, instance.children.map(child => ({
+          console.log(`ðŸ” All children of ${instance.name}:`, instance.children.map(child => ({
             name: child.name,
             type: child.type,
             id: child.id
           })));
           
           const allInstances = instance.findAll(node => node.type === 'INSTANCE') as InstanceNode[];
-          console.log(`🔍 Found ${allInstances.length} total instances in component`);
+          console.log(`ðŸ” Found ${allInstances.length} total instances in component`);
           
           for (const inst of allInstances) {
             const instName = inst.name.toLowerCase();
-            console.log(`🔍 Checking instance: ${inst.name} (${inst.id})`);
+            console.log(`ðŸ” Checking instance: ${inst.name} (${inst.id})`);
             
             // Check if this instance matches our semantic search
             if (nodeId.includes('leading') && instName.includes('leading')) {
               targetInstance = inst;
-              console.log(`🔍 Found by semantic match: ${inst.name}`);
+              console.log(`ðŸ” Found by semantic match: ${inst.name}`);
               break;
             } else if (nodeId.includes('trailing') && instName.includes('trailing')) {
               targetInstance = inst;
-              console.log(`🔍 Found by semantic match: ${inst.name}`);
+              console.log(`ðŸ” Found by semantic match: ${inst.name}`);
               break;
             } else if (nodeId.includes('icon') && instName.includes('icon')) {
               targetInstance = inst;
-              console.log(`🔍 Found by semantic match: ${inst.name}`);
+              console.log(`ðŸ” Found by semantic match: ${inst.name}`);
               break;
             }
           }
           
           // If semantic search failed, let's try to find any instances that might be icons
           if (!targetInstance && allInstances.length > 0) {
-            console.log(`🔍 No semantic match, checking all instances for potential icon swaps...`);
+            console.log(`ðŸ” No semantic match, checking all instances for potential icon swaps...`);
             for (const inst of allInstances) {
-              console.log(`🔍 Instance details: ${inst.name} (${inst.id})`);
+              console.log(`ðŸ” Instance details: ${inst.name} (${inst.id})`);
               
               // If this looks like it might be an icon (has mainComponent with 'icon' in name)
               try {
                 const mainComp = await inst.getMainComponentAsync();
-                console.log(`🔍 Instance ${inst.name} has mainComponent: ${mainComp?.name || 'none'}`);
+                console.log(`ðŸ” Instance ${inst.name} has mainComponent: ${mainComp?.name || 'none'}`);
                 if (mainComp && mainComp.name.toLowerCase().includes('icon')) {
                   targetInstance = inst;
-                  console.log(`🔍 Found potential icon by mainComponent: ${inst.name} → ${mainComp.name}`);
+                  console.log(`ðŸ” Found potential icon by mainComponent: ${inst.name} â†’ ${mainComp.name}`);
                   break;
                 }
               } catch (error) {
-                console.warn(`🔍 Error checking mainComponent for ${inst.name}:`, error);
+                console.warn(`ðŸ” Error checking mainComponent for ${inst.name}:`, error);
               }
             }
           }
         } catch (error) {
-          console.warn(`🔍 Fallback search failed:`, error);
+          console.warn(`ðŸ” Fallback search failed:`, error);
         }
       }
       
       // Strategy 2: Search by exact ID
       if (!targetInstance) {
-        console.log(`🔍 Searching by exact ID: ${nodeId}`);
+        console.log(`ðŸ” Searching by exact ID: ${nodeId}`);
         let node = instance.findChild(node => node.id === nodeId);
         
         if (node && node.type === 'INSTANCE') {
           targetInstance = node as InstanceNode;
         } else if (node) {
           // If found node is not an instance, search within it for component instances
-          console.log(`🔍 Found node ${nodeId} (type: ${node.type}), searching for component instances within...`);
+          console.log(`ðŸ” Found node ${nodeId} (type: ${node.type}), searching for component instances within...`);
           try {
             const instances = (node as any).findAll?.((n: any) => n.type === 'INSTANCE') || [];
             if (instances.length > 0) {
               targetInstance = instances[0] as InstanceNode;
-              console.log(`🔍 Found nested instance: ${targetInstance.name} (${targetInstance.id})`);
+              console.log(`ðŸ” Found nested instance: ${targetInstance.name} (${targetInstance.id})`);
             }
           } catch (error) {
-            console.warn(`🔍 Error searching within node:`, error);
+            console.warn(`ðŸ” Error searching within node:`, error);
           }
         }
       }
       
       // Strategy 3: Broader recursive search
       if (!targetInstance) {
-        console.log(`🔍 Broader search for any matching instances...`);
+        console.log(`ðŸ” Broader search for any matching instances...`);
         try {
           const allInstances = instance.findAll(node => node.type === 'INSTANCE') as InstanceNode[];
           
           for (const inst of allInstances) {
             if (inst.id.includes(nodeId) || inst.id === nodeId) {
               targetInstance = inst;
-              console.log(`🔍 Found instance by ID match: ${inst.name} (${inst.id})`);
+              console.log(`ðŸ” Found instance by ID match: ${inst.name} (${inst.id})`);
               break;
             }
             
@@ -2586,7 +2610,7 @@ export class FigmaRenderer {
               const childNode = inst.findChild(n => n.id === nodeId);
               if (childNode && childNode.type === 'INSTANCE') {
                 targetInstance = childNode as InstanceNode;
-                console.log(`🔍 Found nested instance within ${inst.name}: ${childNode.name}`);
+                console.log(`ðŸ” Found nested instance within ${inst.name}: ${childNode.name}`);
                 break;
               }
             } catch (nestedError) {
@@ -2594,7 +2618,7 @@ export class FigmaRenderer {
             }
           }
         } catch (error) {
-          console.warn(`🔍 Recursive search failed:`, error);
+          console.warn(`ðŸ” Recursive search failed:`, error);
         }
       }
       
@@ -2615,79 +2639,79 @@ export class FigmaRenderer {
             }
             
             if (iconComponent && iconComponent.type === 'COMPONENT') {
-              console.log(`🔄 Attempting to swap component: ${targetInstance.name} → ${iconComponent.name}`);
+              console.log(`ðŸ”„ Attempting to swap component: ${targetInstance.name} â†’ ${iconComponent.name}`);
               targetInstance.swapComponent(iconComponent);
-              console.log(`✅ Successfully swapped ${nodeId} to ${iconName} (${iconId})`);
+              console.log(`âœ… Successfully swapped ${nodeId} to ${iconName} (${iconId})`);
             } else {
-              console.error(`❌ Could not get valid component for ${iconName}: ${iconId}`);
+              console.error(`âŒ Could not get valid component for ${iconName}: ${iconId}`);
             }
           } else {
-            console.warn(`❌ Could not resolve icon "${iconName}"`);
+            console.warn(`âŒ Could not resolve icon "${iconName}"`);
           }
         } catch (error) {
-          console.error(`❌ Icon swap failed for ${nodeId} → ${iconName}:`, error);
+          console.error(`âŒ Icon swap failed for ${nodeId} â†’ ${iconName}:`, error);
         }
       } else {
-        console.warn(`⚠️ No suitable component instance found for ${nodeId}`);
+        console.warn(`âš ï¸ No suitable component instance found for ${nodeId}`);
         
         // EMERGENCY FALLBACK: Try to swap ANY icon instance found
-        console.log(`🚨 FALLBACK: Attempting to swap any icon instance to "${iconName}"`);
+        console.log(`ðŸš¨ FALLBACK: Attempting to swap any icon instance to "${iconName}"`);
         try {
           const allInstances = instance.findAll(node => node.type === 'INSTANCE') as InstanceNode[];
-          console.log(`🐛 Available instances:`, allInstances.map(i => `${i.name} (${i.id})`));
+          console.log(`ðŸ› Available instances:`, allInstances.map(i => `${i.name} (${i.id})`));
           
           if (allInstances.length > 0) {
             // Just try the first instance
             const firstInstance = allInstances[0];
-            console.log(`🚨 Trying to swap first available instance: ${firstInstance.name}`);
+            console.log(`ðŸš¨ Trying to swap first available instance: ${firstInstance.name}`);
             
             const iconId = this.resolveIcon(iconName, designSystemData);
-            console.log(`🚨 FALLBACK: Icon ID resolved to: ${iconId}`);
+            console.log(`ðŸš¨ FALLBACK: Icon ID resolved to: ${iconId}`);
             if (iconId) {
-              console.log(`🚨 FALLBACK: Getting component node for ID: ${iconId}`);
+              console.log(`ðŸš¨ FALLBACK: Getting component node for ID: ${iconId}`);
               const iconNode = await figma.getNodeByIdAsync(iconId);
-              console.log(`🚨 FALLBACK: Got node:`, iconNode?.name, iconNode?.type);
+              console.log(`ðŸš¨ FALLBACK: Got node:`, iconNode?.name, iconNode?.type);
               
               let iconComponent: ComponentNode | null = null;
               
               if (iconNode?.type === 'COMPONENT') {
                 iconComponent = iconNode as ComponentNode;
-                console.log(`🚨 FALLBACK: Using COMPONENT directly`);
+                console.log(`ðŸš¨ FALLBACK: Using COMPONENT directly`);
               } else if (iconNode?.type === 'COMPONENT_SET') {
-                console.log(`🚨 FALLBACK: Got COMPONENT_SET, finding default component...`);
+                console.log(`ðŸš¨ FALLBACK: Got COMPONENT_SET, finding default component...`);
                 const componentSet = iconNode as ComponentSetNode;
                 // Get the first (default) component from the set
                 const defaultComponent = componentSet.defaultVariant;
                 if (defaultComponent) {
                   iconComponent = defaultComponent;
-                  console.log(`🚨 FALLBACK: Using default variant: ${defaultComponent.name}`);
+                  console.log(`ðŸš¨ FALLBACK: Using default variant: ${defaultComponent.name}`);
                 } else {
-                  console.log(`🚨 FALLBACK: No default variant, trying first child...`);
+                  console.log(`ðŸš¨ FALLBACK: No default variant, trying first child...`);
                   const firstChild = componentSet.children.find(child => child.type === 'COMPONENT');
                   if (firstChild) {
                     iconComponent = firstChild as ComponentNode;
-                    console.log(`🚨 FALLBACK: Using first child component: ${firstChild.name}`);
+                    console.log(`ðŸš¨ FALLBACK: Using first child component: ${firstChild.name}`);
                   }
                 }
               }
               
               if (iconComponent && iconComponent.type === 'COMPONENT') {
-                console.log(`🚨 FALLBACK: Attempting to swap ${firstInstance.name} → ${iconComponent.name}`);
+                console.log(`ðŸš¨ FALLBACK: Attempting to swap ${firstInstance.name} â†’ ${iconComponent.name}`);
                 try {
                   firstInstance.swapComponent(iconComponent);
-                  console.log(`✅ FALLBACK SUCCESS: Swapped ${firstInstance.name} to ${iconName}`);
+                  console.log(`âœ… FALLBACK SUCCESS: Swapped ${firstInstance.name} to ${iconName}`);
                 } catch (swapError) {
-                  console.error(`❌ FALLBACK: Swap failed:`, swapError);
+                  console.error(`âŒ FALLBACK: Swap failed:`, swapError);
                 }
               } else {
-                console.error(`❌ FALLBACK: Could not get valid COMPONENT from ${iconNode?.type}`);
+                console.error(`âŒ FALLBACK: Could not get valid COMPONENT from ${iconNode?.type}`);
               }
             } else {
-              console.error(`❌ FALLBACK: No icon ID resolved for "${iconName}"`);
+              console.error(`âŒ FALLBACK: No icon ID resolved for "${iconName}"`);
             }
           }
         } catch (error) {
-          console.warn(`🚨 Fallback swap failed:`, error);
+          console.warn(`ðŸš¨ Fallback swap failed:`, error);
         }
       }
     }
@@ -2701,7 +2725,7 @@ export class FigmaRenderer {
     
     const schema = ComponentPropertyEngine.getComponentSchema(componentId);
     if (!schema) {
-      console.warn(`⚠️ No schema found for component ${componentId}, using fallback text application`);
+      console.warn(`âš ï¸ No schema found for component ${componentId}, using fallback text application`);
       // Fallback to original method
       await this.applyTextProperties(instance, textProperties);
       return;
@@ -2714,12 +2738,12 @@ export class FigmaRenderer {
         instance.findAllWithCriteria({ types: ['TEXT'] }) as TextNode[]
       );
     } catch (findError) {
-      console.error(`❌ Error finding text nodes in component ${componentId}:`, findError.message);
+      console.error(`âŒ Error finding text nodes in component ${componentId}:`, findError.message);
       // Fallback to original method if available
       try {
         await this.applyTextProperties(instance, textProperties);
       } catch (fallbackError) {
-        console.error(`❌ Fallback text application also failed:`, fallbackError.message);
+        console.error(`âŒ Fallback text application also failed:`, fallbackError.message);
       }
       return;
     }
@@ -2728,7 +2752,7 @@ export class FigmaRenderer {
       const textLayerInfo = schema.textLayers[propKey];
       
       if (!textLayerInfo) {
-        console.warn(`⚠️ No text layer info found for property "${propKey}"`);
+        console.warn(`âš ï¸ No text layer info found for property "${propKey}"`);
         // Try semantic matching as fallback
         const semanticMatch = Object.entries(schema.textLayers).find(([layerName, info]) => {
           const layerLower = layerName.toLowerCase();
@@ -2738,7 +2762,7 @@ export class FigmaRenderer {
         
         if (semanticMatch) {
           const [matchedName, matchedInfo] = semanticMatch;
-          console.log(` Using semantic match: "${propKey}" → "${matchedName}"`);
+          console.log(` Using semantic match: "${propKey}" â†’ "${matchedName}"`);
           if (matchedInfo.dataType === 'array' && Array.isArray(propValue)) {
             await this.applyArrayTextProperty(propKey, propValue, allTextNodes, matchedInfo);
           } else {
@@ -2790,10 +2814,10 @@ export class FigmaRenderer {
     // Hide extra nodes if we have fewer values than nodes
     for (let i = maxItems; i < matchingNodes.length; i++) {
       matchingNodes[i].visible = false;
-      console.log(`️ Hidden extra text node: "${matchingNodes[i].name}"`);
+      console.log(`ï¸ Hidden extra text node: "${matchingNodes[i].name}"`);
     }
     
-    console.log(`✅ Applied ${maxItems} values to ${propKey} array property`);
+    console.log(`âœ… Applied ${maxItems} values to ${propKey} array property`);
   }
 
   /**
@@ -2824,7 +2848,7 @@ export class FigmaRenderer {
     if (textNode) {
       await this.setTextNodeValueSafe(textNode, propValue, propKey);
     } else {
-      console.warn(`❌ No text node found for property "${propKey}" (looking for "${textLayerInfo.nodeName}")`);
+      console.warn(`âŒ No text node found for property "${propKey}" (looking for "${textLayerInfo.nodeName}")`);
     }
   }
 
@@ -2832,11 +2856,11 @@ export class FigmaRenderer {
    * Apply media properties systematically
    */
   static async applyMediaPropertiesSystematic(instance: InstanceNode, mediaProperties: any, componentId: string): Promise<void> {
-    console.log("️ Applying media properties systematically:", mediaProperties);
+    console.log("ï¸ Applying media properties systematically:", mediaProperties);
     
     const schema = ComponentPropertyEngine.getComponentSchema(componentId);
     if (!schema) {
-      console.warn(`⚠️ No schema found for component ${componentId}, skipping media application`);
+      console.warn(`âš ï¸ No schema found for component ${componentId}, skipping media application`);
       return;
     }
 
@@ -2852,7 +2876,7 @@ export class FigmaRenderer {
         return [...vectors, ...rectangles, ...ellipses, ...components];
       });
     } catch (findError) {
-      console.error(`❌ Error finding media nodes in component ${componentId}:`, findError.message);
+      console.error(`âŒ Error finding media nodes in component ${componentId}:`, findError.message);
       return; // Skip media property application if we can't find nodes
     }
 
@@ -2860,7 +2884,7 @@ export class FigmaRenderer {
       const mediaLayerInfo = schema.mediaLayers[propKey];
       
       if (!mediaLayerInfo) {
-        console.warn(`⚠️ No media layer info found for property "${propKey}"`);
+        console.warn(`âš ï¸ No media layer info found for property "${propKey}"`);
         continue;
       }
       
@@ -2869,10 +2893,10 @@ export class FigmaRenderer {
                        allMediaNodes.find(n => n.name.toLowerCase() === mediaLayerInfo.nodeName.toLowerCase());
       
       if (mediaNode) {
-        console.log(`✅ Found media node for "${propKey}": "${mediaNode.name}" (${mediaNode.type})`);
+        console.log(`âœ… Found media node for "${propKey}": "${mediaNode.name}" (${mediaNode.type})`);
         // Future: Apply actual media content here (swap instances, change fills, etc.)
       } else {
-        console.warn(`❌ No media node found for property "${propKey}"`);
+        console.warn(`âŒ No media node found for property "${propKey}"`);
       }
     }
   }
@@ -2885,7 +2909,7 @@ export class FigmaRenderer {
       await PerformanceTracker.track('set-text-value', async () => {
         // Critical: Check for missing fonts first
         if (textNode.hasMissingFont) {
-          console.error(`❌ Cannot set text "${context}": Missing fonts`);
+          console.error(`âŒ Cannot set text "${context}": Missing fonts`);
           return;
         }
 
@@ -2896,19 +2920,19 @@ export class FigmaRenderer {
         // Load all required fonts properly
         await this.loadAllRequiredFonts(textNode);
         textNode.characters = value;
-        console.log(`✅ Set "${textNode.name}" to "${value}" (${context})`);
+        console.log(`âœ… Set "${textNode.name}" to "${value}" (${context})`);
       });
     } catch (fontError) {
-      console.error(`❌ Font loading failed for "${textNode.name}":`, fontError);
+      console.error(`âŒ Font loading failed for "${textNode.name}":`, fontError);
       
       // Fallback to Inter Regular
       try {
         await figma.loadFontAsync({ family: "Inter", style: "Regular" });
         textNode.fontName = { family: "Inter", style: "Regular" };
         textNode.characters = value;
-        console.log(`⚠️ Used fallback font for "${textNode.name}"`);
+        console.log(`âš ï¸ Used fallback font for "${textNode.name}"`);
       } catch (fallbackError) {
-        console.error(`❌ Even fallback failed:`, fallbackError);
+        console.error(`âŒ Even fallback failed:`, fallbackError);
       }
     }
   }
@@ -2952,7 +2976,7 @@ export class FigmaRenderer {
     let lastBreadcrumb = 'START';
     const breadcrumb = (location: string) => {
       lastBreadcrumb = location;
-      console.log(`🍞 ${location}`);
+      console.log(`ðŸž ${location}`);
     };
     
     try {
@@ -2964,25 +2988,25 @@ export class FigmaRenderer {
         this.setDesignSystemData(designSystemData);
       }
       
-      console.log('🔧 Starting generateUIFromDataSystematic with data:', {
+      console.log('ðŸ”§ Starting generateUIFromDataSystematic with data:', {
         hasLayoutContainer: !!layoutData.layoutContainer,
         hasItems: !!layoutData.items,
         parentType: parentNode.type,
         hasDesignSystemData: !!designSystemData
       });
       
-      console.log('🚨 DEBUG TRACE: About to start main processing');
+      console.log('ðŸš¨ DEBUG TRACE: About to start main processing');
       
       // Skip ComponentPropertyEngine if no schemas available
       const schemas = ComponentPropertyEngine.getAllSchemas();
       if (schemas.length === 0) {
-        console.log('⚠️ No schemas - running systematic generation in basic mode');
+        console.log('âš ï¸ No schemas - running systematic generation in basic mode');
       }
     
     let currentFrame: FrameNode;
     const containerData = layoutData.layoutContainer || layoutData;
     
-    console.log('🚨 DEBUG TRACE: Container data extracted:', {
+    console.log('ðŸš¨ DEBUG TRACE: Container data extracted:', {
       hasContainerData: !!containerData,
       containerDataKeys: containerData ? Object.keys(containerData) : [],
       hasWidth: !!(containerData && containerData.width),
@@ -2997,7 +3021,7 @@ export class FigmaRenderer {
       parentNodeType: parentNode.type
     };
     
-    console.log('📁 FULL INPUT DATA FOR DEBUGGING:', JSON.stringify(debugData, null, 2));
+    console.log('ðŸ“ FULL INPUT DATA FOR DEBUGGING:', JSON.stringify(debugData, null, 2));
     
     // Create downloadable debug file
     try {
@@ -3014,13 +3038,13 @@ export class FigmaRenderer {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      console.log('💾 Debug file auto-downloaded as: debug-renderer-input.json');
+      console.log('ðŸ’¾ Debug file auto-downloaded as: debug-renderer-input.json');
     } catch (e) {
-      console.warn('⚠️ Could not auto-download debug file:', e.message);
-      console.log('📋 Copy this JSON manually:', JSON.stringify(debugData, null, 2));
+      console.warn('âš ï¸ Could not auto-download debug file:', e.message);
+      console.log('ðŸ“‹ Copy this JSON manually:', JSON.stringify(debugData, null, 2));
     }
     
-    console.log('🔍 INPUT DATA:', {
+    console.log('ðŸ” INPUT DATA:', {
       containerData: containerData,
       hasWidth: !!containerData?.width,
       widthValue: containerData?.width
@@ -3028,18 +3052,18 @@ export class FigmaRenderer {
     
     if (parentNode.type === 'PAGE' && containerData) {
       breadcrumb('FRAME: Creating root frame for PAGE');
-      console.log('🚨 DEBUG TRACE: Creating root frame for PAGE');
+      console.log('ðŸš¨ DEBUG TRACE: Creating root frame for PAGE');
       currentFrame = figma.createFrame();
-      console.log('🚨 DEBUG TRACE: Root frame created successfully');
+      console.log('ðŸš¨ DEBUG TRACE: Root frame created successfully');
       
       // Set initial size - width fixed, height to minimum
       const initialWidth = containerData.width || 375;
       const minHeight = containerData.minHeight || 812;
       
       breadcrumb('FRAME: Setting initial size with resize');
-      console.log('🚨 DEBUG TRACE: About to call resize with:', { initialWidth, minHeight });
+      console.log('ðŸš¨ DEBUG TRACE: About to call resize with:', { initialWidth, minHeight });
       currentFrame.resize(initialWidth, minHeight);
-      console.log('🚨 DEBUG TRACE: Resize completed successfully');
+      console.log('ðŸš¨ DEBUG TRACE: Resize completed successfully');
       
       // Configure auto-layout FIRST, then sizing properties
       if (containerData.layoutMode && containerData.layoutMode !== 'NONE') {
@@ -3047,9 +3071,9 @@ export class FigmaRenderer {
         try {
           breadcrumb('FRAME: Setting layoutMode to ' + containerData.layoutMode);
           currentFrame.layoutMode = containerData.layoutMode;
-          console.log('✅ Set layoutMode to:', containerData.layoutMode);
+          console.log('âœ… Set layoutMode to:', containerData.layoutMode);
         } catch (layoutModeError) {
-          console.warn('⚠️ Could not set layoutMode:', layoutModeError.message);
+          console.warn('âš ï¸ Could not set layoutMode:', layoutModeError.message);
           return currentFrame; // Exit early if auto-layout can't be enabled
         }
         
@@ -3058,26 +3082,26 @@ export class FigmaRenderer {
           // Key change: Use AUTO for primary axis (vertical) to hug content
           breadcrumb('FRAME: Setting primaryAxisSizingMode to AUTO');
           currentFrame.primaryAxisSizingMode = "AUTO"; // Force content hugging regardless of JSON
-          console.log('✅ Set primaryAxisSizingMode to AUTO');
+          console.log('âœ… Set primaryAxisSizingMode to AUTO');
         } catch (sizingError) {
-          console.warn('⚠️ Could not set primaryAxisSizingMode:', sizingError.message);
+          console.warn('âš ï¸ Could not set primaryAxisSizingMode:', sizingError.message);
         }
         
         try {
           currentFrame.counterAxisSizingMode = "FIXED"; // Keep width fixed
-          console.log('✅ Set counterAxisSizingMode to FIXED');
+          console.log('âœ… Set counterAxisSizingMode to FIXED');
         } catch (counterError) {
-          console.warn('⚠️ Could not set counterAxisSizingMode:', counterError.message);
+          console.warn('âš ï¸ Could not set counterAxisSizingMode:', counterError.message);
         }
         
         // Step 3: Set minimum height constraint AFTER sizing modes
         try {
           if (minHeight) {
             currentFrame.minHeight = minHeight;
-            console.log('✅ Set minHeight to:', minHeight);
+            console.log('âœ… Set minHeight to:', minHeight);
           }
         } catch (minHeightError) {
-          console.warn('⚠️ Could not set minHeight:', minHeightError.message);
+          console.warn('âš ï¸ Could not set minHeight:', minHeightError.message);
         }
       }
       
@@ -3088,9 +3112,9 @@ export class FigmaRenderer {
       
       parentNode.appendChild(currentFrame);
     } else if (parentNode.type === 'FRAME') {
-      console.log('🚨 DEBUG TRACE: Using existing FRAME as container');
+      console.log('ðŸš¨ DEBUG TRACE: Using existing FRAME as container');
       currentFrame = parentNode;
-      console.log('🚨 DEBUG TRACE: Current frame properties:', {
+      console.log('ðŸš¨ DEBUG TRACE: Current frame properties:', {
         type: currentFrame.type,
         layoutMode: currentFrame.layoutMode,
         hasWidthProperty: 'width' in currentFrame,
@@ -3103,7 +3127,7 @@ export class FigmaRenderer {
     
     // Apply container properties
     // DEBUG LOG 2: Container condition check
-    console.log('🔍 CONTAINER CONDITION:', {
+    console.log('ðŸ” CONTAINER CONDITION:', {
       hasContainerData: !!containerData,
       containerEqualsLayout: containerData === layoutData,
       conditionPassed: !!(containerData && containerData !== layoutData)
@@ -3112,7 +3136,7 @@ export class FigmaRenderer {
       breadcrumb('FRAME: Setting name to ' + (containerData.name || "Generated Frame"));
       currentFrame.name = containerData.name || "Generated Frame";
       
-      console.log('🔧 Applying container properties:', {
+      console.log('ðŸ”§ Applying container properties:', {
         name: containerData.name,
         layoutMode: containerData.layoutMode,
         itemSpacing: containerData.itemSpacing,
@@ -3125,9 +3149,9 @@ export class FigmaRenderer {
         breadcrumb('FRAME: Setting secondary layoutMode to ' + (containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL" ? containerData.layoutMode : "NONE"));
         currentFrame.layoutMode = containerData.layoutMode === "HORIZONTAL" || containerData.layoutMode === "VERTICAL"
           ? containerData.layoutMode : "NONE";
-        console.log('🔧 Frame layoutMode set to:', currentFrame.layoutMode);
+        console.log('ðŸ”§ Frame layoutMode set to:', currentFrame.layoutMode);
       } catch (e) {
-        console.warn('⚠️ Failed to set layoutMode:', e.message);
+        console.warn('âš ï¸ Failed to set layoutMode:', e.message);
       }
         
       if (currentFrame.layoutMode !== 'NONE') {
@@ -3135,28 +3159,28 @@ export class FigmaRenderer {
           breadcrumb('FRAME: Setting paddingTop to ' + (typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0));
           currentFrame.paddingTop = typeof containerData.paddingTop === 'number' ? containerData.paddingTop : 0;
         } catch (e) {
-          console.warn('⚠️ Failed to set paddingTop:', e.message);
+          console.warn('âš ï¸ Failed to set paddingTop:', e.message);
         }
         
         try {
           breadcrumb('FRAME: Setting paddingBottom to ' + (typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0));
           currentFrame.paddingBottom = typeof containerData.paddingBottom === 'number' ? containerData.paddingBottom : 0;
         } catch (e) {
-          console.warn('⚠️ Failed to set paddingBottom:', e.message);
+          console.warn('âš ï¸ Failed to set paddingBottom:', e.message);
         }
         
         try {
           breadcrumb('FRAME: Setting paddingLeft to ' + (typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0));
           currentFrame.paddingLeft = typeof containerData.paddingLeft === 'number' ? containerData.paddingLeft : 0;
         } catch (e) {
-          console.warn('⚠️ Failed to set paddingLeft:', e.message);
+          console.warn('âš ï¸ Failed to set paddingLeft:', e.message);
         }
         
         try {
           breadcrumb('FRAME: Setting paddingRight to ' + (typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0));
           currentFrame.paddingRight = typeof containerData.paddingRight === 'number' ? containerData.paddingRight : 0;
         } catch (e) {
-          console.warn('⚠️ Failed to set paddingRight:', e.message);
+          console.warn('âš ï¸ Failed to set paddingRight:', e.message);
         }
         
         // Enhanced auto-layout properties
@@ -3167,7 +3191,7 @@ export class FigmaRenderer {
             currentFrame.itemSpacing = typeof containerData.itemSpacing === 'number' ? containerData.itemSpacing : 0;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set itemSpacing:', e.message);
+          console.warn('âš ï¸ Failed to set itemSpacing:', e.message);
         }
         
         // Layout wrap support
@@ -3176,7 +3200,7 @@ export class FigmaRenderer {
             currentFrame.layoutWrap = containerData.layoutWrap;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set layoutWrap:', e.message);
+          console.warn('âš ï¸ Failed to set layoutWrap:', e.message);
         }
         
         // Primary axis alignment
@@ -3185,7 +3209,7 @@ export class FigmaRenderer {
             currentFrame.primaryAxisAlignItems = containerData.primaryAxisAlignItems;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set primaryAxisAlignItems:', e.message);
+          console.warn('âš ï¸ Failed to set primaryAxisAlignItems:', e.message);
         }
         
         // Counter axis alignment
@@ -3194,12 +3218,12 @@ export class FigmaRenderer {
             currentFrame.counterAxisAlignItems = containerData.counterAxisAlignItems;
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set counterAxisAlignItems:', e.message);
+          console.warn('âš ï¸ Failed to set counterAxisAlignItems:', e.message);
         }
         
         // Sizing modes - Skip primaryAxisSizingMode here if we have explicit width
         // (it will be set to FIXED later in the width setting block)
-        console.log('🔍 EARLY CHECK:', {
+        console.log('ðŸ” EARLY CHECK:', {
           hasWidth: !!containerData.width,
           widthValue: containerData.width,
           skipEarlySetting: !containerData.width
@@ -3212,16 +3236,16 @@ export class FigmaRenderer {
               if (hasPrimarySetter) {
                 breadcrumb('FRAME: Setting early primaryAxisSizingMode to ' + containerData.primaryAxisSizingMode);
                 currentFrame.primaryAxisSizingMode = containerData.primaryAxisSizingMode;
-                console.log('🔍 Set primaryAxisSizingMode early:', containerData.primaryAxisSizingMode);
+                console.log('ðŸ” Set primaryAxisSizingMode early:', containerData.primaryAxisSizingMode);
               } else {
-                console.warn('⚠️ Skipping early primaryAxisSizingMode - setter not available');
+                console.warn('âš ï¸ Skipping early primaryAxisSizingMode - setter not available');
               }
             }
           } catch (e) {
-            console.warn('⚠️ Failed to set primaryAxisSizingMode:', e.message);
+            console.warn('âš ï¸ Failed to set primaryAxisSizingMode:', e.message);
           }
         } else {
-          console.log('🔍 SKIPPED early primaryAxisSizingMode setting (has width)');
+          console.log('ðŸ” SKIPPED early primaryAxisSizingMode setting (has width)');
         }
         
         try {
@@ -3231,11 +3255,11 @@ export class FigmaRenderer {
               breadcrumb('FRAME: Setting counterAxisSizingMode to ' + containerData.counterAxisSizingMode);
               currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode;
             } else {
-              console.warn('⚠️ Skipping counterAxisSizingMode - setter not available');
+              console.warn('âš ï¸ Skipping counterAxisSizingMode - setter not available');
             }
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set counterAxisSizingMode:', e.message);
+          console.warn('âš ï¸ Failed to set counterAxisSizingMode:', e.message);
         }
       }
       
@@ -3245,7 +3269,7 @@ export class FigmaRenderer {
           currentFrame.minWidth = containerData.minWidth;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set minWidth:', e.message);
+        console.warn('âš ï¸ Failed to set minWidth:', e.message);
       }
       
       try {
@@ -3253,7 +3277,7 @@ export class FigmaRenderer {
           currentFrame.maxWidth = containerData.maxWidth;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set maxWidth:', e.message);
+        console.warn('âš ï¸ Failed to set maxWidth:', e.message);
       }
       
       try {
@@ -3261,7 +3285,7 @@ export class FigmaRenderer {
           currentFrame.minHeight = containerData.minHeight;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set minHeight:', e.message);
+        console.warn('âš ï¸ Failed to set minHeight:', e.message);
       }
       
       try {
@@ -3269,11 +3293,11 @@ export class FigmaRenderer {
           currentFrame.maxHeight = containerData.maxHeight;
         }
       } catch (e) {
-        console.warn('⚠️ Failed to set maxHeight:', e.message);
+        console.warn('âš ï¸ Failed to set maxHeight:', e.message);
       }
       
       if (containerData.width) {
-        console.log('🚨 WIDTH SETTING ENTRY POINT:', {
+        console.log('ðŸš¨ WIDTH SETTING ENTRY POINT:', {
           layoutMode: currentFrame.layoutMode,
           widthDescriptor: Object.getOwnPropertyDescriptor(currentFrame, 'width'),
           hasWidthSetter: Object.getOwnPropertyDescriptor(currentFrame, 'width')?.set !== undefined
@@ -3301,13 +3325,13 @@ export class FigmaRenderer {
           });
 
           if (currentFrame.layoutMode !== 'NONE') {
-            console.log('🔧 ATTEMPTING AUTO-LAYOUT WIDTH SET');
+            console.log('ðŸ”§ ATTEMPTING AUTO-LAYOUT WIDTH SET');
             
             // WORKAROUND: Create new auto-layout frame if width setter not available
             const hasWidthSetter = Object.getOwnPropertyDescriptor(currentFrame, 'width')?.set !== undefined;
             
             if (!hasWidthSetter) {
-              console.log('⚠️ WIDTH SETTER NOT AVAILABLE - Using resize workaround for auto-layout frame');
+              console.log('âš ï¸ WIDTH SETTER NOT AVAILABLE - Using resize workaround for auto-layout frame');
               
               // Use resize as fallback, then set sizing modes
               breadcrumb('FRAME: Using resize workaround for width ' + containerData.width);
@@ -3318,7 +3342,7 @@ export class FigmaRenderer {
                 const hasPrimarySetter = Object.getOwnPropertyDescriptor(currentFrame, 'primaryAxisSizingMode')?.set !== undefined;
                 const hasCounterSetter = Object.getOwnPropertyDescriptor(currentFrame, 'counterAxisSizingMode')?.set !== undefined;
                 
-                console.log('🔧 SIZING MODE SETTERS CHECK:', {
+                console.log('ðŸ”§ SIZING MODE SETTERS CHECK:', {
                   hasPrimarySetter,
                   hasCounterSetter,
                   layoutMode: currentFrame.layoutMode
@@ -3328,25 +3352,25 @@ export class FigmaRenderer {
                   breadcrumb('FRAME: Setting primaryAxisSizingMode to FIXED (resize workaround)');
                   currentFrame.primaryAxisSizingMode = "FIXED";
                 } else {
-                  console.warn('⚠️ primaryAxisSizingMode setter not available');
+                  console.warn('âš ï¸ primaryAxisSizingMode setter not available');
                 }
                 
                 if (hasCounterSetter) {
                   breadcrumb('FRAME: Setting counterAxisSizingMode to ' + (containerData.counterAxisSizingMode || "FIXED") + ' (resize workaround)');
                   currentFrame.counterAxisSizingMode = containerData.counterAxisSizingMode || "FIXED";
                 } else {
-                  console.warn('⚠️ counterAxisSizingMode setter not available');
+                  console.warn('âš ï¸ counterAxisSizingMode setter not available');
                 }
               } catch (e) {
-                console.warn('⚠️ Could not set sizing modes:', e.message);
+                console.warn('âš ï¸ Could not set sizing modes:', e.message);
               }
               
-              console.log('✅ Applied width via resize workaround:', containerData.width);
+              console.log('âœ… Applied width via resize workaround:', containerData.width);
             } else {
               // Standard width setting for proper auto-layout frames
               breadcrumb('FRAME: Setting width directly to ' + containerData.width);
               currentFrame.width = containerData.width;
-              console.log('✅ Set width directly:', containerData.width);
+              console.log('âœ… Set width directly:', containerData.width);
             }
           } else {
             // For regular frames, use resize
@@ -3377,7 +3401,7 @@ export class FigmaRenderer {
             currentFrame.counterAxisSizingMode = "AUTO";
           }
         } catch (e) {
-          console.warn('⚠️ Failed to set counterAxisSizingMode (AUTO):', e.message);
+          console.warn('âš ï¸ Failed to set counterAxisSizingMode (AUTO):', e.message);
         }
       }
     }
@@ -3387,7 +3411,7 @@ export class FigmaRenderer {
     
     for (const item of items) {
       try {
-        console.log('🔥 PROCESSING ITEM:', item.type, item.name || 'unnamed', 'layoutMode:', item.layoutMode);
+        console.log('ðŸ”¥ PROCESSING ITEM:', item.type, item.name || 'unnamed', 'layoutMode:', item.layoutMode);
         
         // Pre-process item to fix common issues
         const processedItem = {...item};
@@ -3397,7 +3421,7 @@ export class FigmaRenderer {
           const validatedType = this.validateNativeType(processedItem.type);
           
           if (!validatedType) {
-            console.error(`❌ Skipping invalid native element type: ${processedItem.type}`);
+            console.error(`âŒ Skipping invalid native element type: ${processedItem.type}`);
             continue;
           }
           
@@ -3451,14 +3475,14 @@ export class FigmaRenderer {
         
         // Process based on type
         if (processedItem.type === 'layoutContainer') {
-          console.log('🔥 CREATING NESTED LAYOUT CONTAINER:', processedItem.name, 'layoutMode:', processedItem.layoutMode);
-          console.log('🚀 DEPLOYMENT CHECK AUG 12 2025 - CODE IS DEPLOYED AND RUNNING');
+          console.log('ðŸ”¥ CREATING NESTED LAYOUT CONTAINER:', processedItem.name, 'layoutMode:', processedItem.layoutMode);
+          console.log('ðŸš€ DEPLOYMENT CHECK AUG 12 2025 - CODE IS DEPLOYED AND RUNNING');
           breadcrumb('NESTED: Creating layoutContainer frame for ' + (processedItem.name || 'unnamed'));
           const nestedFrame = figma.createFrame();
           breadcrumb('NESTED: Appending layoutContainer frame to parent');
           currentFrame.appendChild(nestedFrame);
           
-          console.log('🔍 DEBUG: Created nested frame with defaults:', {
+          console.log('ðŸ” DEBUG: Created nested frame with defaults:', {
             name: processedItem.name,
             layoutMode: processedItem.layoutMode,
             primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
@@ -3467,7 +3491,7 @@ export class FigmaRenderer {
           });
           
           // Apply child layout properties
-          console.log('🚨 DEBUG LINE 3072: About to call applyChildLayoutProperties', {
+          console.log('ðŸš¨ DEBUG LINE 3072: About to call applyChildLayoutProperties', {
             nestedFrameType: nestedFrame.type,
             itemType: processedItem.type,
             itemKeys: Object.keys(processedItem),
@@ -3510,12 +3534,12 @@ export class FigmaRenderer {
           
           // CRITICAL FIX: Reset height for horizontal AUTO containers
           if (nestedFrame.layoutMode === 'HORIZONTAL' && nestedFrame.primaryAxisSizingMode === 'AUTO') {
-            console.log('🔧 HORIZONTAL AUTO CONTAINER: Forcing height reset from default 100px');
+            console.log('ðŸ”§ HORIZONTAL AUTO CONTAINER: Forcing height reset from default 100px');
             
             // Direct approach: Force height to hug by resetting the frame height
             try {
               // Method 1: Try to force height recalculation by changing the height property
-              console.log('📏 Current height before fix:', nestedFrame.height);
+              console.log('ðŸ“ Current height before fix:', nestedFrame.height);
               
               // For horizontal containers with AUTO primary axis, the height should adapt to content
               // Force the frame to recalculate its height based on children
@@ -3529,7 +3553,7 @@ export class FigmaRenderer {
                   }
                 }
                 
-                console.log('📏 Calculated max child height:', maxChildHeight);
+                console.log('ðŸ“ Calculated max child height:', maxChildHeight);
                 
                 if (maxChildHeight > 0 && maxChildHeight !== nestedFrame.height) {
                   // Apply padding if it exists
@@ -3537,19 +3561,19 @@ export class FigmaRenderer {
                   const paddingBottom = (nestedFrame as any).paddingBottom || 0;
                   const targetHeight = maxChildHeight + paddingTop + paddingBottom;
                   
-                  console.log('📏 Setting frame height to:', targetHeight);
+                  console.log('ðŸ“ Setting frame height to:', targetHeight);
                   nestedFrame.resize(nestedFrame.width, targetHeight);
                 }
               }
               
-              console.log('📏 Final height after fix:', nestedFrame.height);
-              console.log('✅ Height reset complete - should now hug content');
+              console.log('ðŸ“ Final height after fix:', nestedFrame.height);
+              console.log('âœ… Height reset complete - should now hug content');
             } catch (error) {
-              console.error('❌ Height reset failed:', error);
+              console.error('âŒ Height reset failed:', error);
             }
           }
           
-          console.log('🔍 DEBUG: After applyChildLayoutProperties:', {
+          console.log('ðŸ” DEBUG: After applyChildLayoutProperties:', {
             name: processedItem.name,
             layoutMode: nestedFrame.layoutMode,
             primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
@@ -3563,7 +3587,7 @@ export class FigmaRenderer {
             items: processedItem.items
           }, nestedFrame);
           
-          console.log('🔍 DEBUG: Final frame properties:', {
+          console.log('ðŸ” DEBUG: Final frame properties:', {
             name: nestedFrame.name,
             layoutMode: nestedFrame.layoutMode,
             primaryAxisSizingMode: nestedFrame.primaryAxisSizingMode,
@@ -3583,8 +3607,8 @@ export class FigmaRenderer {
         
         // Safe defensive conversion for native elements with children
         else if (processedItem.type?.startsWith('native-') && (processedItem.items || processedItem.properties?.items)) {
-          console.warn(`⚠️ Invalid structure: ${processedItem.type} cannot have child items`);
-          console.warn('📦 Auto-converting to layoutContainer to prevent crash');
+          console.warn(`âš ï¸ Invalid structure: ${processedItem.type} cannot have child items`);
+          console.warn('ðŸ“¦ Auto-converting to layoutContainer to prevent crash');
           
           // Extract the items array (might be in different places)
           const childItems = processedItem.items || processedItem.properties?.items || [];
@@ -3620,7 +3644,7 @@ export class FigmaRenderer {
           }
           
           // Log what we're doing for debugging
-          console.log('🔄 Converted structure:', {
+          console.log('ðŸ”„ Converted structure:', {
             from: processedItem.type,
             to: 'layoutContainer',
             preservedStyling: {
@@ -3635,7 +3659,7 @@ export class FigmaRenderer {
           breadcrumb('NESTED: Appending defensive container to parent');
           currentFrame.appendChild(nestedFrame);
           
-          console.log('🚨 DEBUG LINE 3138: About to call applyChildLayoutProperties', {
+          console.log('ðŸš¨ DEBUG LINE 3138: About to call applyChildLayoutProperties', {
             nestedFrameType: nestedFrame.type,
             itemType: safeContainer.type,
             itemKeys: Object.keys(safeContainer),
@@ -3694,7 +3718,7 @@ export class FigmaRenderer {
         // COMPONENT ELEMENTS
         else if (processedItem.type === 'component') {
           if (!processedItem.componentNodeId) {
-            console.error('❌ No component ID found after normalization');
+            console.error('âŒ No component ID found after normalization');
             continue;
           }
           
@@ -3702,12 +3726,12 @@ export class FigmaRenderer {
           try {
             componentNode = await figma.getNodeByIdAsync(processedItem.componentNodeId);
           } catch (nodeError) {
-            console.warn(`⚠️ Error accessing component ${processedItem.componentNodeId}: ${nodeError.message}`);
+            console.warn(`âš ï¸ Error accessing component ${processedItem.componentNodeId}: ${nodeError.message}`);
             componentNode = null;
           }
           
           if (!componentNode) {
-            console.warn(`⚠️ Component ${processedItem.componentNodeId} not found - creating placeholder`);
+            console.warn(`âš ï¸ Component ${processedItem.componentNodeId} not found - creating placeholder`);
             await this.createMissingComponentPlaceholder(processedItem.componentNodeId, currentFrame);
             continue;
           }
@@ -3722,7 +3746,7 @@ export class FigmaRenderer {
               componentInfo = scanSession.components.find(c => c.id === processedItem.componentNodeId);
             }
           } catch (error) {
-            console.warn('⚠️ Could not load component info from scan data:', error);
+            console.warn('âš ï¸ Could not load component info from scan data:', error);
           }
           
           // Normalize properties
@@ -3768,7 +3792,7 @@ export class FigmaRenderer {
             
             // Apply child layout properties if any exist
             if (Object.keys(childLayoutProps).length > 0) {
-              console.log('✅ Applying child layout properties to component:', childLayoutProps);
+              console.log('âœ… Applying child layout properties to component:', childLayoutProps);
               this.applyChildLayoutProperties(componentInstance, childLayoutProps);
             }
           }
@@ -3801,14 +3825,14 @@ export class FigmaRenderer {
             
             // Apply child layout properties if any exist
             if (Object.keys(childLayoutProps).length > 0) {
-              console.log('✅ Applying child layout properties to other type:', childLayoutProps);
+              console.log('âœ… Applying child layout properties to other type:', childLayoutProps);
               this.applyChildLayoutProperties(createdInstance, childLayoutProps);
             }
           }
         }
         
       } catch (itemError) {
-        console.error(`❌ Error rendering item:`, itemError);
+        console.error(`âŒ Error rendering item:`, itemError);
         console.log('Problematic item:', JSON.stringify(item, null, 2));
         
         // Create error placeholder
@@ -3843,7 +3867,7 @@ export class FigmaRenderer {
     // Post-processing: Ensure frame maintains intended dimensions after content is added
     const postProcessContainerData = layoutData.layoutContainer || layoutData;
     if (postProcessContainerData && postProcessContainerData.width && currentFrame.layoutMode !== 'NONE') {
-      console.log('🔧 Post-processing: Re-enforcing frame width to:', postProcessContainerData.width);
+      console.log('ðŸ”§ Post-processing: Re-enforcing frame width to:', postProcessContainerData.width);
       breadcrumb('POSTPROCESS: Re-enforcing frame width to ' + postProcessContainerData.width);
       
       // Check if width setter is available
@@ -3851,14 +3875,14 @@ export class FigmaRenderer {
       
       if (hasWidthSetter) {
         currentFrame.width = postProcessContainerData.width;
-        console.log('✅ Re-enforced width via setter');
+        console.log('âœ… Re-enforced width via setter');
       } else {
         // Use resize as fallback
         try {
           currentFrame.resize(postProcessContainerData.width, currentFrame.height);
-          console.log('✅ Re-enforced width via resize fallback');
+          console.log('âœ… Re-enforced width via resize fallback');
         } catch (resizeError) {
-          console.warn('⚠️ Could not re-enforce width:', resizeError.message);
+          console.warn('âš ï¸ Could not re-enforce width:', resizeError.message);
           // Continue without re-enforcing - not critical
         }
       }
@@ -3870,7 +3894,7 @@ export class FigmaRenderer {
       const minHeight = containerData.minHeight || 812;
       await this.adjustRootFrameHeight(currentFrame, minHeight);
       
-      console.log('🎯 Final root frame dimensions:', {
+      console.log('ðŸŽ¯ Final root frame dimensions:', {
         width: currentFrame.width,
         height: currentFrame.height,
         primaryAxisSizing: currentFrame.primaryAxisSizingMode,
@@ -3878,13 +3902,13 @@ export class FigmaRenderer {
       });
     }
 
-    if (parentNode.type === 'PAGE') {      
+    if (parentNode.type === 'PAGE') {
       figma.currentPage.selection = [currentFrame];
       figma.viewport.scrollAndZoomIntoView([currentFrame]);
       
       // Show performance report
       const perfReport = ComponentPropertyEngine.getPerformanceReport();
-      console.log("⚡ Performance Report:", perfReport);
+      console.log("âš¡ Performance Report:", perfReport);
       
       figma.notify(`UI generated with systematic validation!`, { timeout: 2500 });
     }
@@ -3892,9 +3916,9 @@ export class FigmaRenderer {
     return currentFrame;
     
     } catch (error) {
-      console.error('❌ BREADCRUMB LOCATION:', lastBreadcrumb);
-      console.error('❌ generateUIFromDataSystematic error:', error);
-      console.error('❌ Error details:', {
+      console.error('âŒ BREADCRUMB LOCATION:', lastBreadcrumb);
+      console.error('âŒ generateUIFromDataSystematic error:', error);
+      console.error('âŒ Error details:', {
         lastBreadcrumb: lastBreadcrumb,
         message: error.message,
         stack: error.stack,
@@ -3921,7 +3945,7 @@ export class FigmaRenderer {
         parentNode.appendChild(fallbackFrame);
       }
       
-      figma.notify(`❌ Error creating UI: ${error.message}`, { error: true });
+      figma.notify(`âŒ Error creating UI: ${error.message}`, { error: true });
       return fallbackFrame;
     }
   }
@@ -3949,7 +3973,7 @@ export class FigmaRenderer {
     } catch (e: any) {
       const errorMessage = e instanceof Error ? e.message : String(e);
       figma.notify("Modification error: " + errorMessage, { error: true });
-      console.error("❌ modifyExistingUI error:", e);
+      console.error("âŒ modifyExistingUI error:", e);
       return null;
     }
   }
@@ -3959,20 +3983,20 @@ export class FigmaRenderer {
    */
   static async ensureColorStylesLoaded(): Promise<void> {
     if (!this.cachedColorStyles) {
-      console.log('🎨 Color styles not cached, attempting to load from storage...');
+      console.log('ðŸŽ¨ Color styles not cached, attempting to load from storage...');
       try {
         const scanSession = await SessionManager.loadLastScanSession();
         if (scanSession?.colorStyles) {
           this.setColorStyles(scanSession.colorStyles);
-          console.log('✅ Color styles loaded from scan session');
+          console.log('âœ… Color styles loaded from scan session');
         } else {
-          console.warn('⚠️ No color styles found in storage. Run a design system scan first.');
+          console.warn('âš ï¸ No color styles found in storage. Run a design system scan first.');
         }
       } catch (e) {
-        console.warn('⚠️ Failed to load color styles from storage:', e);
+        console.warn('âš ï¸ Failed to load color styles from storage:', e);
       }
     } else {
-      console.log('✅ Color styles already cached');
+      console.log('âœ… Color styles already cached');
     }
   }
 
@@ -3981,20 +4005,20 @@ export class FigmaRenderer {
    */
   static async ensureDesignTokensLoaded(): Promise<void> {
     if (!this.cachedDesignTokens) {
-      console.log('🔧 Design tokens not cached, attempting to load from storage...');
+      console.log('ðŸ”§ Design tokens not cached, attempting to load from storage...');
       try {
         const scanSession = await SessionManager.loadLastScanSession();
         if (scanSession?.designTokens) {
           this.setDesignTokens(scanSession.designTokens);
-          console.log('✅ Design tokens loaded from scan session');
+          console.log('âœ… Design tokens loaded from scan session');
         } else {
-          console.warn('⚠️ No design tokens found in storage. Run a design system scan first.');
+          console.warn('âš ï¸ No design tokens found in storage. Run a design system scan first.');
         }
       } catch (e) {
-        console.warn('⚠️ Failed to load design tokens from storage:', e);
+        console.warn('âš ï¸ Failed to load design tokens from storage:', e);
       }
     } else {
-      console.log('✅ Design tokens already cached');
+      console.log('âœ… Design tokens already cached');
     }
   }
 
@@ -4014,7 +4038,7 @@ export class FigmaRenderer {
     this.cachedColorStyles = colorStyles;
     if (colorStyles) {
       const totalStyles = Object.values(colorStyles).reduce((sum, styles) => sum + styles.length, 0);
-      console.log(`🎨 FigmaRenderer: Loaded ${totalStyles} Color Styles for semantic color resolution`);
+      console.log(`ðŸŽ¨ FigmaRenderer: Loaded ${totalStyles} Color Styles for semantic color resolution`);
     }
   }
   
@@ -4023,7 +4047,7 @@ export class FigmaRenderer {
    */
   static setDesignTokens(designTokens: DesignToken[]): void {
     this.cachedDesignTokens = designTokens;
-    console.log(`🔧 Cached ${designTokens?.length || 0} design tokens for renderer`);
+    console.log(`ðŸ”§ Cached ${designTokens?.length || 0} design tokens for renderer`);
   }
 
   /**
@@ -4035,7 +4059,7 @@ export class FigmaRenderer {
       return null;
     }
     
-    console.log(`🔧 Resolving design token: "${tokenName}"`);
+    console.log(`ðŸ”§ Resolving design token: "${tokenName}"`);
     
     // Find exact match first
     const exactMatch = this.cachedDesignTokens.find(token =>
@@ -4043,7 +4067,7 @@ export class FigmaRenderer {
     );
     
     if (exactMatch) {
-      console.log(`✅ Found exact design token: ${exactMatch.name}`);
+      console.log(`âœ… Found exact design token: ${exactMatch.name}`);
       return this.convertTokenValueToRgb(exactMatch.value);
     }
     
@@ -4053,7 +4077,7 @@ export class FigmaRenderer {
     );
     
     if (caseInsensitiveMatch) {
-      console.log(`✅ Found case-insensitive design token: ${caseInsensitiveMatch.name}`);
+      console.log(`âœ… Found case-insensitive design token: ${caseInsensitiveMatch.name}`);
       return this.convertTokenValueToRgb(caseInsensitiveMatch.value);
     }
     
@@ -4063,11 +4087,11 @@ export class FigmaRenderer {
     );
     
     if (collectionMatch) {
-      console.log(`✅ Found collection-based design token: ${collectionMatch.collection}/${collectionMatch.name}`);
+      console.log(`âœ… Found collection-based design token: ${collectionMatch.collection}/${collectionMatch.name}`);
       return this.convertTokenValueToRgb(collectionMatch.value);
     }
     
-    console.warn(`⚠️ Could not find design token "${tokenName}"`);
+    console.warn(`âš ï¸ Could not find design token "${tokenName}"`);
     return null;
   }
   
@@ -4092,10 +4116,10 @@ export class FigmaRenderer {
         return this.hexToRgb(tokenValue);
       }
       
-      console.warn(`⚠️ Unsupported token value format:`, tokenValue);
+      console.warn(`âš ï¸ Unsupported token value format:`, tokenValue);
       return null;
     } catch (error) {
-      console.error(`❌ Error converting token value:`, error);
+      console.error(`âŒ Error converting token value:`, error);
       return null;
     }
   }
@@ -4105,22 +4129,22 @@ export class FigmaRenderer {
    * Returns the actual Figma PaintStyle object so styles are applied, not raw colors
    */
   static async resolveColorStyleReference(colorStyleName: string): Promise<PaintStyle | null> {
-    console.log(`🎨 Resolving color style reference: "${colorStyleName}"`);
+    console.log(`ðŸŽ¨ Resolving color style reference: "${colorStyleName}"`);
     
     try {
       // Get all local paint styles from Figma
       const localPaintStyles = await figma.getLocalPaintStylesAsync();
-      console.log(`📋 Found ${localPaintStyles.length} local paint styles in Figma`);
+      console.log(`ðŸ“‹ Found ${localPaintStyles.length} local paint styles in Figma`);
       
       // Debug: Show first few style names
       if (localPaintStyles.length > 0) {
-        console.log(`📋 First 5 style names:`, localPaintStyles.slice(0, 5).map(s => s.name));
+        console.log(`ðŸ“‹ First 5 style names:`, localPaintStyles.slice(0, 5).map(s => s.name));
       }
       
       // Find exact match first
       const exactMatch = localPaintStyles.find(style => style.name === colorStyleName);
       if (exactMatch) {
-        console.log(`✅ Found exact color style: ${exactMatch.name}`);
+        console.log(`âœ… Found exact color style: ${exactMatch.name}`);
         return exactMatch;
       }
       
@@ -4129,16 +4153,16 @@ export class FigmaRenderer {
         style.name.toLowerCase() === colorStyleName.toLowerCase()
       );
       if (caseInsensitiveMatch) {
-        console.log(`✅ Found case-insensitive color style: ${caseInsensitiveMatch.name}`);
+        console.log(`âœ… Found case-insensitive color style: ${caseInsensitiveMatch.name}`);
         return caseInsensitiveMatch;
       }
       
-      console.warn(`⚠️ Could not find color style "${colorStyleName}"`);
-      console.log(`📋 All available paint styles:`, localPaintStyles.map(s => s.name));
+      console.warn(`âš ï¸ Could not find color style "${colorStyleName}"`);
+      console.log(`ðŸ“‹ All available paint styles:`, localPaintStyles.map(s => s.name));
       return null;
       
     } catch (error) {
-      console.error(`❌ Error resolving color style "${colorStyleName}":`, error);
+      console.error(`âŒ Error resolving color style "${colorStyleName}":`, error);
       return null;
     }
   }
@@ -4150,24 +4174,24 @@ export class FigmaRenderer {
    * 3. Semantic color fallback
    */
   static resolveColorReference(colorName: string): RGB | null {
-    console.log(`🎨 Resolving color: "${colorName}" with 3-tier system`);
+    console.log(`ðŸŽ¨ Resolving color: "${colorName}" with 3-tier system`);
     
     // Tier 1: Try design tokens first (modern approach)
     const tokenColor = this.resolveDesignTokenReference(colorName);
     if (tokenColor) {
-      console.log(`✅ Resolved via design token`);
+      console.log(`âœ… Resolved via design token`);
       return tokenColor;
     }
     
     // Tier 2: Fallback to color styles (legacy approach)
     const styleColor = this.resolveSemanticColor(colorName);
     if (styleColor && !(styleColor.r === 0 && styleColor.g === 0 && styleColor.b === 0)) {
-      console.log(`✅ Resolved via color style`);
+      console.log(`âœ… Resolved via color style`);
       return styleColor;
     }
     
     // Tier 3: Ultimate fallback
-    console.warn(`⚠️ Could not resolve color "${colorName}" through any method`);
+    console.warn(`âš ï¸ Could not resolve color "${colorName}" through any method`);
     return { r: 0, g: 0, b: 0 }; // Black fallback
   }
 
@@ -4178,18 +4202,18 @@ export class FigmaRenderer {
    */
   static resolveSemanticColor(colorStyleName: string): RGB | null {
     if (!this.cachedColorStyles) {
-      console.warn(`⚠️ No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
+      console.warn(`âš ï¸ No Color Styles loaded. Call setColorStyles() first or run a design system scan.`);
       return null;
     }
     
-    console.log(`🎨 Resolving color style: "${colorStyleName}"`);
+    console.log(`ðŸŽ¨ Resolving color style: "${colorStyleName}"`);
     
     // Search all categories for exact name match
     const allCategories = Object.values(this.cachedColorStyles).flat();
     const exactMatch = allCategories.find(style => style.name === colorStyleName);
     
     if (exactMatch && exactMatch.colorInfo.type === 'SOLID') {
-      console.log(`✅ Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
+      console.log(`âœ… Found exact match: ${exactMatch.name} (${exactMatch.colorInfo.color})`);
       return this.hexToRgb(exactMatch.colorInfo.color || '#000000');
     }
     
@@ -4199,11 +4223,11 @@ export class FigmaRenderer {
     );
     
     if (caseInsensitiveMatch && caseInsensitiveMatch.colorInfo.type === 'SOLID') {
-      console.log(`✅ Found case-insensitive match: ${caseInsensitiveMatch.name} (${caseInsensitiveMatch.colorInfo.color})`);
+      console.log(`âœ… Found case-insensitive match: ${caseInsensitiveMatch.name} (${caseInsensitiveMatch.colorInfo.color})`);
       return this.hexToRgb(caseInsensitiveMatch.colorInfo.color || '#000000');
     }
     
-    console.warn(`⚠️ Could not find color style "${colorStyleName}"`);
+    console.warn(`âš ï¸ Could not find color style "${colorStyleName}"`);
     console.log(`Available color styles:`, allCategories.map(s => s.name));
     
     // Return black as fallback
@@ -4248,7 +4272,7 @@ export class FigmaRenderer {
     const rgb = this.resolveColorReference(semanticColorName);
     if (rgb) {
       textNode.fills = [this.createSolidPaint(rgb)];
-      console.log(`✅ Applied semantic color "${semanticColorName}" to text node`);
+      console.log(`âœ… Applied semantic color "${semanticColorName}" to text node`);
       return true;
     }
     return false;
@@ -4262,7 +4286,7 @@ export class FigmaRenderer {
     const colorStyle = await this.resolveColorStyleReference(semanticColorName);
     if (colorStyle && 'setFillStyleIdAsync' in node) {
       await (node as any).setFillStyleIdAsync(colorStyle.id);
-      console.log(`✅ Applied color style "${semanticColorName}" to node (as style reference)`);
+      console.log(`âœ… Applied color style "${semanticColorName}" to node (as style reference)`);
       return true;
     }
     
@@ -4270,7 +4294,7 @@ export class FigmaRenderer {
     const rgb = this.resolveColorReference(semanticColorName);
     if (rgb && 'fills' in node) {
       (node as any).fills = [this.createSolidPaint(rgb)];
-      console.log(`✅ Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
+      console.log(`âœ… Applied semantic fill color "${semanticColorName}" to node (as RGB fallback)`);
       return true;
     }
     return false;
@@ -4284,7 +4308,7 @@ export class FigmaRenderer {
    */
   static setTextStyles(textStyles: TextStyle[]): void {
     FigmaRenderer.cachedTextStyles = textStyles;
-    console.log(`📝 Cached ${textStyles.length} text styles for rendering`);
+    console.log(`ðŸ“ Cached ${textStyles.length} text styles for rendering`);
     
     // Log available text styles for debugging
     if (textStyles.length > 0) {
@@ -4297,22 +4321,22 @@ export class FigmaRenderer {
    * Mirrors resolveColorStyleReference pattern
    */
   static async resolveTextStyleReference(textStyleName: string): Promise<TextStyle | null> {
-    console.log(`📝 Resolving text style reference: "${textStyleName}"`);
+    console.log(`ðŸ“ Resolving text style reference: "${textStyleName}"`);
     
     try {
       // Get all local text styles from Figma
       const localTextStyles = await figma.getLocalTextStylesAsync();
-      console.log(`📋 Found ${localTextStyles.length} local text styles in Figma`);
+      console.log(`ðŸ“‹ Found ${localTextStyles.length} local text styles in Figma`);
       
       // Debug: Show first few style names
       if (localTextStyles.length > 0) {
-        console.log(`📋 First 5 text style names:`, localTextStyles.slice(0, 5).map(s => s.name));
+        console.log(`ðŸ“‹ First 5 text style names:`, localTextStyles.slice(0, 5).map(s => s.name));
       }
       
       // Find exact match first
       const exactMatch = localTextStyles.find(style => style.name === textStyleName);
       if (exactMatch) {
-        console.log(`✅ Found exact text style: ${exactMatch.name}`);
+        console.log(`âœ… Found exact text style: ${exactMatch.name}`);
         return exactMatch;
       }
       
@@ -4321,16 +4345,16 @@ export class FigmaRenderer {
         style.name.toLowerCase() === textStyleName.toLowerCase()
       );
       if (caseInsensitiveMatch) {
-        console.log(`✅ Found case-insensitive text style: ${caseInsensitiveMatch.name}`);
+        console.log(`âœ… Found case-insensitive text style: ${caseInsensitiveMatch.name}`);
         return caseInsensitiveMatch;
       }
       
-      console.warn(`⚠️ Could not find text style "${textStyleName}"`);
-      console.log(`📋 All available text styles:`, localTextStyles.map(s => s.name));
+      console.warn(`âš ï¸ Could not find text style "${textStyleName}"`);
+      console.log(`ðŸ“‹ All available text styles:`, localTextStyles.map(s => s.name));
       return null;
       
     } catch (error) {
-      console.error(`❌ Error resolving text style "${textStyleName}":`, error);
+      console.error(`âŒ Error resolving text style "${textStyleName}":`, error);
       return null;
     }
   }
@@ -4340,18 +4364,18 @@ export class FigmaRenderer {
    */
   static async applyTextStyle(textNode: TextNode, textStyleName: string): Promise<void> {
     try {
-      console.log(`📝 Attempting to apply text style: "${textStyleName}"`);
+      console.log(`ðŸ“ Attempting to apply text style: "${textStyleName}"`);
       const textStyle = await FigmaRenderer.resolveTextStyleReference(textStyleName);
       if (textStyle) {
-        console.log(`📝 Text style found - ID: ${textStyle.id}, Name: ${textStyle.name}`);
+        console.log(`ðŸ“ Text style found - ID: ${textStyle.id}, Name: ${textStyle.name}`);
         await textNode.setTextStyleIdAsync(textStyle.id);
-        console.log(`✅ Applied text style "${textStyleName}" to text node`);
+        console.log(`âœ… Applied text style "${textStyleName}" to text node`);
       } else {
-        console.warn(`❌ Could not apply text style "${textStyleName}" - style not found`);
+        console.warn(`âŒ Could not apply text style "${textStyleName}" - style not found`);
       }
     } catch (error) {
-      console.error(`❌ Error applying text style "${textStyleName}":`, error);
-      console.error(`❌ Error details:`, {
+      console.error(`âŒ Error applying text style "${textStyleName}":`, error);
+      console.error(`âŒ Error details:`, {
         errorMessage: error.message,
         errorStack: error.stack,
         textStyleName: textStyleName,
@@ -4382,11 +4406,11 @@ export class FigmaRenderer {
     };
     
     if (fallbackMap[type]) {
-      console.warn(`⚠️ Unknown native type "${type}" - falling back to "${fallbackMap[type]}"`);
+      console.warn(`âš ï¸ Unknown native type "${type}" - falling back to "${fallbackMap[type]}"`);
       return fallbackMap[type];
     }
     
-    console.error(`❌ Unknown native type "${type}" - no fallback available`);
+    console.error(`âŒ Unknown native type "${type}" - no fallback available`);
     return null;
   }
 
@@ -4400,13 +4424,13 @@ export class FigmaRenderer {
       if (width.endsWith('%')) {
         const percentage = parseFloat(width);
         if (width === '100%') {
-          console.warn('⚠️ Converting width "100%" to horizontalSizing: "FILL"');
+          console.warn('âš ï¸ Converting width "100%" to horizontalSizing: "FILL"');
           return null; // Signal to use FILL instead
         } else {
           // Convert percentage to approximate fixed width
           const defaultContainerWidth = 375; // Mobile width
           const calculated = (defaultContainerWidth * percentage) / 100;
-          console.warn(`⚠️ Converting width "${width}" to ${calculated}px`);
+          console.warn(`âš ï¸ Converting width "${width}" to ${calculated}px`);
           return calculated;
         }
       }
@@ -4422,7 +4446,7 @@ export class FigmaRenderer {
       return width;
     }
     
-    console.warn(`⚠️ Invalid width value: ${width}`);
+    console.warn(`âš ï¸ Invalid width value: ${width}`);
     return null;
   }
 
@@ -4452,7 +4476,7 @@ export class FigmaRenderer {
           // Find correct property name
           for (const [correct, wrongNames] of Object.entries(aliases)) {
             if (wrongNames.includes(propName) && textLayers.includes(correct)) {
-              console.warn(`⚠️ Normalizing property "${propName}" to "${correct}"`);
+              console.warn(`âš ï¸ Normalizing property "${propName}" to "${correct}"`);
               normalized[correct] = properties[propName];
               delete normalized[propName];
               break;
@@ -4483,7 +4507,7 @@ export class FigmaRenderer {
       const validValues = variantDetails[propName];
       
       if (!validValues) {
-        console.warn(`⚠️ Unknown variant property "${propName}" - removing`);
+        console.warn(`âš ï¸ Unknown variant property "${propName}" - removing`);
         delete fixed[propName];
         return;
       }
@@ -4496,10 +4520,10 @@ export class FigmaRenderer {
         );
         
         if (match) {
-          console.warn(`⚠️ Fixing variant case: "${value}" → "${match}"`);
+          console.warn(`âš ï¸ Fixing variant case: "${value}" â†’ "${match}"`);
           fixed[propName] = match;
         } else {
-          console.warn(`⚠️ Invalid variant value "${value}" for "${propName}". Using default: "${validValues[0]}"`);
+          console.warn(`âš ï¸ Invalid variant value "${value}" for "${propName}". Using default: "${validValues[0]}"`);
           fixed[propName] = validValues[0];
         }
       }
@@ -4508,7 +4532,7 @@ export class FigmaRenderer {
     // Add missing required variants
     Object.entries(variantDetails).forEach(([propName, values]: [string, any]) => {
       if (!fixed[propName] && Array.isArray(values) && values.length > 0) {
-        console.warn(`⚠️ Adding missing variant "${propName}" with default: "${values[0]}"`);
+        console.warn(`âš ï¸ Adding missing variant "${propName}" with default: "${values[0]}"`);
         fixed[propName] = values[0];
       }
     });
